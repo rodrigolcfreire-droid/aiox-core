@@ -1,18 +1,14 @@
 # AIOS Code Owners
-# Story: COLLAB-1
+# Story: COLLAB-1, COLLAB-2
 # Last Updated: 2025-12-30
 #
 # Format: <pattern> <owners>
 # Later patterns take precedence over earlier ones
 # See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 #
-# Teams:
-# - @SynkraAI/maintainers: General maintainers (write access)
-# - @SynkraAI/core-team: Core framework developers
-# - @SynkraAI/devops: CI/CD and infrastructure
-#
-# Note: Teams must exist in the GitHub organization and have write access
-# Until teams are created, @SynkraAI org handles all reviews
+# Owner: @SynkraAI (organization)
+# All PRs require approval from an org member before merge.
+# This is a public open-source repository - no GitHub Teams needed.
 
 # ============================================
 # Default Owner (fallback)
