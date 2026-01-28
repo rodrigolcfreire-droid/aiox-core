@@ -1,5 +1,9 @@
 # Gerenciamento de Chaves de API MCP
 
+> 🌐 [EN](../../architecture/mcp-api-keys-management.md) *(coming soon)* | **PT** | [ES](../../es/architecture/mcp-api-keys-management.md)
+
+---
+
 **Versão:** 1.0.0
 **Última Atualização:** 2026-01-26
 **Status:** Referência Oficial

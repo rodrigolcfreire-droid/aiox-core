@@ -2,6 +2,10 @@
 
 # Arquitetura de Alto Nível do AIOS v2.1
 
+> 🌐 [EN](../../architecture/high-level-architecture.md) *(coming soon)* | **PT** | [ES](../../es/architecture/high-level-architecture.md)
+
+---
+
 **Versão:** 2.1.0
 **Última Atualização:** 2025-12-09
 **Status:** Documento Oficial de Arquitetura

@@ -1,5 +1,11 @@
 <!-- Tradução: PT-BR | Original: /docs/en/architecture/coding-standards.md | Sincronização: 2026-01-26 -->
 
+# Padrões de Codificação AIOS
+
+> 🌐 [EN](../../architecture/coding-standards.md) *(coming soon)* | **PT** | [ES](../../es/architecture/coding-standards.md)
+
+---
+
 > ⚠️ **DESCONTINUADO**: Este arquivo é mantido apenas para compatibilidade retroativa.
 >
 > **Versão oficial:** [docs/framework/coding-standards.md](../framework/coding-standards.md)

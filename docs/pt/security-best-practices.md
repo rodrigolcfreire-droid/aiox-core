@@ -6,6 +6,10 @@
 
 # Melhores Práticas de Segurança do Synkra AIOS
 
+> 🌐 [EN](../security-best-practices.md) | **PT** | [ES](../es/security-best-practices.md)
+
+---
+
 Este guia fornece recomendações abrangentes de segurança para implantação e manutenção do Synkra AIOS em ambientes de produção.
 
 ## Índice

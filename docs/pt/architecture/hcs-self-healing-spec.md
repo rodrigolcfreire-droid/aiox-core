@@ -2,6 +2,10 @@
 
 # Especificação de Auto-Recuperação do HCS
 
+> 🌐 [EN](../../architecture/hcs-self-healing-spec.md) *(coming soon)* | **PT** | [ES](../../es/architecture/hcs-self-healing-spec.md)
+
+---
+
 **Versão:** 1.0
 **Status:** Proposto
 **Criado:** 2025-12-30

@@ -6,6 +6,10 @@
 
 # Guia de Migração de Squad
 
+> 🌐 [EN](../../guides/squad-migration.md) | **PT** | [ES](../../es/guides/squad-migration.md)
+
+---
+
 Como migrar squads legados para o formato AIOS 2.1.
 
 ## Visão Geral

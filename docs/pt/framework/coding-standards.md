@@ -6,6 +6,10 @@
 
 # Padrões de Código AIOS
 
+> 🌐 [EN](../../framework/coding-standards.md) | **PT** | [ES](../../es/framework/coding-standards.md)
+
+---
+
 **Versão:** 1.1
 **Última Atualização:** 2025-12-14
 **Status:** Padrão Oficial do Framework

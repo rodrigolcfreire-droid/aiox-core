@@ -2,6 +2,10 @@
 
 # Auditoria de Uso de Configuração de Agentes
 
+> 🌐 [EN](../../architecture/agent-config-audit.md) *(coming soon)* | **PT** | [ES](../../es/architecture/agent-config-audit.md)
+
+---
+
 **Gerado em:** 2025-11-16T13:49:03.668Z
 **Total de Agentes:** 8
 

@@ -1,5 +1,11 @@
 <!-- Tradução: PT-BR | Original: /docs/en/architecture/tech-stack.md | Sincronização: 2026-01-26 -->
 
+# Stack de Tecnologia AIOS
+
+> 🌐 [EN](../../architecture/tech-stack.md) *(coming soon)* | **PT** | [ES](../../es/architecture/tech-stack.md)
+
+---
+
 > ⚠️ **DESCONTINUADO**: Este arquivo é mantido apenas para compatibilidade retroativa.
 >
 > **Versão oficial:** [docs/framework/tech-stack.md](../framework/tech-stack.md)

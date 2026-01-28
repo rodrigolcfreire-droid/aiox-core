@@ -6,6 +6,10 @@
 
 # FAQ do Synkra AIOS
 
+> 🌐 [EN](../../installation/faq.md) | **PT** | [ES](../../es/installation/faq.md)
+
+---
+
 **Versão:** 2.1.0
 **Última Atualização:** 2025-01-24
 

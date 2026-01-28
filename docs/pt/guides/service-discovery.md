@@ -6,6 +6,10 @@
 
 # Guia de Service Discovery AIOS
 
+> 🌐 [EN](../../guides/service-discovery.md) | **PT** | [ES](../../es/guides/service-discovery.md)
+
+---
+
 > Como descobrir, consultar e usar workers no framework AIOS.
 
 **Versão:** 2.1.0

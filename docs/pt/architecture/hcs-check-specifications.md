@@ -2,6 +2,10 @@
 
 # Especificações de Verificação do HCS
 
+> 🌐 [EN](../../architecture/hcs-check-specifications.md) *(coming soon)* | **PT** | [ES](../../es/architecture/hcs-check-specifications.md)
+
+---
+
 **Versão:** 1.0
 **Status:** Proposto
 **Criado:** 2025-12-30

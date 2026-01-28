@@ -6,6 +6,10 @@
 
 # Guia de Instalação via NPX
 
+> 🌐 [EN](../npx-install.md) | **PT** | [ES](../es/npx-install.md)
+
+---
+
 ## Visão Geral
 
 O Synkra AIOS pode ser instalado via NPX para uma configuração rápida sem instalação global. Este guia cobre o uso correto e a resolução de problemas para instalações baseadas em NPX.

@@ -1,5 +1,9 @@
 # Guia AIOS para AntiGravity
 
+> 🌐 [EN](../../platforms/antigravity.md) | **PT** | [ES](../../es/platforms/antigravity.md)
+
+---
+
 > **Plataforma de Desenvolvimento Agêntico do Google** - Arquitetura Baseada em Workflows
 
 ---

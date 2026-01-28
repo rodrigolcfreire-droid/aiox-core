@@ -2,6 +2,10 @@
 
 # Sistema MCP Global - Diagramas de Arquitetura
 
+> 🌐 [EN](../../architecture/mcp-system-diagrams.md) *(coming soon)* | **PT** | [ES](../../es/architecture/mcp-system-diagrams.md)
+
+---
+
 **Story:** 2.11 - Sistema MCP Global
 **Gerado por:** CodeRabbit (PR #16)
 **Data:** 2025-12-01

@@ -6,6 +6,10 @@
 
 # Funcionalidade de Status do Projeto - Guia do Usuário
 
+> 🌐 [EN](../../guides/project-status-feature.md) | **PT** | [ES](../../es/guides/project-status-feature.md)
+
+---
+
 **Funcionalidade:** Contexto Dinâmico de Status do Projeto para Ativação de Agentes
 **Versão:** 1.0
 **Story:** 6.1.2.4

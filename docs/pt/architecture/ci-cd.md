@@ -2,6 +2,10 @@
 
 # Arquitetura de CI/CD
 
+> 🌐 [EN](../../architecture/ci-cd.md) *(coming soon)* | **PT** | [ES](../../es/architecture/ci-cd.md)
+
+---
+
 > Story 6.1: Otimização de Custos do GitHub Actions
 
 ## Visão Geral

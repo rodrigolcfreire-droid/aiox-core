@@ -2,6 +2,10 @@
 
 # Documento de Arquitetura Fullstack da Camada de Memória do AIOS (MVP - Completo)
 
+> 🌐 [EN](../../architecture/memory-layer.md) *(coming soon)* | **PT** | [ES](../../es/architecture/memory-layer.md)
+
+---
+
 ## Introdução
 
 Este documento representa a arquitetura completa para o MVP da Camada de Memória do AIOS, um sistema de gerenciamento de memória totalmente funcional construído com LlamaIndex e armazenamento de vetores local. O MVP foi implementado e testado com sucesso, demonstrando toda a funcionalidade principal de memória com qualidade pronta para produção.

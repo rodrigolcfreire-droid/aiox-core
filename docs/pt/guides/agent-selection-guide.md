@@ -5,6 +5,11 @@
 -->
 
 # Guia de Seleção de Agentes
+
+> 🌐 [EN](../../guides/agent-selection-guide.md) | **PT** | [ES](../../es/guides/agent-selection-guide.md)
+
+---
+
 ## Referência Rápida para Escolher o Agente Correto
 
 **Última Atualização:** 2025-01-15 (Story 6.1.2.3)

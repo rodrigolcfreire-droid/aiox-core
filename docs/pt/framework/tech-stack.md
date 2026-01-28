@@ -6,6 +6,10 @@
 
 # Stack de Tecnologia AIOS
 
+> 🌐 [EN](../../framework/tech-stack.md) | **PT** | [ES](../../es/framework/tech-stack.md)
+
+---
+
 **Versão:** 1.1
 **Última Atualização:** 2025-12-14
 **Status:** Padrão Oficial do Framework

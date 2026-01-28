@@ -6,6 +6,10 @@
 
 # Método AIOS: Arquitetura Central
 
+> 🌐 [EN](../core-architecture.md) | **PT** | [ES](../es/core-architecture.md)
+
+---
+
 ## 1. Visão Geral
 
 O Método AIOS foi projetado para fornecer modos agênticos, tarefas e templates que permitem workflows úteis e repetíveis, seja para desenvolvimento ágil com agentes ou expansão para domínios vastamente diferentes. O propósito central do projeto é fornecer um conjunto estruturado, porém flexível, de prompts, templates e workflows que os usuários podem empregar para guiar agentes de IA (como Gemini, Claude ou ChatGPT) para realizar tarefas complexas, discussões guiadas ou outros fluxos significativos específicos de domínio de maneira previsível e com alta qualidade.

@@ -6,6 +6,10 @@
 
 # Processo de Solicitação de Funcionalidades
 
+> 🌐 [EN](../FEATURE_PROCESS.md) | **PT** | [ES](../es/FEATURE_PROCESS.md)
+
+---
+
 Este documento explica como propor novas funcionalidades para o AIOS.
 
 ## Ideias Rápidas

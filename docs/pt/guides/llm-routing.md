@@ -6,6 +6,10 @@
 
 # Guia de Roteamento de LLM
 
+> 🌐 [EN](../../guides/llm-routing.md) | **PT** | [ES](../../es/guides/llm-routing.md)
+
+---
+
 **Versão:** 1.0.0
 **Atualizado:** 2025-12-14
 

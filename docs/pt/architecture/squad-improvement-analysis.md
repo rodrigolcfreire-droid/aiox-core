@@ -2,6 +2,10 @@
 
 # Análise do Projeto: Sistema de Melhoria de Squads
 
+> 🌐 [EN](../../architecture/squad-improvement-analysis.md) *(coming soon)* | **PT** | [ES](../../es/architecture/squad-improvement-analysis.md)
+
+---
+
 **Gerado:** 2025-12-26
 **Gerado Por:** @architect (Aria)
 **Funcionalidade:** Tarefas de Análise e Melhoria Contínua de Squads

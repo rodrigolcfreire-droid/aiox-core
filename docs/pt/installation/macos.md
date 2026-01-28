@@ -6,6 +6,10 @@
 
 # Guia de Instalação para macOS - Synkra AIOS
 
+> 🌐 [EN](../../installation/macos.md) | **PT** | [ES](../../es/installation/macos.md)
+
+---
+
 ## Pré-requisitos
 
 ### 1. Node.js (v20 ou superior)

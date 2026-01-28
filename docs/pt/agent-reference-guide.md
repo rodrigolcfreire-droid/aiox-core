@@ -6,6 +6,10 @@
 
 # Guia de Referência dos Agentes PV do HybridOps
 
+> 🌐 [EN](../agent-reference-guide.md) | **PT** | [ES](../es/agent-reference-guide.md)
+
+---
+
 **Versão**: 2.0
 **Última Atualização**: 2025-10-19
 **Story**: 1.9 - Implementação Completa dos Agentes PV

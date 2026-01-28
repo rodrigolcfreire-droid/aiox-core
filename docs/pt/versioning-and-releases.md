@@ -6,6 +6,10 @@
 
 # Como Lançar uma Nova Versão
 
+> 🌐 [EN](../versioning-and-releases.md) | **PT** | [ES](../es/versioning-and-releases.md)
+
+---
+
 ## Releases Automatizados (Recomendado)
 
 A maneira mais fácil de lançar novas versões é através de **releases semânticos automáticos**. Basta fazer commit com o formato de mensagem correto e fazer push - todo o resto acontece automaticamente.

@@ -2,6 +2,10 @@
 
 # Pesquisa de Workflow de Contribuição Externa
 
+> 🌐 [EN](../../architecture/contribution-workflow-research.md) *(coming soon)* | **PT** | [ES](../../es/architecture/contribution-workflow-research.md)
+
+---
+
 **Story:** COLLAB-1
 **Data:** 2025-12-30
 **Autor:** @dev (Dex) + @devops (Gage)

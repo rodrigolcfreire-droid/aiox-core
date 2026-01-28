@@ -6,6 +6,10 @@
 
 # Guia do Dashboard de Quality Gates
 
+> 🌐 [EN](../../guides/quality-dashboard.md) | **PT** | [ES](../../es/guides/quality-dashboard.md)
+
+---
+
 > Dashboard visual para monitoramento de métricas de qualidade em todas as 3 camadas.
 
 **Versão:** 1.0

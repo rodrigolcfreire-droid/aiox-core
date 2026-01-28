@@ -6,6 +6,10 @@
 
 # Guia de Contribuição de Squads
 
+> 🌐 [EN](../../guides/contributing-squads.md) | **PT** | [ES](../../es/guides/contributing-squads.md)
+
+---
+
 Como contribuir squads para o ecossistema AIOS.
 
 ## Visão Geral

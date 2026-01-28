@@ -6,6 +6,10 @@
 
 # Guia de Desinstalação
 
+> 🌐 [EN](../uninstallation.md) | **PT** | [ES](../es/uninstallation.md)
+
+---
+
 Este guia fornece instruções completas para desinstalar o Synkra AIOS do seu sistema.
 
 ## Índice

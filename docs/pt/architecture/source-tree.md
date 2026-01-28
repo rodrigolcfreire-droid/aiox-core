@@ -1,5 +1,11 @@
 <!-- Tradução: PT-BR | Original: /docs/en/architecture/source-tree.md | Sincronização: 2026-01-26 -->
 
+# Estrutura da Árvore de Código AIOS
+
+> 🌐 [EN](../../architecture/source-tree.md) *(coming soon)* | **PT** | [ES](../../es/architecture/source-tree.md)
+
+---
+
 > ⚠️ **DESCONTINUADO**: Este arquivo é mantido apenas para compatibilidade retroativa.
 >
 > **Versão oficial:** [docs/framework/source-tree.md](../framework/source-tree.md)

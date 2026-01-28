@@ -1,5 +1,9 @@
 # Guia AIOS para Windsurf
 
+> 🌐 [EN](../../platforms/windsurf.md) | **PT** | [ES](../../es/platforms/windsurf.md)
+
+---
+
 > **Ambiente de Desenvolvimento com IA** - Inovação Cascade Flow
 
 ---

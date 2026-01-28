@@ -6,6 +6,10 @@
 
 # Referência de Comandos do Meta-Agente
 
+> 🌐 [EN](../meta-agent-commands.md) | **PT** | [ES](../es/meta-agent-commands.md)
+
+---
+
 Guia de referência completo para todos os comandos do meta-agente Synkra AIOS.
 
 ## Sumário
