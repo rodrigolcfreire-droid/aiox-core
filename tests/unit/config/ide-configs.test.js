@@ -4,8 +4,8 @@
  * Story 1.4: IDE Selection
  * Tests IDE configuration metadata structure
  *
- * Synkra AIOS v2.1 supports 9 IDEs:
- * - Claude Code, Cursor, Windsurf, Trae, Roo Code, Cline, Gemini CLI, GitHub Copilot, AntiGravity
+ * Synkra AIOS v2.1 supports 6 IDEs:
+ * - Claude Code, Cursor, Windsurf, Gemini CLI, GitHub Copilot, AntiGravity
  */
 
 const {
@@ -18,9 +18,9 @@ const {
 
 describe('IDE Configs', () => {
   describe('IDE_CONFIGS', () => {
-    it('should have 9 IDE configurations', () => {
+    it('should have 6 IDE configurations', () => {
       const keys = Object.keys(IDE_CONFIGS);
-      expect(keys).toHaveLength(9);
+      expect(keys).toHaveLength(6);
     });
 
     it('should include all expected IDEs', () => {
@@ -28,15 +28,12 @@ describe('IDE Configs', () => {
         'claude-code',
         'cursor',
         'windsurf',
-        'trae',
-        'roo-code',
-        'cline',
         'gemini-cli',
         'github-copilot',
         'antigravity',
       ];
 
-      expectedIDEs.forEach(ide => {
+      expectedIDEs.forEach((ide) => {
         expect(IDE_CONFIGS).toHaveProperty(ide);
       });
     });
@@ -64,39 +61,33 @@ describe('IDE Configs', () => {
     it('should have correct directory requirements', () => {
       // IDEs that require directories
       expect(IDE_CONFIGS['claude-code'].requiresDirectory).toBe(true);
-      expect(IDE_CONFIGS.trae.requiresDirectory).toBe(true);
-      expect(IDE_CONFIGS['roo-code'].requiresDirectory).toBe(true);
-      expect(IDE_CONFIGS.cline.requiresDirectory).toBe(true);
       expect(IDE_CONFIGS['gemini-cli'].requiresDirectory).toBe(true);
       expect(IDE_CONFIGS['github-copilot'].requiresDirectory).toBe(true);
       expect(IDE_CONFIGS.antigravity.requiresDirectory).toBe(true);
+      expect(IDE_CONFIGS.cursor.requiresDirectory).toBe(true);
 
       // IDEs that do not require directories (only windsurf uses root file)
-      expect(IDE_CONFIGS.cursor.requiresDirectory).toBe(true);  // Changed: now uses .cursor/rules.md
       expect(IDE_CONFIGS.windsurf.requiresDirectory).toBe(false);
     });
 
     it('should have correct file formats', () => {
       // All current IDEs use text format
-      Object.values(IDE_CONFIGS).forEach(config => {
+      Object.values(IDE_CONFIGS).forEach((config) => {
         expect(config.format).toBe('text');
       });
     });
 
     it('should have correct config file paths', () => {
       expect(IDE_CONFIGS['claude-code'].configFile).toContain('.claude');
-      expect(IDE_CONFIGS.cursor.configFile).toContain('.cursor');  // Changed: now .cursor/rules.md
+      expect(IDE_CONFIGS.cursor.configFile).toContain('.cursor');
       expect(IDE_CONFIGS.windsurf.configFile).toBe('.windsurfrules');
-      expect(IDE_CONFIGS.trae.configFile).toContain('.trae');
-      expect(IDE_CONFIGS['roo-code'].configFile).toContain('.roo');
-      expect(IDE_CONFIGS.cline.configFile).toContain('.cline');
       expect(IDE_CONFIGS['gemini-cli'].configFile).toContain('.gemini');
       expect(IDE_CONFIGS['github-copilot'].configFile).toContain('.github');
       expect(IDE_CONFIGS.antigravity.configFile).toContain('.antigravity');
     });
 
     it('should have template paths in ide-rules folder', () => {
-      Object.values(IDE_CONFIGS).forEach(config => {
+      Object.values(IDE_CONFIGS).forEach((config) => {
         expect(config.template).toMatch(/^ide-rules\//);
       });
     });
@@ -112,12 +103,6 @@ describe('IDE Configs', () => {
       expect(IDE_CONFIGS.cursor.agentFolder).toContain('rules');
       expect(IDE_CONFIGS.windsurf.agentFolder).toContain('.windsurf');
       expect(IDE_CONFIGS.windsurf.agentFolder).toContain('rules');
-      expect(IDE_CONFIGS.trae.agentFolder).toContain('.trae');
-      expect(IDE_CONFIGS.trae.agentFolder).toContain('agents');
-      expect(IDE_CONFIGS['roo-code'].agentFolder).toContain('.roo');
-      expect(IDE_CONFIGS['roo-code'].agentFolder).toContain('agents');
-      expect(IDE_CONFIGS.cline.agentFolder).toContain('.cline');
-      expect(IDE_CONFIGS.cline.agentFolder).toContain('agents');
       expect(IDE_CONFIGS['gemini-cli'].agentFolder).toContain('.gemini');
       expect(IDE_CONFIGS['gemini-cli'].agentFolder).toContain('agents');
       expect(IDE_CONFIGS['github-copilot'].agentFolder).toContain('.github');
@@ -133,7 +118,7 @@ describe('IDE Configs', () => {
       const keys = getIDEKeys();
 
       expect(Array.isArray(keys)).toBe(true);
-      expect(keys).toHaveLength(9);
+      expect(keys).toHaveLength(6);
     });
 
     it('should return all IDE keys', () => {
@@ -142,15 +127,12 @@ describe('IDE Configs', () => {
         'claude-code',
         'cursor',
         'windsurf',
-        'trae',
-        'roo-code',
-        'cline',
         'gemini-cli',
         'github-copilot',
         'antigravity',
       ];
 
-      expectedKeys.forEach(key => {
+      expectedKeys.forEach((key) => {
         expect(keys).toContain(key);
       });
     });
@@ -175,15 +157,12 @@ describe('IDE Configs', () => {
         'claude-code',
         'cursor',
         'windsurf',
-        'trae',
-        'roo-code',
-        'cline',
         'gemini-cli',
         'github-copilot',
         'antigravity',
       ];
 
-      ides.forEach(ide => {
+      ides.forEach((ide) => {
         const config = getIDEConfig(ide);
         expect(config).toBeDefined();
         expect(config).toBe(IDE_CONFIGS[ide]);
@@ -195,7 +174,7 @@ describe('IDE Configs', () => {
     it('should return true for valid IDE', () => {
       expect(isValidIDE('cursor')).toBe(true);
       expect(isValidIDE('windsurf')).toBe(true);
-      expect(isValidIDE('trae')).toBe(true);
+      expect(isValidIDE('gemini-cli')).toBe(true);
       expect(isValidIDE('claude-code')).toBe(true);
       expect(isValidIDE('antigravity')).toBe(true);
     });
@@ -210,7 +189,7 @@ describe('IDE Configs', () => {
     it('should return true for all valid IDE keys', () => {
       const keys = getIDEKeys();
 
-      keys.forEach(key => {
+      keys.forEach((key) => {
         expect(isValidIDE(key)).toBe(true);
       });
     });
@@ -221,13 +200,13 @@ describe('IDE Configs', () => {
       const choices = getIDEChoices();
 
       expect(Array.isArray(choices)).toBe(true);
-      expect(choices).toHaveLength(9);
+      expect(choices).toHaveLength(6);
     });
 
     it('should have valid choice structure', () => {
       const choices = getIDEChoices();
 
-      choices.forEach(choice => {
+      choices.forEach((choice) => {
         expect(choice).toHaveProperty('name');
         expect(choice).toHaveProperty('value');
         expect(typeof choice.name).toBe('string');
@@ -235,15 +214,14 @@ describe('IDE Configs', () => {
       });
     });
 
-    it('should include IDE name and description in choice name', () => {
+    it('should include IDE name in choice name', () => {
       const choices = getIDEChoices();
 
-      choices.forEach(choice => {
+      choices.forEach((choice) => {
         const ideKey = choice.value;
         const config = getIDEConfig(ideKey);
 
         expect(choice.name).toContain(config.name);
-        expect(choice.name).toContain(config.description);
       });
     });
 
@@ -251,16 +229,16 @@ describe('IDE Configs', () => {
       const choices = getIDEChoices();
       const keys = getIDEKeys();
 
-      const choiceValues = choices.map(c => c.value);
+      const choiceValues = choices.map((c) => c.value);
 
-      keys.forEach(key => {
+      keys.forEach((key) => {
         expect(choiceValues).toContain(key);
       });
     });
 
     it('should pre-check recommended IDEs', () => {
       const choices = getIDEChoices();
-      const claudeCodeChoice = choices.find(c => c.value === 'claude-code');
+      const claudeCodeChoice = choices.find((c) => c.value === 'claude-code');
 
       expect(claudeCodeChoice.checked).toBe(true);
     });
