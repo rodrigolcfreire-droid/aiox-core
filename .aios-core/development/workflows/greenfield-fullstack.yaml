@@ -70,8 +70,8 @@ workflow:
       duration_estimate: "30-60 min"
       requires: environment_bootstrap_complete
       optional_steps:
-        - brainstorming_session
-        - market_research_prompt
+        - brainstorming-session
+        - market-research-prompt
       notes: "Can do brainstorming first, then optional deep research before creating project brief. SAVE OUTPUT: Copy final project-brief.md to your project's docs/ folder."
 
     - id: pm-create-prd
@@ -87,7 +87,7 @@ workflow:
       duration_estimate: "30-45 min"
       requires: prd.md
       optional_steps:
-        - user_research_prompt
+        - user-research-prompt
       notes: "Creates UI/UX specification using front-end-spec-tmpl. SAVE OUTPUT: Copy final front-end-spec.md to your project's docs/ folder."
 
     - id: ux-generate-v0-prompt
@@ -106,8 +106,8 @@ workflow:
         - prd.md
         - front-end-spec.md
       optional_steps:
-        - technical_research_prompt
-        - review_generated_ui_structure
+        - technical-research-prompt
+        - review-generated-ui-structure
       notes: "Creates comprehensive architecture using fullstack-architecture-tmpl. If user generated UI with v0/Lovable, can incorporate the project structure into architecture. May suggest changes to PRD stories or new stories. SAVE OUTPUT: Copy final fullstack-architecture.md to your project's docs/ folder."
 
     - id: pm-update-prd
@@ -157,7 +157,10 @@ workflow:
       action: shard_documents
       creates: sharded_docs
       duration_estimate: "15-30 min"
-      requires: all_artifacts_in_project
+      requires:  # all validated artifacts must be saved in project docs/ folder
+        - prd.md
+        - front-end-spec.md
+        - fullstack-architecture.md
       notes: |
         Shard documents for IDE development:
         - Option A: Use PO agent to shard: @po then ask to shard docs/prd.md

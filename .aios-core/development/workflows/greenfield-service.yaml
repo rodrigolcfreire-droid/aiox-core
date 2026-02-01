@@ -78,7 +78,8 @@ workflow:
       updates: any_flagged_documents
       duration_estimate: "15-30 min"
       condition: po_checklist_issues
-      notes: "If PO finds issues, PO delegates fixes to the relevant agent and re-validates updated documents in docs/ folder."
+      returns_to: po-validate-artifacts
+      notes: "If PO finds issues, PO delegates fixes to the relevant agent. After fixes are applied, returns to po-validate-artifacts for re-validation before proceeding to Phase 2."
 
     # ═══════════════════════════════════════════════════════════════════════════
     # PHASE 2: DOCUMENT SHARDING
@@ -92,7 +93,9 @@ workflow:
       action: shard_documents
       creates: sharded_docs
       duration_estimate: "15-30 min"
-      requires: all_artifacts_in_project
+      requires:  # all validated artifacts must be saved in project docs/ folder
+        - prd.md
+        - architecture.md
       notes: |
         Shard documents for IDE development:
         - Option A: Use PO agent to shard: @po then ask to shard docs/prd.md

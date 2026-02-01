@@ -85,7 +85,10 @@ workflow:
       action: shard_documents
       creates: sharded_docs
       duration_estimate: "15-30 min"
-      requires: all_artifacts_in_project
+      requires:  # all validated artifacts must be saved in project docs/ folder
+        - prd.md
+        - front-end-spec.md
+        - architecture.md
       notes: |
         Shard documents for IDE development:
         - Option A: Use PO agent to shard: @po then ask to shard docs/prd.md

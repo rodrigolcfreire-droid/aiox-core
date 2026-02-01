@@ -59,7 +59,7 @@ npm run setup:environment
 
 ## Creating New Workflows
 
-Workflows can be defined in YAML format. See existing workflows for examples.
+Workflows are defined in YAML format. See existing workflows for examples.
 
 ### Workflow Structure
 ```yaml
