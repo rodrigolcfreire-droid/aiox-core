@@ -62,7 +62,41 @@ autoClaude:
 
 ---
 
-## Core Principle: No Invention
+## Constitutional Gate: No Invention
+
+> **Reference:** Constitution Article IV - No Invention (MUST)
+> **Severity:** BLOCK
+> **Enforcement:** Automatic validation before spec completion
+
+```yaml
+constitutional_gate:
+  article: IV
+  name: No Invention
+  severity: BLOCK
+
+  validation:
+    - Every statement MUST trace to FR-*, NFR-*, CON-*, or research finding
+    - No features not present in requirements.json
+    - No technologies not validated in research.json
+    - No acceptance criteria not derived from inputs
+
+  on_violation:
+    action: BLOCK
+    message: |
+      CONSTITUTIONAL VIOLATION: Article IV - No Invention
+      Spec contains content not traceable to inputs.
+
+      Violations found:
+      {list_violations}
+
+      Resolution: Remove invented content or add to Open Questions section.
+
+  audit:
+    log: true
+    report_to: qa_critique_phase
+```
+
+### No Invention Rule Details
 
 ```yaml
 no_invention_rule:

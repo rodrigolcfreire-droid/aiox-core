@@ -28,7 +28,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
 const { hashFile, hashesMatch } = require('./file-hasher');
-const { loadAndVerifyManifest, signatureExists } = require('./manifest-signature');
+const { loadAndVerifyManifest } = require('./manifest-signature');
 
 /**
  * Validation result severity levels
@@ -480,7 +480,7 @@ class PostInstallValidator {
     const byteLength = Buffer.byteLength(content, 'utf8');
     if (byteLength > SecurityLimits.MAX_MANIFEST_SIZE) {
       throw new Error(
-        `Manifest exceeds maximum size (${byteLength} bytes > ${SecurityLimits.MAX_MANIFEST_SIZE} bytes)`
+        `Manifest exceeds maximum size (${byteLength} bytes > ${SecurityLimits.MAX_MANIFEST_SIZE} bytes)`,
       );
     }
 
@@ -499,7 +499,7 @@ class PostInstallValidator {
     // SECURITY: File count limit
     if (parsed.files.length > SecurityLimits.MAX_FILE_COUNT) {
       throw new Error(
-        `Manifest contains too many files (${parsed.files.length} > ${SecurityLimits.MAX_FILE_COUNT})`
+        `Manifest contains too many files (${parsed.files.length} > ${SecurityLimits.MAX_FILE_COUNT})`,
       );
     }
 
@@ -534,7 +534,7 @@ class PostInstallValidator {
         const sizeNum = Number(entry.size);
         if (Number.isNaN(sizeNum) || !Number.isInteger(sizeNum) || sizeNum < 0) {
           throw new Error(
-            `Entry ${i}: invalid size '${entry.size}' for path '${entry.path}' (must be non-negative integer)`
+            `Entry ${i}: invalid size '${entry.size}' for path '${entry.path}' (must be non-negative integer)`,
           );
         }
       }
@@ -562,7 +562,7 @@ class PostInstallValidator {
     };
 
     this.log(
-      `Loaded manifest v${this.manifest.version || 'unknown'} with ${this.manifest.files.length} files`
+      `Loaded manifest v${this.manifest.version || 'unknown'} with ${this.manifest.files.length} files`,
     );
 
     return this.manifest;
@@ -675,43 +675,54 @@ class PostInstallValidator {
     // SECURITY [C3-REALPATH]: Detect symlinks in intermediate directory components
     // A file may not be a symlink itself, but a parent directory could be,
     // allowing path traversal attacks (e.g., /install/.aios-core/symlinked-dir/../../../etc/passwd)
+    //
+    // NOTE: On macOS, /tmp is a symlink to /private/tmp. This is a system-level
+    // symlink that shouldn't trigger security alerts. We handle this by resolving
+    // both the file path AND the target directory to their real paths, then
+    // comparing containment. The key security check is: does the real path of the
+    // file stay within the real path of the target directory?
     try {
       const realPath = fs.realpathSync(absolutePath);
-      // Compare normalized paths - if they differ, there's a symlink in the path
-      const normalizedAbsolute = path.resolve(absolutePath);
-      const normalizedReal = path.resolve(realPath);
+      const realTargetDir = fs.realpathSync(this.aiosCoreTarget);
 
-      // Platform-aware comparison (case-insensitive on Windows)
-      const comparableAbsolute =
-        process.platform === 'win32' ? normalizedAbsolute.toLowerCase() : normalizedAbsolute;
-      const comparableReal =
-        process.platform === 'win32' ? normalizedReal.toLowerCase() : normalizedReal;
-
-      if (comparableAbsolute !== comparableReal) {
-        this.log(`SECURITY: Symlinked path component detected: ${relativePath}`);
+      // SECURITY: Verify realpath is still contained within REAL target directory
+      // This handles system symlinks like /tmp -> /private/tmp correctly
+      if (!isPathContained(realPath, realTargetDir)) {
+        this.log(`SECURITY: Realpath escapes target directory: ${relativePath}`);
         result.issue = {
-          type: IssueType.SYMLINK_REJECTED,
+          type: IssueType.INVALID_PATH,
           severity: Severity.CRITICAL,
-          message: `Symlinked path component detected: ${relativePath}`,
-          details: `Resolved path differs from expected: ${realPath} vs ${absolutePath}`,
+          message: `Path escape via symlink detected: ${relativePath}`,
+          details: `Real path ${realPath} is outside installation directory ${realTargetDir}`,
           category,
-          remediation: 'Remove symlinks from directory structure',
+          remediation: 'This indicates a path traversal attack via symlinked directories',
           relativePath,
         };
         this.stats.skippedFiles++;
         return result;
       }
 
-      // Also verify realpath is still contained within target directory
-      if (!isPathContained(realPath, this.aiosCoreTarget)) {
-        this.log(`SECURITY: Realpath escapes target directory: ${relativePath}`);
+      // SECURITY: Detect symlinks in the RELATIVE portion of the path
+      // Compare the relative path from target to file with the relative path
+      // from realTarget to realPath. If they differ, there's a symlink attack.
+      const expectedRelative = path.relative(this.aiosCoreTarget, absolutePath);
+      const actualRelative = path.relative(realTargetDir, realPath);
+
+      // Platform-aware comparison (case-insensitive on Windows)
+      const comparableExpected =
+        process.platform === 'win32' ? expectedRelative.toLowerCase() : expectedRelative;
+      const comparableActual =
+        process.platform === 'win32' ? actualRelative.toLowerCase() : actualRelative;
+
+      if (comparableExpected !== comparableActual) {
+        this.log(`SECURITY: Symlinked path component detected: ${relativePath}`);
         result.issue = {
-          type: IssueType.INVALID_PATH,
+          type: IssueType.SYMLINK_REJECTED,
           severity: Severity.CRITICAL,
-          message: `Path escape via symlink detected: ${relativePath}`,
-          details: `Real path ${realPath} is outside installation directory`,
+          message: `Symlinked path component detected: ${relativePath}`,
+          details: `Resolved relative path differs: expected '${expectedRelative}', got '${actualRelative}'`,
           category,
-          remediation: 'This indicates a path traversal attack via symlinked directories',
+          remediation: 'Remove symlinks from directory structure',
           relativePath,
         };
         this.stats.skippedFiles++;
@@ -995,7 +1006,7 @@ class PostInstallValidator {
    * @param {Array} [fileResults] - File validation results
    * @returns {Object} - Report
    */
-  generateReport(startTime, fileResults = []) {
+  generateReport(startTime, _fileResults = []) {
     const duration = Date.now() - startTime;
 
     // Group by severity
@@ -1048,10 +1059,10 @@ class PostInstallValidator {
       duration: `${duration}ms`,
       manifest: this.manifest
         ? {
-            version: this.manifest.version,
-            generatedAt: this.manifest.generated_at,
-            totalFiles: this.manifest.files.length,
-          }
+          version: this.manifest.version,
+          generatedAt: this.manifest.generated_at,
+          totalFiles: this.manifest.files.length,
+        }
         : null,
       stats: { ...this.stats },
       issues: this.issues,
@@ -1079,7 +1090,7 @@ class PostInstallValidator {
 
     if (!this.manifestVerified && this.options.requireSignature) {
       recommendations.push(
-        'CRITICAL: Manifest signature verification failed. Do not trust validation results.'
+        'CRITICAL: Manifest signature verification failed. Do not trust validation results.',
       );
     }
 
@@ -1088,14 +1099,14 @@ class PostInstallValidator {
         recommendations.push('Consider re-running full installation.');
       } else {
         recommendations.push(
-          `${this.stats.missingFiles} file(s) missing. Run 'aios validate --repair'.`
+          `${this.stats.missingFiles} file(s) missing. Run 'aios validate --repair'.`,
         );
       }
     }
 
     if (this.stats.corruptedFiles > 0) {
       recommendations.push(
-        `${this.stats.corruptedFiles} file(s) corrupted. Run 'aios validate --repair'.`
+        `${this.stats.corruptedFiles} file(s) corrupted. Run 'aios validate --repair'.`,
       );
     }
 
@@ -1160,7 +1171,7 @@ class PostInstallValidator {
       (i) =>
         i.type === IssueType.MISSING_FILE ||
         i.type === IssueType.CORRUPTED_FILE ||
-        i.type === IssueType.SIZE_MISMATCH
+        i.type === IssueType.SIZE_MISMATCH,
     );
 
     const result = {
@@ -1202,7 +1213,7 @@ class PostInstallValidator {
       let sourceLstat;
       try {
         sourceLstat = fs.lstatSync(sourcePath);
-      } catch (error) {
+      } catch (_error) {
         result.failed.push({ path: relativePath, reason: 'Source file not found' });
         result.success = false;
         continue;

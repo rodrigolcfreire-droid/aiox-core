@@ -1,18 +1,18 @@
 status:
   branch: feat/aios-dashboard
   modifiedFiles:
-    - .aios-core/core/execution/build-state-manager.js
-    - .aios-core/core/health-check/check-registry.js
-    - .aios-core/core/health-check/checks/deployment/env-file.js
-    - .aios-core/core/health-check/checks/local/disk-space.js
-    - .aios-core/core/health-check/checks/local/environment-vars.js
-  modifiedFilesTotalCount: 227
+    - .aios/project-status.yaml
+    - .eslintcache
+    - .tsbuildinfo
+    - .aios/feedback.json
+    - .aios/file-evolution/
+  modifiedFilesTotalCount: 6
   recentCommits:
-    - 'feat(epic-12): implement Auto-Claude feature absorption'
-    - 'feat(ade): implement build recovery & resume system [Story 8.4]'
+    - 'fix(monitor): resolve ESLint error in useMonitorEvents hook'
+    - 'fix(dashboard): add Monitor view to page switch statement'
   currentEpic: null
   currentStory: null
-  lastUpdate: '2026-01-29T05:29:42.387Z'
+  lastUpdate: '2026-01-29T14:48:45.444Z'
   isGitRepo: true
-timestamp: 1769664582388
+timestamp: 1769698125444
 ttl: 60

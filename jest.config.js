@@ -48,9 +48,6 @@ module.exports = {
     'tests/unit/manifest/manifest-validator.test.js',
     // Performance tests are flaky on different hardware (OSR-10 tech debt)
     'tests/integration/install-transaction.test.js',
-    // TEMPORARY: Flaky test with dashboard status.json dependency (PR #53)
-    // TODO: Fix test setup to create required directory structure
-    'tests/core/master-orchestrator.test.js',
   ],
 
   // Coverage collection (Story TD-3: Updated paths)
@@ -99,10 +96,10 @@ module.exports = {
     },
     // Core modules coverage threshold
     // TD-6: Adjusted to 45% to reflect current coverage (47.14%)
-    // TEMPORARY: Lowered to 38% for PR #53 - many new files without tests
+    // TEMPORARY: Lowered to 39% for PR #53 - many new files without tests
     // Many core modules are I/O-heavy orchestration that's difficult to unit test
     '.aios-core/core/': {
-      lines: 38,
+      lines: 39,
     },
   },
 

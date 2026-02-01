@@ -41,6 +41,7 @@ Use when you need comprehensive expertise across all domains, framework componen
 - `*doc-out` - Output complete document
 - `*shard-doc` - Break document into parts
 - `*document-project` - Generate project documentation
+- `*add-tech-doc` - Create tech-preset from documentation file
 - `*create-next-story` - Create next user story
 - `*advanced-elicitation` - Execute advanced elicitation
 - `*chat-mode` - Start conversational assistance
@@ -74,6 +75,7 @@ Use when you need comprehensive expertise across all domains, framework componen
 - `*doc-out` - Output complete document
 - `*shard-doc` - Break document into parts
 - `*document-project` - Generate project documentation
+- `*add-tech-doc` - Create tech-preset from documentation file
 - `*create-next-story` - Create next user story
 - `*advanced-elicitation` - Execute advanced elicitation
 - `*chat-mode` - Start conversational assistance
@@ -84,6 +86,7 @@ Use when you need comprehensive expertise across all domains, framework componen
 ## Dependencies
 
 ### Tasks
+- add-tech-doc.md
 - advanced-elicitation.md
 - analyze-framework.md
 - correct-course.md

@@ -16,7 +16,7 @@
  * Based on Auto-Claude's merge system architecture.
  */
 
-const { execSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const EventEmitter = require('events');
@@ -240,7 +240,7 @@ class SemanticAnalyzer {
   /**
    * Compute semantic changes between two element sets
    */
-  computeChanges(before, after, language) {
+  computeChanges(before, after, _language) {
     const changes = [];
 
     // Compare imports
@@ -474,7 +474,7 @@ class ConflictDetector {
           analysisA.changes,
           taskB,
           analysisB.changes,
-          analysisA.filePath
+          analysisA.filePath,
         );
 
         conflicts.push(...taskConflicts);
@@ -670,12 +670,12 @@ class AutoMerger {
     // This is a simplified version - real implementation would parse AST
     let mergedContent = baseContent;
 
-    for (const [taskId, content] of Object.entries(taskContents)) {
+    for (const [_taskId, content] of Object.entries(taskContents)) {
       for (const funcName of functionNames) {
         // Check if function exists in this task's content but not in merged
         const funcRegex = new RegExp(
           `(?:export\\s+)?(?:async\\s+)?function\\s+${funcName}\\s*\\([^)]*\\)\\s*\\{[^}]*\\}`,
-          'g'
+          'g',
         );
 
         const match = content.match(funcRegex);
@@ -811,18 +811,20 @@ Provide ONLY the merged code in a code block. No explanations outside the code b
 
   /**
    * Call Claude CLI for merge resolution
+   * Uses execFileSync with args array to prevent command injection
    */
   async callClaude(prompt) {
     return new Promise((resolve, reject) => {
       try {
-        // Use Claude CLI in print mode
-        const result = execSync(
-          `claude --print --dangerously-skip-permissions -p "${prompt.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`,
+        // Use Claude CLI in print mode with safe argument passing (no shell interpolation)
+        const result = execFileSync(
+          'claude',
+          ['--print', '--dangerously-skip-permissions', '-p', prompt],
           {
             encoding: 'utf8',
             maxBuffer: 10 * 1024 * 1024,
             timeout: 120000,
-          }
+          },
         );
         resolve(result);
       } catch (error) {
@@ -1376,7 +1378,7 @@ class SemanticMergeEngine extends EventEmitter {
           filePath,
           baseContent,
           taskContent,
-          taskId
+          taskId,
         );
         taskContents[taskId] = taskContent;
       }
@@ -1448,7 +1450,7 @@ class SemanticMergeEngine extends EventEmitter {
         const aiResult = await this.aiResolver.resolveConflict(
           conflict,
           baseContent,
-          taskSnapshots
+          taskSnapshots,
         );
         results.push({
           conflict,
@@ -1698,7 +1700,7 @@ class SemanticMergeEngine extends EventEmitter {
 
     const reportPath = path.join(
       this.storageDir,
-      `merge-report-${new Date().toISOString().replace(/[:.]/g, '-')}.json`
+      `merge-report-${new Date().toISOString().replace(/[:.]/g, '-')}.json`,
     );
 
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));

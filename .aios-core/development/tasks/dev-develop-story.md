@@ -88,6 +88,62 @@ atomic_layer: Organism
 
 ---
 
+## Constitutional Gates
+
+> **Reference:** Constitution Articles I, III
+> **Enforcement:** Automatic validation before execution
+
+### Gate 1: Story-Driven Development (Article III)
+
+```yaml
+constitutional_gate:
+  article: III
+  name: Story-Driven Development
+  severity: BLOCK
+
+  validation:
+    - Story file MUST exist at docs/stories/{storyId}/story.yaml
+    - Story MUST have status != "Draft" (Ready, In Progress, or Done)
+    - Story MUST have acceptance criteria defined
+    - Story MUST have at least one task/subtask
+
+  on_violation:
+    action: BLOCK
+    message: |
+      CONSTITUTIONAL VIOLATION: Article III - Story-Driven Development
+      Cannot develop without a valid story.
+
+      Issue: {violation_details}
+
+      Resolution: Create or update story via @sm *draft or @po *create-story
+```
+
+### Gate 2: CLI First (Article I)
+
+```yaml
+constitutional_gate:
+  article: I
+  name: CLI First
+  severity: WARN
+
+  validation:
+    - If story involves new functionality:
+      - CLI implementation SHOULD exist or be created first
+      - UI components SHOULD NOT be created before CLI is functional
+
+  on_violation:
+    action: WARN
+    message: |
+      CONSTITUTIONAL WARNING: Article I - CLI First
+      UI implementation detected without CLI foundation.
+
+      Reminder: CLI First → Observability Second → UI Third
+
+      Continue anyway? (This will be logged)
+```
+
+---
+
 ## Pre-Conditions
 
 **Purpose:** Validate prerequisites BEFORE task execution (blocking)
@@ -96,6 +152,13 @@ atomic_layer: Organism
 
 ```yaml
 pre-conditions:
+  - [ ] Constitutional gates passed (Article III: Story exists, Article I: CLI First check)
+    tipo: constitutional-gate
+    blocker: true
+    validação: |
+      Verify story exists and has valid structure
+    error_message: "Constitutional violation - see gate output above"
+
   - [ ] Task is registered; required parameters provided; dependencies met
     tipo: pre-condition
     blocker: true
@@ -654,7 +717,8 @@ function handleCancellation() {
 
 ```javascript
 function validateStoryFile(storyId) {
-  const storyPath = `docs/stories/${storyId}.yaml`;
+  // Story files are in nested directories: docs/stories/{storyId}/story.yaml
+  const storyPath = `docs/stories/${storyId}/story.yaml`;
 
   if (!fs.existsSync(storyPath)) {
     console.error(`Error: Story file not found at ${storyPath}`);
