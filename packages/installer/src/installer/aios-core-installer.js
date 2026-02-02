@@ -17,8 +17,8 @@ const ora = require('ora');
  * @returns {string} Absolute path to .aios-core source
  */
 function getAiosCoreSourcePath() {
-  // Navigate from src/installer/ to project root/.aios-core
-  return path.join(__dirname, '..', '..', '.aios-core');
+  // Navigate from packages/installer/src/installer/ to project root/.aios-core
+  return path.join(__dirname, '..', '..', '..', '..', '.aios-core');
 }
 
 /**

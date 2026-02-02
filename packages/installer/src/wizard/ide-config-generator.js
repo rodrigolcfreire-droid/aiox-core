@@ -185,7 +185,7 @@ function generateTemplateVariables(wizardState) {
  */
 async function copyAgentFiles(projectRoot, agentFolder, ideConfig = null) {
   // v2.1: Agents are in development/agents/ (not root agents/)
-  const sourceDir = path.join(__dirname, '..', '..', '.aios-core', 'development', 'agents');
+  const sourceDir = path.join(__dirname, '..', '..', '..', '..', '.aios-core', 'development', 'agents');
   const targetDir = path.join(projectRoot, agentFolder);
   const copiedFiles = [];
 
@@ -241,7 +241,7 @@ async function copyAgentFiles(projectRoot, agentFolder, ideConfig = null) {
  * @returns {Promise<string[]>} List of copied files
  */
 async function copyClaudeRulesFolder(projectRoot) {
-  const sourceDir = path.join(__dirname, '..', '..', '.claude', 'rules');
+  const sourceDir = path.join(__dirname, '..', '..', '..', '..', '.claude', 'rules');
   const targetDir = path.join(projectRoot, '.claude', 'rules');
   const copiedFiles = [];
 
@@ -413,7 +413,7 @@ async function generateIDEConfigs(selectedIDEs, wizardState, options = {}) {
         }
 
         // Load template from .aios-core/product/templates/
-        const templatePath = path.join(__dirname, '..', '..', '.aios-core', 'product', 'templates', ide.template);
+        const templatePath = path.join(__dirname, '..', '..', '..', '..', '.aios-core', 'product', 'templates', ide.template);
 
         if (!await fs.pathExists(templatePath)) {
           throw new Error(`Template file not found: ${ide.template}`);
