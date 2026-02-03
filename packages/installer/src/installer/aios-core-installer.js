@@ -11,6 +11,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const ora = require('ora');
+const { hashFile } = require('./file-hasher');
 
 /**
  * Get the path to the source .aios-core directory in the package
@@ -73,6 +74,72 @@ const ROOT_FILES_TO_COPY = [
  */
 function replaceRootPlaceholder(content, rootPath = '.aios-core') {
   return content.replace(/\{root\}/g, rootPath);
+}
+
+/**
+ * Generate file hashes for installed files
+ * Story 7.2: Version Tracking
+ *
+ * @param {string} targetAiosCore - Path to .aios-core directory
+ * @param {string[]} installedFiles - List of installed files (relative to .aios-core)
+ * @returns {Promise<Object>} Object mapping file paths to their sha256 hashes
+ */
+async function generateFileHashes(targetAiosCore, installedFiles) {
+  const fileHashes = {};
+
+  for (const filePath of installedFiles) {
+    const absolutePath = path.join(targetAiosCore, filePath);
+
+    try {
+      if (await fs.pathExists(absolutePath)) {
+        const stats = await fs.stat(absolutePath);
+        if (stats.isFile()) {
+          const hash = hashFile(absolutePath);
+          fileHashes[filePath] = `sha256:${hash}`;
+        }
+      }
+    } catch (_error) {
+      // Skip files that can't be hashed (permissions, etc.)
+      continue;
+    }
+  }
+
+  return fileHashes;
+}
+
+/**
+ * Generate version.json for installation tracking
+ * Story 7.2: Version Tracking - Enables update command to detect changes
+ *
+ * @param {Object} options - Options
+ * @param {string} options.targetAiosCore - Path to .aios-core directory
+ * @param {string} options.version - Package version
+ * @param {string[]} options.installedFiles - List of installed files
+ * @param {string} [options.mode='project-development'] - Installation mode
+ * @returns {Promise<Object>} version.json content
+ */
+async function generateVersionJson(options) {
+  const {
+    targetAiosCore,
+    version,
+    installedFiles,
+    mode = 'project-development',
+  } = options;
+
+  const fileHashes = await generateFileHashes(targetAiosCore, installedFiles);
+
+  const versionJson = {
+    version,
+    installedAt: new Date().toISOString(),
+    mode,
+    fileHashes,
+    customized: [],
+  };
+
+  const versionJsonPath = path.join(targetAiosCore, 'version.json');
+  await fs.writeJson(versionJsonPath, versionJson, { spaces: 2 });
+
+  return versionJson;
 }
 
 /**
@@ -226,8 +293,9 @@ async function installAiosCore(options = {}) {
 
     // Create install manifest
     spinner.text = 'Creating installation manifest...';
+    const packageVersion = require('../../../../package.json').version;
     const manifest = {
-      version: require('../../../../package.json').version,
+      version: packageVersion,
       installed_at: new Date().toISOString(),
       install_type: 'full',
       files: result.installedFiles,
@@ -238,6 +306,16 @@ async function installAiosCore(options = {}) {
       require('js-yaml').dump(manifest),
       'utf8',
     );
+
+    // Story 7.2: Create version.json with file hashes for update tracking
+    spinner.text = 'Generating version tracking info...';
+    const versionInfo = await generateVersionJson({
+      targetAiosCore,
+      version: packageVersion,
+      installedFiles: result.installedFiles,
+      mode: 'project-development',
+    });
+    result.versionInfo = versionInfo;
 
     result.success = true;
     spinner.succeed(`AIOS core installed (${result.installedFiles.length} files)`);
@@ -314,6 +392,8 @@ module.exports = {
   getAiosCoreSourcePath,
   copyFileWithRootReplacement,
   copyDirectoryWithRootReplacement,
+  generateVersionJson,
+  generateFileHashes,
   FOLDERS_TO_COPY,
   ROOT_FILES_TO_COPY,
 };

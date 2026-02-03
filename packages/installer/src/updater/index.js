@@ -21,6 +21,7 @@ const path = require('path');
 const https = require('https');
 const { execSync } = require('child_process');
 const { hashFile, hashesMatch } = require('../installer/file-hasher');
+const { PostInstallValidator, formatReport: formatValidationReport } = require('../installer/post-install-validator');
 
 /**
  * Update status types
@@ -472,6 +473,20 @@ class AIOSUpdater {
       onProgress('finalizing', 'Updating version info...');
       await this.updateVersionInfo(checkResult.latest);
 
+      // Validate installation after update
+      onProgress('validating', 'Validating installation...');
+      const validationResult = await this.validateAfterUpdate();
+      result.validationPassed = validationResult.success;
+      result.integrityScore = validationResult.integrityScore;
+
+      if (!validationResult.success && validationResult.integrityScore < 80) {
+        // Critical validation failure - rollback
+        onProgress('rollback', 'Validation failed, rolling back...');
+        await this.rollback();
+        result.error = `Validation failed (integrity: ${validationResult.integrityScore}%)`;
+        return result;
+      }
+
       // Cleanup backup
       await this.cleanupBackup();
       result.rollbackAvailable = false;
@@ -613,6 +628,48 @@ class AIOSUpdater {
 
     await fs.writeJson(versionJsonPath, versionInfo, { spaces: 2 });
     this.log(`Updated version.json to v${newVersion}`);
+  }
+
+  /**
+   * Validate installation after update using PostInstallValidator
+   *
+   * @param {Object} [options] - Validation options
+   * @param {boolean} [options.verbose=false] - Show detailed output
+   * @returns {Promise<Object>} Validation result
+   */
+  async validateAfterUpdate(options = {}) {
+    const result = {
+      success: false,
+      integrityScore: 0,
+      issues: [],
+      error: null,
+    };
+
+    try {
+      const validator = new PostInstallValidator(this.projectRoot, null, {
+        verifyHashes: true,
+        detectExtras: false,
+        verbose: options.verbose || this.options.verbose,
+        requireSignature: false, // Signature may not be available after npm update
+      });
+
+      const report = await validator.validate();
+
+      result.success = report.status === 'success' || report.status === 'warning';
+      result.integrityScore = report.integrityScore;
+      result.issues = report.issues || [];
+      result.report = report;
+
+      if (options.verbose) {
+        console.log(formatValidationReport(report, { colors: true }));
+      }
+
+      return result;
+    } catch (error) {
+      result.error = error.message;
+      this.log(`Validation failed: ${error.message}`);
+      return result;
+    }
   }
 
   /**
