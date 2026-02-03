@@ -26,6 +26,9 @@ describe('MasterOrchestrator', () => {
     tempDir = path.join(os.tmpdir(), `master-orchestrator-test-${Date.now()}`);
     await fs.ensureDir(tempDir);
 
+    // Create .aios/dashboard directory for dashboard integration
+    await fs.ensureDir(path.join(tempDir, '.aios', 'dashboard'));
+
     // Create a minimal package.json for tech stack detection
     await fs.writeJson(path.join(tempDir, 'package.json'), {
       name: 'test-project',
