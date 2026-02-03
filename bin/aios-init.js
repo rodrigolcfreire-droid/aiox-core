@@ -1,9 +1,20 @@
 #!/usr/bin/env node
 
 /**
- * AIOS-FullStack Installation Wizard v5
+ * AIOS-FullStack Installation Wizard v5 (LEGACY)
  * Based on the original beautiful visual design with ASCII art
  * Version: 2.1.0
+ *
+ * ⚠️ DEPRECATION NOTICE (v3.11.2):
+ * This file is the LEGACY installer and will be removed in v4.0.0.
+ * The new modular wizard is located at: packages/installer/src/wizard/index.js
+ *
+ * This file is kept as a fallback for edge cases where the new wizard
+ * is not available. All new development should use the new wizard.
+ *
+ * Migration path:
+ * - Use `npx aios-core` which routes through bin/aios.js to the new wizard
+ * - Do NOT call this file directly
  *
  * Supported IDEs (8 total):
  * - Claude Code, Cursor, Windsurf, Trae, Roo Code, Cline, Gemini CLI, GitHub Copilot
