@@ -8,9 +8,9 @@
 # - File types for categorization
 #
 version: 3.11.3
-generated_at: "2026-02-05T18:34:33.865Z"
+generated_at: "2026-02-05T20:19:25.389Z"
 generator: scripts/generate-install-manifest.js
-file_count: 872
+file_count: 875
 files:
   - path: cli/commands/config/index.js
     hash: sha256:ebcad2ce3807eda29dcddff76d7a95ddc9b7fa160df21fd608f94b802237e862
@@ -605,9 +605,9 @@ files:
     type: core
     size: 4383
   - path: core/orchestration/index.js
-    hash: sha256:18d754ec22016cc2efc3a7da872a783dd6ff36578e5c2ccdc550b24005cfa9f1
+    hash: sha256:f2f956c3ac8bb663e6b5f9c0b6813bd64cb5e99bdb82402e926d5983b78b50d5
     type: core
-    size: 5650
+    size: 6028
   - path: core/orchestration/master-orchestrator.js
     hash: sha256:0f636d7b7a26c4d5ea63c1ddce3bf96096033bbca462678168e4096ccfe96038
     type: core
@@ -633,9 +633,9 @@ files:
     type: core
     size: 11255
   - path: core/orchestration/surface-checker.js
-    hash: sha256:e68b0f723852752cadd8ec370d61fe8b808c642cc34ca382b7f41e1152cf9612
+    hash: sha256:92e9d5bea78c3db4940c39f79e537821b36451cd524d69e6b738272aa63c08b6
     type: core
-    size: 12847
+    size: 12849
   - path: core/orchestration/task-complexity-classifier.js
     hash: sha256:33b3b7c349352d607c156e0018c508f0869a1c7d233d107bed194a51bc608c93
     type: core
@@ -748,6 +748,18 @@ files:
     hash: sha256:eaef1e3a11feb2d355c5dc8fc2813ae095e27911cdf1261e5d003b22be16d8f0
     type: core
     size: 13729
+  - path: core/ui/index.js
+    hash: sha256:e2ead179c646b8f36046134c631c24f35a151dbf5a1e95c0e4311bf1652abe12
+    type: core
+    size: 747
+  - path: core/ui/observability-panel.js
+    hash: sha256:f73bb7b80e60d8158c5044b13bb4dd4945270d3d44b8ac3e2c30635e5040f0f8
+    type: core
+    size: 8869
+  - path: core/ui/panel-renderer.js
+    hash: sha256:d51a8a9d1dd76ce6bc08d38eaf53f4f7df948cc4edc8e7f56d68c39522f64dc6
+    type: core
+    size: 9675
   - path: core/utils/output-formatter.js
     hash: sha256:9c386d8b0232f92887dc6f8d32671444a5857b6c848c84b561eedef27a178470
     type: core
