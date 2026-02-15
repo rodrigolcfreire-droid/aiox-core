@@ -206,14 +206,14 @@ function generateTemplateVariables(wizardState) {
 
 /**
  * Copy agent files from .aios-core/development/agents to IDE-specific agent folder
- * v2.1 modular structure: agents are now in development/ module
+ * v4 modular structure: agents are now in development/ module
  * @param {string} projectRoot - Project root directory
  * @param {string} agentFolder - Target folder for agent files (IDE-specific)
  * @param {Object} ideConfig - IDE configuration object (optional, for special handling)
  * @returns {Promise<string[]>} List of copied files
  */
 async function copyAgentFiles(projectRoot, agentFolder, ideConfig = null) {
-  // v2.1: Agents are in development/agents/ (not root agents/)
+  // v4: Agents are in development/agents/ (not root agents/)
   const sourceDir = path.join(__dirname, '..', '..', '..', '..', '.aios-core', 'development', 'agents');
   const targetDir = path.join(projectRoot, agentFolder);
   const copiedFiles = [];
@@ -283,38 +283,6 @@ async function copyClaudeRulesFolder(projectRoot) {
   await fs.ensureDir(targetDir);
 
   // Get all files in rules folder
-  const files = await fs.readdir(sourceDir);
-
-  for (const file of files) {
-    const sourcePath = path.join(sourceDir, file);
-    const targetPath = path.join(targetDir, file);
-
-    const stat = await fs.stat(sourcePath);
-    if (stat.isFile()) {
-      await fs.copy(sourcePath, targetPath);
-      copiedFiles.push(targetPath);
-    }
-  }
-
-  return copiedFiles;
-}
-
-/**
- * Copy .claude/hooks folder for Claude Code IDE
- * @param {string} projectRoot - Project root directory
- * @returns {Promise<string[]>} List of copied files
- */
-async function copyClaudeHooksFolder(projectRoot) {
-  const sourceDir = path.join(__dirname, '..', '..', '..', '..', '.claude', 'hooks');
-  const targetDir = path.join(projectRoot, '.claude', 'hooks');
-  const copiedFiles = [];
-
-  if (!await fs.pathExists(sourceDir)) {
-    return copiedFiles;
-  }
-
-  await fs.ensureDir(targetDir);
-
   const files = await fs.readdir(sourceDir);
 
   for (const file of files) {
