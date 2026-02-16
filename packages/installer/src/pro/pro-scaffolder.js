@@ -127,6 +127,16 @@ async function scaffoldProContent(targetDir, proSourceDir, options = {}) {
       onProgress({ item: 'pro-config', status: 'done', message: 'Pro config merged into core-config.yaml' });
     }
 
+    // Install squad agent commands to IDEs
+    const commandsResult = await installSquadCommands(targetDir);
+    if (commandsResult.installed > 0) {
+      result.copiedFiles.push(...commandsResult.files);
+      if (onProgress) {
+        onProgress({ item: 'squad-commands', status: 'done',
+          message: `${commandsResult.installed} squad agent commands installed` });
+      }
+    }
+
     // Generate pro-version.json (AC4)
     const versionInfo = await generateProVersionJson(targetDir, proSourceDir, result.copiedFiles);
     result.versionInfo = versionInfo;
@@ -372,6 +382,59 @@ async function mergeProConfig(targetDir) {
   return true;
 }
 
+/**
+ * Install squad agent commands into active IDE directories.
+ * Detects which IDEs are configured and copies agent .md files accordingly.
+ *
+ * @param {string} targetDir - Project root directory
+ * @returns {Promise<Object>} Result with installed count and file list
+ */
+async function installSquadCommands(targetDir) {
+  const squadsDir = path.join(targetDir, 'squads');
+  if (!await fs.pathExists(squadsDir)) return { installed: 0, files: [] };
+
+  const ideTargets = [
+    { check: path.join('.claude', 'commands'), dest: (squad) => path.join('.claude', 'commands', squad) },
+    { check: path.join('.codex', 'agents'), dest: () => path.join('.codex', 'agents') },
+    { check: path.join('.gemini', 'rules'), dest: (squad) => path.join('.gemini', 'rules', squad) },
+    { check: path.join('.cursor', 'rules'), dest: () => path.join('.cursor', 'rules') },
+  ];
+
+  const activeIDEs = [];
+  for (const ide of ideTargets) {
+    if (await fs.pathExists(path.join(targetDir, ide.check))) {
+      activeIDEs.push(ide);
+    }
+  }
+  if (activeIDEs.length === 0) return { installed: 0, files: [] };
+
+  const files = [];
+  const items = await fs.readdir(squadsDir, { withFileTypes: true });
+
+  for (const item of items) {
+    if (!item.isDirectory()) continue;
+    const agentsDir = path.join(squadsDir, item.name, 'agents');
+    if (!await fs.pathExists(agentsDir)) continue;
+
+    const agentFiles = (await fs.readdir(agentsDir))
+      .filter(f => f.endsWith('.md') && !f.startsWith('test-'));
+
+    for (const ide of activeIDEs) {
+      const destDir = path.join(targetDir, ide.dest(item.name));
+      await fs.ensureDir(destDir);
+      for (const agentFile of agentFiles) {
+        await fs.copy(
+          path.join(agentsDir, agentFile),
+          path.join(destDir, agentFile)
+        );
+        files.push(path.relative(targetDir, path.join(destDir, agentFile)).replace(/\\/g, '/'));
+      }
+    }
+  }
+
+  return { installed: files.length, files };
+}
+
 module.exports = {
   scaffoldProContent,
   scaffoldDirectory,
@@ -380,6 +443,7 @@ module.exports = {
   generateInstalledManifest,
   rollbackScaffold,
   mergeProConfig,
+  installSquadCommands,
   SCAFFOLD_ITEMS,
   SCAFFOLD_EXCLUDES,
 };
