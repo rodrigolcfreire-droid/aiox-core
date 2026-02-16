@@ -719,23 +719,49 @@ async function runWizard(options = {}) {
           answers.proInstalled = proResult.success;
           answers.proResult = proResult;
         } else if (!isCI && !options.quiet) {
-          // Interactive mode: ask if user has a Pro license
-          const { hasPro } = await inquirer.prompt([
+          // Interactive mode: ask which edition to install
+          const { edition } = await inquirer.prompt([
             {
-              type: 'confirm',
-              name: 'hasPro',
-              message: colors.primary('Do you have an AIOS Pro license key?'),
-              default: false,
+              type: 'list',
+              name: 'edition',
+              message: colors.primary('Which edition do you want to install?'),
+              choices: [
+                {
+                  name: 'Community (free) — agents, workflows, squads, full CLI',
+                  value: 'community',
+                },
+                {
+                  name: 'Pro (requires account) — premium squads, minds, priority support',
+                  value: 'pro',
+                },
+              ],
+              default: 'community',
             },
           ]);
 
-          if (hasPro) {
+          if (edition === 'pro') {
             const proResult = await runProWizard(proOptions);
             answers.proInstalled = proResult.success;
             answers.proResult = proResult;
 
             if (!proResult.success && proResult.error) {
-              console.error(`\n⚠️  Pro installation issue: ${proResult.error}`);
+              console.error(`\n⚠️  Pro activation failed: ${proResult.error}`);
+
+              const { fallback } = await inquirer.prompt([
+                {
+                  type: 'confirm',
+                  name: 'fallback',
+                  message: colors.primary('Continue with Community (free) edition instead?'),
+                  default: true,
+                },
+              ]);
+
+              if (!fallback) {
+                console.log('\n👋 Installation cancelled. Run again when ready.');
+                return answers;
+              }
+
+              console.log('\n📦 Continuing with Community edition...\n');
             }
           } else {
             answers.proInstalled = false;
