@@ -161,6 +161,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -171,6 +173,8 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        env:
+          HUSKY: '0'
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -253,7 +257,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: packages/aios-install
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Get aios-install version
         id: pkg-version
