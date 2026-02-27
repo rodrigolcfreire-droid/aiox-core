@@ -88,8 +88,8 @@ function run() {
   timer.unref();
   main()
     .then(() => safeExit(0))
-    .catch((err) => {
-      console.error(`[synapse-hook] ${err.message}`);
+    .catch(() => {
+      // Silent exit — stderr output triggers "hook error" in Claude Code UI
       safeExit(0);
     });
 }

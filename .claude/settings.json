@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/synapse-engine.cjs\"",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/synapse-engine.cjs\"",
             "timeout": 10
           }
         ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/code-intel-pretool.cjs\"",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/code-intel-pretool.cjs\"",
             "timeout": 10
           }
         ]
@@ -28,7 +28,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/precompact-session-digest.cjs\"",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/precompact-session-digest.cjs\"",
             "timeout": 10
           }
         ]

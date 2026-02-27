@@ -160,18 +160,8 @@ tests/*/__fixtures__/
 # UI/UX design artifacts
 docs/ui-prompts.pdf
 
-# Keep these main planning documents (DO commit these)
-# docs/prd.md
-# docs/architecture.md
-# docs/front-end-spec.md
-# docs/project-brief.md
-# docs/epics/          - Epic definitions
-# docs/stories/        - Story files (v2.1, v2.2, etc)
-# docs/qa/             - QA gates and reports
-# docs/architecture/   - Architecture decisions and reviews
-# docs/decisions/      - Decision logs and learnings (except roundtables)
-# NOTE: docs/standards/ is IGNORED - contains proprietary methodology (see below)
-# NOTE: docs/one-pagers/ is IGNORED - contains internal business decisions (see below)
+# NOTE: docs/ internal directories are gitignored in the
+# "INTERNAL DOCS" section below. Only public docs ship.
 
 # Windows reserved device names
 NUL
@@ -236,33 +226,26 @@ test-sample-*.md
 .eslintcache
 
 # ============================================
-# PROPRIETARY/INTERNAL CONTENT (Story TD-5)
+# INTERNAL DOCS (not for GitHub or npm install)
 # ============================================
-# Content that is NOT part of the public aios-core framework
-# These are SynkraAI-specific methodologies and business documents
+# Development artifacts, internal strategy, and proprietary content.
+# These stay local only — not published to GitHub or npm.
 
-# Proprietary Process Mapping Frameworks (Pedro Valério methodology)
-docs/standards/
-
-# Internal Business Decisions and Strategy
-docs/one-pagers/
-
-# Internal PRDs (product requirements - internal development plans)
-docs/prd/
-
-# Internal Decisions (business strategy, architecture decisions)
-docs/decisions/
-
-# Internal Development Stories (sprint backlogs, story tracking)
-# Users don't need development history - only documentation
 docs/stories/
-
-# Internal QA Reports and Assessments
+docs/research/
 docs/qa/
-
-# Internal Epics (roadmap, partner strategies, business plans)
-# Contains sensitive info: partner names, financials, timelines
 docs/epics/
+docs/prd/
+docs/decisions/
+docs/one-pagers/
+docs/strategy/
+docs/handoffs/
+docs/requirements/
+docs/releases/
+docs/standards/
+docs/architecture/
+docs/agents/
+docs/private/
 
 # Squad Design Files (test artifacts)
 squads/.designs/
@@ -363,7 +346,6 @@ scripts/glue/
 .claude/agent-memory/
 .claude/setup/
 docs/guides/aios-workflows/
-docs/guides/glue-script-guide.md
 
 # Local Gemini project rules generated/managed per workspace
 .gemini/rules.md

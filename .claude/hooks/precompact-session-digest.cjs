@@ -95,9 +95,9 @@ function run() {
   timer.unref();
   main()
     .then(() => safeExit(0))
-    .catch((err) => {
-      console.error(`[precompact-hook] ${err.message}`);
-      safeExit(0); // Never block the compact operation
+    .catch(() => {
+      // Silent exit — stderr output triggers "hook error" in Claude Code UI
+      safeExit(0);
     });
 }
 
