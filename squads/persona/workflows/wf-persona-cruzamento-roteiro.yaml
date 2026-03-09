@@ -1,0 +1,56 @@
+workflow:
+  id: wf-persona-cruzamento-roteiro
+  name: Persona Cruzamento de Roteiro
+  description: Recebe um roteiro base e gera versões adaptadas por perfis de apostador.
+  type: squad
+  sequence:
+    - agent: apostador-social-recreativo
+      action: adaptar-social-recreativo
+      creates: roteiro-social-recreativo
+      task: organizar-pedido-persona.md
+
+    - agent: apostador-de-fuga
+      action: adaptar-fuga
+      requires: roteiro-social-recreativo
+      creates: roteiro-fuga
+      task: selecionar-personas.md
+
+    - agent: apostador-profissional-analitico
+      action: adaptar-profissional-analitico
+      requires: roteiro-fuga
+      creates: roteiro-profissional-analitico
+      task: adaptar-roteiro-com-personas.md
+
+    - agent: apostador-cauteloso
+      action: adaptar-cauteloso
+      requires: roteiro-profissional-analitico
+      creates: roteiro-cauteloso
+      task: adaptar-roteiro-com-personas.md
+
+    - agent: apostador-reals-bet
+      action: adaptar-reals-bet
+      requires: roteiro-cauteloso
+      creates: roteiro-reals-bet
+      task: adaptar-roteiro-com-personas.md
+
+    - agent: apostador-bingo-bet
+      action: adaptar-bingo-bet
+      requires: roteiro-reals-bet
+      creates: roteiros-cruzados-por-persona
+      task: adaptar-roteiro-com-personas.md
+  handoff_prompts:
+    - from: apostador-social-recreativo
+      to: apostador-de-fuga
+      guidance: Entregar versão leve/social mantendo oferta e CTA.
+    - from: apostador-de-fuga
+      to: apostador-profissional-analitico
+      guidance: Entregar versão de emoção e fuga sem descaracterizar mensagem.
+    - from: apostador-profissional-analitico
+      to: apostador-cauteloso
+      guidance: Entregar versão técnica para fechamento com linguagem segura.
+    - from: apostador-cauteloso
+      to: apostador-reals-bet
+      guidance: Entregar versão prudente para ajuste por contexto Reals Bet.
+    - from: apostador-reals-bet
+      to: apostador-bingo-bet
+      guidance: Entregar versão Reals Bet para adaptação final em Bingo Bet.
