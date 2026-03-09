@@ -1,17 +1,19 @@
-name: Test
-# Story 6.1: Specialized testing (security, build, integration, performance)
-# Cross-platform compatibility testing moved to ci.yml
-# NOTE: Only runs on push to main (PRs use ci.yml for validation)
+name: Test (DEPRECATED)
+# DEPRECATED: Consolidated into ci.yml — integration-test job
+# Security audit, build test, integration test, and performance test
+# are now handled by ci.yml for both PRs and push to main.
+# Kept as manual-only for emergency use.
 
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - 'docs/**'
-      - '*.md'
-      - '.aiox/**'
-      - 'squads/**'
-  workflow_dispatch:
+  # All automated triggers disabled — consolidated into ci.yml
+  # push:
+  #   branches: [main]
+  #   paths-ignore:
+  #     - 'docs/**'
+  #     - '*.md'
+  #     - '.aiox/**'
+  #     - 'squads/**'
+  workflow_dispatch: # Manual trigger only
 
 concurrency:
   group: test-${{ github.ref }}

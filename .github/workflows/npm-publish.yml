@@ -43,6 +43,7 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -68,6 +69,7 @@ jobs:
   build:
     needs: test
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     outputs:
       version: ${{ steps.package-version.outputs.version }}
       packages: ${{ steps.detect-packages.outputs.packages }}
@@ -158,6 +160,7 @@ jobs:
   publish:
     needs: [test, build]
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -243,6 +246,7 @@ jobs:
     if: ${{ needs.build.outputs.has_aiox_install == 'true' }}
     continue-on-error: true  # Don't block main publish if @synkra org not yet configured
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -319,6 +323,7 @@ jobs:
     needs: [build, publish, publish-aiox-install]
     if: always()
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Notify completion
         run: |
@@ -351,6 +356,7 @@ jobs:
     needs: [build, publish, publish-aiox-install]
     if: github.event_name == 'release' && (needs.publish.result == 'success' || needs.publish-aiox-install.result == 'success')
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: write
     steps:

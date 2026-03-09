@@ -1,0 +1,42 @@
+name: Sync Manus Agents
+
+on:
+  # schedule disabled — Manus API not in use
+  # - cron: '0 * * * *'
+  workflow_dispatch: # Manual trigger only
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Import Script
+        env:
+          MANUS_API_ENDPOINT: ${{ secrets.MANUS_API_ENDPOINT }}
+          MANUS_API_TOKEN: ${{ secrets.MANUS_API_TOKEN }}
+        run: node scripts/import-manus-agents.js
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "AIOX Sync Bot"
+          git config --global user.email "sync-bot@synkra.ai"
+          git add .aiox-core/development/agents/*.md
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: sync agents from Manus"
+            git push
+          fi
