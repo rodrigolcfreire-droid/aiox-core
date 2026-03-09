@@ -25,6 +25,7 @@ permissions:
 jobs:
   create-release:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     outputs:
       release_id: ${{ steps.create_release.outputs.id }}
       upload_url: ${{ steps.create_release.outputs.upload_url }}
@@ -104,6 +105,7 @@ jobs:
   build-and-upload:
     needs: create-release
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -174,55 +176,59 @@ jobs:
   trigger-npm-publish:
     needs: [create-release, build-and-upload]
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Wait for release event propagation
-        run: |
-          echo "⏳ Waiting for release event to propagate..."
-          sleep 10
-
       - name: Verify npm-publish workflow triggered
         uses: actions/github-script@v7
         with:
           script: |
             const { owner, repo } = context.repo;
 
-            // Check if npm-publish workflow was triggered by release event
-            const runs = await github.rest.actions.listWorkflowRuns({
-              owner,
-              repo,
-              workflow_id: 'npm-publish.yml',
-              per_page: 5
-            });
-
-            const recentRun = runs.data.workflow_runs.find(run =>
-              run.event === 'release' &&
-              new Date(run.created_at) > new Date(Date.now() - 60000)
-            );
-
-            if (recentRun) {
-              console.log(`✅ npm-publish workflow triggered automatically (run #${recentRun.run_number})`);
-              console.log(`   URL: ${recentRun.html_url}`);
-            } else {
-              console.log('⚠️ npm-publish not auto-triggered, dispatching manually...');
-
-              await github.rest.actions.createWorkflowDispatch({
+            // Poll for npm-publish workflow (up to 60s, every 10s)
+            for (let attempt = 1; attempt <= 6; attempt++) {
+              const runs = await github.rest.actions.listWorkflowRuns({
                 owner,
                 repo,
                 workflow_id: 'npm-publish.yml',
-                ref: 'main',
-                inputs: {
-                  publish_mode: 'stable',
-                  packages: 'all'
-                }
+                per_page: 5
               });
 
-              console.log('✅ Manually triggered NPM publication workflow');
+              const recentRun = runs.data.workflow_runs.find(run =>
+                run.event === 'release' &&
+                new Date(run.created_at) > new Date(Date.now() - 120000)
+              );
+
+              if (recentRun) {
+                console.log(`✅ npm-publish workflow triggered automatically (run #${recentRun.run_number})`);
+                console.log(`   URL: ${recentRun.html_url}`);
+                return;
+              }
+
+              console.log(`⏳ Checking for npm-publish workflow... (attempt ${attempt}/6)`);
+              await new Promise(r => setTimeout(r, 10000));
             }
+
+            // Fallback: manually dispatch if not auto-triggered
+            console.log('⚠️ npm-publish not auto-triggered after 60s, dispatching manually...');
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner,
+              repo,
+              workflow_id: 'npm-publish.yml',
+              ref: 'main',
+              inputs: {
+                publish_mode: 'stable',
+                packages: 'all'
+              }
+            });
+
+            console.log('✅ Manually triggered NPM publication workflow');
 
   notify:
     needs: [create-release, build-and-upload, trigger-npm-publish]
     if: always()
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Notify completion
         run: |

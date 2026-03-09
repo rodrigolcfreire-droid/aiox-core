@@ -71,7 +71,7 @@ jobs:
       - name: Run Intel-specific tests
         run: |
           cd tests/macos
-          ./test-intel-installation.sh || true
+          ./test-intel-installation.sh
 
       - name: Run compatibility tests
         run: |
@@ -141,7 +141,7 @@ jobs:
       - name: Run Apple Silicon-specific tests
         run: |
           cd tests/macos
-          ./test-apple-silicon-installation.sh || true
+          ./test-apple-silicon-installation.sh
 
       - name: Run compatibility tests
         run: |
@@ -214,6 +214,7 @@ jobs:
   generate-report:
     name: Generate Test Report
     runs-on: macos-latest
+    timeout-minutes: 10
     needs: [test-intel-mac, test-apple-silicon, test-error-recovery]
     if: always()
     permissions:
@@ -270,39 +271,6 @@ jobs:
               body: summary
             });
 
-  # Job 5: Performance Comparison
-  performance-comparison:
-    name: Compare Intel vs Apple Silicon Performance
-    runs-on: macos-latest
-    needs: [test-intel-mac, test-apple-silicon]
-    if: always()
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Download test logs
-        uses: actions/download-artifact@v4
-        with:
-          path: test-results/
-
-      - name: Analyze performance metrics
-        run: |
-          echo "# Performance Comparison Report" > perf-comparison.md
-          echo "" >> perf-comparison.md
-          echo "## Installation Performance" >> perf-comparison.md
-          echo "" >> perf-comparison.md
-          echo "| Metric | Intel | Apple Silicon |" >> perf-comparison.md
-          echo "|--------|-------|---------------|" >> perf-comparison.md
-          echo "| Installation Time | TBD | TBD |" >> perf-comparison.md
-          echo "| Health Check Time | TBD | TBD |" >> perf-comparison.md
-          echo "| CLI Response Time | TBD | TBD |" >> perf-comparison.md
-          echo "" >> perf-comparison.md
-          echo "*Note: Metrics extracted from test logs*" >> perf-comparison.md
-
-      - name: Upload performance report
-        uses: actions/upload-artifact@v4
-        with:
-          name: performance-comparison
-          path: perf-comparison.md
-          retention-days: 90
+  # Job 5: Performance Comparison — REMOVED
+  # Was generating TBD placeholders (never implemented).
+  # Re-add when actual metric extraction from test logs is built.

@@ -95,6 +95,6 @@ jobs:
       - name: Lint orchestration modules
         run: |
           echo "=== Linting Bob Orchestration ==="
-          npx eslint .aiox-core/core/orchestration/ --cache --cache-location .eslintcache --no-error-on-unmatched-pattern || true
-          npx eslint .aiox-core/core/events/ --cache --cache-location .eslintcache --no-error-on-unmatched-pattern || true
+          npx eslint .aiox-core/core/orchestration/ --cache --cache-location .eslintcache --no-error-on-unmatched-pattern
+          npx eslint .aiox-core/core/events/ --cache --cache-location .eslintcache --no-error-on-unmatched-pattern
           echo "✅ Orchestration lint passed"
