@@ -1,0 +1,47 @@
+name: persona
+version: 1.0.0
+short-title: Persona Squad
+description: Squad para catalogar personas e adaptar roteiros do UXGroup com voz, estilo e comportamento por personagem.
+author: Antigravidade
+license: MIT
+slashPrefix: persona
+
+aiox:
+  minVersion: "2.1.0"
+  type: squad
+
+components:
+  agents:
+    - apostador-social-recreativo.md
+    - apostador-de-fuga.md
+    - apostador-profissional-analitico.md
+    - apostador-cauteloso.md
+    - apostador-reals-bet.md
+    - apostador-bingo-bet.md
+  tasks:
+    - organizar-pedido-persona.md
+    - selecionar-personas.md
+    - adaptar-roteiro-com-personas.md
+  workflows:
+    - wf-persona-cruzamento-roteiro.yaml
+  checklists:
+    - gate-coerencia-persona.md
+  templates:
+    - roteiro-cruzado-persona-template.md
+  tools: []
+  scripts: []
+
+config:
+  extends: extend
+
+dependencies:
+  node: []
+  python: []
+  squads:
+    - uxgroup-audiovisual
+
+tags:
+  - persona
+  - roteiro
+  - uxgroup
+  - adaptacao

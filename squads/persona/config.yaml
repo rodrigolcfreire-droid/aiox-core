@@ -1,0 +1,73 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Squad: Persona
+# Domain: Personas e Adaptação de Roteiro
+# Created: 2026-03-07
+# Version: 1.0.0
+# ═══════════════════════════════════════════════════════════════════════════════
+
+squad:
+  name: persona
+  display_name: "Persona Squad"
+  version: "1.0.0"
+  domain: "Personas e Adaptação de Roteiro"
+  description: |
+    Squad dedicado a cruzar roteiros prontos com perfis de apostador,
+    gerando versões alinhadas por estilo de decisão e comportamento.
+
+  entry_agent: apostador-social-recreativo
+  created_by: "Antigravidade"
+  created_at: "2026-03-07"
+
+tiers:
+  tier_0:
+    name: "Perfis de Apostador"
+    agents:
+      - apostador-social-recreativo
+      - apostador-de-fuga
+      - apostador-profissional-analitico
+      - apostador-cauteloso
+      - apostador-reals-bet
+      - apostador-bingo-bet
+    purpose: "Adaptação do roteiro por perfil comportamental"
+
+agents:
+  apostador-social-recreativo:
+    file: agents/apostador-social-recreativo.md
+    tier: 0
+    icon: "🎉"
+    focus: "Tom social, entretenimento e leveza"
+
+  apostador-de-fuga:
+    file: agents/apostador-de-fuga.md
+    tier: 0
+    icon: "🌪️"
+    focus: "Narrativa de escape da rotina e emoção imediata"
+
+  apostador-profissional-analitico:
+    file: agents/apostador-profissional-analitico.md
+    tier: 0
+    icon: "📈"
+    focus: "Racional, probabilidade, método e gestão"
+
+  apostador-cauteloso:
+    file: agents/apostador-cauteloso.md
+    tier: 0
+    icon: "🛡️"
+    focus: "Segurança, limites e risco controlado"
+
+  apostador-reals-bet:
+    file: agents/apostador-reals-bet.md
+    tier: 0
+    icon: "💸"
+    focus: "Abordagem objetiva para contexto Reals Bet"
+
+  apostador-bingo-bet:
+    file: agents/apostador-bingo-bet.md
+    tier: 0
+    icon: "🎯"
+    focus: "Abordagem dinâmica para contexto Bingo Bet"
+
+settings:
+  activation:
+    prefix: "persona"
+    example: "@persona:apostador-social-recreativo"

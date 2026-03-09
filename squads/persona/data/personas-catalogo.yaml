@@ -1,0 +1,54 @@
+personas:
+  - id: apostador-social-recreativo
+    nome: "Apostador Social/Recreativo"
+    perfil: "aposta por diversão e socialização"
+    tom: "leve, animado, popular"
+    gatilhos:
+      - "entretenimento"
+      - "comunidade"
+      - "experiencia"
+
+  - id: apostador-de-fuga
+    nome: "Apostador de Fuga"
+    perfil: "busca desligar da rotina e sentir emoção"
+    tom: "intenso, dinâmico, envolvente"
+    gatilhos:
+      - "escape"
+      - "adrenalina"
+      - "novidade"
+
+  - id: apostador-profissional-analitico
+    nome: "Apostador Profissional Analítico"
+    perfil: "orientado por método e leitura de cenário"
+    tom: "racional, técnico, objetivo"
+    gatilhos:
+      - "metodo"
+      - "probabilidade"
+      - "disciplina"
+
+  - id: apostador-cauteloso
+    nome: "Apostador Cauteloso"
+    perfil: "prioriza segurança, limite e previsibilidade"
+    tom: "prudente, claro, didático"
+    gatilhos:
+      - "controle"
+      - "limites"
+      - "seguranca"
+
+  - id: apostador-reals-bet
+    nome: "Apostador Reals Bet"
+    perfil: "focado em dinâmica e oportunidades do contexto Reals Bet"
+    tom: "objetivo, direto, orientado a execução"
+    gatilhos:
+      - "oportunidade"
+      - "agilidade"
+      - "clareza"
+
+  - id: apostador-bingo-bet
+    nome: "Apostador Bingo Bet"
+    perfil: "focado em experiência de jogo Bingo Bet com ritmo e engajamento"
+    tom: "acessível, dinâmico, envolvente"
+    gatilhos:
+      - "ritmo"
+      - "diversao"
+      - "participacao"
