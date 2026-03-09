@@ -67,6 +67,34 @@ agents:
     icon: "🎯"
     focus: "Abordagem dinâmica para contexto Bingo Bet"
 
+rules:
+  persona-replication:
+    name: "Regra de Replicacao de Persona"
+    trigger: "after_briefing_script_generated"
+    description: |
+      Apos a geracao de um roteiro base pelo Squad de Briefing,
+      o sistema executa um checkpoint de decisao perguntando ao usuario
+      se deseja replicar o roteiro para as personas cadastradas.
+    checkpoint:
+      type: "user_decision"
+      prompt: "Deseja replicar este roteiro para as personas cadastradas?"
+      options:
+        - label: "Sim, replicar para todas as personas"
+          action: "replicate_all"
+        - label: "Sim, selecionar personas"
+          action: "replicate_selected"
+        - label: "Nao, manter apenas o roteiro base"
+          action: "skip"
+    on_authorize:
+      workflow: "wf-persona-cruzamento-roteiro"
+      adaptations:
+        - linguagem
+        - narrativa
+        - gatilhos_psicologicos
+        - estilo_de_comunicacao
+        - cta
+      output: "Variacoes do roteiro adaptadas por persona"
+
 settings:
   activation:
     prefix: "persona"
