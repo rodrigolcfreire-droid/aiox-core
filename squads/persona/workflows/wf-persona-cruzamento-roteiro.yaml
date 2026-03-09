@@ -1,8 +1,25 @@
 workflow:
   id: wf-persona-cruzamento-roteiro
   name: Persona Cruzamento de Roteiro
-  description: Recebe um roteiro base e gera versões adaptadas por perfis de apostador.
+  description: Recebe um roteiro base e gera versoes adaptadas por perfis de apostador.
   type: squad
+  trigger: after_briefing_script_generated
+  checkpoint:
+    step: 0
+    type: user_decision
+    elicit: true
+    prompt: "Roteiro base gerado. Deseja replicar para as personas cadastradas?"
+    options:
+      - "Sim, replicar para todas"
+      - "Sim, selecionar personas"
+      - "Nao, manter apenas o base"
+    on_skip: halt
+  adaptations_per_persona:
+    - linguagem
+    - narrativa
+    - gatilhos_psicologicos
+    - estilo_de_comunicacao
+    - cta
   sequence:
     - agent: apostador-social-recreativo
       action: adaptar-social-recreativo
