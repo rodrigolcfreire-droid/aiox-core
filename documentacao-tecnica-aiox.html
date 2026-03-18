@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Documentação Técnica Consolidada — AIOX</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        @page {
+            size: A4;
+            margin: 20mm 18mm 20mm 18mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #1a1a2e;
+            background: #fff;
+            font-size: 11px;
+            line-height: 1.6;
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0f0f23;
+            border-bottom: 3px solid #6c63ff;
+            padding-bottom: 10px;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 28px;
+            font-style: italic;
+        }
+
+        h2 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #6c63ff;
+            margin-top: 28px;
+            margin-bottom: 10px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        h3 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        p,
+        li {
+            font-size: 11px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        ul,
+        ol {
+            padding-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0 18px 0;
+            font-size: 10px;
+        }
+
+        thead th {
+            background: #6c63ff;
+            color: #fff;
+            font-weight: 600;
+            padding: 8px 10px;
+            text-align: left;
+            font-size: 10px;
+        }
+
+        tbody td {
+            padding: 6px 10px;
+            border-bottom: 1px solid #e8e8f0;
+            vertical-align: top;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f8f8ff;
+        }
+
+        tbody tr:hover {
+            background: #f0f0ff;
+        }
+
+        code {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            background: #f0f0ff;
+            color: #6c63ff;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: 10px;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #6c63ff, #5a52d5);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            margin: 4px 0;
+            gap: 8px;
+        }
+
+        .flow-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #6c63ff;
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 10px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .flow-text {
+            font-size: 11px;
+            color: #333;
+            padding-top: 2px;
+        }
+
+        .tool-category {
+            display: inline-block;
+            background: #eef;
+            border: 1px solid #ddf;
+            border-radius: 6px;
+            padding: 8px 14px;
+            margin: 4px 4px 4px 0;
+            font-size: 10px;
+        }
+
+        .tool-category strong {
+            color: #6c63ff;
+        }
+
+        .ref-list {
+            background: #f8f8ff;
+            border-left: 3px solid #6c63ff;
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .ref-list code {
+            display: block;
+            margin: 3px 0;
+        }
+
+        .quality-gate {
+            display: inline-block;
+            background: #e8ffe8;
+            border: 1px solid #b0e0b0;
+            color: #2a7a2a;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 10px;
+            margin: 2px 4px 2px 0;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 12px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 9px;
+            color: #999;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>📋 Documentação Técnica Consolidada</h1>
+    <p class="subtitle">AIOX — Agentes · Pipeline · Ferramentas · Base de Conhecimento · Fluxos de Execução</p>
+
+    <!-- ====== SEÇÃO 1 ====== -->
+    <h2><span class="section-badge">1</span> Lista de Agentes Oficiais</h2>
+    <p>Fonte primária: <code>.aiox-core/development/agents/*.md</code></p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Título</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>aiox-master</code></td>
+                <td>Orion</td>
+                <td>AIOX Master Orchestrator &amp; Framework Developer</td>
+            </tr>
+            <tr>
+                <td><code>analyst</code></td>
+                <td>Atlas</td>
+                <td>Business Analyst</td>
+            </tr>
+            <tr>
+                <td><code>architect</code></td>
+                <td>Aria</td>
+                <td>Architect</td>
+            </tr>
+            <tr>
+                <td><code>data-engineer</code></td>
+                <td>Dara</td>
+                <td>Database Architect &amp; Operations Engineer</td>
+            </tr>
+            <tr>
+                <td><code>dev</code></td>
+                <td>Dex</td>
+                <td>Full Stack Developer</td>
+            </tr>
+            <tr>
+                <td><code>devops</code></td>
+                <td>Gage</td>
+                <td>GitHub Repository Manager &amp; DevOps Specialist</td>
+            </tr>
+            <tr>
+                <td><code>pm</code></td>
+                <td>Morgan</td>
+                <td>Product Manager</td>
+            </tr>
+            <tr>
+                <td><code>po</code></td>
+                <td>Pax</td>
+                <td>Product Owner</td>
+            </tr>
+            <tr>
+                <td><code>qa</code></td>
+                <td>Quinn</td>
+                <td>Test Architect &amp; Quality Advisor</td>
+            </tr>
+            <tr>
+                <td><code>sm</code></td>
+                <td>River</td>
+                <td>Scrum Master</td>
+            </tr>
+            <tr>
+                <td><code>squad-creator</code></td>
+                <td>Craft</td>
+                <td>Squad Creator</td>
+            </tr>
+            <tr>
+                <td><code>ux-design-expert</code></td>
+                <td>Uma</td>
+                <td>UX/UI Designer &amp; Design System Architect</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- ====== SEÇÃO 2 ====== -->
+    <h2><span class="section-badge">2</span> Funções dos Agentes</h2>
+    <p>Fonte primária: <code>role</code> e dependências nos YAMLs dos agentes + Constitution.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Agente</th>
+                <th>Função principal</th>
+                <th>Autoridade / Limite</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>aiox-master</code></td>
+                <td>Orquestração transversal, criação/modificação de componentes do framework</td>
+                <td>Coordena domínios; segue constitution como guardrail</td>
+            </tr>
+            <tr>
+                <td><code>analyst</code></td>
+                <td>Pesquisa, análise de mercado/usuário, ideação estruturada</td>
+                <td>Foco em descoberta e definição analítica</td>
+            </tr>
+            <tr>
+                <td><code>architect</code></td>
+                <td>Arquitetura fullstack, decisões técnicas estruturais, APIs e infra</td>
+                <td>Sem push remoto</td>
+            </tr>
+            <tr>
+                <td><code>data-engineer</code></td>
+                <td>Modelagem de dados, SQL/migrações, RLS, performance de banco</td>
+                <td>Sem push remoto</td>
+            </tr>
+            <tr>
+                <td><code>dev</code></td>
+                <td>Implementação de stories, refatoração, testes e correções</td>
+                <td>Operações git locais; sem <code>git push</code></td>
+            </tr>
+            <tr>
+                <td><code>devops</code></td>
+                <td>Governança de repositório, PR/release/CI/CD e quality gate pré-push</td>
+                <td><strong>Único autorizado</strong> para <code>git push</code>, PR e release</td>
+            </tr>
+            <tr>
+                <td><code>pm</code></td>
+                <td>Estratégia de produto, PRD, roadmap e priorização macro</td>
+                <td>Sem foco em operações git</td>
+            </tr>
+            <tr>
+                <td><code>po</code></td>
+                <td>Gestão de backlog, refinamento de story e critérios de aceite</td>
+                <td>Sem push remoto</td>
+            </tr>
+            <tr>
+                <td><code>qa</code></td>
+                <td>Arquitetura de testes, análise de risco e parecer de qualidade</td>
+                <td>Revisão/validação; sem push remoto</td>
+            </tr>
+            <tr>
+                <td><code>sm</code></td>
+                <td>Preparação de stories, facilitação do fluxo e gestão de sprint</td>
+                <td>Pode gerir branch local; sem push remoto</td>
+            </tr>
+            <tr>
+                <td><code>squad-creator</code></td>
+                <td>Criação/publicação/evolução de squads</td>
+                <td>Mantém consistência de estrutura e contratos</td>
+            </tr>
+            <tr>
+                <td><code>ux-design-expert</code></td>
+                <td>UX/UI, design system, tokens e qualidade de interface</td>
+                <td>Foco em experiência e consistência visual</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- ====== SEÇÃO 3 ====== -->
+    <h2><span class="section-badge">3</span> Pipeline</h2>
+
+    <h3>3.1 Pipeline de Ativação de Agentes (UAP)</h3>
+    <p>Fonte: <code>unified-activation-pipeline.js</code> e <code>00-shared-activation-pipeline.md</code></p>
+    <div style="margin: 8px 0 14px 0;">
+        <div class="flow-step"><span class="flow-num">1</span><span class="flow-text">Entrada única:
+                <code>activate(agentId)</code></span></div>
+        <div class="flow-step"><span class="flow-num">2</span><span class="flow-text">Carga paralela de contexto (config
+                de agente, sessão, projeto, git, permissão)</span></div>
+        <div class="flow-step"><span class="flow-num">3</span><span class="flow-text">Etapas sequenciais dependentes
+                (greeting, tipo de sessão, estado de workflow)</span></div>
+        <div class="flow-step"><span class="flow-num">4</span><span class="flow-text">Montagem de
+                <code>enrichedContext</code></span></div>
+        <div class="flow-step"><span class="flow-num">5</span><span class="flow-text">Geração final do greeting/contexto
+                via <code>GreetingBuilder</code></span></div>
+    </div>
+    <p><em>Obs: <code>generate-greeting.js</code> atua como wrapper fino para retrocompatibilidade. Fallback em timeout
+            e degradação graciosa quando alguma fonte falha.</em></p>
+
+    <h3>3.2 Pipeline de Desenvolvimento (Story-Driven)</h3>
+    <p>Fonte: <code>constitution.md</code> e <code>.aiox-core/development/workflows/*.yaml</code></p>
+    <div style="margin: 8px 0 8px 0;">
+        <div class="flow-step"><span class="flow-num">1</span><span class="flow-text">Início obrigatório por story
+                (<code>docs/stories/</code>)</span></div>
+        <div class="flow-step"><span class="flow-num">2</span><span class="flow-text">Implementação estritamente pelos
+                acceptance criteria</span></div>
+        <div class="flow-step"><span class="flow-num">3</span><span class="flow-text">Atualização de checklist e file
+                list</span></div>
+        <div class="flow-step"><span class="flow-num">4</span><span class="flow-text">Quality gates obrigatórios antes
+                de concluir</span></div>
+    </div>
+    <p><strong>Quality gates mandatórios:</strong></p>
+    <p>
+        <span class="quality-gate">npm run lint</span>
+        <span class="quality-gate">npm run typecheck</span>
+        <span class="quality-gate">npm test</span>
+    </p>
+
+    <!-- ====== SEÇÃO 4 ====== -->
+    <div class="page-break"></div>
+    <h2><span class="section-badge">4</span> Ferramentas Conectadas</h2>
+    <p>Fonte: <code>agent-tool-integration-guide.md</code> + YAMLs de agentes.</p>
+
+    <h3>4.1 Ferramentas por categoria</h3>
+    <div style="margin: 8px 0 14px 0;">
+        <div class="tool-category"><strong>CLI:</strong> git, github-cli, docker, npm, jest, ffmpeg, psql, pg_dump,
+            supabase-cli</div>
+        <div class="tool-category"><strong>MCP / Contexto externo:</strong> exa, context7, browser / Playwright, apify,
+            docker-gateway</div>
+        <div class="tool-category"><strong>Serviços / Integrações:</strong> coderabbit, supabase, n8n, google-workspace,
+            clickup, 21st-dev-magic</div>
+    </div>
+
+    <h3>4.2 Integração multi-IDE</h3>
+    <p>Fonte: scripts em <code>package.json</code></p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>IDE / Conector</th>
+                <th>Comandos-chave</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Claude Code, Codex, Gemini, Cursor, GitHub Copilot, Antigravity</td>
+                <td>
+                    <code>npm run sync:ide</code><br>
+                    <code>npm run sync:ide:check</code><br>
+                    <code>npm run validate:parity</code><br>
+                    <code>npm run validate:codex-sync && npm run validate:codex-integration</code><br>
+                    <code>npm run sync:skills:codex</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- ====== SEÇÃO 5 ====== -->
+    <h2><span class="section-badge">5</span> Base de Conhecimento</h2>
+
+    <h3>5.1 Fontes estruturadas (source of truth)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Fonte</th>
+                <th>Caminho</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Constituição</td>
+                <td><code>.aiox-core/constitution.md</code></td>
+            </tr>
+            <tr>
+                <td>Definições de agentes</td>
+                <td><code>.aiox-core/development/agents/</code></td>
+            </tr>
+            <tr>
+                <td>Tasks operacionais</td>
+                <td><code>.aiox-core/development/tasks/</code></td>
+            </tr>
+            <tr>
+                <td>Workflows</td>
+                <td><code>.aiox-core/development/workflows/</code></td>
+            </tr>
+            <tr>
+                <td>Checklists</td>
+                <td><code>.aiox-core/product/checklists/</code></td>
+            </tr>
+            <tr>
+                <td>Templates</td>
+                <td><code>.aiox-core/product/templates/</code></td>
+            </tr>
+            <tr>
+                <td>Doc funcional/arquitetural</td>
+                <td><code>docs/</code></td>
+            </tr>
+            <tr>
+                <td>Squads e assets</td>
+                <td><code>squads/</code></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>5.2 Camada de memória/conhecimento operacional</h3>
+    <p>Fonte: <code>MEMORY-SYSTEM.md</code>, <code>MEMORY-INTEGRATION.md</code>,
+        <code>MEMORY-INTELLIGENCE-SYSTEM.md</code></p>
+    <ul>
+        <li>Memória nativa do runtime de agente (transcripts e sessão)</li>
+        <li>Memória de framework AIOX (<code>.aiox/</code>) para estado de sessão, snapshots, timeline e gotchas</li>
+        <li>Extensão Open Core/Pro para retrieval progressivo, escopo por agente e feature gating</li>
+    </ul>
+
+    <!-- ====== SEÇÃO 6 ====== -->
+    <h2><span class="section-badge">6</span> Fluxos de Execução</h2>
+
+    <h3>6.1 Ativação de agente</h3>
+    <div style="margin: 6px 0;">
+        <div class="flow-step"><span class="flow-num">1</span><span class="flow-text">Usuário ativa agente</span></div>
+        <div class="flow-step"><span class="flow-num">2</span><span class="flow-text">UAP enriquece contexto com estado
+                de sessão/projeto/permissões</span></div>
+        <div class="flow-step"><span class="flow-num">3</span><span class="flow-text">Agente inicia com greeting
+                contextual e comandos do domínio</span></div>
+    </div>
+
+    <h3>6.2 Desenvolvimento por story</h3>
+    <div style="margin: 6px 0;">
+        <div class="flow-step"><span class="flow-num">1</span><span class="flow-text"><code>@sm</code> /
+                <code>@po</code> estruturam story e critérios</span></div>
+        <div class="flow-step"><span class="flow-num">2</span><span class="flow-text"><code>@dev</code> implementa e
+                testa localmente</span></div>
+        <div class="flow-step"><span class="flow-num">3</span><span class="flow-text"><code>@qa</code> valida riscos,
+                cobertura e aderência aos critérios</span></div>
+        <div class="flow-step"><span class="flow-num">4</span><span class="flow-text"><code>@devops</code> executa gates
+                finais, push remoto, PR e release</span></div>
+    </div>
+
+    <h3>6.3 Governança de git</h3>
+    <div style="margin: 6px 0;">
+        <div class="flow-step"><span class="flow-num">1</span><span class="flow-text">Trabalho e commits locais em
+                branch de feature</span></div>
+        <div class="flow-step"><span class="flow-num">2</span><span class="flow-text">Push remoto
+                <strong>somente</strong> via <code>@devops</code></span></div>
+        <div class="flow-step"><span class="flow-num">3</span><span class="flow-text">PR/merge/release
+                <strong>somente</strong> via <code>@devops</code></span></div>
+        <div class="flow-step"><span class="flow-num">4</span><span class="flow-text">Regras reforçadas por constitution
+                + hooks + definições de agente</span></div>
+    </div>
+
+    <h3>6.4 Sincronização de ecossistema</h3>
+    <div style="margin: 6px 0;">
+        <div class="flow-step"><span class="flow-num">1</span><span class="flow-text">Atualização de
+                agentes/rules/templates no core</span></div>
+        <div class="flow-step"><span class="flow-num">2</span><span class="flow-text">Execução de <code>sync:ide</code>
+                para propagar para IDEs alvo</span></div>
+        <div class="flow-step"><span class="flow-num">3</span><span class="flow-text">Execução de validadores de
+                sync/integration/parity</span></div>
+        <div class="flow-step"><span class="flow-num">4</span><span class="flow-text">Correção de drift e republicação
+                de artefatos</span></div>
+    </div>
+
+    <!-- ====== SEÇÃO 7 ====== -->
+    <h2><span class="section-badge">7</span> Referências Diretas</h2>
+    <div class="ref-list">
+        <code>.aiox-core/constitution.md</code>
+        <code>.aiox-core/development/agents/</code>
+        <code>.aiox-core/development/workflows/</code>
+        <code>.aiox-core/development/tasks/</code>
+        <code>docs/pt/architecture/agent-tool-integration-guide.md</code>
+        <code>docs/pt/architecture/agent-responsibility-matrix.md</code>
+        <code>docs/guides/agents/traces/00-shared-activation-pipeline.md</code>
+        <code>docs/guides/MEMORY-SYSTEM.md</code>
+        <code>docs/guides/MEMORY-INTEGRATION.md</code>
+        <code>docs/guides/MEMORY-INTELLIGENCE-SYSTEM.md</code>
+        <code>package.json</code>
+    </div>
+
+    <div class="footer">
+        AIOX — Documentação Técnica Consolidada · Gerado em 2026-03-08
+    </div>
+
+</body>
+
+</html>
