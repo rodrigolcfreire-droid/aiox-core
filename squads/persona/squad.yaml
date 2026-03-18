@@ -38,7 +38,7 @@ dependencies:
   node: []
   python: []
   squads:
-    - uxgroup-audiovisual
+    - maquina-de-briefing
 
 tags:
   - persona

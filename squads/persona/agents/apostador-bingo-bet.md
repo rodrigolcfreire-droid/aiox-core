@@ -9,74 +9,142 @@
 Apostador Bingo Bet
 
 ## 2. Descricao
-Perfil focado na modalidade Bingo Bet. Apostador que busca diversao acessivel, ritmo dinamico e a experiencia nostalgica do bingo combinada com apostas modernas. Valoriza simplicidade, clareza e a emocao do jogo.
+Persona principal da Bingo Bet. Usuario que busca diversao, emocao e chance de ganhar algo — tudo pelo celular, de forma rapida e espontanea. A motivacao e simples: diversao + sorte. Joga slots como quem joga joguinho de celular. Consome conteudo de meme, lives e influenciadores "gente como a gente".
 
 ## 3. Perfil Demografico
-- **Idade:** 25-55 anos
+- **Nome ficticio:** Patricia / Jessica / Diego / Rafael
+- **Idade:** 21-45 anos
 - **Genero:** Misto (equilibrado)
-- **Renda:** Classe C/D
-- **Localizacao:** Diversificado, forte em cidades medias e interior
+- **Renda:** Classe C / C+
+- **Localizacao:** Brasil inteiro (muito forte em interior e periferia)
 - **Escolaridade:** Ensino medio
-- **Ocupacao:** Diversificado — donas de casa, aposentados, CLT, informal
+- **Ocupacao:** Balconista, atendente, manicure, motoboy, auxiliar administrativo, trabalhador informal
 
 ## 4. Perfil Psicologico
-- Busca diversao simples e acessivel
-- Nostalgico (lembra do bingo tradicional)
-- Prefere jogos faceis de entender
-- Nao gosta de complexidade ou muitas regras
-- Sociavel e gosta de jogar em comunidade
-- Emocao vem da experiencia, nao so do resultado
+- Busca diversao e emocao acima de tudo
+- Movida por sorte e esperanca leve ("vai que da bom")
+- Nao quer complexidade — quer apertar e jogar
+- Gosta de espontaneidade e conteudo que parece real
+- Rejeita conteudo que parece publicitario ou forcado
+- Sociavel — compartilha momentos de vitoria
+- Cultura de meme e humor faz parte do dia a dia
 
 ## 5. Comportamento de Consumo
-- Joga em horarios de lazer (noite, fins de semana)
-- Prefere sessoes curtas e repetitivas
-- Ticket medio baixo, alta frequencia
-- Gosta de promocoes e bonus de entrada
-- Consome conteudo leve e divertido sobre o jogo
-- Compartilha momentos de vitoria em grupos e redes
+- Usa muito o celular o dia inteiro
+- Aplicativos principais: Instagram, TikTok, Kwai, WhatsApp
+- Ve memes o tempo todo
+- Gosta de lives e interacao ao vivo
+- Acompanha influenciadores que parecem "gente como a gente"
+- Joga principalmente slots
+- Joga em momentos de pausa ("antes de dormir", "no intervalo")
+- Ticket medio baixo, frequencia alta
+- Experiencia similar a: jogo do tigrinho, caca-niquel digital, joguinhos de celular
 
 ## 6. Conteudo que Conecta
-- Videos de jogadas emocionantes com comemoracoes
-- Tutoriais simples de como jogar Bingo Bet
-- Historias de vitorias inesperadas
-- Conteudo nostalgico ("lembra do bingo da igreja?")
-- Lives de partidas com interacao ao vivo
-- Dicas simples para aproveitar melhor o jogo
+- Slots pagando (tela de celular real)
+- Multiplicadores grandes em destaque
+- Videos de tela de celular (formato nativo, espontaneo)
+- Reacoes engracadas e genuinas
+- Desafios tipo "R$10 ate R$500"
+- Lives com interacao e premios
+- Historias de ganhadores reais
+- Conteudo com humor e energia
+
+**Regra de ouro:** conteudo espontaneo > conteudo publicitario
 
 ## 7. Tom de Comunicacao
-- Acessivel e dinamico
-- Tom alegre e convidativo
-- Linguagem simples, sem jargao tecnico
-- Ritmo animado que reflete a energia do bingo
-- Caloroso e proximo (como um apresentador de bingo)
-- Nunca complicado ou intimidador
+- Leve e divertido
+- Energetico e animado
+- Brasileiro e espontaneo
+- Muito proximo da cultura de meme
+- Tom de quem esta compartilhando algo incrivel que acabou de acontecer
+- Frases curtas e explosivas
 
-## 8. Gatilhos Psicologicos
-- **Nostalgia:** "O bingo que voce amava, agora no celular"
-- **Simplicidade:** "Facil de jogar, dificil de parar de se divertir"
-- **Comunidade:** "Jogue com milhares de pessoas ao mesmo tempo"
-- **Surpresa:** "A qualquer momento pode sair o seu numero"
-- **Acessibilidade:** "Comece com centavos e sinta a emocao"
+**Exemplos de tom:**
+- "Olha isso!"
+- "Esse slot ta maluco!"
+- "Que pancada!"
+- "Ta pagando demais!"
 
-## 9. Narrativa Principal
-"Bingo Bet e diversao pura — simples, rapido e cheio de emocao. Nao precisa ser expert, nao precisa estudar odds. E so entrar, jogar e curtir cada numero que sai. A emocao do bingo, agora na palma da mao."
+## 8. Motivacao Principal
+A motivacao e mais simples — nao e status, nao e metodo.
 
-## 10. Exemplos de Hook
-- "Faltava UM numero e olha o que aconteceu..."
-- "Comecei com R$0,50 no Bingo Bet e nao esperava isso"
-- "A emocao do bingo voltou — e agora paga de verdade"
-- "Joguei 3 rodadas e aconteceu o IMPOSSIVEL"
+E: **diversao + sorte.**
 
-## 11. Exemplos de CTA
-- "Jogue sua primeira rodada gratis"
-- "Entre e sinta a emocao do Bingo Bet"
-- "Comece com centavos — clique aqui"
-- "Tente a sorte agora mesmo"
+Pensamentos comuns:
+- "vou jogar um pouquinho antes de dormir"
+- "vai que da bom"
+- "olha esse slot pagando"
 
-## 12. Conteudo a Evitar
+E muito parecido com quem joga joguinho de celular — so que com chance de ganhar dinheiro de verdade.
+
+## 9. O que Atrai essa Persona
+- Slots pagando com prova visual
+- Multiplicadores grandes
+- Videos espontaneos de tela de celular
+- Reacoes engracadas e genuinas
+- Desafios tipo "R$10 ate R$500"
+- Conteudo que parece real, nao anuncio
+
+## 10. Arquetipo da Marca
+**O Bobo da Corte / Entretenedor**
+
+A Bingo Bet existe para:
+- Divertir
+- Gerar emocao
+- Criar momentos de alegria
+
+O branding laranja reforca essa energia: quente, vibrante, acessivel.
+
+## 11. Gatilhos Psicologicos
+- **Diversao:** "Esse slot ta insano!"
+- **Sorte:** "Vai que hoje da bom"
+- **Curiosidade:** "Olha o que saiu nessa rodada"
+- **Prova social:** "Ganhei agora — olha a tela"
+- **Desafio:** "Comecei com R$10 e olha onde cheguei"
+- **Simplicidade:** "E so apertar e jogar"
+
+## 12. Narrativa Principal
+"Bingo Bet e diversao pura — leve, rapido e cheio de emocao. Nao precisa entender nada, e so entrar e jogar. Cada rodada e uma chance, cada spin e uma emocao. Vai que hoje e seu dia de sorte."
+
+## 13. Exemplos de Hook
+- "Esse slot ta MALUCO — olha o que saiu"
+- "Comecei com R$5 e nao esperava isso"
+- "Que pancada! Olha esse multiplicador"
+- "Joguei antes de dormir e aconteceu isso"
+- "Ta pagando demais hoje na Bingo"
+
+## 14. Exemplos de CTA
+- "Entra e joga — e rapidinho"
+- "Tenta a sorte agora"
+- "Cadastra e ganha bonus pra comecar"
+- "Aperta e joga — simples assim"
+
+## 15. Conteudo a Evitar
+- Conteudo que parece anuncio ou publicitario demais
 - Linguagem tecnica ou analitica
-- Pressao financeira ou urgencia de deposito
-- Exagero de promessa de ganho
-- Conteudo que complica regras simples
-- Tom serio ou corporativo
-- Comparacao agressiva com outras modalidades
+- Tom corporativo ou distante
+- Promessas exageradas de enriquecimento
+- Conteudo complicado ou com muitas regras
+- Pressao agressiva para deposito
+- Qualquer coisa que quebre a espontaneidade
+- Tom serio demais — a Bingo e diversao
+
+## 16. Palavras e Expressoes PROIBIDAS (Compliance)
+**NUNCA usar expressoes que garantam ganhos ou pagamentos.** Exemplos proibidos:
+- "Ta pagando" / "Ta pagando de verdade" / "Ta pagando demais"
+- "Paga de verdade"
+- "Ja sabe que paga"
+- "Pode pagar mais"
+- "Ta perdendo dinheiro"
+- "Ganha dinheiro" / "So que ganha dinheiro"
+- "Ate perder fica divertido" (implica ganho certo)
+- Qualquer variacao que garanta, prometa ou implique ganho certo
+
+**Alternativas permitidas:**
+- "Vai que da bom"
+- "Olha o que aconteceu"
+- "A emocao e diferente"
+- "Que surpresa!"
+- "Experimenta e ve"
+- Focar em DIVERSAO e EMOCAO, nunca em GANHO GARANTIDO

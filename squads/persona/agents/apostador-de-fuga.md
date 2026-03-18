@@ -80,3 +80,21 @@ Perfil que usa a aposta como valvula de escape da rotina, estresse ou frustracao
 - Promessas garantidas de ganho
 - Pressao financeira explicita
 - Conteudo longo e denso (perde atencao rapido)
+
+## 13. Palavras e Expressoes PROIBIDAS (Compliance)
+**NUNCA usar expressoes que garantam ganhos ou pagamentos.** Exemplos proibidos:
+- "Ta pagando" / "Ta pagando de verdade" / "Ta pagando demais"
+- "Paga de verdade"
+- "Ja sabe que paga"
+- "Pode pagar mais"
+- "Ta perdendo dinheiro"
+- "Ganha dinheiro" / "So que ganha dinheiro"
+- "Ate perder fica divertido" (implica ganho certo)
+- Qualquer variacao que garanta, prometa ou implique ganho certo
+
+**Alternativas permitidas:**
+- "Vai que da bom"
+- "Olha o que aconteceu"
+- "A emocao e diferente"
+- "Experimenta e ve"
+- Focar em EMOCAO e EXPERIENCIA, nunca em GANHO GARANTIDO
