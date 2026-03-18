@@ -368,3 +368,6 @@ build/
 .aiox-core/local/
 .claude/settings.local.json
 .aiox/install-log.txt
+
+# WhatsApp Web.js cache (session data)
+.wwebjs_cache/
