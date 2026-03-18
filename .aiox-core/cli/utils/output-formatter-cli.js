@@ -1,7 +1,7 @@
 /**
  * CLI Output Formatter
  *
- * Formats search results for CLI output in table, JSON, or YAML format.
+ * Formata os resultados de busca para a saída da CLI em formato de tabela, JSON ou YAML.
  *
  * @module cli/utils/output-formatter-cli
  * @version 1.0.0
@@ -11,15 +11,15 @@
 const yaml = require('js-yaml');
 
 /**
- * Format output based on specified format
- * @param {Array} results - Search results
- * @param {object} options - Formatting options
- * @param {string} options.format - Output format: table, json, yaml
- * @param {string} options.query - Original search query
- * @param {string} options.duration - Search duration
- * @param {string} options.searchMethod - Search method used
- * @param {boolean} options.verbose - Show verbose output
- * @returns {string} Formatted output string
+ * Formata a saída com base no formato especificado
+ * @param {Array} results - Resultados da busca
+ * @param {object} options - Opções de formatação
+ * @param {string} options.format - Formato de saída: table, json, yaml
+ * @param {string} options.query - Consulta de busca original
+ * @param {string} options.duration - Duração da busca
+ * @param {string} options.searchMethod - Método de busca utilizado
+ * @param {boolean} options.verbose - Mostrar saída detalhada
+ * @returns {string} String de saída formatada
  */
 function formatOutput(results, options = {}) {
   const { format = 'table', query, duration, searchMethod, verbose } = options;
@@ -36,31 +36,31 @@ function formatOutput(results, options = {}) {
 }
 
 /**
- * Format results as table
- * @param {Array} results - Search results
- * @param {object} options - Options
- * @returns {string} Table formatted string
+ * Formata resultados como tabela
+ * @param {Array} results - Resultados da busca
+ * @param {object} options - Opções
+ * @returns {string} String formatada em tabela
  */
 function formatTable(results, options = {}) {
   const { query = '', duration = '0', searchMethod = 'keyword', verbose = false } = options;
 
   if (results.length === 0) {
-    return `No workers found matching "${query}".\n\nTry different search terms or check available categories with 'aiox workers list --categories'.`;
+    return `Nenhum worker encontrado correspondente a "${query}".\n\nTente termos de busca diferentes ou verifique as categorias disponíveis com 'aiox workers list --categories'.`;
   }
 
-  // Header
-  let output = `Found ${results.length} worker${results.length !== 1 ? 's' : ''} (took ${duration}s):\n\n`;
+  // Cabeçalho
+  let output = `Encontrado(s) ${results.length} worker(s) (levou ${duration}s):\n\n`;
 
-  // Column widths
+  // Larguras das colunas
   const idWidth = Math.min(25, Math.max(4, ...results.map(r => r.id.length)));
   const nameWidth = Math.min(30, Math.max(4, ...results.map(r => r.name.length)));
   const categoryWidth = Math.min(15, Math.max(8, ...results.map(r => (r.category || '').length)));
 
-  // Table header
-  output += `  ${'#'.padEnd(3)}  ${'ID'.padEnd(idWidth)}  ${'NAME'.padEnd(nameWidth)}  ${'CATEGORY'.padEnd(categoryWidth)}  SCORE\n`;
+  // Cabeçalho da tabela
+  output += `  ${'#'.padEnd(3)}  ${'ID'.padEnd(idWidth)}  ${'NOME'.padEnd(nameWidth)}  ${'CATEGORIA'.padEnd(categoryWidth)}  SCORE\n`;
   output += `  ${'─'.repeat(3)}  ${'─'.repeat(idWidth)}  ${'─'.repeat(nameWidth)}  ${'─'.repeat(categoryWidth)}  ${'─'.repeat(5)}\n`;
 
-  // Table rows
+  // Linhas da tabela
   results.forEach((result, index) => {
     const num = (index + 1).toString().padEnd(3);
     const id = truncate(result.id, idWidth).padEnd(idWidth);
@@ -71,22 +71,22 @@ function formatTable(results, options = {}) {
     output += `  ${num}  ${id}  ${name}  ${category}  ${score}\n`;
   });
 
-  // Footer
-  output += '\nUse \'aiox workers info <id>\' for details.';
+  // Rodapé
+  output += '\nUse \'aiox workers info <id>\' para mais detalhes.';
 
-  // Verbose info
+  // Informação detalhada (verbose)
   if (verbose) {
-    output += `\n\n[Debug: method=${searchMethod}]`;
+    output += `\n\n[Depuração: método=${searchMethod}]`;
   }
 
   return output;
 }
 
 /**
- * Format results as JSON
- * @param {Array} results - Search results
- * @param {object} options - Options
- * @returns {string} JSON formatted string
+ * Formata resultados como JSON
+ * @param {Array} results - Resultados da busca
+ * @param {object} options - Opções
+ * @returns {string} String formatada em JSON
  */
 function formatJSON(results, options = {}) {
   const output = results.map(result => ({
@@ -104,10 +104,10 @@ function formatJSON(results, options = {}) {
 }
 
 /**
- * Format results as YAML
- * @param {Array} results - Search results
- * @param {object} options - Options
- * @returns {string} YAML formatted string
+ * Formata resultados como YAML
+ * @param {Array} results - Resultados da busca
+ * @param {object} options - Opções
+ * @returns {string} String formatada em YAML
  */
 function formatYAML(results, options = {}) {
   const output = results.map(result => ({
@@ -129,10 +129,10 @@ function formatYAML(results, options = {}) {
 }
 
 /**
- * Truncate string with ellipsis
- * @param {string} str - String to truncate
- * @param {number} maxLen - Maximum length
- * @returns {string} Truncated string
+ * Trunca uma string com reticências
+ * @param {string} str - String para truncar
+ * @param {number} maxLen - Comprimento máximo
+ * @returns {string} String truncada
  */
 function truncate(str, maxLen) {
   if (!str) return '';
@@ -141,9 +141,9 @@ function truncate(str, maxLen) {
 }
 
 /**
- * Format a single worker for detailed view
- * @param {object} worker - Worker object
- * @returns {string} Formatted worker details
+ * Formata um único worker para visualização detalhada
+ * @param {object} worker - Objeto do worker
+ * @returns {string} Detalhes do worker formatados
  */
 function formatWorkerDetails(worker) {
   let output = '';
@@ -151,49 +151,49 @@ function formatWorkerDetails(worker) {
   output += `📦 ${worker.name}\n`;
   output += `${'─'.repeat(40)}\n`;
   output += `ID:          ${worker.id}\n`;
-  output += `Category:    ${worker.category}`;
+  output += `Categoria:    ${worker.category}`;
   if (worker.subcategory) {
     output += ` / ${worker.subcategory}`;
   }
   output += '\n';
 
-  output += `\n📝 Description:\n${worker.description}\n`;
+  output += `\n📝 Descrição:\n${worker.description}\n`;
 
   if (worker.tags && worker.tags.length > 0) {
     output += `\n🏷️  Tags: ${worker.tags.join(', ')}\n`;
   }
 
   if (worker.inputs && worker.inputs.length > 0) {
-    output += '\n📥 Inputs:\n';
+    output += '\n📥 Entradas:\n';
     worker.inputs.forEach(input => {
       output += `   • ${input}\n`;
     });
   }
 
   if (worker.outputs && worker.outputs.length > 0) {
-    output += '\n📤 Outputs:\n';
+    output += '\n📤 Saídas:\n';
     worker.outputs.forEach(out => {
       output += `   • ${out}\n`;
     });
   }
 
-  output += `\n📁 Path: ${worker.path}\n`;
-  output += `📋 Format: ${worker.taskFormat}\n`;
+  output += `\n📁 Caminho: ${worker.path}\n`;
+  output += `📋 Formato: ${worker.taskFormat}\n`;
 
   if (worker.executorTypes && worker.executorTypes.length > 0) {
-    output += `⚙️  Executors: ${worker.executorTypes.join(', ')}\n`;
+    output += `⚙️  Executores: ${worker.executorTypes.join(', ')}\n`;
   }
 
   if (worker.performance) {
-    output += '\n⏱️  Performance:\n';
+    output += '\n⏱️  Desempenho:\n';
     if (worker.performance.avgDuration) {
-      output += `   • Avg Duration: ${worker.performance.avgDuration}\n`;
+      output += `   • Duração Média: ${worker.performance.avgDuration}\n`;
     }
     if (worker.performance.cacheable !== undefined) {
-      output += `   • Cacheable: ${worker.performance.cacheable ? 'Yes' : 'No'}\n`;
+      output += `   • Cacheável: ${worker.performance.cacheable ? 'Sim' : 'Não'}\n`;
     }
     if (worker.performance.parallelizable !== undefined) {
-      output += `   • Parallelizable: ${worker.performance.parallelizable ? 'Yes' : 'No'}\n`;
+      output += `   • Paralelizável: ${worker.performance.parallelizable ? 'Sim' : 'Não'}\n`;
     }
   }
 
@@ -201,12 +201,12 @@ function formatWorkerDetails(worker) {
 }
 
 /**
- * Format category summary
- * @param {object} categories - Categories object from registry
- * @returns {string} Formatted categories
+ * Formata o resumo de categorias
+ * @param {object} categories - Objeto de categorias do registro
+ * @returns {string} Categorias formatadas
  */
 function formatCategories(categories) {
-  let output = 'Available Categories:\n\n';
+  let output = 'Categorias Disponíveis:\n\n';
 
   const sortedCategories = Object.entries(categories)
     .sort((a, b) => b[1].count - a[1].count);

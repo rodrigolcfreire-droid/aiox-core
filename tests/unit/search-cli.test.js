@@ -184,7 +184,7 @@ describe('Output Formatter', () => {
 
   test('formatTable returns formatted table', () => {
     const output = formatTable(testResults, { query: 'json', duration: '0.1' });
-    expect(output).toContain('Found 1 worker');
+    expect(output).toContain('1 worker');
     expect(output).toContain('json-csv-transformer');
     expect(output).toContain('95%');
   });
@@ -196,7 +196,7 @@ describe('Output Formatter', () => {
 
   test('formatOutput handles empty results', () => {
     const output = formatOutput([], { format: 'table', query: 'xyz' });
-    expect(output).toContain('No workers found');
+    expect(output).toContain('Nenhum worker encontrado');
   });
 });
 
