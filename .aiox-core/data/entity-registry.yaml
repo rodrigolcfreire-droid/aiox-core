@@ -1,6 +1,6 @@
 metadata:
   version: 1.0.0
-  lastUpdated: '2026-03-18T00:31:52.504Z'
+  lastUpdated: '2026-03-18T00:32:04.734Z'
   entityCount: 748
   checksumAlgorithm: sha256
   resolutionRate: 100
@@ -13006,15 +13006,12 @@ entities:
         - autoavaliativo
       usedBy: []
       dependencies: []
-      externalDeps: []
-      plannedDeps: []
-      lifecycle: orphan
       adaptability:
         score: 0.3
         constraints: []
         extensionPoints: []
       checksum: sha256:5c00c9200fc8a074fb0c9437e2469ab0fbe822d8a99e1a3b877d8fb6bdd218c3
-      lastVerified: '2026-03-18T00:29:56.414Z'
+      lastVerified: '2026-03-18T00:32:04.731Z'
     data-engineer:
       path: .aiox-core/development/agents/data-engineer.md
       layer: L2
@@ -13633,26 +13630,23 @@ entities:
       checksum: sha256:5ca4ec06aaf8525668303f8bdef9c5bc868b1f084db905e8b7636c974c2faa94
       lastVerified: '2026-03-18T00:29:56.434Z'
     MEMORY:
-      path: .aiox-core/development/agents/analyst/MEMORY.md
+      path: .aiox-core/development/agents/autoavaliativo/MEMORY.md
       layer: L3
       type: agent
-      purpose: Analyst Agent Memory (Atlas)
+      purpose: Sentinel (autoavaliativo) — Agent Memory
       keywords:
         - memory
-        - analyst
+        - sentinel
+        - (autoavaliativo)
         - agent
-        - (atlas)
       usedBy: []
       dependencies: []
-      externalDeps: []
-      plannedDeps: []
-      lifecycle: orphan
       adaptability:
         score: 0.3
         constraints: []
         extensionPoints: []
-      checksum: sha256:b8b52820ba1929ba12403fc437868dd9e8a9c2532abe99296ad05864618693b0
-      lastVerified: '2026-03-18T00:29:56.434Z'
+      checksum: sha256:6aa2a3812332ec099a18e4266430f5639f0074f5cb17c989654fb8149955bb22
+      lastVerified: '2026-03-18T00:32:04.732Z'
   checklists:
     agent-quality-gate:
       path: .aiox-core/development/checklists/agent-quality-gate.md
