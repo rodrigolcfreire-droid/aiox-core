@@ -26,6 +26,9 @@
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const {
+  STOP_WORDS, classifyMessage, suggestContent,
+} = require('./lib/message-classifier');
 
 // ── Config ──────────────────────────────────────────────────────
 const ENV_PATH = path.resolve(__dirname, '..', '.env');
@@ -383,82 +386,8 @@ async function cmdReport(agentId) {
 }
 
 // ── Intelligence Analysis ───────────────────────────────────────
-
-// Stop words PT-BR (filtradas da analise de palavras)
-const STOP_WORDS = new Set([
-  'para', 'como', 'mais', 'isso', 'esse', 'essa', 'este', 'esta',
-  'voce', 'voces', 'eles', 'elas', 'dele', 'dela', 'meus', 'minha',
-  'minhas', 'seus', 'suas', 'nosso', 'nossa', 'nossos', 'nossas',
-  'todo', 'toda', 'todos', 'todas', 'cada', 'outro', 'outra',
-  'outros', 'outras', 'mesmo', 'mesma', 'qual', 'quais',
-  'quando', 'onde', 'quem', 'porque', 'pois', 'ainda', 'muito',
-  'muita', 'muitos', 'muitas', 'mais', 'menos', 'tambem', 'pode',
-  'podem', 'fazer', 'faz', 'feito', 'sendo', 'sido', 'seria',
-  'sobre', 'entre', 'depois', 'antes', 'desde', 'aqui', 'agora',
-  'algo', 'alguem', 'nada', 'ninguem', 'tudo', 'tanto', 'tanta',
-  'bem', 'bom', 'boa', 'bons', 'boas', 'melhor', 'pior',
-  'com', 'sem', 'por', 'pelo', 'pela', 'pelos', 'pelas',
-  'uma', 'umas', 'uns', 'dos', 'das', 'nos', 'nas',
-  'que', 'mas', 'nem', 'nao', 'sim', 'tipo', 'gente',
-  'ter', 'tem', 'tinha', 'tive', 'teve', 'temos', 'tenho',
-  'ser', 'sou', 'era', 'foi', 'somos', 'eram',
-  'estar', 'esta', 'estou', 'estava', 'estamos',
-  'vai', 'vou', 'vamos', 'vem', 'veio',
-  'acho', 'coisa', 'coisas', 'cara', 'galera', 'pessoal',
-]);
-
-// Indicadores de duvida
-const QUESTION_PATTERNS = [
-  /\?/,
-  /^como\s/i, /^qual\s/i, /^quais\s/i, /^quanto/i,
-  /^onde\s/i, /^quando\s/i, /^porque\s/i, /^por\s?que\s/i,
-  /alguem\s+(sabe|pode|consegue|ja)/i,
-  /como\s+(faz|fazer|funciona|consigo|posso)/i,
-  /^duvida/i, /tenho\s+duvida/i,
-  /o\s+que\s+(e|eh|significa|quer\s+dizer)/i,
-];
-
-// Indicadores de dor/frustacao
-const PAIN_PATTERNS = [
-  /nao\s+(consigo|funciona|entendo|sei)/i,
-  /dificuldade/i, /problema/i, /erro/i, /bug/i,
-  /frustra/i, /complicado/i, /confuso/i,
-  /nao\s+da\s+certo/i, /travou/i, /travando/i,
-  /perdi/i, /perdendo/i, /prejuizo/i,
-  /demora/i, /lento/i, /caro/i,
-  /medo\s+de/i, /receio/i, /inseguro/i,
-  /pior/i, /horrivel/i, /pessimo/i,
-];
-
-// Indicadores de engajamento alto
-const ENGAGEMENT_PATTERNS = [
-  /kkkk/i, /hahaha/i, /rsrs/i,
-  /top\s*demais/i, /sensacional/i, /incrivel/i, /show/i,
-  /concordo/i, /exatamente/i, /isso\s+mesmo/i,
-  /obrigad[oa]/i, /valeu/i, /brigad/i,
-  /compartilh/i, /recomend/i,
-  /monstro/i, /brabo/i, /fera/i, /craque/i,
-];
-
-function classifyMessage(text) {
-  const lower = (text || '').toLowerCase();
-  const tags = [];
-
-  const isQuestion = QUESTION_PATTERNS.some(p => p.test(lower));
-  if (isQuestion) tags.push('duvida');
-
-  const isPain = PAIN_PATTERNS.some(p => p.test(lower));
-  if (isPain) tags.push('dor');
-
-  const isEngagement = ENGAGEMENT_PATTERNS.some(p => p.test(lower));
-  if (isEngagement) tags.push('engajamento');
-
-  if (lower.length > 200) tags.push('mensagem_longa');
-  if (/https?:\/\//i.test(lower)) tags.push('link');
-
-  if (tags.length === 0) tags.push('geral');
-  return tags;
-}
+// Classification logic is in bin/lib/message-classifier.js (shared module)
+// Imports: STOP_WORDS, classifyMessage, suggestContent, hasOperationalContext
 
 function extractTopics(messages) {
   // Bigram extraction for topic detection
@@ -600,62 +529,7 @@ function detectViralTopics(messages) {
   });
 }
 
-function suggestContent(analysis) {
-  const suggestions = [];
-
-  // From questions/pains
-  if (analysis.questions.length > 0) {
-    analysis.questions.slice(0, 5).forEach(q => {
-      suggestions.push({
-        type: 'conteudo',
-        source: 'duvida_recorrente',
-        suggestion: `Tutorial/video respondendo: "${q.text.slice(0, 80)}"`,
-        priority: q.count > 3 ? 'high' : 'medium',
-        format: 'video_curto',
-      });
-    });
-  }
-
-  if (analysis.pains.length > 0) {
-    analysis.pains.slice(0, 3).forEach(p => {
-      suggestions.push({
-        type: 'roteiro',
-        source: 'dor_da_audiencia',
-        suggestion: `Roteiro abordando dor: "${p.text.slice(0, 80)}"`,
-        priority: 'high',
-        format: 'video_longo',
-      });
-    });
-  }
-
-  // From trending topics
-  if (analysis.topics.bigrams.length > 0) {
-    analysis.topics.bigrams.slice(0, 3).forEach(([topic, count]) => {
-      suggestions.push({
-        type: 'conteudo',
-        source: 'tema_trending',
-        suggestion: `Conteudo sobre: "${topic}" (${count} mencoes)`,
-        priority: count > 10 ? 'high' : 'medium',
-        format: 'post_ou_video',
-      });
-    });
-  }
-
-  // From viral topics
-  if (analysis.viral.length > 0) {
-    analysis.viral.forEach(v => {
-      suggestions.push({
-        type: 'anuncio',
-        source: 'tema_viral',
-        suggestion: `Anuncio baseado em tema viral: "${v.topic}" (velocidade ${v.velocity}x)`,
-        priority: 'high',
-        format: 'criativo_pago',
-      });
-    });
-  }
-
-  return suggestions;
-}
+// suggestContent() imported from bin/lib/message-classifier.js
 
 async function cmdAnalyze(agentFilter) {
   ensureDataDir();
