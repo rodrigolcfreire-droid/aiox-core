@@ -98,7 +98,7 @@ class DatabaseClient {
       });
       this._serviceClients.set(
         schemaName,
-        new SchemaClient(client, schemaName, 'system', 'admin')
+        new SchemaClient(client, schemaName, 'system', 'admin'),
       );
     }
     return this._serviceClients.get(schemaName);

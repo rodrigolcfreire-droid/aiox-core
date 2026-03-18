@@ -96,7 +96,7 @@ function telegramApi(token, method, params) {
         try {
           const parsed = JSON.parse(data);
           resolve(parsed);
-        } catch (e) {
+        } catch (_e) {
           reject(new Error(`Failed to parse response: ${data.slice(0, 200)}`));
         }
       });
@@ -117,7 +117,7 @@ function saveMessages(agentId, messages) {
   if (fs.existsSync(filePath)) {
     try {
       existing = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    } catch (e) {
+    } catch (_e) {
       existing = [];
     }
   }
@@ -281,7 +281,7 @@ async function cmdListen(agentFilter) {
       console.log(`  ${allMessages.length} mensagens encontradas, ${newCount} novas salvas${page > 1 ? ` (${page} paginas)` : ''}`);
 
       if (allMessages.length > 0) {
-        console.log(`  Ultimas 5 mensagens:`);
+        console.log('  Ultimas 5 mensagens:');
         allMessages.slice(-5).forEach(m => {
           console.log(`    [${formatDate(m.date)}] ${m.from}: ${m.text.slice(0, 80)}`);
         });
@@ -346,7 +346,7 @@ async function cmdReport(agentId) {
     .sort((a, b) => b.count - a.count)
     .slice(0, 10);
 
-  console.log(`\n  Top usuarios mais ativos:`);
+  console.log('\n  Top usuarios mais ativos:');
   topUsers.forEach((u, i) => {
     console.log(`    ${i + 1}. ${u.name} — ${u.count} mensagens`);
   });
@@ -360,7 +360,7 @@ async function cmdReport(agentId) {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 15);
 
-  console.log(`\n  Palavras mais frequentes:`);
+  console.log('\n  Palavras mais frequentes:');
   topWords.forEach(([word, count]) => {
     console.log(`    ${word}: ${count}x`);
   });
@@ -694,20 +694,20 @@ async function cmdAnalyze(agentFilter) {
     const pains = classified.filter(m => m.tags.includes('dor'));
     const engagements = classified.filter(m => m.tags.includes('engajamento'));
 
-    console.log(`\n  CLASSIFICACAO`);
+    console.log('\n  CLASSIFICACAO');
     console.log(`    Duvidas:     ${questions.length} (${(questions.length / messages.length * 100).toFixed(1)}%)`);
     console.log(`    Dores:       ${pains.length} (${(pains.length / messages.length * 100).toFixed(1)}%)`);
     console.log(`    Engajamento: ${engagements.length} (${(engagements.length / messages.length * 100).toFixed(1)}%)`);
 
     // 2. Topics
     const topics = extractTopics(messages);
-    console.log(`\n  TOPICOS MAIS DISCUTIDOS`);
+    console.log('\n  TOPICOS MAIS DISCUTIDOS');
     topics.bigrams.slice(0, 10).forEach(([topic, count]) => {
       console.log(`    ${topic}: ${count}x`);
     });
 
     // 3. Questions
-    console.log(`\n  DUVIDAS RECORRENTES`);
+    console.log('\n  DUVIDAS RECORRENTES');
     // Group similar questions
     const qMap = new Map();
     questions.forEach(q => {
@@ -721,7 +721,7 @@ async function cmdAnalyze(agentFilter) {
     });
 
     // 4. Pains
-    console.log(`\n  DORES DA AUDIENCIA`);
+    console.log('\n  DORES DA AUDIENCIA');
     const pMap = new Map();
     pains.forEach(p => {
       const key = p.text.slice(0, 60).toLowerCase();
@@ -735,7 +735,7 @@ async function cmdAnalyze(agentFilter) {
 
     // 5. Influencers
     const influencers = detectInfluencers(messages);
-    console.log(`\n  INFLUENCIADORES`);
+    console.log('\n  INFLUENCIADORES');
     influencers.slice(0, 5).forEach((u, i) => {
       console.log(`    ${i + 1}. ${u.name} — ${u.count} msgs, score ${u.score.toFixed(1)} [${u.level}]`);
     });
@@ -745,7 +745,7 @@ async function cmdAnalyze(agentFilter) {
     const iniciantes = segments.filter(s => s.segment === 'iniciante');
     const avancados = segments.filter(s => s.segment === 'avancado');
     const intermediarios = segments.filter(s => s.segment === 'intermediario');
-    console.log(`\n  SEGMENTACAO DE USUARIOS`);
+    console.log('\n  SEGMENTACAO DE USUARIOS');
     console.log(`    Iniciantes:     ${iniciantes.length}`);
     console.log(`    Intermediarios: ${intermediarios.length}`);
     console.log(`    Avancados:      ${avancados.length}`);
@@ -753,7 +753,7 @@ async function cmdAnalyze(agentFilter) {
     // 7. Viral topics
     const viral = detectViralTopics(messages);
     if (viral.length > 0) {
-      console.log(`\n  TEMAS VIRAIS DETECTADOS`);
+      console.log('\n  TEMAS VIRAIS DETECTADOS');
       viral.forEach(v => {
         console.log(`    ${v.topic} — ${v.message_count} msgs, velocidade ${v.velocity}x (${v.timestamp})`);
       });
@@ -765,12 +765,12 @@ async function cmdAnalyze(agentFilter) {
       const hour = new Date(m.date * 1000).getHours();
       hourCounts[hour]++;
     });
-    const peakHour = hourCounts.indexOf(Math.max(...hourCounts));
+    const _peakHour = hourCounts.indexOf(Math.max(...hourCounts));
     const top3Hours = hourCounts
       .map((c, h) => ({ hour: h, count: c }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 3);
-    console.log(`\n  HORARIOS DE PICO`);
+    console.log('\n  HORARIOS DE PICO');
     top3Hours.forEach(h => {
       console.log(`    ${h.hour}h: ${h.count} mensagens`);
     });
@@ -788,8 +788,8 @@ async function cmdAnalyze(agentFilter) {
     const suggestions = suggestContent(analysis);
 
     if (suggestions.length > 0) {
-      console.log(`\n  SUGESTOES DE CONTEUDO`);
-      suggestions.forEach((s, i) => {
+      console.log('\n  SUGESTOES DE CONTEUDO');
+      suggestions.forEach((s, _i) => {
         const pIcon = s.priority === 'high' ? '[!!!]' : '[ ! ]';
         console.log(`    ${pIcon} [${s.type}] ${s.suggestion}`);
       });
@@ -850,7 +850,7 @@ function getDbClient() {
   let pg;
   try {
     pg = require('pg');
-  } catch (e) {
+  } catch (_e) {
     console.error('  Modulo "pg" nao encontrado. Execute: npm install pg --no-save');
     return null;
   }
@@ -891,7 +891,7 @@ async function cmdSync(agentFilter) {
               ON CONFLICT (agent_id, chat_id, message_id) DO NOTHING
             `, [id, m.chat_id, m.chat_title, m.message_id, m.from_id, m.from, m.text, m.date]);
             synced++;
-          } catch (e) { /* skip duplicates */ }
+          } catch (_e) { /* skip duplicates */ }
         }
         console.log(`  ${AGENTS[id].name}: ${synced} mensagens sincronizadas`);
       }
@@ -1150,7 +1150,7 @@ async function cmdExport(agentFilter) {
     fs.writeFileSync(filePath, html);
     console.log(`  ${AGENTS[id].name}: Relatorio exportado`);
     console.log(`    Arquivo: ${filePath}`);
-    console.log(`    Para PDF: abra no navegador e use Ctrl+P / Cmd+P`);
+    console.log('    Para PDF: abra no navegador e use Ctrl+P / Cmd+P');
   }
 
   // Generate index file listing all reports
@@ -1228,11 +1228,11 @@ async function cmdSetupNotify() {
 
     ensureDataDir();
     fs.writeFileSync(NOTIFY_CONFIG_PATH, JSON.stringify(config, null, 2));
-    console.log(`  Operador configurado:`);
+    console.log('  Operador configurado:');
     console.log(`    Nome: ${operator.name}`);
     console.log(`    Username: @${operator.username}`);
     console.log(`    Chat ID: ${operator.chat_id}`);
-    console.log(`\n  Notificacoes serao enviadas para este chat.\n`);
+    console.log('\n  Notificacoes serao enviadas para este chat.\n');
   } catch (err) {
     console.log(`  Erro: ${err.message}`);
   }
@@ -1242,7 +1242,7 @@ function getNotifyConfig() {
   if (!fs.existsSync(NOTIFY_CONFIG_PATH)) return null;
   try {
     return JSON.parse(fs.readFileSync(NOTIFY_CONFIG_PATH, 'utf8'));
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 }
@@ -1270,7 +1270,7 @@ async function sendTelegramMessage(token, chatId, text) {
       res.on('data', chunk => { data += chunk; });
       res.on('end', () => {
         try { resolve(JSON.parse(data)); }
-        catch (e) { reject(new Error(`Parse error: ${data.slice(0, 200)}`)); }
+        catch (_e) { reject(new Error(`Parse error: ${data.slice(0, 200)}`)); }
       });
     });
     req.on('error', reject);
@@ -1312,16 +1312,16 @@ async function cmdNotify(agentFilter) {
 
     // Build concise Telegram message
     let msg = `<b>RELATORIO — ${AGENTS[id].name}</b>\n`;
-    msg += `<i>Squad Telegram Intelligence</i>\n\n`;
+    msg += '<i>Squad Telegram Intelligence</i>\n\n';
 
-    msg += `<b>Resumo</b>\n`;
+    msg += '<b>Resumo</b>\n';
     msg += `Mensagens: ${analysis.total_messages}\n`;
     msg += `Duvidas: ${c.duvidas || 0} | Dores: ${c.dores || 0} | Engajamento: ${c.engajamento || 0}\n\n`;
 
     // Top topics
     const topTopics = (analysis.topics?.bigrams || []).slice(0, 5);
     if (topTopics.length > 0) {
-      msg += `<b>Topicos</b>\n`;
+      msg += '<b>Topicos</b>\n';
       topTopics.forEach(t => { msg += `• ${t.topic} (${t.count}x)\n`; });
       msg += '\n';
     }
@@ -1329,7 +1329,7 @@ async function cmdNotify(agentFilter) {
     // Top questions
     const topQ = (analysis.top_questions || []).slice(0, 3);
     if (topQ.length > 0) {
-      msg += `<b>Duvidas</b>\n`;
+      msg += '<b>Duvidas</b>\n';
       topQ.forEach(q => { msg += `• ${q.text.slice(0, 80)}\n`; });
       msg += '\n';
     }
@@ -1337,19 +1337,19 @@ async function cmdNotify(agentFilter) {
     // Top pains
     const topP = (analysis.top_pains || []).slice(0, 3);
     if (topP.length > 0) {
-      msg += `<b>Dores</b>\n`;
+      msg += '<b>Dores</b>\n';
       topP.forEach(p => { msg += `• ${p.text.slice(0, 80)}\n`; });
       msg += '\n';
     }
 
     // Segments
-    msg += `<b>Segmentacao</b>\n`;
+    msg += '<b>Segmentacao</b>\n';
     msg += `Iniciantes: ${segs.iniciantes || 0} | Intermediarios: ${segs.intermediarios || 0} | Avancados: ${segs.avancados || 0}\n\n`;
 
     // Suggestions
     const sug = (analysis.content_suggestions || []).slice(0, 3);
     if (sug.length > 0) {
-      msg += `<b>Sugestoes</b>\n`;
+      msg += '<b>Sugestoes</b>\n';
       sug.forEach(s => { msg += `• [${s.priority}] ${s.suggestion.slice(0, 80)}\n`; });
       msg += '\n';
     }
@@ -1384,7 +1384,7 @@ async function cmdPipeline() {
   const start = Date.now();
   const timestamp = new Date().toLocaleString('pt-BR');
 
-  console.log(`\n  PIPELINE AUTOMATICO — Squad Telegram Intelligence`);
+  console.log('\n  PIPELINE AUTOMATICO — Squad Telegram Intelligence');
   console.log(`  ${timestamp}`);
   console.log('  ================================================\n');
 
@@ -1502,10 +1502,10 @@ function cmdCronInstall() {
   const { execSync } = require('child_process');
   try {
     execSync(`launchctl unload "${PLIST_PATH}" 2>/dev/null`, { stdio: 'ignore' });
-  } catch (e) { /* ignore if not loaded */ }
+  } catch (_e) { /* ignore if not loaded */ }
   execSync(`launchctl load "${PLIST_PATH}"`);
 
-  console.log(`\n  AGENDAMENTO INSTALADO`);
+  console.log('\n  AGENDAMENTO INSTALADO');
   console.log('  ---------------------');
   console.log('  Frequencia: Diariamente as 08:00 e 20:00');
   console.log('  Pipeline:   listen all > analyze all > export all > notify all');
@@ -1525,7 +1525,7 @@ function cmdCronRemove() {
   const { execSync } = require('child_process');
   try {
     execSync(`launchctl unload "${PLIST_PATH}"`, { stdio: 'ignore' });
-  } catch (e) { /* ignore */ }
+  } catch (_e) { /* ignore */ }
   fs.unlinkSync(PLIST_PATH);
 
   console.log('\n  AGENDAMENTO REMOVIDO');
@@ -1556,7 +1556,7 @@ function cmdCronStatus() {
     } else {
       console.log('  launchd: INATIVO (mac reiniciou? execute cron-install)');
     }
-  } catch (e) {
+  } catch (_e) {
     console.log('  launchd: INATIVO');
   }
 
@@ -1601,8 +1601,8 @@ function cmdImport(filePath, agentId) {
   }
 
   if (!agentId || !AGENTS[agentId]) {
-    console.log(`  Erro: agente invalido ou nao informado.`);
-    console.log(`  Uso: node bin/telegram-monitor.js import <result.json> <agent>`);
+    console.log('  Erro: agente invalido ou nao informado.');
+    console.log('  Uso: node bin/telegram-monitor.js import <result.json> <agent>');
     console.log(`  Agentes: ${Object.keys(AGENTS).join(', ')}`);
     return;
   }
@@ -1647,7 +1647,7 @@ function cmdImport(filePath, agentId) {
 
   // Filter only text messages (type === 'message', skip service messages)
   const textMessages = rawMessages.filter(m =>
-    m.type === 'message' && m.text && m.text !== ''
+    m.type === 'message' && m.text && m.text !== '',
   );
 
   console.log(`  Total de registros no arquivo: ${rawMessages.length}`);
@@ -1661,7 +1661,7 @@ function cmdImport(filePath, agentId) {
       text = m.text;
     } else if (Array.isArray(m.text)) {
       text = m.text.map(part =>
-        typeof part === 'string' ? part : (part.text || '')
+        typeof part === 'string' ? part : (part.text || ''),
       ).join('');
     }
 
@@ -1702,7 +1702,7 @@ function cmdImport(filePath, agentId) {
   const firstDate = dates.length > 0 ? formatDate(dates[0]) : 'N/A';
   const lastDate = dates.length > 0 ? formatDate(dates[dates.length - 1]) : 'N/A';
 
-  console.log(`\n  Resultado:`);
+  console.log('\n  Resultado:');
   console.log(`    Convertidas: ${converted.length}`);
   console.log(`    Novas (nao duplicadas): ${newCount}`);
   console.log(`    Periodo: ${firstDate} a ${lastDate}`);

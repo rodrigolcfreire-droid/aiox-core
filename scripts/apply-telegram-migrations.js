@@ -8,7 +8,6 @@
  * Alternativa: instalar psql (brew install postgresql@16)
  */
 
-const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
@@ -42,7 +41,7 @@ const config = {
 let pg;
 try {
   pg = require('pg');
-} catch (e) {
+} catch (_e) {
   console.log('Modulo "pg" nao encontrado. Instalando...');
   const { execSync } = require('child_process');
   execSync('npm install pg --no-save', { stdio: 'inherit', cwd: path.resolve(__dirname, '..') });
@@ -78,7 +77,7 @@ async function main() {
       console.log(`  Executando: ${file}`);
       try {
         await client.query(sql);
-        console.log(`  OK\n`);
+        console.log('  OK\n');
       } catch (err) {
         console.error(`  ERRO: ${err.message}\n`);
       }

@@ -77,7 +77,7 @@ function createPgClient(target) {
   if (!connectionString) {
     throw new Error(
       `Database connection not configured for target '${target}'. ` +
-      `Set ${target === 'local' ? 'SUPABASE_LOCAL_DB_URL' : 'SUPABASE_DB_URL'} in .env`
+      `Set ${target === 'local' ? 'SUPABASE_LOCAL_DB_URL' : 'SUPABASE_DB_URL'} in .env`,
     );
   }
 

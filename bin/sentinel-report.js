@@ -111,9 +111,9 @@ function collectActivity() {
   const commitDetails = run('git log --since="24 hours ago" --all --format="%h|%s|%an|%ar"');
   const detailedCommits = commitDetails
     ? commitDetails.split('\n').filter(Boolean).map(line => {
-        const [hash, message, author, when] = line.split('|');
-        return { hash, message, author, when };
-      })
+      const [hash, message, author, when] = line.split('|');
+      return { hash, message, author, when };
+    })
     : [];
 
   // Categorize file changes
@@ -123,7 +123,7 @@ function collectActivity() {
   const scriptChanges = modifiedFiles.filter(l => l.includes('bin/') || l.includes('scripts/'));
   const storyChanges = modifiedFiles.filter(l => l.includes('stories/'));
   const configChanges = modifiedFiles.filter(l =>
-    l.includes('.yaml') || l.includes('.json') || l.includes('config') || l.includes('.env')
+    l.includes('.yaml') || l.includes('.json') || l.includes('config') || l.includes('.env'),
   );
 
   return {
@@ -614,11 +614,11 @@ function exportToDashboard(report, historyData) {
 
   fs.writeFileSync(
     path.join(DASHBOARD_DATA_DIR, 'sentinel-report.json'),
-    JSON.stringify(report, null, 2)
+    JSON.stringify(report, null, 2),
   );
   fs.writeFileSync(
     path.join(DASHBOARD_DATA_DIR, 'sentinel-history.json'),
-    JSON.stringify(historyData, null, 2)
+    JSON.stringify(historyData, null, 2),
   );
 
   console.log(`  Dashboard data exported to ${path.relative(ROOT, DASHBOARD_DATA_DIR)}/`);

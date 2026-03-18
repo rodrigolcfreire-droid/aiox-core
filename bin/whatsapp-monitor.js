@@ -49,7 +49,7 @@ function loadEnv() {
         env[trimmed.slice(0, eqIdx)] = trimmed.slice(eqIdx + 1);
       }
     });
-  } catch (err) {
+  } catch (_err) {
     // .env optional for whatsapp
   }
   return env;
@@ -59,7 +59,7 @@ function getGroupsConfig() {
   if (!fs.existsSync(GROUPS_CONFIG_PATH)) return {};
   try {
     return JSON.parse(fs.readFileSync(GROUPS_CONFIG_PATH, 'utf8'));
-  } catch (e) {
+  } catch (_e) {
     return {};
   }
 }
@@ -84,7 +84,7 @@ function saveMessages(groupSlug, messages) {
   if (fs.existsSync(filePath)) {
     try {
       existing = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    } catch (e) {
+    } catch (_e) {
       existing = [];
     }
   }
@@ -437,7 +437,7 @@ async function cmdStatus() {
         try {
           const msgs = JSON.parse(fs.readFileSync(path.join(DATA_DIR, f), 'utf8'));
           totalMsgs += msgs.length;
-        } catch (e) { /* ignore */ }
+        } catch (_e) { /* ignore */ }
       });
       console.log(`  Mensagens coletadas: ${totalMsgs}`);
       console.log('');
@@ -488,7 +488,7 @@ async function cmdGroups() {
     if (fs.existsSync(msgPath)) {
       try {
         msgCount = JSON.parse(fs.readFileSync(msgPath, 'utf8')).length;
-      } catch (e) { /* ignore */ }
+      } catch (_e) { /* ignore */ }
     }
     console.log(`  ${(i + 1 + '.').padEnd(4)} ${g.name}`);
     console.log(`       Slug: ${slug} | Mensagens: ${msgCount}`);
@@ -615,14 +615,14 @@ async function cmdAnalyze(groupFilter) {
     const pains = classified.filter(m => m.tags.includes('dor'));
     const engagements = classified.filter(m => m.tags.includes('engajamento'));
 
-    console.log(`\n  CLASSIFICACAO`);
+    console.log('\n  CLASSIFICACAO');
     console.log(`    Duvidas:     ${questions.length} (${(questions.length / messages.length * 100).toFixed(1)}%)`);
     console.log(`    Dores:       ${pains.length} (${(pains.length / messages.length * 100).toFixed(1)}%)`);
     console.log(`    Engajamento: ${engagements.length} (${(engagements.length / messages.length * 100).toFixed(1)}%)`);
 
     // 2. Topics
     const topics = extractTopics(messages);
-    console.log(`\n  TOPICOS MAIS DISCUTIDOS`);
+    console.log('\n  TOPICOS MAIS DISCUTIDOS');
     topics.bigrams.slice(0, 10).forEach(([topic, count]) => {
       console.log(`    ${topic}: ${count}x`);
     });
@@ -635,7 +635,7 @@ async function cmdAnalyze(groupFilter) {
       qMap.get(key).count++;
     });
     const topQ = [...qMap.values()].sort((a, b) => b.count - a.count).slice(0, 8);
-    console.log(`\n  DUVIDAS RECORRENTES`);
+    console.log('\n  DUVIDAS RECORRENTES');
     topQ.forEach(q => { console.log(`    [${q.count}x] ${q.text.slice(0, 100)}`); });
 
     // 4. Pains
@@ -646,12 +646,12 @@ async function cmdAnalyze(groupFilter) {
       pMap.get(key).count++;
     });
     const topP = [...pMap.values()].sort((a, b) => b.count - a.count).slice(0, 8);
-    console.log(`\n  DORES DA AUDIENCIA`);
+    console.log('\n  DORES DA AUDIENCIA');
     topP.forEach(p => { console.log(`    [${p.count}x] ${p.text.slice(0, 100)}`); });
 
     // 5. Influencers
     const influencers = detectInfluencers(messages);
-    console.log(`\n  INFLUENCIADORES`);
+    console.log('\n  INFLUENCIADORES');
     influencers.slice(0, 5).forEach((u, i) => {
       console.log(`    ${i + 1}. ${u.name} — ${u.count} msgs, score ${u.score.toFixed(1)} [${u.level}]`);
     });
@@ -661,7 +661,7 @@ async function cmdAnalyze(groupFilter) {
     const iniciantes = segments.filter(s => s.segment === 'iniciante');
     const avancados = segments.filter(s => s.segment === 'avancado');
     const intermediarios = segments.filter(s => s.segment === 'intermediario');
-    console.log(`\n  SEGMENTACAO DE USUARIOS`);
+    console.log('\n  SEGMENTACAO DE USUARIOS');
     console.log(`    Iniciantes:     ${iniciantes.length}`);
     console.log(`    Intermediarios: ${intermediarios.length}`);
     console.log(`    Avancados:      ${avancados.length}`);
@@ -669,7 +669,7 @@ async function cmdAnalyze(groupFilter) {
     // 7. Viral topics
     const viral = detectViralTopics(messages);
     if (viral.length > 0) {
-      console.log(`\n  TEMAS VIRAIS DETECTADOS`);
+      console.log('\n  TEMAS VIRAIS DETECTADOS');
       viral.forEach(v => {
         console.log(`    ${v.topic} — ${v.message_count} msgs, velocidade ${v.velocity}x`);
       });
@@ -680,7 +680,7 @@ async function cmdAnalyze(groupFilter) {
     messages.forEach(m => { hourCounts[new Date(m.date * 1000).getHours()]++; });
     const top3Hours = hourCounts.map((c, h) => ({ hour: h, count: c }))
       .sort((a, b) => b.count - a.count).slice(0, 3);
-    console.log(`\n  HORARIOS DE PICO`);
+    console.log('\n  HORARIOS DE PICO');
     top3Hours.forEach(h => { console.log(`    ${h.hour}h: ${h.count} mensagens`); });
 
     // 9. Suggestions
@@ -693,7 +693,7 @@ async function cmdAnalyze(groupFilter) {
     const suggestions = suggestContent(analysis);
 
     if (suggestions.length > 0) {
-      console.log(`\n  SUGESTOES DE CONTEUDO`);
+      console.log('\n  SUGESTOES DE CONTEUDO');
       suggestions.forEach(s => {
         const pIcon = s.priority === 'high' ? '[!!!]' : '[ ! ]';
         console.log(`    ${pIcon} [${s.type}] ${s.suggestion}`);
@@ -846,7 +846,7 @@ function getNotifyConfig() {
   if (!fs.existsSync(NOTIFY_CONFIG_PATH)) return null;
   try {
     return JSON.parse(fs.readFileSync(NOTIFY_CONFIG_PATH, 'utf8'));
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 }
@@ -865,7 +865,7 @@ async function sendTelegramMessage(token, chatId, text) {
       res.on('data', chunk => { data += chunk; });
       res.on('end', () => {
         try { resolve(JSON.parse(data)); }
-        catch (e) { reject(new Error(`Parse error: ${data.slice(0, 200)}`)); }
+        catch (_e) { reject(new Error(`Parse error: ${data.slice(0, 200)}`)); }
       });
     });
     req.on('error', reject);
@@ -916,27 +916,27 @@ async function cmdNotify(groupFilter) {
     const segs = analysis.segments || {};
 
     let msg = `<b>WHATSAPP — ${groupConfig.name}</b>\n`;
-    msg += `<i>Squad WhatsApp Intelligence</i>\n\n`;
+    msg += '<i>Squad WhatsApp Intelligence</i>\n\n';
 
-    msg += `<b>Resumo</b>\n`;
+    msg += '<b>Resumo</b>\n';
     msg += `Mensagens: ${analysis.total_messages}\n`;
     msg += `Duvidas: ${c.duvidas || 0} | Dores: ${c.dores || 0} | Engajamento: ${c.engajamento || 0}\n\n`;
 
     const topTopics = (analysis.topics?.bigrams || []).slice(0, 5);
     if (topTopics.length > 0) {
-      msg += `<b>Topicos</b>\n`;
+      msg += '<b>Topicos</b>\n';
       topTopics.forEach(t => { msg += `- ${t.topic} (${t.count}x)\n`; });
       msg += '\n';
     }
 
     const topQ = (analysis.top_questions || []).slice(0, 3);
     if (topQ.length > 0) {
-      msg += `<b>Duvidas</b>\n`;
+      msg += '<b>Duvidas</b>\n';
       topQ.forEach(q => { msg += `- ${q.text.slice(0, 80)}\n`; });
       msg += '\n';
     }
 
-    msg += `<b>Segmentacao</b>\n`;
+    msg += '<b>Segmentacao</b>\n';
     msg += `Iniciantes: ${segs.iniciantes || 0} | Intermediarios: ${segs.intermediarios || 0} | Avancados: ${segs.avancados || 0}\n\n`;
 
     msg += `<i>Gerado: ${new Date().toLocaleString('pt-BR')}</i>`;
@@ -952,7 +952,7 @@ async function cmdNotify(groupFilter) {
     try {
       const result = await sendTelegramMessage(token, notifyConfig.chat_id, msg);
       if (result.ok) {
-        console.log(`  Enviado com sucesso.`);
+        console.log('  Enviado com sucesso.');
       } else {
         console.log(`  Erro: ${result.description || 'Unknown'}`);
       }
@@ -969,7 +969,7 @@ async function cmdPipeline() {
   const start = Date.now();
   const timestamp = new Date().toLocaleString('pt-BR');
 
-  console.log(`\n  PIPELINE AUTOMATICO — Squad WhatsApp Intelligence`);
+  console.log('\n  PIPELINE AUTOMATICO — Squad WhatsApp Intelligence');
   console.log(`  ${timestamp}`);
   console.log('  ================================================\n');
 

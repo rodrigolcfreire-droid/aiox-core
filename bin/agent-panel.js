@@ -369,14 +369,14 @@ function printAgentDetail(agent) {
   console.log(`  Squads: ${agent.squads.length > 0 ? agent.squads.join(', ') : 'nenhum'}`);
   console.log(`  When to use: ${agent.when_to_use || 'N/A'}`);
 
-  console.log(`\n  MEMORIA`);
+  console.log('\n  MEMORIA');
   if (agent.memory.exists) {
     console.log(`  ${agent.memory.lines} linhas | ${agent.memory.age_days}d atras`);
   } else {
     console.log('  Sem MEMORY.md');
   }
 
-  console.log(`\n  ATIVIDADE`);
+  console.log('\n  ATIVIDADE');
   console.log(`  Commits 30d: ${agent.activity.commits_30d}`);
   if (agent.recent_commits?.length > 0) {
     for (const c of agent.recent_commits.slice(0, 5)) {
@@ -413,7 +413,7 @@ function exportToDashboard(data) {
 
   fs.writeFileSync(
     path.join(DASHBOARD_DATA_DIR, 'agent-panel.json'),
-    JSON.stringify(data, null, 2)
+    JSON.stringify(data, null, 2),
   );
   console.log(`  Dashboard data exported to ${path.relative(ROOT, DASHBOARD_DATA_DIR)}/agent-panel.json`);
 }
@@ -430,7 +430,7 @@ function main() {
         }
         fs.writeFileSync(
           path.join(DASHBOARD_DATA_DIR, `agent-detail-${agent}.json`),
-          JSON.stringify(detail, null, 2)
+          JSON.stringify(detail, null, 2),
         );
         console.log(`  Agent detail exported to agent-detail-${agent}.json`);
       }
@@ -450,7 +450,7 @@ function main() {
       const detail = collectAgentDetail(a.id);
       fs.writeFileSync(
         path.join(DASHBOARD_DATA_DIR, `agent-detail-${a.id}.json`),
-        JSON.stringify(detail, null, 2)
+        JSON.stringify(detail, null, 2),
       );
     }
     console.log(`  ${data.agents.length} agent details exported`);
