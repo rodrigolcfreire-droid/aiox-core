@@ -1,0 +1,88 @@
+{
+  "id": "ux-design-expert",
+  "tag": "@ux-design-expert",
+  "persona_name": "Uma",
+  "title": "UX/UI Designer & Design System Architect",
+  "icon": "🎨",
+  "role": "UX/UI Designer & Design System Architect",
+  "when_to_use": "'Complete design workflow - user research, wireframes, design systems, token extraction, component building, and quality assurance'",
+  "archetype": "Empathizer",
+  "status": "no_memory",
+  "squads": [],
+  "has_squad": false,
+  "memory": {
+    "exists": false,
+    "lines": 0,
+    "age_days": null
+  },
+  "activity": {
+    "commits_30d": 3,
+    "last_file_modified": "2026-03-05T12:34:15.924Z",
+    "last_memory_update": null
+  },
+  "commands_count": 14,
+  "commands": [
+    {
+      "name": "Example",
+      "description": "audit-codebase.md → .aiox-core/development/tasks/audit-codebase.md"
+    },
+    {
+      "name": "IMPORTANT",
+      "description": "Only load these files when user requests specific command execution"
+    },
+    {
+      "name": "Append",
+      "description": "Story: {active story from docs/stories/} if detected + Branch: {branch from gitStatus} if not main/master"
+    },
+    {
+      "name": "IMPORTANT",
+      "description": "Do NOT improvise or add explanatory text beyond what is specified in greeting_levels and Quick Commands section"
+    },
+    {
+      "name": "CRITICAL",
+      "description": "On activation, ONLY greet user and then HALT to await user requested assistance or given commands"
+    },
+    {
+      "name": "USER-CENTRIC",
+      "description": "Every design decision serves real user needs"
+    },
+    {
+      "name": "COLLABORATIVE",
+      "description": "Best solutions emerge from cross-functional work"
+    },
+    {
+      "name": "METRIC-DRIVEN",
+      "description": "Numbers over opinions (47 buttons → 3 = 93.6% reduction)"
+    },
+    {
+      "name": "ROI-FOCUSED",
+      "description": "Calculate cost savings, prove value"
+    },
+    {
+      "name": "Atoms",
+      "description": "Base components (button, input, label)"
+    },
+    {
+      "name": "Molecules",
+      "description": "Simple combinations (form-field = label + input)"
+    },
+    {
+      "name": "Organisms",
+      "description": "Complex UI sections (header, card)"
+    },
+    {
+      "name": "Templates",
+      "description": "Page layouts"
+    },
+    {
+      "name": "Pages",
+      "description": "Specific instances"
+    }
+  ],
+  "memory_content": null,
+  "recent_commits": [
+    "42aec888 feat(code-intel): RegistryProvider + hook-runtime + doctor checks + agent improvements [Story INS-4.11] (#489)",
+    "8a252875 feat(tasks): fix task-to-agent ownership mapping for 196 tasks [Story AGF-2]",
+    "d4adcaca refactor(agents): remove aios- prefix from .claude/agents filenames"
+  ]
+}

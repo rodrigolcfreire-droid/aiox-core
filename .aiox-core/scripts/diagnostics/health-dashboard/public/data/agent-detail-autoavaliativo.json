@@ -1,0 +1,464 @@
+{
+  "id": "autoavaliativo",
+  "tag": "@autoavaliativo",
+  "persona_name": "Sentinel",
+  "title": "AIOS Autoavaliativo",
+  "icon": "🔍",
+  "role": "System Governance Analyst & Strategic Architecture Advisor",
+  "when_to_use": "|",
+  "archetype": "Sentinel",
+  "status": "active",
+  "squads": [],
+  "has_squad": false,
+  "memory": {
+    "exists": true,
+    "lines": 13,
+    "age_days": 0
+  },
+  "activity": {
+    "commits_30d": 0,
+    "last_file_modified": "2026-03-14T05:35:20.210Z",
+    "last_memory_update": "2026-03-14T03:40:31.125Z"
+  },
+  "commands_count": 15,
+  "commands": [
+    {
+      "name": "IMPORTANT",
+      "description": "Only load these files when user requests specific command execution"
+    },
+    {
+      "name": "Append",
+      "description": "Branch: {branch from gitStatus} if not main/master"
+    },
+    {
+      "name": "IMPORTANT",
+      "description": "Do NOT improvise or add explanatory text beyond what is specified"
+    },
+    {
+      "name": "CRITICAL",
+      "description": "On activation, ONLY greet user and then HALT to await user requested assistance or given commands."
+    },
+    {
+      "name": "new_agent_created",
+      "description": "Evaluate impact on system structure"
+    },
+    {
+      "name": "new_squad_created",
+      "description": "Verify organization and integration with existing squads"
+    },
+    {
+      "name": "automation_changed",
+      "description": "Analyze if workflow remains efficient"
+    },
+    {
+      "name": "database_growth",
+      "description": "Verify organization and structure"
+    },
+    {
+      "name": "new_integration",
+      "description": "Assess impact on architecture"
+    },
+    {
+      "name": "event",
+      "description": "new_day"
+    },
+    {
+      "name": "event",
+      "description": "new_agent_created"
+    },
+    {
+      "name": "event",
+      "description": "new_squad_created"
+    },
+    {
+      "name": "event",
+      "description": "automation_changed"
+    },
+    {
+      "name": "event",
+      "description": "database_change"
+    },
+    {
+      "name": "event",
+      "description": "report_generated"
+    }
+  ],
+  "memory_content": "# Sentinel (autoavaliativo) — Agent Memory\n\n## Agent Identity\n- **Name:** Sentinel\n- **Role:** System Governance Analyst & Strategic Architecture Advisor\n- **Level:** Governance (above operational squads)\n- **Created:** 2026-03-14\n\n## Key Constraints\n- READ-ONLY: Never executes changes directly\n- All suggestions require operator (Rodrigo) confirmation\n- Always follows the suggestion format: Diagnostico > Impacto > Sugestao > Pergunta ao operador\n",
+  "recent_commits": [],
+  "sentinel": {
+    "reports": [
+      {
+        "file": "2026-03-14-sentinel-1773467020121.json",
+        "date": "2026-03-14",
+        "timestamp": "2026-03-14T05:43:40.122Z",
+        "summary": {
+          "agents": 13,
+          "squads": 2,
+          "skills": 13,
+          "stories": 13,
+          "alerts_high": 1,
+          "alerts_warning": 4,
+          "alerts_info": 1,
+          "pending_stories": 11,
+          "uncommitted_files": 37
+        },
+        "alerts": [
+          {
+            "severity": "HIGH",
+            "message": "SUPABASE_SERVICE_KEY nao configurada"
+          },
+          {
+            "severity": "WARNING",
+            "message": "3 agentes sem MEMORY.md: aiox-master, squad-creator, ux-design-expert"
+          },
+          {
+            "severity": "INFO",
+            "message": "9 agentes com memoria > 7 dias: analyst, architect, data-engineer, dev, devops, pm, po, qa, sm"
+          },
+          {
+            "severity": "WARNING",
+            "message": "13 arquivos untracked"
+          },
+          {
+            "severity": "WARNING",
+            "message": "5 scripts de hardening pendentes: db-check-consistency.js, db-benchmark.js, db-backup.js, db-restore.js, db-weekly-report.js"
+          },
+          {
+            "severity": "WARNING",
+            "message": "37 arquivos modificados sem commit"
+          }
+        ],
+        "pendencies": [
+          {
+            "story": "2026-03-05-uxgroup-agent-replacement.md",
+            "status": "unknown",
+            "progress": "15/15",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-05-uxgroup-constitutions-sync.md",
+            "status": "unknown",
+            "progress": "15/15",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-create-squad-espiao.md",
+            "status": "unknown",
+            "progress": "11/11",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-uxgroup-continuous-improvement-policy.md",
+            "status": "unknown",
+            "progress": "13/13",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-uxgroup-cycle-002-cashback-roleta.md",
+            "status": "unknown",
+            "progress": "13/13",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-uxgroup-first-real-cycle.md",
+            "status": "unknown",
+            "progress": "14/14",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-uxgroup-operational-base-mvp.md",
+            "status": "unknown",
+            "progress": "31/31",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-uxgroup-scope-split-formatting-final.md",
+            "status": "unknown",
+            "progress": "7/7",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-07-create-persona-squad-and-ux-cross.md",
+            "status": "unknown",
+            "progress": "25/25",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-08-documentacao-tecnica-agentes-pipeline.md",
+            "status": "unknown",
+            "progress": "9/9",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-14-database-phase5-hardening.md",
+            "status": "Ready",
+            "progress": "0/59",
+            "unchecked": 59
+          },
+          {
+            "type": "missing_scripts",
+            "items": [
+              "db-check-consistency.js",
+              "db-benchmark.js",
+              "db-backup.js",
+              "db-restore.js",
+              "db-weekly-report.js"
+            ]
+          },
+          {
+            "type": "missing_credential",
+            "item": "SUPABASE_SERVICE_KEY"
+          }
+        ]
+      },
+      {
+        "file": "2026-03-14-sentinel-1773466534666.json",
+        "date": "2026-03-14",
+        "timestamp": "2026-03-14T05:35:34.666Z",
+        "summary": {
+          "agents": 13,
+          "squads": 2,
+          "skills": 13,
+          "stories": 13,
+          "alerts_high": 1,
+          "alerts_warning": 4,
+          "alerts_info": 1,
+          "pending_stories": 11,
+          "uncommitted_files": 33
+        },
+        "alerts": [
+          {
+            "severity": "HIGH",
+            "message": "SUPABASE_SERVICE_KEY nao configurada"
+          },
+          {
+            "severity": "WARNING",
+            "message": "3 agentes sem MEMORY.md: aiox-master, squad-creator, ux-design-expert"
+          },
+          {
+            "severity": "INFO",
+            "message": "9 agentes com memoria > 7 dias: analyst, architect, data-engineer, dev, devops, pm, po, qa, sm"
+          },
+          {
+            "severity": "WARNING",
+            "message": "12 arquivos untracked"
+          },
+          {
+            "severity": "WARNING",
+            "message": "5 scripts de hardening pendentes: db-check-consistency.js, db-benchmark.js, db-backup.js, db-restore.js, db-weekly-report.js"
+          },
+          {
+            "severity": "WARNING",
+            "message": "33 arquivos modificados sem commit"
+          }
+        ],
+        "pendencies": [
+          {
+            "story": "2026-03-05-uxgroup-agent-replacement.md",
+            "status": "unknown",
+            "progress": "15/15",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-05-uxgroup-constitutions-sync.md",
+            "status": "unknown",
+            "progress": "15/15",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-create-squad-espiao.md",
+            "status": "unknown",
+            "progress": "11/11",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-uxgroup-continuous-improvement-policy.md",
+            "status": "unknown",
+            "progress": "13/13",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-uxgroup-cycle-002-cashback-roleta.md",
+            "status": "unknown",
+            "progress": "13/13",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-uxgroup-first-real-cycle.md",
+            "status": "unknown",
+            "progress": "14/14",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-uxgroup-operational-base-mvp.md",
+            "status": "unknown",
+            "progress": "31/31",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-uxgroup-scope-split-formatting-final.md",
+            "status": "unknown",
+            "progress": "7/7",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-07-create-persona-squad-and-ux-cross.md",
+            "status": "unknown",
+            "progress": "25/25",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-08-documentacao-tecnica-agentes-pipeline.md",
+            "status": "unknown",
+            "progress": "9/9",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-14-database-phase5-hardening.md",
+            "status": "Ready",
+            "progress": "0/59",
+            "unchecked": 59
+          },
+          {
+            "type": "missing_scripts",
+            "items": [
+              "db-check-consistency.js",
+              "db-benchmark.js",
+              "db-backup.js",
+              "db-restore.js",
+              "db-weekly-report.js"
+            ]
+          },
+          {
+            "type": "missing_credential",
+            "item": "SUPABASE_SERVICE_KEY"
+          }
+        ]
+      },
+      {
+        "file": "2026-03-14-sentinel-1773466308663.json",
+        "date": "2026-03-14",
+        "timestamp": "2026-03-14T05:31:48.663Z",
+        "summary": {
+          "agents": 13,
+          "squads": 2,
+          "skills": 13,
+          "stories": 13,
+          "alerts_high": 1,
+          "alerts_warning": 4,
+          "alerts_info": 1,
+          "pending_stories": 11,
+          "uncommitted_files": 33
+        },
+        "alerts": [
+          {
+            "severity": "HIGH",
+            "message": "SUPABASE_SERVICE_KEY nao configurada"
+          },
+          {
+            "severity": "WARNING",
+            "message": "3 agentes sem MEMORY.md: aiox-master, squad-creator, ux-design-expert"
+          },
+          {
+            "severity": "INFO",
+            "message": "9 agentes com memoria > 7 dias: analyst, architect, data-engineer, dev, devops, pm, po, qa, sm"
+          },
+          {
+            "severity": "WARNING",
+            "message": "12 arquivos untracked"
+          },
+          {
+            "severity": "WARNING",
+            "message": "5 scripts de hardening pendentes: db-check-consistency.js, db-benchmark.js, db-backup.js, db-restore.js, db-weekly-report.js"
+          },
+          {
+            "severity": "WARNING",
+            "message": "33 arquivos modificados sem commit"
+          }
+        ],
+        "pendencies": [
+          {
+            "story": "2026-03-05-uxgroup-agent-replacement.md",
+            "status": "unknown",
+            "progress": "15/15",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-05-uxgroup-constitutions-sync.md",
+            "status": "unknown",
+            "progress": "15/15",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-create-squad-espiao.md",
+            "status": "unknown",
+            "progress": "11/11",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-uxgroup-continuous-improvement-policy.md",
+            "status": "unknown",
+            "progress": "13/13",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-uxgroup-cycle-002-cashback-roleta.md",
+            "status": "unknown",
+            "progress": "13/13",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-uxgroup-first-real-cycle.md",
+            "status": "unknown",
+            "progress": "14/14",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-uxgroup-operational-base-mvp.md",
+            "status": "unknown",
+            "progress": "31/31",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-06-uxgroup-scope-split-formatting-final.md",
+            "status": "unknown",
+            "progress": "7/7",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-07-create-persona-squad-and-ux-cross.md",
+            "status": "unknown",
+            "progress": "25/25",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-08-documentacao-tecnica-agentes-pipeline.md",
+            "status": "unknown",
+            "progress": "9/9",
+            "unchecked": 0
+          },
+          {
+            "story": "2026-03-14-database-phase5-hardening.md",
+            "status": "Ready",
+            "progress": "0/59",
+            "unchecked": 59
+          },
+          {
+            "type": "missing_scripts",
+            "items": [
+              "db-check-consistency.js",
+              "db-benchmark.js",
+              "db-backup.js",
+              "db-restore.js",
+              "db-weekly-report.js"
+            ]
+          },
+          {
+            "type": "missing_credential",
+            "item": "SUPABASE_SERVICE_KEY"
+          }
+        ]
+      }
+    ]
+  }
+}

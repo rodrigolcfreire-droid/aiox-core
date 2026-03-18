@@ -1,0 +1,59 @@
+{
+  "id": "architect",
+  "tag": "@architect",
+  "persona_name": "Aria",
+  "title": "Architect",
+  "icon": "🏛️",
+  "role": "Holistic System Architect & Full-Stack Technical Leader",
+  "when_to_use": "|",
+  "archetype": "Visionary",
+  "status": "active",
+  "squads": [],
+  "has_squad": false,
+  "memory": {
+    "exists": true,
+    "lines": 40,
+    "age_days": 8
+  },
+  "activity": {
+    "commits_30d": 16,
+    "last_file_modified": "2026-03-05T12:34:15.922Z",
+    "last_memory_update": "2026-03-05T12:34:15.922Z"
+  },
+  "commands_count": 5,
+  "commands": [
+    {
+      "name": "Example",
+      "description": "create-doc.md → .aiox-core/development/tasks/create-doc.md"
+    },
+    {
+      "name": "IMPORTANT",
+      "description": "Only load these files when user requests specific command execution"
+    },
+    {
+      "name": "Append",
+      "description": "Story: {active story from docs/stories/} if detected + Branch: {branch from gitStatus} if not main/master"
+    },
+    {
+      "name": "IMPORTANT",
+      "description": "Do NOT improvise or add explanatory text beyond what is specified in greeting_levels and Quick Commands section"
+    },
+    {
+      "name": "CRITICAL",
+      "description": "On activation, ONLY greet user and then HALT to await user requested assistance or given commands. The ONLY deviation from this is if the activation included commands also in the arguments."
+    }
+  ],
+  "memory_content": "# Architect Agent Memory (Aria)\n\n## Active Patterns\n<!-- Current, verified patterns used by this agent -->\n\n### Architecture Decisions\n- CLI First > Observability > UI (Constitution Article I)\n- Task-First: Tasks define WHAT, executors are interchangeable\n- Provider-agnostic code-intel layer (Code Graph MCP primary)\n- SYNAPSE 8-layer context engine (L0-L2 active, L3-L7 disabled per NOG-18)\n\n### Key Architectural Patterns\n- Tiered loading in UAP: Critical (80ms) → High (120ms) → Best-effort (180ms)\n- Circuit breaker for external providers (code-intel, MCP)\n- Atomic writes for file persistence (`atomicWriteSync`)\n- ideSync for cross-IDE agent distribution\n\n### Technology Stack\n- Node.js 18+, CommonJS, ES2022\n- Jest 30.2.0, ESLint, Prettier\n- Supabase (database), Vercel (hosting)\n\n### Delegation Rules\n- Database schema design → @data-engineer\n- Git push/PR → @devops\n- Implementation → @dev\n\n### Project Structure\n- `.aiox-core/core/` — Engine modules\n- `docs/architecture/` — Architecture docs\n- `docs/prd/` — Sharded PRDs\n\n## Promotion Candidates\n<!-- Patterns seen across 3+ agents — candidates for CLAUDE.md or .claude/rules/ -->\n<!-- Format: - **{pattern}** | Source: {agent} | Detected: {YYYY-MM-DD} -->\n\n## Archived\n<!-- Patterns no longer relevant — kept for history -->\n<!-- Format: - ~~{pattern}~~ | Archived: {YYYY-MM-DD} | Reason: {reason} -->\n",
+  "recent_commits": [
+    "37424c76 chore: reorganize docs/ — gitignore internal, ship public docs in npm (#529)",
+    "a8af4313 docs(i18n): complete Chinese (zh-CN) documentation translation (#525)",
+    "fe56c42d chore: reorganize docs/ — gitignore internal, add public docs to npm package",
+    "9425a351 docs(i18n): complete Chinese (zh-CN) documentation translation (#495)",
+    "42aec888 feat(code-intel): RegistryProvider + hook-runtime + doctor checks + agent improvements [Story INS-4.11] (#489)",
+    "b8c5bb1c feat: v4.3.0 — 5 epics (NOG, GD, BM, TOK, INS-4)",
+    "9f32d099 docs: fix broken documentation links in ide-integration, CONTRIBUTING, and README (#205)",
+    "087ef542 docs(AGF-7): investigation report, tech search, ADR with 7 architecture decisions [Story AGF-7]",
+    "7260721d refactor(AGF-6): deprecate UAP/greeting-builder, consolidate agent memory, optimize CLAUDE.md",
+    "c1c69939 fix(tests): resolve pipeline-memory and codex-skills-validate failures [Epic AGF]"
+  ]
+}

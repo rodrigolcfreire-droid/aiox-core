@@ -46,12 +46,12 @@ function Dashboard() {
     <div className="dashboard">
       {/* Header Section */}
       <div className="dashboard-header">
-        <div className="dashboard-title">
-          <h1>System Health</h1>
+        <div class="dashboard-title">
+          <h1>Saúde do Sistema</h1>
           <div className="dashboard-meta">
             {lastUpdated && (
               <span className="last-updated">
-                Last updated: {lastUpdated.toLocaleTimeString()}
+                Última atualização: {lastUpdated.toLocaleTimeString()}
               </span>
             )}
             <button
@@ -59,7 +59,7 @@ function Dashboard() {
               onClick={refresh}
               disabled={autoRefresh.isRefreshing}
             >
-              {autoRefresh.isRefreshing ? 'Refreshing...' : 'Refresh'}
+              {autoRefresh.isRefreshing ? 'Atualizando...' : 'Atualizar'}
             </button>
           </div>
         </div>
@@ -70,10 +70,10 @@ function Dashboard() {
               checked={autoRefresh.isEnabled}
               onChange={autoRefresh.toggle}
             />
-            <span>Auto-refresh</span>
+            <span>Auto-atualizar</span>
           </label>
           {autoRefresh.isEnabled && (
-            <span className="countdown">Next: {autoRefresh.countdown}s</span>
+            <span className="countdown">Próxima: {autoRefresh.countdown}s</span>
           )}
         </div>
       </div>
@@ -86,32 +86,33 @@ function Dashboard() {
             <div className="score-stats">
               <div className="stat">
                 <span className="stat-value">{overall?.issuesCount || 0}</span>
-                <span className="stat-label">Issues</span>
+                <span className="stat-label">Problemas</span>
               </div>
               <div className="stat stat--success">
                 <span className="stat-value">{overall?.autoFixedCount || 0}</span>
-                <span className="stat-label">Auto-Fixed</span>
+                <span className="stat-label">Correção Automática</span>
               </div>
               {history?.scoreDelta !== undefined && (
                 <div className={`stat ${history.scoreDelta >= 0 ? 'stat--success' : 'stat--danger'}`}>
                   <span className="stat-value">
                     {history.scoreDelta >= 0 ? '+' : ''}{history.scoreDelta}
                   </span>
-                  <span className="stat-label">vs Previous</span>
+                  <span className="stat-label">vs Anterior</span>
                 </div>
               )}
             </div>
           </div>
         </Card>
 
-        <Card className="overview-trend" title="Health Trend">
+        <Card className="overview-trend" title="TENDÊNCIA DE SAÚDE">
           <TrendChart data={history?.trend || []} height={180} />
+          <p className="health-trend-desc">Essa área indica que o painel está mostrando o estado geral do sistema.</p>
         </Card>
       </div>
 
       {/* Domain Cards */}
       <section className="dashboard-section">
-        <h2 className="section-title">Health by Domain</h2>
+        <h2 className="section-title">Saúde por Domínio</h2>
         <div className="domain-grid">
           {domains && Object.entries(domains).map(([domainId, domainData]) => (
             <DomainCard

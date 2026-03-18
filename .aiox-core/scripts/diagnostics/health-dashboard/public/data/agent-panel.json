@@ -1,0 +1,332 @@
+{
+  "timestamp": "2026-03-14T05:55:46.661Z",
+  "agents": [
+    {
+      "id": "aiox-master",
+      "tag": "@aiox-master",
+      "persona_name": "Orion",
+      "title": "AIOX Master Orchestrator & Framework Developer",
+      "icon": "👑",
+      "role": "Master Orchestrator, Framework Developer & AIOX Method Expert",
+      "when_to_use": "Use when you need comprehensive expertise across all domains, framework component creation/modification, workflow orchestration, or running tasks that don't require a specialized persona.",
+      "archetype": "Orchestrator",
+      "status": "no_memory",
+      "squads": [],
+      "has_squad": false,
+      "memory": {
+        "exists": false,
+        "lines": 0,
+        "age_days": null
+      },
+      "activity": {
+        "commits_30d": 0,
+        "last_file_modified": "2026-03-05T12:34:15.921Z",
+        "last_memory_update": null
+      },
+      "commands_count": 17
+    },
+    {
+      "id": "analyst",
+      "tag": "@analyst",
+      "persona_name": "Atlas",
+      "title": "Business Analyst",
+      "icon": "🔍",
+      "role": "Insightful Analyst & Strategic Ideation Partner",
+      "when_to_use": "|",
+      "archetype": "Decoder",
+      "status": "active",
+      "squads": [],
+      "has_squad": false,
+      "memory": {
+        "exists": true,
+        "lines": 34,
+        "age_days": 8
+      },
+      "activity": {
+        "commits_30d": 3,
+        "last_file_modified": "2026-03-05T12:34:15.921Z",
+        "last_memory_update": "2026-03-05T12:34:15.921Z"
+      },
+      "commands_count": 5
+    },
+    {
+      "id": "architect",
+      "tag": "@architect",
+      "persona_name": "Aria",
+      "title": "Architect",
+      "icon": "🏛️",
+      "role": "Holistic System Architect & Full-Stack Technical Leader",
+      "when_to_use": "|",
+      "archetype": "Visionary",
+      "status": "active",
+      "squads": [],
+      "has_squad": false,
+      "memory": {
+        "exists": true,
+        "lines": 40,
+        "age_days": 8
+      },
+      "activity": {
+        "commits_30d": 16,
+        "last_file_modified": "2026-03-05T12:34:15.922Z",
+        "last_memory_update": "2026-03-05T12:34:15.922Z"
+      },
+      "commands_count": 5
+    },
+    {
+      "id": "autoavaliativo",
+      "tag": "@autoavaliativo",
+      "persona_name": "Sentinel",
+      "title": "AIOS Autoavaliativo",
+      "icon": "🔍",
+      "role": "System Governance Analyst & Strategic Architecture Advisor",
+      "when_to_use": "|",
+      "archetype": "Sentinel",
+      "status": "active",
+      "squads": [],
+      "has_squad": false,
+      "memory": {
+        "exists": true,
+        "lines": 13,
+        "age_days": 0
+      },
+      "activity": {
+        "commits_30d": 0,
+        "last_file_modified": "2026-03-14T05:35:20.210Z",
+        "last_memory_update": "2026-03-14T03:40:31.125Z"
+      },
+      "commands_count": 15
+    },
+    {
+      "id": "data-engineer",
+      "tag": "@data-engineer",
+      "persona_name": "Dara",
+      "title": "Database Architect & Operations Engineer",
+      "icon": "📊",
+      "role": "Master Database Architect & Reliability Engineer",
+      "when_to_use": "Use for database design, schema architecture, Supabase configuration, RLS policies, migrations, query optimization, data modeling, operations, and monitoring",
+      "archetype": "Sage",
+      "status": "active",
+      "squads": [],
+      "has_squad": false,
+      "memory": {
+        "exists": true,
+        "lines": 33,
+        "age_days": 8
+      },
+      "activity": {
+        "commits_30d": 5,
+        "last_file_modified": "2026-03-05T12:34:15.922Z",
+        "last_memory_update": "2026-03-05T12:34:15.922Z"
+      },
+      "commands_count": 21
+    },
+    {
+      "id": "dev",
+      "tag": "@dev",
+      "persona_name": "Dex",
+      "title": "Full Stack Developer",
+      "icon": "💻",
+      "role": "Expert Senior Software Engineer & Implementation Specialist",
+      "when_to_use": "'Use for code implementation, debugging, refactoring, and development best practices'",
+      "archetype": "Builder",
+      "status": "active",
+      "squads": [],
+      "has_squad": false,
+      "memory": {
+        "exists": true,
+        "lines": 47,
+        "age_days": 8
+      },
+      "activity": {
+        "commits_30d": 20,
+        "last_file_modified": "2026-03-05T12:34:15.922Z",
+        "last_memory_update": "2026-03-05T12:34:15.922Z"
+      },
+      "commands_count": 16
+    },
+    {
+      "id": "devops",
+      "tag": "@devops",
+      "persona_name": "Gage",
+      "title": "GitHub Repository Manager & DevOps Specialist",
+      "icon": "⚡",
+      "role": "GitHub Repository Guardian & Release Manager",
+      "when_to_use": "'Use for repository operations, version management, CI/CD, quality gates, and GitHub push operations. ONLY agent authorized to push to remote repository.'",
+      "archetype": "Operator",
+      "status": "active",
+      "squads": [],
+      "has_squad": false,
+      "memory": {
+        "exists": true,
+        "lines": 40,
+        "age_days": 8
+      },
+      "activity": {
+        "commits_30d": 8,
+        "last_file_modified": "2026-03-05T12:34:15.922Z",
+        "last_memory_update": "2026-03-05T12:34:15.922Z"
+      },
+      "commands_count": 5
+    },
+    {
+      "id": "pm",
+      "tag": "@pm",
+      "persona_name": "Morgan",
+      "title": "Product Manager",
+      "icon": "📋",
+      "role": "Investigative Product Strategist & Market-Savvy PM",
+      "when_to_use": "|",
+      "archetype": "Strategist",
+      "status": "active",
+      "squads": [],
+      "has_squad": false,
+      "memory": {
+        "exists": true,
+        "lines": 39,
+        "age_days": 8
+      },
+      "activity": {
+        "commits_30d": 27,
+        "last_file_modified": "2026-03-05T12:34:15.923Z",
+        "last_memory_update": "2026-03-05T12:34:15.923Z"
+      },
+      "commands_count": 5
+    },
+    {
+      "id": "po",
+      "tag": "@po",
+      "persona_name": "Pax",
+      "title": "Product Owner",
+      "icon": "🎯",
+      "role": "Technical Product Owner & Process Steward",
+      "when_to_use": "Use for backlog management, story refinement, acceptance criteria, sprint planning, and prioritization decisions",
+      "archetype": "Balancer",
+      "status": "active",
+      "squads": [
+        "maquina-de-briefing",
+        "persona"
+      ],
+      "has_squad": true,
+      "memory": {
+        "exists": true,
+        "lines": 46,
+        "age_days": 8
+      },
+      "activity": {
+        "commits_30d": 47,
+        "last_file_modified": "2026-03-05T12:34:15.923Z",
+        "last_memory_update": "2026-03-05T12:34:15.923Z"
+      },
+      "commands_count": 8
+    },
+    {
+      "id": "qa",
+      "tag": "@qa",
+      "persona_name": "Quinn",
+      "title": "Test Architect & Quality Advisor",
+      "icon": "✅",
+      "role": "Test Architect with Quality Advisory Authority",
+      "when_to_use": "Use for comprehensive test architecture review, quality gate decisions, and code improvement. Provides thorough analysis including requirements traceability, risk assessment, and test strategy. Advisory only - teams choose their quality bar.",
+      "archetype": "Guardian",
+      "status": "active",
+      "squads": [
+        "maquina-de-briefing"
+      ],
+      "has_squad": true,
+      "memory": {
+        "exists": true,
+        "lines": 43,
+        "age_days": 8
+      },
+      "activity": {
+        "commits_30d": 9,
+        "last_file_modified": "2026-03-05T12:34:15.923Z",
+        "last_memory_update": "2026-03-05T12:34:15.923Z"
+      },
+      "commands_count": 10
+    },
+    {
+      "id": "sm",
+      "tag": "@sm",
+      "persona_name": "River",
+      "title": "Scrum Master",
+      "icon": "🌊",
+      "role": "Technical Scrum Master - Story Preparation Specialist",
+      "when_to_use": "|",
+      "archetype": "Facilitator",
+      "status": "active",
+      "squads": [],
+      "has_squad": false,
+      "memory": {
+        "exists": true,
+        "lines": 32,
+        "age_days": 8
+      },
+      "activity": {
+        "commits_30d": 14,
+        "last_file_modified": "2026-03-05T12:34:15.923Z",
+        "last_memory_update": "2026-03-05T12:34:15.923Z"
+      },
+      "commands_count": 5
+    },
+    {
+      "id": "squad-creator",
+      "tag": "@squad-creator",
+      "persona_name": "Craft",
+      "title": "Squad Creator",
+      "icon": "'🏗️'",
+      "role": "Squad Architect & Builder",
+      "when_to_use": "'Use to create, validate, publish and manage squads'",
+      "archetype": "Builder",
+      "status": "no_memory",
+      "squads": [],
+      "has_squad": false,
+      "memory": {
+        "exists": false,
+        "lines": 0,
+        "age_days": null
+      },
+      "activity": {
+        "commits_30d": 2,
+        "last_file_modified": "2026-03-05T12:34:15.924Z",
+        "last_memory_update": null
+      },
+      "commands_count": 11
+    },
+    {
+      "id": "ux-design-expert",
+      "tag": "@ux-design-expert",
+      "persona_name": "Uma",
+      "title": "UX/UI Designer & Design System Architect",
+      "icon": "🎨",
+      "role": "UX/UI Designer & Design System Architect",
+      "when_to_use": "'Complete design workflow - user research, wireframes, design systems, token extraction, component building, and quality assurance'",
+      "archetype": "Empathizer",
+      "status": "no_memory",
+      "squads": [],
+      "has_squad": false,
+      "memory": {
+        "exists": false,
+        "lines": 0,
+        "age_days": null
+      },
+      "activity": {
+        "commits_30d": 3,
+        "last_file_modified": "2026-03-05T12:34:15.924Z",
+        "last_memory_update": null
+      },
+      "commands_count": 14
+    }
+  ],
+  "stats": {
+    "total": 13,
+    "active": 10,
+    "ready": 0,
+    "idle": 0,
+    "stale": 0,
+    "no_memory": 3,
+    "with_squad": 2,
+    "without_squad": 11
+  }
+}

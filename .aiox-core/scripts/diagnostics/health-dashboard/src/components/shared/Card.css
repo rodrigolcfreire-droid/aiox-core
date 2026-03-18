@@ -1,9 +1,10 @@
 .card {
-  background-color: var(--color-bg-secondary);
+  background-color: var(--color-bg-card);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: var(--shadow-md);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .card--clickable {
@@ -11,16 +12,17 @@
 }
 
 .card--clickable:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-glow);
 }
 
 .card--elevated {
-  background-color: var(--color-bg-card);
+  background-color: var(--color-bg-card-hover);
 }
 
 .card--bordered {
-  border: 1px solid var(--color-bg-card);
+  border: 1px solid rgba(0, 229, 204, 0.15);
 }
 
 .card-header {
@@ -28,14 +30,16 @@
 }
 
 .card-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-accent);
   margin-bottom: var(--spacing-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .card-subtitle {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: var(--color-text-secondary);
 }
 

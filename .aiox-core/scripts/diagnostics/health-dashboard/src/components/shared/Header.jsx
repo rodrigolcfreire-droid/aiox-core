@@ -12,6 +12,9 @@ function Header() {
         </Link>
         <nav className="header-nav">
           <Link to="/" className="nav-link">Dashboard</Link>
+          <Link to="/agents" className="nav-link">Agentes</Link>
+          <Link to="/sentinel" className="nav-link">Sentinel</Link>
+          <Link to="/test" className="nav-link" style={{ color: '#D946EF' }}>Test UX</Link>
         </nav>
       </div>
     </header>

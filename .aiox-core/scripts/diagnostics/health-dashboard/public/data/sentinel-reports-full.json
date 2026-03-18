@@ -1,0 +1,2028 @@
+[
+  {
+    "id": "sentinel-1773470249785",
+    "timestamp": "2026-03-14T06:37:29.785Z",
+    "date": "2026-03-14",
+    "sections": {
+      "activity": {
+        "commits_24h": [],
+        "commits_24h_detailed": [],
+        "commits_7d": 3,
+        "last_commit": "e5234c2d feat(persona): add persona replication rule with user checkpoint (4 days ago)",
+        "modified_count": 42,
+        "staged_count": 1,
+        "unstaged_count": 23,
+        "untracked_count": 18,
+        "modified_files": [
+          "M .aiox-core/cli/utils/output-formatter-cli.js",
+          "M .aiox-core/data/entity-registry.yaml",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/App.jsx",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/AutoFixLog.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/DomainCard.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/HealthScore.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/IssuesList.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/TechDebtList.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/index.js",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/shared/Card.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/shared/Header.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/shared/Header.jsx",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/pages/Dashboard.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/pages/Dashboard.jsx",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/styles/index.css",
+          "M package-lock.json",
+          "M package.json",
+          "M squads/persona/agents/apostador-bingo-bet.md",
+          "M squads/persona/agents/apostador-cauteloso.md",
+          "M squads/persona/agents/apostador-de-fuga.md",
+          "M squads/persona/agents/apostador-profissional-analitico.md",
+          "M squads/persona/agents/apostador-reals-bet.md",
+          "M squads/persona/agents/apostador-social-recreativo.md",
+          "M squads/persona/squad.yaml",
+          "?? .aiox-core/core/db/",
+          "?? .aiox-core/development/agents/autoavaliativo.md",
+          "?? .aiox-core/development/agents/autoavaliativo/",
+          "?? .aiox-core/scripts/diagnostics/health-dashboard/public/data/",
+          "?? .aiox-core/scripts/diagnostics/health-dashboard/src/components/sentinel/",
+          "?? .aiox-core/scripts/diagnostics/health-dashboard/src/pages/AgentDetail.jsx",
+          "?? .aiox-core/scripts/diagnostics/health-dashboard/src/pages/AgentPanel.css",
+          "?? .aiox-core/scripts/diagnostics/health-dashboard/src/pages/AgentPanel.jsx",
+          "?? .antigravity/rules/agents/uxgroup-maestro.md",
+          "?? bin/agent-panel.js",
+          "?? bin/db-audit-security.js",
+          "?? bin/sentinel-report.js",
+          "?? docs/examples/ux-command-center/",
+          "?? docs/pt/architecture/documentacao-tecnica-agentes-pipeline-ferramentas-kb-fluxos.md",
+          "?? documentacao-tecnica-aiox.html",
+          "?? generate-pdf.js",
+          "?? scripts/import-manus-agents.js",
+          "?? scripts/migrate-to-db.js"
+        ],
+        "changes_by_area": {
+          "agents": 9,
+          "squads": 7,
+          "database": 3,
+          "scripts": 23,
+          "stories": 0,
+          "configs": 4
+        }
+      },
+      "system_state": {
+        "agents_total": 13,
+        "agents": [
+          "aiox-master",
+          "analyst",
+          "architect",
+          "autoavaliativo",
+          "data-engineer",
+          "dev",
+          "devops",
+          "pm",
+          "po",
+          "qa",
+          "sm",
+          "squad-creator",
+          "ux-design-expert"
+        ],
+        "squads_total": 2,
+        "squads": [
+          "maquina-de-briefing",
+          "persona"
+        ],
+        "skills_total": 13,
+        "skills": [
+          "architect-first",
+          "checklist-runner",
+          "clone-mind.md",
+          "coderabbit-review",
+          "course-generation-workflow.md",
+          "enhance-workflow.md",
+          "mcp-builder",
+          "morning-briefing",
+          "ralph.md",
+          "skill-creator",
+          "squad.md",
+          "synapse",
+          "tech-search"
+        ],
+        "stories_total": 13,
+        "stories": [
+          "2026-03-05-uxgroup-agent-replacement.md",
+          "2026-03-05-uxgroup-constitutions-sync.md",
+          "2026-03-06-create-squad-espiao.md",
+          "2026-03-06-uxgroup-continuous-improvement-policy.md",
+          "2026-03-06-uxgroup-cycle-002-cashback-roleta.md",
+          "2026-03-06-uxgroup-first-real-cycle.md",
+          "2026-03-06-uxgroup-operational-base-mvp.md",
+          "2026-03-06-uxgroup-scope-split-formatting-final.md",
+          "2026-03-07-create-persona-squad-and-ux-cross.md",
+          "2026-03-08-documentacao-tecnica-agentes-pipeline.md",
+          "2026-03-13-database-phase1-foundation.md",
+          "2026-03-13-database-phase2-core-content.md",
+          "2026-03-14-database-phase5-hardening.md"
+        ],
+        "branch": "main"
+      },
+      "agent_health": {
+        "agents": [
+          {
+            "id": "aiox-master",
+            "has_memory": false,
+            "memory_lines": 0,
+            "memory_age_days": null,
+            "status": "no_memory"
+          },
+          {
+            "id": "analyst",
+            "has_memory": true,
+            "memory_lines": 34,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "architect",
+            "has_memory": true,
+            "memory_lines": 40,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "autoavaliativo",
+            "has_memory": true,
+            "memory_lines": 13,
+            "memory_age_days": 0,
+            "status": "active"
+          },
+          {
+            "id": "data-engineer",
+            "has_memory": true,
+            "memory_lines": 33,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "dev",
+            "has_memory": true,
+            "memory_lines": 47,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "devops",
+            "has_memory": true,
+            "memory_lines": 40,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "pm",
+            "has_memory": true,
+            "memory_lines": 39,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "po",
+            "has_memory": true,
+            "memory_lines": 46,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "qa",
+            "has_memory": true,
+            "memory_lines": 43,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "sm",
+            "has_memory": true,
+            "memory_lines": 32,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "squad-creator",
+            "has_memory": false,
+            "memory_lines": 0,
+            "memory_age_days": null,
+            "status": "no_memory"
+          },
+          {
+            "id": "ux-design-expert",
+            "has_memory": false,
+            "memory_lines": 0,
+            "memory_age_days": null,
+            "status": "no_memory"
+          }
+        ],
+        "with_memory": 10,
+        "without_memory": 3,
+        "stale_memory": 9,
+        "total": 13
+      },
+      "squad_performance": {
+        "squads": [
+          {
+            "id": "maquina-de-briefing",
+            "members_count": 9,
+            "members": [
+              "uxgroup-ads",
+              "uxgroup-brand-guardian",
+              "uxgroup-briefing",
+              "uxgroup-concorrentes",
+              "uxgroup-formatting",
+              "uxgroup-maestro",
+              "uxgroup-qa-criativo",
+              "uxgroup-roteiro",
+              "uxgroup-task-orchestrator"
+            ],
+            "last_activity": "2026-03-12",
+            "status": "active"
+          },
+          {
+            "id": "persona",
+            "members_count": 6,
+            "members": [
+              "apostador-bingo-bet",
+              "apostador-cauteloso",
+              "apostador-de-fuga",
+              "apostador-profissional-analitico",
+              "apostador-reals-bet",
+              "apostador-social-recreativo"
+            ],
+            "last_activity": "2026-03-12",
+            "status": "active"
+          }
+        ],
+        "total": 2
+      },
+      "database": {
+        "phases": {
+          "5": "IN_PROGRESS",
+          "1-4": "DONE"
+        },
+        "schemas": 7,
+        "tables": 30,
+        "rls_policies": "~80",
+        "credentials": {
+          "SUPABASE_URL": true,
+          "SUPABASE_ANON_KEY": true,
+          "SUPABASE_SERVICE_KEY": false,
+          "SUPABASE_DB_URL": true
+        },
+        "db_scripts": [
+          "db-audit-security.js"
+        ],
+        "missing_scripts": [
+          "db-check-consistency.js",
+          "db-benchmark.js",
+          "db-backup.js",
+          "db-restore.js",
+          "db-weekly-report.js"
+        ],
+        "migrations_count": 15
+      },
+      "memory": {
+        "agent_memories": 10,
+        "agents_without_memory": 3,
+        "stale_memories": 9,
+        "total_memory_lines": 367,
+        "project_memories": 3,
+        "project_memory_files": [
+          "MEMORY.md",
+          "feedback_morning_briefing.md",
+          "project_db_isolation.md"
+        ]
+      },
+      "alerts": [
+        {
+          "severity": "HIGH",
+          "message": "SUPABASE_SERVICE_KEY nao configurada"
+        },
+        {
+          "severity": "WARNING",
+          "message": "3 agentes sem MEMORY.md: aiox-master, squad-creator, ux-design-expert"
+        },
+        {
+          "severity": "INFO",
+          "message": "9 agentes com memoria > 7 dias: analyst, architect, data-engineer, dev, devops, pm, po, qa, sm"
+        },
+        {
+          "severity": "WARNING",
+          "message": "18 arquivos untracked"
+        },
+        {
+          "severity": "WARNING",
+          "message": "5 scripts de hardening pendentes: db-check-consistency.js, db-benchmark.js, db-backup.js, db-restore.js, db-weekly-report.js"
+        },
+        {
+          "severity": "WARNING",
+          "message": "42 arquivos modificados sem commit"
+        }
+      ],
+      "pendencies": [
+        {
+          "story": "2026-03-05-uxgroup-agent-replacement.md",
+          "status": "unknown",
+          "progress": "15/15",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-05-uxgroup-constitutions-sync.md",
+          "status": "unknown",
+          "progress": "15/15",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-create-squad-espiao.md",
+          "status": "unknown",
+          "progress": "11/11",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-continuous-improvement-policy.md",
+          "status": "unknown",
+          "progress": "13/13",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-cycle-002-cashback-roleta.md",
+          "status": "unknown",
+          "progress": "13/13",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-first-real-cycle.md",
+          "status": "unknown",
+          "progress": "14/14",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-operational-base-mvp.md",
+          "status": "unknown",
+          "progress": "31/31",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-scope-split-formatting-final.md",
+          "status": "unknown",
+          "progress": "7/7",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-07-create-persona-squad-and-ux-cross.md",
+          "status": "unknown",
+          "progress": "25/25",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-08-documentacao-tecnica-agentes-pipeline.md",
+          "status": "unknown",
+          "progress": "9/9",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-14-database-phase5-hardening.md",
+          "status": "Ready",
+          "progress": "0/59",
+          "unchecked": 59
+        },
+        {
+          "type": "missing_scripts",
+          "items": [
+            "db-check-consistency.js",
+            "db-benchmark.js",
+            "db-backup.js",
+            "db-restore.js",
+            "db-weekly-report.js"
+          ]
+        },
+        {
+          "type": "missing_credential",
+          "item": "SUPABASE_SERVICE_KEY"
+        }
+      ]
+    },
+    "summary": {
+      "agents": 13,
+      "squads": 2,
+      "skills": 13,
+      "stories": 13,
+      "alerts_high": 1,
+      "alerts_warning": 4,
+      "alerts_info": 1,
+      "pending_stories": 11,
+      "uncommitted_files": 42
+    }
+  },
+  {
+    "id": "sentinel-1773469596529",
+    "timestamp": "2026-03-14T06:26:36.529Z",
+    "date": "2026-03-14",
+    "sections": {
+      "activity": {
+        "commits_24h": [],
+        "commits_7d": 3,
+        "last_commit": "e5234c2d feat(persona): add persona replication rule with user checkpoint (4 days ago)",
+        "modified_count": 42,
+        "staged_count": 1,
+        "unstaged_count": 23,
+        "untracked_count": 18,
+        "modified_files": [
+          "M .aiox-core/cli/utils/output-formatter-cli.js",
+          "M .aiox-core/data/entity-registry.yaml",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/App.jsx",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/AutoFixLog.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/DomainCard.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/HealthScore.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/IssuesList.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/TechDebtList.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/index.js",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/shared/Card.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/shared/Header.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/shared/Header.jsx",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/pages/Dashboard.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/pages/Dashboard.jsx",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/styles/index.css",
+          "M package-lock.json",
+          "M package.json",
+          "M squads/persona/agents/apostador-bingo-bet.md",
+          "M squads/persona/agents/apostador-cauteloso.md",
+          "M squads/persona/agents/apostador-de-fuga.md",
+          "M squads/persona/agents/apostador-profissional-analitico.md",
+          "M squads/persona/agents/apostador-reals-bet.md",
+          "M squads/persona/agents/apostador-social-recreativo.md",
+          "M squads/persona/squad.yaml",
+          "?? .aiox-core/core/db/",
+          "?? .aiox-core/development/agents/autoavaliativo.md",
+          "?? .aiox-core/development/agents/autoavaliativo/",
+          "?? .aiox-core/scripts/diagnostics/health-dashboard/public/data/",
+          "?? .aiox-core/scripts/diagnostics/health-dashboard/src/components/sentinel/",
+          "?? .aiox-core/scripts/diagnostics/health-dashboard/src/pages/AgentDetail.jsx",
+          "?? .aiox-core/scripts/diagnostics/health-dashboard/src/pages/AgentPanel.css",
+          "?? .aiox-core/scripts/diagnostics/health-dashboard/src/pages/AgentPanel.jsx",
+          "?? .antigravity/rules/agents/uxgroup-maestro.md",
+          "?? bin/agent-panel.js",
+          "?? bin/db-audit-security.js",
+          "?? bin/sentinel-report.js",
+          "?? docs/examples/ux-command-center/",
+          "?? docs/pt/architecture/documentacao-tecnica-agentes-pipeline-ferramentas-kb-fluxos.md",
+          "?? documentacao-tecnica-aiox.html",
+          "?? generate-pdf.js",
+          "?? scripts/import-manus-agents.js",
+          "?? scripts/migrate-to-db.js"
+        ]
+      },
+      "system_state": {
+        "agents_total": 13,
+        "agents": [
+          "aiox-master",
+          "analyst",
+          "architect",
+          "autoavaliativo",
+          "data-engineer",
+          "dev",
+          "devops",
+          "pm",
+          "po",
+          "qa",
+          "sm",
+          "squad-creator",
+          "ux-design-expert"
+        ],
+        "squads_total": 2,
+        "squads": [
+          "maquina-de-briefing",
+          "persona"
+        ],
+        "skills_total": 13,
+        "skills": [
+          "architect-first",
+          "checklist-runner",
+          "clone-mind.md",
+          "coderabbit-review",
+          "course-generation-workflow.md",
+          "enhance-workflow.md",
+          "mcp-builder",
+          "morning-briefing",
+          "ralph.md",
+          "skill-creator",
+          "squad.md",
+          "synapse",
+          "tech-search"
+        ],
+        "stories_total": 13,
+        "stories": [
+          "2026-03-05-uxgroup-agent-replacement.md",
+          "2026-03-05-uxgroup-constitutions-sync.md",
+          "2026-03-06-create-squad-espiao.md",
+          "2026-03-06-uxgroup-continuous-improvement-policy.md",
+          "2026-03-06-uxgroup-cycle-002-cashback-roleta.md",
+          "2026-03-06-uxgroup-first-real-cycle.md",
+          "2026-03-06-uxgroup-operational-base-mvp.md",
+          "2026-03-06-uxgroup-scope-split-formatting-final.md",
+          "2026-03-07-create-persona-squad-and-ux-cross.md",
+          "2026-03-08-documentacao-tecnica-agentes-pipeline.md",
+          "2026-03-13-database-phase1-foundation.md",
+          "2026-03-13-database-phase2-core-content.md",
+          "2026-03-14-database-phase5-hardening.md"
+        ],
+        "branch": "main"
+      },
+      "agent_health": {
+        "agents": [
+          {
+            "id": "aiox-master",
+            "has_memory": false,
+            "memory_lines": 0,
+            "memory_age_days": null,
+            "status": "no_memory"
+          },
+          {
+            "id": "analyst",
+            "has_memory": true,
+            "memory_lines": 34,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "architect",
+            "has_memory": true,
+            "memory_lines": 40,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "autoavaliativo",
+            "has_memory": true,
+            "memory_lines": 13,
+            "memory_age_days": 0,
+            "status": "active"
+          },
+          {
+            "id": "data-engineer",
+            "has_memory": true,
+            "memory_lines": 33,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "dev",
+            "has_memory": true,
+            "memory_lines": 47,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "devops",
+            "has_memory": true,
+            "memory_lines": 40,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "pm",
+            "has_memory": true,
+            "memory_lines": 39,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "po",
+            "has_memory": true,
+            "memory_lines": 46,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "qa",
+            "has_memory": true,
+            "memory_lines": 43,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "sm",
+            "has_memory": true,
+            "memory_lines": 32,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "squad-creator",
+            "has_memory": false,
+            "memory_lines": 0,
+            "memory_age_days": null,
+            "status": "no_memory"
+          },
+          {
+            "id": "ux-design-expert",
+            "has_memory": false,
+            "memory_lines": 0,
+            "memory_age_days": null,
+            "status": "no_memory"
+          }
+        ],
+        "with_memory": 10,
+        "without_memory": 3,
+        "stale_memory": 9,
+        "total": 13
+      },
+      "squad_performance": {
+        "squads": [
+          {
+            "id": "maquina-de-briefing",
+            "members_count": 9,
+            "members": [
+              "uxgroup-ads",
+              "uxgroup-brand-guardian",
+              "uxgroup-briefing",
+              "uxgroup-concorrentes",
+              "uxgroup-formatting",
+              "uxgroup-maestro",
+              "uxgroup-qa-criativo",
+              "uxgroup-roteiro",
+              "uxgroup-task-orchestrator"
+            ],
+            "last_activity": "2026-03-12",
+            "status": "active"
+          },
+          {
+            "id": "persona",
+            "members_count": 6,
+            "members": [
+              "apostador-bingo-bet",
+              "apostador-cauteloso",
+              "apostador-de-fuga",
+              "apostador-profissional-analitico",
+              "apostador-reals-bet",
+              "apostador-social-recreativo"
+            ],
+            "last_activity": "2026-03-12",
+            "status": "active"
+          }
+        ],
+        "total": 2
+      },
+      "database": {
+        "phases": {
+          "5": "IN_PROGRESS",
+          "1-4": "DONE"
+        },
+        "schemas": 7,
+        "tables": 30,
+        "rls_policies": "~80",
+        "credentials": {
+          "SUPABASE_URL": true,
+          "SUPABASE_ANON_KEY": true,
+          "SUPABASE_SERVICE_KEY": false,
+          "SUPABASE_DB_URL": true
+        },
+        "db_scripts": [
+          "db-audit-security.js"
+        ],
+        "missing_scripts": [
+          "db-check-consistency.js",
+          "db-benchmark.js",
+          "db-backup.js",
+          "db-restore.js",
+          "db-weekly-report.js"
+        ],
+        "migrations_count": 15
+      },
+      "memory": {
+        "agent_memories": 10,
+        "agents_without_memory": 3,
+        "stale_memories": 9,
+        "total_memory_lines": 367,
+        "project_memories": 3,
+        "project_memory_files": [
+          "MEMORY.md",
+          "feedback_morning_briefing.md",
+          "project_db_isolation.md"
+        ]
+      },
+      "alerts": [
+        {
+          "severity": "HIGH",
+          "message": "SUPABASE_SERVICE_KEY nao configurada"
+        },
+        {
+          "severity": "WARNING",
+          "message": "3 agentes sem MEMORY.md: aiox-master, squad-creator, ux-design-expert"
+        },
+        {
+          "severity": "INFO",
+          "message": "9 agentes com memoria > 7 dias: analyst, architect, data-engineer, dev, devops, pm, po, qa, sm"
+        },
+        {
+          "severity": "WARNING",
+          "message": "18 arquivos untracked"
+        },
+        {
+          "severity": "WARNING",
+          "message": "5 scripts de hardening pendentes: db-check-consistency.js, db-benchmark.js, db-backup.js, db-restore.js, db-weekly-report.js"
+        },
+        {
+          "severity": "WARNING",
+          "message": "42 arquivos modificados sem commit"
+        }
+      ],
+      "pendencies": [
+        {
+          "story": "2026-03-05-uxgroup-agent-replacement.md",
+          "status": "unknown",
+          "progress": "15/15",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-05-uxgroup-constitutions-sync.md",
+          "status": "unknown",
+          "progress": "15/15",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-create-squad-espiao.md",
+          "status": "unknown",
+          "progress": "11/11",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-continuous-improvement-policy.md",
+          "status": "unknown",
+          "progress": "13/13",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-cycle-002-cashback-roleta.md",
+          "status": "unknown",
+          "progress": "13/13",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-first-real-cycle.md",
+          "status": "unknown",
+          "progress": "14/14",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-operational-base-mvp.md",
+          "status": "unknown",
+          "progress": "31/31",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-scope-split-formatting-final.md",
+          "status": "unknown",
+          "progress": "7/7",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-07-create-persona-squad-and-ux-cross.md",
+          "status": "unknown",
+          "progress": "25/25",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-08-documentacao-tecnica-agentes-pipeline.md",
+          "status": "unknown",
+          "progress": "9/9",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-14-database-phase5-hardening.md",
+          "status": "Ready",
+          "progress": "0/59",
+          "unchecked": 59
+        },
+        {
+          "type": "missing_scripts",
+          "items": [
+            "db-check-consistency.js",
+            "db-benchmark.js",
+            "db-backup.js",
+            "db-restore.js",
+            "db-weekly-report.js"
+          ]
+        },
+        {
+          "type": "missing_credential",
+          "item": "SUPABASE_SERVICE_KEY"
+        }
+      ]
+    },
+    "summary": {
+      "agents": 13,
+      "squads": 2,
+      "skills": 13,
+      "stories": 13,
+      "alerts_high": 1,
+      "alerts_warning": 4,
+      "alerts_info": 1,
+      "pending_stories": 11,
+      "uncommitted_files": 42
+    }
+  },
+  {
+    "id": "sentinel-1773467020121",
+    "timestamp": "2026-03-14T05:43:40.122Z",
+    "date": "2026-03-14",
+    "sections": {
+      "activity": {
+        "commits_24h": [],
+        "commits_7d": 3,
+        "last_commit": "e5234c2d feat(persona): add persona replication rule with user checkpoint (4 days ago)",
+        "modified_count": 37,
+        "staged_count": 1,
+        "unstaged_count": 23,
+        "untracked_count": 13,
+        "modified_files": [
+          "M .aiox-core/cli/utils/output-formatter-cli.js",
+          "M .aiox-core/data/entity-registry.yaml",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/App.jsx",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/AutoFixLog.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/DomainCard.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/HealthScore.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/IssuesList.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/TechDebtList.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/index.js",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/shared/Card.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/shared/Header.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/shared/Header.jsx",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/pages/Dashboard.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/pages/Dashboard.jsx",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/styles/index.css",
+          "M package-lock.json",
+          "M package.json",
+          "M squads/persona/agents/apostador-bingo-bet.md",
+          "M squads/persona/agents/apostador-cauteloso.md",
+          "M squads/persona/agents/apostador-de-fuga.md",
+          "M squads/persona/agents/apostador-profissional-analitico.md",
+          "M squads/persona/agents/apostador-reals-bet.md",
+          "M squads/persona/agents/apostador-social-recreativo.md",
+          "M squads/persona/squad.yaml",
+          "?? .aiox-core/core/db/",
+          "?? .aiox-core/development/agents/autoavaliativo.md",
+          "?? .aiox-core/development/agents/autoavaliativo/",
+          "?? .aiox-core/scripts/diagnostics/health-dashboard/src/components/sentinel/",
+          "?? .antigravity/rules/agents/uxgroup-maestro.md",
+          "?? bin/db-audit-security.js",
+          "?? bin/sentinel-report.js",
+          "?? docs/examples/ux-command-center/",
+          "?? docs/pt/architecture/documentacao-tecnica-agentes-pipeline-ferramentas-kb-fluxos.md",
+          "?? documentacao-tecnica-aiox.html",
+          "?? generate-pdf.js",
+          "?? scripts/import-manus-agents.js",
+          "?? scripts/migrate-to-db.js"
+        ]
+      },
+      "system_state": {
+        "agents_total": 13,
+        "agents": [
+          "aiox-master",
+          "analyst",
+          "architect",
+          "autoavaliativo",
+          "data-engineer",
+          "dev",
+          "devops",
+          "pm",
+          "po",
+          "qa",
+          "sm",
+          "squad-creator",
+          "ux-design-expert"
+        ],
+        "squads_total": 2,
+        "squads": [
+          "maquina-de-briefing",
+          "persona"
+        ],
+        "skills_total": 13,
+        "skills": [
+          "architect-first",
+          "checklist-runner",
+          "clone-mind.md",
+          "coderabbit-review",
+          "course-generation-workflow.md",
+          "enhance-workflow.md",
+          "mcp-builder",
+          "morning-briefing",
+          "ralph.md",
+          "skill-creator",
+          "squad.md",
+          "synapse",
+          "tech-search"
+        ],
+        "stories_total": 13,
+        "stories": [
+          "2026-03-05-uxgroup-agent-replacement.md",
+          "2026-03-05-uxgroup-constitutions-sync.md",
+          "2026-03-06-create-squad-espiao.md",
+          "2026-03-06-uxgroup-continuous-improvement-policy.md",
+          "2026-03-06-uxgroup-cycle-002-cashback-roleta.md",
+          "2026-03-06-uxgroup-first-real-cycle.md",
+          "2026-03-06-uxgroup-operational-base-mvp.md",
+          "2026-03-06-uxgroup-scope-split-formatting-final.md",
+          "2026-03-07-create-persona-squad-and-ux-cross.md",
+          "2026-03-08-documentacao-tecnica-agentes-pipeline.md",
+          "2026-03-13-database-phase1-foundation.md",
+          "2026-03-13-database-phase2-core-content.md",
+          "2026-03-14-database-phase5-hardening.md"
+        ],
+        "branch": "main"
+      },
+      "agent_health": {
+        "agents": [
+          {
+            "id": "aiox-master",
+            "has_memory": false,
+            "memory_lines": 0,
+            "memory_age_days": null,
+            "status": "no_memory"
+          },
+          {
+            "id": "analyst",
+            "has_memory": true,
+            "memory_lines": 34,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "architect",
+            "has_memory": true,
+            "memory_lines": 40,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "autoavaliativo",
+            "has_memory": true,
+            "memory_lines": 13,
+            "memory_age_days": 0,
+            "status": "active"
+          },
+          {
+            "id": "data-engineer",
+            "has_memory": true,
+            "memory_lines": 33,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "dev",
+            "has_memory": true,
+            "memory_lines": 47,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "devops",
+            "has_memory": true,
+            "memory_lines": 40,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "pm",
+            "has_memory": true,
+            "memory_lines": 39,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "po",
+            "has_memory": true,
+            "memory_lines": 46,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "qa",
+            "has_memory": true,
+            "memory_lines": 43,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "sm",
+            "has_memory": true,
+            "memory_lines": 32,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "squad-creator",
+            "has_memory": false,
+            "memory_lines": 0,
+            "memory_age_days": null,
+            "status": "no_memory"
+          },
+          {
+            "id": "ux-design-expert",
+            "has_memory": false,
+            "memory_lines": 0,
+            "memory_age_days": null,
+            "status": "no_memory"
+          }
+        ],
+        "with_memory": 10,
+        "without_memory": 3,
+        "stale_memory": 9,
+        "total": 13
+      },
+      "squad_performance": {
+        "squads": [
+          {
+            "id": "maquina-de-briefing",
+            "members_count": 9,
+            "members": [
+              "uxgroup-ads",
+              "uxgroup-brand-guardian",
+              "uxgroup-briefing",
+              "uxgroup-concorrentes",
+              "uxgroup-formatting",
+              "uxgroup-maestro",
+              "uxgroup-qa-criativo",
+              "uxgroup-roteiro",
+              "uxgroup-task-orchestrator"
+            ],
+            "last_activity": "2026-03-12",
+            "status": "active"
+          },
+          {
+            "id": "persona",
+            "members_count": 6,
+            "members": [
+              "apostador-bingo-bet",
+              "apostador-cauteloso",
+              "apostador-de-fuga",
+              "apostador-profissional-analitico",
+              "apostador-reals-bet",
+              "apostador-social-recreativo"
+            ],
+            "last_activity": "2026-03-12",
+            "status": "active"
+          }
+        ],
+        "total": 2
+      },
+      "database": {
+        "phases": {
+          "5": "IN_PROGRESS",
+          "1-4": "DONE"
+        },
+        "schemas": 7,
+        "tables": 30,
+        "rls_policies": "~80",
+        "credentials": {
+          "SUPABASE_URL": true,
+          "SUPABASE_ANON_KEY": true,
+          "SUPABASE_SERVICE_KEY": false,
+          "SUPABASE_DB_URL": true
+        },
+        "db_scripts": [
+          "db-audit-security.js"
+        ],
+        "missing_scripts": [
+          "db-check-consistency.js",
+          "db-benchmark.js",
+          "db-backup.js",
+          "db-restore.js",
+          "db-weekly-report.js"
+        ],
+        "migrations_count": 15
+      },
+      "memory": {
+        "agent_memories": 10,
+        "agents_without_memory": 3,
+        "stale_memories": 9,
+        "total_memory_lines": 367,
+        "project_memories": 3,
+        "project_memory_files": [
+          "MEMORY.md",
+          "feedback_morning_briefing.md",
+          "project_db_isolation.md"
+        ]
+      },
+      "alerts": [
+        {
+          "severity": "HIGH",
+          "message": "SUPABASE_SERVICE_KEY nao configurada"
+        },
+        {
+          "severity": "WARNING",
+          "message": "3 agentes sem MEMORY.md: aiox-master, squad-creator, ux-design-expert"
+        },
+        {
+          "severity": "INFO",
+          "message": "9 agentes com memoria > 7 dias: analyst, architect, data-engineer, dev, devops, pm, po, qa, sm"
+        },
+        {
+          "severity": "WARNING",
+          "message": "13 arquivos untracked"
+        },
+        {
+          "severity": "WARNING",
+          "message": "5 scripts de hardening pendentes: db-check-consistency.js, db-benchmark.js, db-backup.js, db-restore.js, db-weekly-report.js"
+        },
+        {
+          "severity": "WARNING",
+          "message": "37 arquivos modificados sem commit"
+        }
+      ],
+      "pendencies": [
+        {
+          "story": "2026-03-05-uxgroup-agent-replacement.md",
+          "status": "unknown",
+          "progress": "15/15",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-05-uxgroup-constitutions-sync.md",
+          "status": "unknown",
+          "progress": "15/15",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-create-squad-espiao.md",
+          "status": "unknown",
+          "progress": "11/11",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-continuous-improvement-policy.md",
+          "status": "unknown",
+          "progress": "13/13",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-cycle-002-cashback-roleta.md",
+          "status": "unknown",
+          "progress": "13/13",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-first-real-cycle.md",
+          "status": "unknown",
+          "progress": "14/14",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-operational-base-mvp.md",
+          "status": "unknown",
+          "progress": "31/31",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-scope-split-formatting-final.md",
+          "status": "unknown",
+          "progress": "7/7",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-07-create-persona-squad-and-ux-cross.md",
+          "status": "unknown",
+          "progress": "25/25",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-08-documentacao-tecnica-agentes-pipeline.md",
+          "status": "unknown",
+          "progress": "9/9",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-14-database-phase5-hardening.md",
+          "status": "Ready",
+          "progress": "0/59",
+          "unchecked": 59
+        },
+        {
+          "type": "missing_scripts",
+          "items": [
+            "db-check-consistency.js",
+            "db-benchmark.js",
+            "db-backup.js",
+            "db-restore.js",
+            "db-weekly-report.js"
+          ]
+        },
+        {
+          "type": "missing_credential",
+          "item": "SUPABASE_SERVICE_KEY"
+        }
+      ]
+    },
+    "summary": {
+      "agents": 13,
+      "squads": 2,
+      "skills": 13,
+      "stories": 13,
+      "alerts_high": 1,
+      "alerts_warning": 4,
+      "alerts_info": 1,
+      "pending_stories": 11,
+      "uncommitted_files": 37
+    }
+  },
+  {
+    "id": "sentinel-1773466534666",
+    "timestamp": "2026-03-14T05:35:34.666Z",
+    "date": "2026-03-14",
+    "sections": {
+      "activity": {
+        "commits_24h": [],
+        "commits_7d": 3,
+        "last_commit": "e5234c2d feat(persona): add persona replication rule with user checkpoint (4 days ago)",
+        "modified_count": 33,
+        "staged_count": 1,
+        "unstaged_count": 20,
+        "untracked_count": 12,
+        "modified_files": [
+          "M .aiox-core/cli/utils/output-formatter-cli.js",
+          "M .aiox-core/data/entity-registry.yaml",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/AutoFixLog.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/DomainCard.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/HealthScore.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/IssuesList.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/TechDebtList.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/shared/Card.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/shared/Header.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/pages/Dashboard.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/pages/Dashboard.jsx",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/styles/index.css",
+          "M package-lock.json",
+          "M package.json",
+          "M squads/persona/agents/apostador-bingo-bet.md",
+          "M squads/persona/agents/apostador-cauteloso.md",
+          "M squads/persona/agents/apostador-de-fuga.md",
+          "M squads/persona/agents/apostador-profissional-analitico.md",
+          "M squads/persona/agents/apostador-reals-bet.md",
+          "M squads/persona/agents/apostador-social-recreativo.md",
+          "M squads/persona/squad.yaml",
+          "?? .aiox-core/core/db/",
+          "?? .aiox-core/development/agents/autoavaliativo.md",
+          "?? .aiox-core/development/agents/autoavaliativo/",
+          "?? .antigravity/rules/agents/uxgroup-maestro.md",
+          "?? bin/db-audit-security.js",
+          "?? bin/sentinel-report.js",
+          "?? docs/examples/ux-command-center/",
+          "?? docs/pt/architecture/documentacao-tecnica-agentes-pipeline-ferramentas-kb-fluxos.md",
+          "?? documentacao-tecnica-aiox.html",
+          "?? generate-pdf.js",
+          "?? scripts/import-manus-agents.js",
+          "?? scripts/migrate-to-db.js"
+        ]
+      },
+      "system_state": {
+        "agents_total": 13,
+        "agents": [
+          "aiox-master",
+          "analyst",
+          "architect",
+          "autoavaliativo",
+          "data-engineer",
+          "dev",
+          "devops",
+          "pm",
+          "po",
+          "qa",
+          "sm",
+          "squad-creator",
+          "ux-design-expert"
+        ],
+        "squads_total": 2,
+        "squads": [
+          "maquina-de-briefing",
+          "persona"
+        ],
+        "skills_total": 13,
+        "skills": [
+          "architect-first",
+          "checklist-runner",
+          "clone-mind.md",
+          "coderabbit-review",
+          "course-generation-workflow.md",
+          "enhance-workflow.md",
+          "mcp-builder",
+          "morning-briefing",
+          "ralph.md",
+          "skill-creator",
+          "squad.md",
+          "synapse",
+          "tech-search"
+        ],
+        "stories_total": 13,
+        "stories": [
+          "2026-03-05-uxgroup-agent-replacement.md",
+          "2026-03-05-uxgroup-constitutions-sync.md",
+          "2026-03-06-create-squad-espiao.md",
+          "2026-03-06-uxgroup-continuous-improvement-policy.md",
+          "2026-03-06-uxgroup-cycle-002-cashback-roleta.md",
+          "2026-03-06-uxgroup-first-real-cycle.md",
+          "2026-03-06-uxgroup-operational-base-mvp.md",
+          "2026-03-06-uxgroup-scope-split-formatting-final.md",
+          "2026-03-07-create-persona-squad-and-ux-cross.md",
+          "2026-03-08-documentacao-tecnica-agentes-pipeline.md",
+          "2026-03-13-database-phase1-foundation.md",
+          "2026-03-13-database-phase2-core-content.md",
+          "2026-03-14-database-phase5-hardening.md"
+        ],
+        "branch": "main"
+      },
+      "agent_health": {
+        "agents": [
+          {
+            "id": "aiox-master",
+            "has_memory": false,
+            "memory_lines": 0,
+            "memory_age_days": null,
+            "status": "no_memory"
+          },
+          {
+            "id": "analyst",
+            "has_memory": true,
+            "memory_lines": 34,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "architect",
+            "has_memory": true,
+            "memory_lines": 40,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "autoavaliativo",
+            "has_memory": true,
+            "memory_lines": 13,
+            "memory_age_days": 0,
+            "status": "active"
+          },
+          {
+            "id": "data-engineer",
+            "has_memory": true,
+            "memory_lines": 33,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "dev",
+            "has_memory": true,
+            "memory_lines": 47,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "devops",
+            "has_memory": true,
+            "memory_lines": 40,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "pm",
+            "has_memory": true,
+            "memory_lines": 39,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "po",
+            "has_memory": true,
+            "memory_lines": 46,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "qa",
+            "has_memory": true,
+            "memory_lines": 43,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "sm",
+            "has_memory": true,
+            "memory_lines": 32,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "squad-creator",
+            "has_memory": false,
+            "memory_lines": 0,
+            "memory_age_days": null,
+            "status": "no_memory"
+          },
+          {
+            "id": "ux-design-expert",
+            "has_memory": false,
+            "memory_lines": 0,
+            "memory_age_days": null,
+            "status": "no_memory"
+          }
+        ],
+        "with_memory": 10,
+        "without_memory": 3,
+        "stale_memory": 9,
+        "total": 13
+      },
+      "squad_performance": {
+        "squads": [
+          {
+            "id": "maquina-de-briefing",
+            "members_count": 9,
+            "members": [
+              "uxgroup-ads",
+              "uxgroup-brand-guardian",
+              "uxgroup-briefing",
+              "uxgroup-concorrentes",
+              "uxgroup-formatting",
+              "uxgroup-maestro",
+              "uxgroup-qa-criativo",
+              "uxgroup-roteiro",
+              "uxgroup-task-orchestrator"
+            ],
+            "last_activity": "2026-03-12",
+            "status": "active"
+          },
+          {
+            "id": "persona",
+            "members_count": 6,
+            "members": [
+              "apostador-bingo-bet",
+              "apostador-cauteloso",
+              "apostador-de-fuga",
+              "apostador-profissional-analitico",
+              "apostador-reals-bet",
+              "apostador-social-recreativo"
+            ],
+            "last_activity": "2026-03-12",
+            "status": "active"
+          }
+        ],
+        "total": 2
+      },
+      "database": {
+        "phases": {
+          "5": "IN_PROGRESS",
+          "1-4": "DONE"
+        },
+        "schemas": 7,
+        "tables": 30,
+        "rls_policies": "~80",
+        "credentials": {
+          "SUPABASE_URL": true,
+          "SUPABASE_ANON_KEY": true,
+          "SUPABASE_SERVICE_KEY": false,
+          "SUPABASE_DB_URL": true
+        },
+        "db_scripts": [
+          "db-audit-security.js"
+        ],
+        "missing_scripts": [
+          "db-check-consistency.js",
+          "db-benchmark.js",
+          "db-backup.js",
+          "db-restore.js",
+          "db-weekly-report.js"
+        ],
+        "migrations_count": 15
+      },
+      "memory": {
+        "agent_memories": 10,
+        "agents_without_memory": 3,
+        "stale_memories": 9,
+        "total_memory_lines": 367,
+        "project_memories": 3,
+        "project_memory_files": [
+          "MEMORY.md",
+          "feedback_morning_briefing.md",
+          "project_db_isolation.md"
+        ]
+      },
+      "alerts": [
+        {
+          "severity": "HIGH",
+          "message": "SUPABASE_SERVICE_KEY nao configurada"
+        },
+        {
+          "severity": "WARNING",
+          "message": "3 agentes sem MEMORY.md: aiox-master, squad-creator, ux-design-expert"
+        },
+        {
+          "severity": "INFO",
+          "message": "9 agentes com memoria > 7 dias: analyst, architect, data-engineer, dev, devops, pm, po, qa, sm"
+        },
+        {
+          "severity": "WARNING",
+          "message": "12 arquivos untracked"
+        },
+        {
+          "severity": "WARNING",
+          "message": "5 scripts de hardening pendentes: db-check-consistency.js, db-benchmark.js, db-backup.js, db-restore.js, db-weekly-report.js"
+        },
+        {
+          "severity": "WARNING",
+          "message": "33 arquivos modificados sem commit"
+        }
+      ],
+      "pendencies": [
+        {
+          "story": "2026-03-05-uxgroup-agent-replacement.md",
+          "status": "unknown",
+          "progress": "15/15",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-05-uxgroup-constitutions-sync.md",
+          "status": "unknown",
+          "progress": "15/15",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-create-squad-espiao.md",
+          "status": "unknown",
+          "progress": "11/11",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-continuous-improvement-policy.md",
+          "status": "unknown",
+          "progress": "13/13",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-cycle-002-cashback-roleta.md",
+          "status": "unknown",
+          "progress": "13/13",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-first-real-cycle.md",
+          "status": "unknown",
+          "progress": "14/14",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-operational-base-mvp.md",
+          "status": "unknown",
+          "progress": "31/31",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-scope-split-formatting-final.md",
+          "status": "unknown",
+          "progress": "7/7",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-07-create-persona-squad-and-ux-cross.md",
+          "status": "unknown",
+          "progress": "25/25",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-08-documentacao-tecnica-agentes-pipeline.md",
+          "status": "unknown",
+          "progress": "9/9",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-14-database-phase5-hardening.md",
+          "status": "Ready",
+          "progress": "0/59",
+          "unchecked": 59
+        },
+        {
+          "type": "missing_scripts",
+          "items": [
+            "db-check-consistency.js",
+            "db-benchmark.js",
+            "db-backup.js",
+            "db-restore.js",
+            "db-weekly-report.js"
+          ]
+        },
+        {
+          "type": "missing_credential",
+          "item": "SUPABASE_SERVICE_KEY"
+        }
+      ]
+    },
+    "summary": {
+      "agents": 13,
+      "squads": 2,
+      "skills": 13,
+      "stories": 13,
+      "alerts_high": 1,
+      "alerts_warning": 4,
+      "alerts_info": 1,
+      "pending_stories": 11,
+      "uncommitted_files": 33
+    }
+  },
+  {
+    "id": "sentinel-1773466308663",
+    "timestamp": "2026-03-14T05:31:48.663Z",
+    "date": "2026-03-14",
+    "sections": {
+      "activity": {
+        "commits_24h": [],
+        "commits_7d": 3,
+        "last_commit": "e5234c2d feat(persona): add persona replication rule with user checkpoint (4 days ago)",
+        "modified_count": 33,
+        "staged_count": 1,
+        "unstaged_count": 20,
+        "untracked_count": 12,
+        "modified_files": [
+          "M .aiox-core/cli/utils/output-formatter-cli.js",
+          "M .aiox-core/data/entity-registry.yaml",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/AutoFixLog.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/DomainCard.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/HealthScore.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/IssuesList.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/TechDebtList.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/shared/Card.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/components/shared/Header.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/pages/Dashboard.css",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/pages/Dashboard.jsx",
+          "M .aiox-core/scripts/diagnostics/health-dashboard/src/styles/index.css",
+          "M package-lock.json",
+          "M package.json",
+          "M squads/persona/agents/apostador-bingo-bet.md",
+          "M squads/persona/agents/apostador-cauteloso.md",
+          "M squads/persona/agents/apostador-de-fuga.md",
+          "M squads/persona/agents/apostador-profissional-analitico.md",
+          "M squads/persona/agents/apostador-reals-bet.md",
+          "M squads/persona/agents/apostador-social-recreativo.md",
+          "M squads/persona/squad.yaml",
+          "?? .aiox-core/core/db/",
+          "?? .aiox-core/development/agents/autoavaliativo.md",
+          "?? .aiox-core/development/agents/autoavaliativo/",
+          "?? .antigravity/rules/agents/uxgroup-maestro.md",
+          "?? bin/db-audit-security.js",
+          "?? bin/sentinel-report.js",
+          "?? docs/examples/ux-command-center/",
+          "?? docs/pt/architecture/documentacao-tecnica-agentes-pipeline-ferramentas-kb-fluxos.md",
+          "?? documentacao-tecnica-aiox.html",
+          "?? generate-pdf.js",
+          "?? scripts/import-manus-agents.js",
+          "?? scripts/migrate-to-db.js"
+        ]
+      },
+      "system_state": {
+        "agents_total": 13,
+        "agents": [
+          "aiox-master",
+          "analyst",
+          "architect",
+          "autoavaliativo",
+          "data-engineer",
+          "dev",
+          "devops",
+          "pm",
+          "po",
+          "qa",
+          "sm",
+          "squad-creator",
+          "ux-design-expert"
+        ],
+        "squads_total": 2,
+        "squads": [
+          "maquina-de-briefing",
+          "persona"
+        ],
+        "skills_total": 13,
+        "skills": [
+          "architect-first",
+          "checklist-runner",
+          "clone-mind.md",
+          "coderabbit-review",
+          "course-generation-workflow.md",
+          "enhance-workflow.md",
+          "mcp-builder",
+          "morning-briefing",
+          "ralph.md",
+          "skill-creator",
+          "squad.md",
+          "synapse",
+          "tech-search"
+        ],
+        "stories_total": 13,
+        "stories": [
+          "2026-03-05-uxgroup-agent-replacement.md",
+          "2026-03-05-uxgroup-constitutions-sync.md",
+          "2026-03-06-create-squad-espiao.md",
+          "2026-03-06-uxgroup-continuous-improvement-policy.md",
+          "2026-03-06-uxgroup-cycle-002-cashback-roleta.md",
+          "2026-03-06-uxgroup-first-real-cycle.md",
+          "2026-03-06-uxgroup-operational-base-mvp.md",
+          "2026-03-06-uxgroup-scope-split-formatting-final.md",
+          "2026-03-07-create-persona-squad-and-ux-cross.md",
+          "2026-03-08-documentacao-tecnica-agentes-pipeline.md",
+          "2026-03-13-database-phase1-foundation.md",
+          "2026-03-13-database-phase2-core-content.md",
+          "2026-03-14-database-phase5-hardening.md"
+        ],
+        "branch": "main"
+      },
+      "agent_health": {
+        "agents": [
+          {
+            "id": "aiox-master",
+            "has_memory": false,
+            "memory_lines": 0,
+            "memory_age_days": null,
+            "status": "no_memory"
+          },
+          {
+            "id": "analyst",
+            "has_memory": true,
+            "memory_lines": 34,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "architect",
+            "has_memory": true,
+            "memory_lines": 40,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "autoavaliativo",
+            "has_memory": true,
+            "memory_lines": 13,
+            "memory_age_days": 0,
+            "status": "active"
+          },
+          {
+            "id": "data-engineer",
+            "has_memory": true,
+            "memory_lines": 33,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "dev",
+            "has_memory": true,
+            "memory_lines": 47,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "devops",
+            "has_memory": true,
+            "memory_lines": 40,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "pm",
+            "has_memory": true,
+            "memory_lines": 39,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "po",
+            "has_memory": true,
+            "memory_lines": 46,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "qa",
+            "has_memory": true,
+            "memory_lines": 43,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "sm",
+            "has_memory": true,
+            "memory_lines": 32,
+            "memory_age_days": 8,
+            "status": "active"
+          },
+          {
+            "id": "squad-creator",
+            "has_memory": false,
+            "memory_lines": 0,
+            "memory_age_days": null,
+            "status": "no_memory"
+          },
+          {
+            "id": "ux-design-expert",
+            "has_memory": false,
+            "memory_lines": 0,
+            "memory_age_days": null,
+            "status": "no_memory"
+          }
+        ],
+        "with_memory": 10,
+        "without_memory": 3,
+        "stale_memory": 9,
+        "total": 13
+      },
+      "squad_performance": {
+        "squads": [
+          {
+            "id": "maquina-de-briefing",
+            "members_count": 9,
+            "members": [
+              "uxgroup-ads",
+              "uxgroup-brand-guardian",
+              "uxgroup-briefing",
+              "uxgroup-concorrentes",
+              "uxgroup-formatting",
+              "uxgroup-maestro",
+              "uxgroup-qa-criativo",
+              "uxgroup-roteiro",
+              "uxgroup-task-orchestrator"
+            ],
+            "last_activity": "2026-03-12",
+            "status": "active"
+          },
+          {
+            "id": "persona",
+            "members_count": 6,
+            "members": [
+              "apostador-bingo-bet",
+              "apostador-cauteloso",
+              "apostador-de-fuga",
+              "apostador-profissional-analitico",
+              "apostador-reals-bet",
+              "apostador-social-recreativo"
+            ],
+            "last_activity": "2026-03-12",
+            "status": "active"
+          }
+        ],
+        "total": 2
+      },
+      "database": {
+        "phases": {
+          "5": "IN_PROGRESS",
+          "1-4": "DONE"
+        },
+        "schemas": 7,
+        "tables": 30,
+        "rls_policies": "~80",
+        "credentials": {
+          "SUPABASE_URL": true,
+          "SUPABASE_ANON_KEY": true,
+          "SUPABASE_SERVICE_KEY": false,
+          "SUPABASE_DB_URL": true
+        },
+        "db_scripts": [
+          "db-audit-security.js"
+        ],
+        "missing_scripts": [
+          "db-check-consistency.js",
+          "db-benchmark.js",
+          "db-backup.js",
+          "db-restore.js",
+          "db-weekly-report.js"
+        ],
+        "migrations_count": 15
+      },
+      "memory": {
+        "agent_memories": 10,
+        "agents_without_memory": 3,
+        "stale_memories": 9,
+        "total_memory_lines": 367,
+        "project_memories": 3,
+        "project_memory_files": [
+          "MEMORY.md",
+          "feedback_morning_briefing.md",
+          "project_db_isolation.md"
+        ]
+      },
+      "alerts": [
+        {
+          "severity": "HIGH",
+          "message": "SUPABASE_SERVICE_KEY nao configurada"
+        },
+        {
+          "severity": "WARNING",
+          "message": "3 agentes sem MEMORY.md: aiox-master, squad-creator, ux-design-expert"
+        },
+        {
+          "severity": "INFO",
+          "message": "9 agentes com memoria > 7 dias: analyst, architect, data-engineer, dev, devops, pm, po, qa, sm"
+        },
+        {
+          "severity": "WARNING",
+          "message": "12 arquivos untracked"
+        },
+        {
+          "severity": "WARNING",
+          "message": "5 scripts de hardening pendentes: db-check-consistency.js, db-benchmark.js, db-backup.js, db-restore.js, db-weekly-report.js"
+        },
+        {
+          "severity": "WARNING",
+          "message": "33 arquivos modificados sem commit"
+        }
+      ],
+      "pendencies": [
+        {
+          "story": "2026-03-05-uxgroup-agent-replacement.md",
+          "status": "unknown",
+          "progress": "15/15",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-05-uxgroup-constitutions-sync.md",
+          "status": "unknown",
+          "progress": "15/15",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-create-squad-espiao.md",
+          "status": "unknown",
+          "progress": "11/11",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-continuous-improvement-policy.md",
+          "status": "unknown",
+          "progress": "13/13",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-cycle-002-cashback-roleta.md",
+          "status": "unknown",
+          "progress": "13/13",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-first-real-cycle.md",
+          "status": "unknown",
+          "progress": "14/14",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-operational-base-mvp.md",
+          "status": "unknown",
+          "progress": "31/31",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-06-uxgroup-scope-split-formatting-final.md",
+          "status": "unknown",
+          "progress": "7/7",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-07-create-persona-squad-and-ux-cross.md",
+          "status": "unknown",
+          "progress": "25/25",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-08-documentacao-tecnica-agentes-pipeline.md",
+          "status": "unknown",
+          "progress": "9/9",
+          "unchecked": 0
+        },
+        {
+          "story": "2026-03-14-database-phase5-hardening.md",
+          "status": "Ready",
+          "progress": "0/59",
+          "unchecked": 59
+        },
+        {
+          "type": "missing_scripts",
+          "items": [
+            "db-check-consistency.js",
+            "db-benchmark.js",
+            "db-backup.js",
+            "db-restore.js",
+            "db-weekly-report.js"
+          ]
+        },
+        {
+          "type": "missing_credential",
+          "item": "SUPABASE_SERVICE_KEY"
+        }
+      ]
+    },
+    "summary": {
+      "agents": 13,
+      "squads": 2,
+      "skills": 13,
+      "stories": 13,
+      "alerts_high": 1,
+      "alerts_warning": 4,
+      "alerts_info": 1,
+      "pending_stories": 11,
+      "uncommitted_files": 33
+    }
+  }
+]

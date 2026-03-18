@@ -1,25 +1,29 @@
 .tech-debt-list {
-  background-color: var(--color-bg-secondary);
+  background-color: var(--color-bg-card);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .tech-debt-title {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-accent);
   margin-bottom: var(--spacing-md);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .tech-debt-count {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   padding: 2px var(--spacing-sm);
-  background-color: var(--color-bg-card);
+  background-color: var(--color-accent-dim);
   border-radius: var(--radius-full);
-  color: var(--color-text-muted);
+  color: var(--color-accent);
+  font-weight: 700;
 }
 
 .tech-debt-empty {
@@ -43,10 +47,18 @@
 
 .tech-debt-item {
   padding: var(--spacing-md);
-  background-color: var(--color-bg-card);
+  background-color: rgba(255, 255, 255, 0.02);
   border-radius: var(--radius-md);
   margin-bottom: var(--spacing-sm);
   border-left: 3px solid var(--color-severity-medium);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-left: 3px solid var(--color-severity-medium);
+  transition: border-color 0.2s;
+}
+
+.tech-debt-item:hover {
+  border-color: rgba(0, 229, 204, 0.15);
+  border-left-color: var(--color-accent);
 }
 
 .tech-debt-item:last-child {
@@ -61,14 +73,14 @@
 }
 
 .tech-debt-id {
-  font-family: monospace;
-  font-size: 0.75rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
   color: var(--color-text-muted);
 }
 
 .tech-debt-name {
-  font-size: 0.9375rem;
-  font-weight: 500;
+  font-size: 0.9rem;
+  font-weight: 600;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-sm) 0;
 }
@@ -77,31 +89,34 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-md);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .tech-debt-domain {
-  text-transform: capitalize;
+  text-transform: uppercase;
 }
 
 .tech-debt-effort {
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
+  color: var(--color-accent);
 }
 
 .effort-icon {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
 }
 
 .tech-debt-check {
-  font-family: monospace;
+  font-family: 'Courier New', monospace;
 }
 
 .tech-debt-description {
   margin-top: var(--spacing-sm);
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: var(--color-text-secondary);
   line-height: 1.5;
 }
@@ -110,5 +125,5 @@
   text-align: center;
   padding-top: var(--spacing-md);
   color: var(--color-text-muted);
-  font-size: 0.875rem;
+  font-size: 0.8rem;
 }

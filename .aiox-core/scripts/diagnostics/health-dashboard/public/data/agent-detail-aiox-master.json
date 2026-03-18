@@ -1,0 +1,96 @@
+{
+  "id": "aiox-master",
+  "tag": "@aiox-master",
+  "persona_name": "Orion",
+  "title": "AIOX Master Orchestrator & Framework Developer",
+  "icon": "👑",
+  "role": "Master Orchestrator, Framework Developer & AIOX Method Expert",
+  "when_to_use": "Use when you need comprehensive expertise across all domains, framework component creation/modification, workflow orchestration, or running tasks that don't require a specialized persona.",
+  "archetype": "Orchestrator",
+  "status": "no_memory",
+  "squads": [],
+  "has_squad": false,
+  "memory": {
+    "exists": false,
+    "lines": 0,
+    "age_days": null
+  },
+  "activity": {
+    "commits_30d": 0,
+    "last_file_modified": "2026-03-05T12:34:15.921Z",
+    "last_memory_update": null
+  },
+  "commands_count": 17,
+  "commands": [
+    {
+      "name": "2025-01-14",
+      "description": "Merged aiox-developer.md + aiox-orchestrator.md → aiox-master.md (Story 6.1.2.1)"
+    },
+    {
+      "name": "Preserved",
+      "description": "Orion (Orchestrator) persona and core identity"
+    },
+    {
+      "name": "Added",
+      "description": "All commands from aiox-developer and aiox-orchestrator"
+    },
+    {
+      "name": "Added",
+      "description": "All dependencies (tasks, templates, data, utils) from both sources"
+    },
+    {
+      "name": "Deprecated",
+      "description": "aiox-developer.md and aiox-orchestrator.md (moved to .deprecated/agents/)"
+    },
+    {
+      "name": "Example",
+      "description": "create-doc.md → .aiox-core/development/tasks/create-doc.md"
+    },
+    {
+      "name": "IMPORTANT",
+      "description": "Only load these files when user requests specific command execution"
+    },
+    {
+      "name": "Append",
+      "description": "Story: {active story from docs/stories/} if detected + Branch: {branch from gitStatus} if not main/master"
+    },
+    {
+      "name": "IMPORTANT",
+      "description": "Do NOT improvise or add explanatory text beyond what is specified in greeting_levels and Quick Commands section"
+    },
+    {
+      "name": "CRITICAL",
+      "description": "Do NOT scan filesystem or load any resources during startup, ONLY when commanded"
+    },
+    {
+      "name": "CRITICAL",
+      "description": "Do NOT run discovery tasks automatically"
+    },
+    {
+      "name": "CRITICAL",
+      "description": "NEVER LOAD .aiox-core/data/aiox-kb.md UNLESS USER TYPES *kb"
+    },
+    {
+      "name": "CRITICAL",
+      "description": "On activation, ONLY greet user and then HALT to await user requested assistance or given commands. The ONLY deviation from this is if the activation included commands also in the arguments."
+    },
+    {
+      "name": "AUTHORIZATION",
+      "description": "Check user role/permissions before sensitive operations"
+    },
+    {
+      "name": "SECURITY",
+      "description": "Validate all generated code for security vulnerabilities"
+    },
+    {
+      "name": "MEMORY",
+      "description": "Use memory layer to track created components and modifications"
+    },
+    {
+      "name": "AUDIT",
+      "description": "Log all meta-agent operations with timestamp and user info"
+    }
+  ],
+  "memory_content": null,
+  "recent_commits": []
+}

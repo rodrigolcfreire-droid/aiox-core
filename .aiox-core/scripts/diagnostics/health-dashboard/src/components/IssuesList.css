@@ -1,7 +1,8 @@
 .issues-list {
-  background-color: var(--color-bg-secondary);
+  background-color: var(--color-bg-card);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .issues-header {
@@ -14,9 +15,11 @@
 }
 
 .issues-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .issues-filters {
@@ -26,34 +29,42 @@
 
 .filter-btn {
   padding: var(--spacing-xs) var(--spacing-sm);
-  background-color: var(--color-bg-card);
-  border: none;
-  border-radius: var(--radius-sm);
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-full);
   color: var(--color-text-secondary);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .filter-btn:hover {
-  background-color: var(--color-bg-primary);
+  background-color: rgba(0, 229, 204, 0.08);
+  border-color: var(--color-accent);
 }
 
 .filter-btn.active {
-  background-color: var(--color-info);
-  color: var(--color-text-primary);
+  background-color: var(--color-accent);
+  color: var(--color-bg-primary);
+  border-color: var(--color-accent);
 }
 
 .filter-btn--critical.active {
   background-color: var(--color-severity-critical);
+  border-color: var(--color-severity-critical);
 }
 
 .filter-btn--high.active {
   background-color: var(--color-severity-high);
+  border-color: var(--color-severity-high);
 }
 
 .filter-btn--medium.active {
   background-color: var(--color-severity-medium);
+  border-color: var(--color-severity-medium);
 }
 
 .issues-empty {
@@ -61,7 +72,7 @@
   flex-direction: column;
   align-items: center;
   padding: var(--spacing-xl);
-  color: var(--color-healthy);
+  color: var(--color-accent);
 }
 
 .empty-icon {
@@ -77,9 +88,15 @@
 
 .issue-item {
   padding: var(--spacing-md);
-  background-color: var(--color-bg-card);
+  background-color: rgba(255, 255, 255, 0.02);
   border-radius: var(--radius-md);
   margin-bottom: var(--spacing-sm);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: border-color 0.2s;
+}
+
+.issue-item:hover {
+  border-color: rgba(0, 229, 204, 0.15);
 }
 
 .issue-item:last-child {
@@ -101,16 +118,17 @@
 }
 
 .issue-id {
-  font-family: monospace;
-  font-size: 0.75rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
   padding: 2px var(--spacing-xs);
-  background-color: var(--color-bg-primary);
+  background-color: var(--color-accent-dim);
   border-radius: var(--radius-sm);
-  color: var(--color-text-muted);
+  color: var(--color-accent);
+  font-weight: 600;
 }
 
 .issue-name {
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-text-primary);
 }
 
@@ -121,14 +139,15 @@
 }
 
 .issue-domain {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--color-text-muted);
-  text-transform: capitalize;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .issue-message {
   margin-top: var(--spacing-sm);
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   color: var(--color-text-secondary);
 }
 
@@ -138,47 +157,53 @@
   justify-content: space-between;
   margin-top: var(--spacing-md);
   padding-top: var(--spacing-sm);
-  border-top: 1px solid var(--color-bg-secondary);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .fix-tier {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .action-btn {
   padding: var(--spacing-xs) var(--spacing-md);
   border: none;
   border-radius: var(--radius-sm);
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 0.7rem;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .action-btn--fix {
-  background-color: var(--color-healthy);
-  color: white;
+  background-color: var(--color-accent);
+  color: var(--color-bg-primary);
 }
 
 .action-btn--confirm {
   background-color: var(--color-degraded);
-  color: black;
+  color: var(--color-bg-primary);
 }
 
 .action-btn--guide {
-  background-color: var(--color-info);
-  color: white;
+  background-color: transparent;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
 }
 
 .action-btn:hover {
   opacity: 0.9;
   transform: translateY(-1px);
+  box-shadow: var(--shadow-glow);
 }
 
 .issues-more {
   text-align: center;
   padding-top: var(--spacing-md);
   color: var(--color-text-muted);
-  font-size: 0.875rem;
+  font-size: 0.8rem;
 }

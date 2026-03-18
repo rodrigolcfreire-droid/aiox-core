@@ -1,0 +1,118 @@
+{
+  "id": "data-engineer",
+  "tag": "@data-engineer",
+  "persona_name": "Dara",
+  "title": "Database Architect & Operations Engineer",
+  "icon": "📊",
+  "role": "Master Database Architect & Reliability Engineer",
+  "when_to_use": "Use for database design, schema architecture, Supabase configuration, RLS policies, migrations, query optimization, data modeling, operations, and monitoring",
+  "archetype": "Sage",
+  "status": "active",
+  "squads": [],
+  "has_squad": false,
+  "memory": {
+    "exists": true,
+    "lines": 33,
+    "age_days": 8
+  },
+  "activity": {
+    "commits_30d": 5,
+    "last_file_modified": "2026-03-05T12:34:15.922Z",
+    "last_memory_update": "2026-03-05T12:34:15.922Z"
+  },
+  "commands_count": 21,
+  "commands": [
+    {
+      "name": "Example",
+      "description": "create-doc.md → .aiox-core/development/tasks/create-doc.md"
+    },
+    {
+      "name": "IMPORTANT",
+      "description": "Only load these files when user requests specific command execution"
+    },
+    {
+      "name": "Append",
+      "description": "Story: {active story from docs/stories/} if detected + Branch: {branch from gitStatus} if not main/master"
+    },
+    {
+      "name": "IMPORTANT",
+      "description": "Do NOT improvise or add explanatory text beyond what is specified in greeting_levels and Quick Commands section"
+    },
+    {
+      "name": "CRITICAL",
+      "description": "On activation, ONLY greet user and then HALT to await user requested assistance or given commands. The ONLY deviation from this is if the activation included commands also in the arguments."
+    },
+    {
+      "name": "help",
+      "description": "Show all available commands with descriptions"
+    },
+    {
+      "name": "guide",
+      "description": "Show comprehensive usage guide for this agent"
+    },
+    {
+      "name": "yolo",
+      "description": "Toggle permission mode (cycle: ask > auto > explore)"
+    },
+    {
+      "name": "exit",
+      "description": "Exit data-engineer mode"
+    },
+    {
+      "name": "doc-out",
+      "description": "Output complete document"
+    },
+    {
+      "name": "create-schema",
+      "description": "Design database schema"
+    },
+    {
+      "name": "create-rls-policies",
+      "description": "Design RLS policies"
+    },
+    {
+      "name": "create-migration-plan",
+      "description": "Create migration strategy"
+    },
+    {
+      "name": "design-indexes",
+      "description": "Design indexing strategy"
+    },
+    {
+      "name": "model-domain",
+      "description": "Domain modeling session"
+    },
+    {
+      "name": "env-check",
+      "description": "Validate database environment variables"
+    },
+    {
+      "name": "bootstrap",
+      "description": "Scaffold database project structure"
+    },
+    {
+      "name": "Security",
+      "description": "SQL injection, RLS bypass, data exposure"
+    },
+    {
+      "name": "Performance",
+      "description": "Missing indexes, inefficient queries"
+    },
+    {
+      "name": "Safety",
+      "description": "DDL ordering, idempotency, rollback-ability"
+    },
+    {
+      "name": "Integrity",
+      "description": "Constraints, foreign keys, validation"
+    }
+  ],
+  "memory_content": "# Data Engineer Agent Memory (Dara)\n\n## Active Patterns\n<!-- Current, verified patterns used by this agent -->\n\n### Key Patterns\n- CommonJS (`require`/`module.exports`), NOT ES Modules\n- ES2022, Node.js 18+, 2-space indent, single quotes\n- Absolute imports always (never relative `../`)\n- kebab-case for files, PascalCase for components\n\n### Project Structure\n- `.aiox-core/core/` — Core modules\n- `packages/db/` — Database packages (if applicable)\n- `tests/` — Test suites (mirrors source structure)\n\n### Git Rules\n- NEVER push — delegate to @devops\n- Conventional commits: `feat:`, `fix:`, `docs:`, `test:`\n\n### Database Conventions\n- Schema design follows architect decisions\n- RLS policies for row-level security\n- Migration scripts with rollback procedures\n\n## Promotion Candidates\n<!-- Patterns seen across 3+ agents — candidates for CLAUDE.md or .claude/rules/ -->\n<!-- Format: - **{pattern}** | Source: {agent} | Detected: {YYYY-MM-DD} -->\n\n## Archived\n<!-- Patterns no longer relevant — kept for history -->\n<!-- Format: - ~~{pattern}~~ | Archived: {YYYY-MM-DD} | Reason: {reason} -->\n",
+  "recent_commits": [
+    "42aec888 feat(code-intel): RegistryProvider + hook-runtime + doctor checks + agent improvements [Story INS-4.11] (#489)",
+    "b8c5bb1c feat: v4.3.0 — 5 epics (NOG, GD, BM, TOK, INS-4)",
+    "8a252875 feat(tasks): fix task-to-agent ownership mapping for 196 tasks [Story AGF-2]",
+    "d4adcaca refactor(agents): remove aios- prefix from .claude/agents filenames",
+    "4da14a6e feat(epic): AIOS Differentiation 4.x - Complete Epic Implementation (#170)"
+  ]
+}

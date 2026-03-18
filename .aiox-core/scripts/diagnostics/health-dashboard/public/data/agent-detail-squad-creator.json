@@ -1,0 +1,75 @@
+{
+  "id": "squad-creator",
+  "tag": "@squad-creator",
+  "persona_name": "Craft",
+  "title": "Squad Creator",
+  "icon": "'🏗️'",
+  "role": "Squad Architect & Builder",
+  "when_to_use": "'Use to create, validate, publish and manage squads'",
+  "archetype": "Builder",
+  "status": "no_memory",
+  "squads": [],
+  "has_squad": false,
+  "memory": {
+    "exists": false,
+    "lines": 0,
+    "age_days": null
+  },
+  "activity": {
+    "commits_30d": 2,
+    "last_file_modified": "2026-03-05T12:34:15.924Z",
+    "last_memory_update": null
+  },
+  "commands_count": 11,
+  "commands": [
+    {
+      "name": "Example",
+      "description": "squad-creator-create.md → .aiox-core/development/tasks/squad-creator-create.md"
+    },
+    {
+      "name": "IMPORTANT",
+      "description": "Only load these files when user requests specific command execution"
+    },
+    {
+      "name": "Append",
+      "description": "Story: {active story from docs/stories/} if detected + Branch: {branch from gitStatus} if not main/master"
+    },
+    {
+      "name": "IMPORTANT",
+      "description": "Do NOT improvise or add explanatory text beyond what is specified in greeting_levels and Quick Commands section"
+    },
+    {
+      "name": "EXCEPTION",
+      "description": "STEP 5.5 may read .aiox/handoffs/ and .aiox-core/data/workflow-chains.yaml during activation"
+    },
+    {
+      "name": "CRITICAL",
+      "description": "On activation, ONLY greet user and then HALT to await user requested assistance or given commands. The ONLY deviation from this is if the activation included commands also in the arguments."
+    },
+    {
+      "name": "CRITICAL",
+      "description": "All squads follow task-first architecture"
+    },
+    {
+      "name": "CRITICAL",
+      "description": "Validate squads before any distribution"
+    },
+    {
+      "name": "CRITICAL",
+      "description": "Use JSON Schema for manifest validation"
+    },
+    {
+      "name": "CRITICAL",
+      "description": "Support 3-level distribution (Local, aiox-squads, Synkra API)"
+    },
+    {
+      "name": "CRITICAL",
+      "description": "Integrate with existing squad-loader and squad-validator"
+    }
+  ],
+  "memory_content": null,
+  "recent_commits": [
+    "42aec888 feat(code-intel): RegistryProvider + hook-runtime + doctor checks + agent improvements [Story INS-4.11] (#489)",
+    "4da14a6e feat(epic): AIOS Differentiation 4.x - Complete Epic Implementation (#170)"
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "id": "pm",
+  "tag": "@pm",
+  "persona_name": "Morgan",
+  "title": "Product Manager",
+  "icon": "📋",
+  "role": "Investigative Product Strategist & Market-Savvy PM",
+  "when_to_use": "|",
+  "archetype": "Strategist",
+  "status": "active",
+  "squads": [],
+  "has_squad": false,
+  "memory": {
+    "exists": true,
+    "lines": 39,
+    "age_days": 8
+  },
+  "activity": {
+    "commits_30d": 27,
+    "last_file_modified": "2026-03-05T12:34:15.923Z",
+    "last_memory_update": "2026-03-05T12:34:15.923Z"
+  },
+  "commands_count": 5,
+  "commands": [
+    {
+      "name": "Example",
+      "description": "create-doc.md → .aiox-core/development/tasks/create-doc.md"
+    },
+    {
+      "name": "IMPORTANT",
+      "description": "Only load these files when user requests specific command execution"
+    },
+    {
+      "name": "Append",
+      "description": "Story: {active story from docs/stories/} if detected + Branch: {branch from gitStatus} if not main/master"
+    },
+    {
+      "name": "IMPORTANT",
+      "description": "Do NOT improvise or add explanatory text beyond what is specified in greeting_levels and Quick Commands section"
+    },
+    {
+      "name": "CRITICAL",
+      "description": "On activation, ONLY greet user and then HALT to await user requested assistance or given commands. The ONLY deviation from this is if the activation included commands also in the arguments."
+    }
+  ],
+  "memory_content": "# PM Agent Memory (Morgan)\n\n## Active Patterns\n<!-- Current, verified patterns used by this agent -->\n\n### Responsibilities\n- PRD creation (greenfield + brownfield)\n- Epic creation and management\n- Product strategy and roadmap\n- Requirements gathering (spec pipeline)\n\n### Epic Orchestration\n- `*execute-epic` with `EPIC-{ID}-EXECUTION.yaml`\n- State tracked in `.aiox/epic-{epicId}-state.yaml`\n- Wave-based parallel execution\n\n### Delegation\n- Story creation → @sm (`*draft`)\n- Course correction → @aiox-master (`*correct-course`)\n- Deep research → @analyst (`*research`)\n\n### Bob Mode (user_profile=bob)\n- PM acts as orchestrator when `user_profile: bob`\n- Spawns other agents via TerminalSpawner\n- Session state persistence in `.aiox/bob-session/`\n\n### Key Locations\n- PRD: `docs/prd/` (sharded)\n- Epics: `docs/stories/epics/`\n- Templates: `.aiox-core/development/templates/`\n\n## Promotion Candidates\n<!-- Patterns seen across 3+ agents — candidates for CLAUDE.md or .claude/rules/ -->\n<!-- Format: - **{pattern}** | Source: {agent} | Detected: {YYYY-MM-DD} -->\n\n## Archived\n<!-- Patterns no longer relevant — kept for history -->\n<!-- Format: - ~~{pattern}~~ | Archived: {YYYY-MM-DD} | Reason: {reason} -->\n",
+  "recent_commits": [
+    "3ba831a4 fix(ci): harden 7 CI/CD pipelines — timeouts, real failures, remove dead code",
+    "37424c76 chore: reorganize docs/ — gitignore internal, ship public docs in npm (#529)",
+    "fe56c42d chore: reorganize docs/ — gitignore internal, add public docs to npm package",
+    "35449f61 fix(installer): brownfield dependency resolution [INS-4.12] (#504)",
+    "eaa9f7d5 fix(ci): use latest tag for npm publish on version tag push",
+    "42aec888 feat(code-intel): RegistryProvider + hook-runtime + doctor checks + agent improvements [Story INS-4.11] (#489)",
+    "a58be643 fix(ci): remove submodules: recursive from publish checkout (#487)",
+    "1447d3ac fix(ci): npm publish — skip pro submodule in CI + non-blocking aios-install (#486)",
+    "3556c6fc fix(ci): fix npm publish workflow — submodule init + husky bypass (#485)",
+    "10c3b7ac fix(ci): fix npm publish workflow — submodule init + husky bypass"
+  ]
+}

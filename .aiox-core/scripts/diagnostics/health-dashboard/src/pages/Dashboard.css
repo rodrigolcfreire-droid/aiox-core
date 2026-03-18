@@ -18,14 +18,16 @@
 .loading-spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid var(--color-bg-card);
-  border-top-color: var(--color-info);
+  border: 3px solid var(--color-bg-card);
+  border-top-color: var(--color-accent);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .dashboard-error h2 {
@@ -34,11 +36,19 @@
 
 .dashboard-error button {
   padding: var(--spacing-sm) var(--spacing-lg);
-  background-color: var(--color-info);
-  color: white;
+  background-color: var(--color-accent);
+  color: var(--color-bg-primary);
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: box-shadow 0.2s;
+}
+
+.dashboard-error button:hover {
+  box-shadow: var(--shadow-glow);
 }
 
 /* Header */
@@ -48,6 +58,8 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: var(--spacing-md);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid rgba(0, 229, 204, 0.08);
 }
 
 .dashboard-title {
@@ -59,7 +71,13 @@
 
 .dashboard-title h1 {
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ffffff 0%, var(--color-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .dashboard-meta {
@@ -69,27 +87,33 @@
 }
 
 .last-updated {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: var(--color-text-muted);
+  font-family: 'Courier New', monospace;
 }
 
 .refresh-btn {
   padding: var(--spacing-xs) var(--spacing-md);
-  background-color: var(--color-bg-card);
-  color: var(--color-text-primary);
-  border: none;
+  background-color: transparent;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 0.875rem;
-  transition: background-color 0.2s;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
 }
 
 .refresh-btn:hover:not(:disabled) {
-  background-color: var(--color-bg-secondary);
+  background-color: var(--color-accent);
+  color: var(--color-bg-primary);
+  box-shadow: var(--shadow-glow);
 }
 
 .refresh-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
@@ -104,22 +128,26 @@
   align-items: center;
   gap: var(--spacing-sm);
   cursor: pointer;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .toggle-label input {
   width: 16px;
   height: 16px;
-  accent-color: var(--color-info);
+  accent-color: var(--color-accent);
 }
 
 .countdown {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  color: var(--color-accent);
   padding: var(--spacing-xs) var(--spacing-sm);
-  background-color: var(--color-bg-card);
-  border-radius: var(--radius-sm);
+  background-color: var(--color-accent-dim);
+  border-radius: var(--radius-full);
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
 }
 
 /* Overview Section */
@@ -162,23 +190,33 @@
 
 .stat-value {
   font-size: 1.5rem;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--color-text-primary);
 }
 
 .stat-label {
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   color: var(--color-text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
+  font-weight: 600;
 }
 
 .stat--success .stat-value {
-  color: var(--color-healthy);
+  color: var(--color-accent);
 }
 
 .stat--danger .stat-value {
   color: var(--color-critical);
+}
+
+.health-trend-desc {
+  color: var(--color-degraded);
+  /* Amarelo (mesma cor do gráfico) */
+  font-size: 0.85rem;
+  font-style: italic;
+  margin-top: var(--spacing-sm);
+  text-align: left;
 }
 
 /* Section */
@@ -187,10 +225,24 @@
 }
 
 .section-title {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
   margin-bottom: var(--spacing-md);
-  color: var(--color-text-primary);
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.section-title::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 1em;
+  background: var(--color-accent);
+  border-radius: 2px;
 }
 
 /* Domain Grid */
@@ -228,11 +280,14 @@
 .dashboard-footer {
   margin-top: var(--spacing-xl);
   padding-top: var(--spacing-lg);
-  border-top: 1px solid var(--color-bg-card);
+  border-top: 1px solid rgba(0, 229, 204, 0.08);
   text-align: center;
 }
 
 .dashboard-footer p {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: 'Courier New', monospace;
 }

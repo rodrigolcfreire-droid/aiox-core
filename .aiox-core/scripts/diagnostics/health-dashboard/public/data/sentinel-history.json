@@ -1,0 +1,82 @@
+[
+  {
+    "file": "2026-03-14-sentinel-1773470249785.json",
+    "date": "2026-03-14",
+    "timestamp": "2026-03-14T06:37:29.785Z",
+    "summary": {
+      "agents": 13,
+      "squads": 2,
+      "skills": 13,
+      "stories": 13,
+      "alerts_high": 1,
+      "alerts_warning": 4,
+      "alerts_info": 1,
+      "pending_stories": 11,
+      "uncommitted_files": 42
+    }
+  },
+  {
+    "file": "2026-03-14-sentinel-1773469596529.json",
+    "date": "2026-03-14",
+    "timestamp": "2026-03-14T06:26:36.529Z",
+    "summary": {
+      "agents": 13,
+      "squads": 2,
+      "skills": 13,
+      "stories": 13,
+      "alerts_high": 1,
+      "alerts_warning": 4,
+      "alerts_info": 1,
+      "pending_stories": 11,
+      "uncommitted_files": 42
+    }
+  },
+  {
+    "file": "2026-03-14-sentinel-1773467020121.json",
+    "date": "2026-03-14",
+    "timestamp": "2026-03-14T05:43:40.122Z",
+    "summary": {
+      "agents": 13,
+      "squads": 2,
+      "skills": 13,
+      "stories": 13,
+      "alerts_high": 1,
+      "alerts_warning": 4,
+      "alerts_info": 1,
+      "pending_stories": 11,
+      "uncommitted_files": 37
+    }
+  },
+  {
+    "file": "2026-03-14-sentinel-1773466534666.json",
+    "date": "2026-03-14",
+    "timestamp": "2026-03-14T05:35:34.666Z",
+    "summary": {
+      "agents": 13,
+      "squads": 2,
+      "skills": 13,
+      "stories": 13,
+      "alerts_high": 1,
+      "alerts_warning": 4,
+      "alerts_info": 1,
+      "pending_stories": 11,
+      "uncommitted_files": 33
+    }
+  },
+  {
+    "file": "2026-03-14-sentinel-1773466308663.json",
+    "date": "2026-03-14",
+    "timestamp": "2026-03-14T05:31:48.663Z",
+    "summary": {
+      "agents": 13,
+      "squads": 2,
+      "skills": 13,
+      "stories": 13,
+      "alerts_high": 1,
+      "alerts_warning": 4,
+      "alerts_info": 1,
+      "pending_stories": 11,
+      "uncommitted_files": 33
+    }
+  }
+]

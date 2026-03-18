@@ -1,0 +1,52 @@
+{
+  "id": "analyst",
+  "tag": "@analyst",
+  "persona_name": "Atlas",
+  "title": "Business Analyst",
+  "icon": "🔍",
+  "role": "Insightful Analyst & Strategic Ideation Partner",
+  "when_to_use": "|",
+  "archetype": "Decoder",
+  "status": "active",
+  "squads": [],
+  "has_squad": false,
+  "memory": {
+    "exists": true,
+    "lines": 34,
+    "age_days": 8
+  },
+  "activity": {
+    "commits_30d": 3,
+    "last_file_modified": "2026-03-05T12:34:15.921Z",
+    "last_memory_update": "2026-03-05T12:34:15.921Z"
+  },
+  "commands_count": 5,
+  "commands": [
+    {
+      "name": "Example",
+      "description": "create-doc.md → .aiox-core/development/tasks/create-doc.md"
+    },
+    {
+      "name": "IMPORTANT",
+      "description": "Only load these files when user requests specific command execution"
+    },
+    {
+      "name": "Append",
+      "description": "Story: {active story from docs/stories/} if detected + Branch: {branch from gitStatus} if not main/master"
+    },
+    {
+      "name": "IMPORTANT",
+      "description": "Do NOT improvise or add explanatory text beyond what is specified in greeting_levels and Quick Commands section"
+    },
+    {
+      "name": "CRITICAL",
+      "description": "On activation, ONLY greet user and then HALT to await user requested assistance or given commands. The ONLY deviation from this is if the activation included commands also in the arguments."
+    }
+  ],
+  "memory_content": "# Analyst Agent Memory (Atlas)\n\n## Active Patterns\n<!-- Current, verified patterns used by this agent -->\n\n### Key Patterns\n- CommonJS (`require`/`module.exports`), NOT ES Modules\n- ES2022, Node.js 18+, 2-space indent, single quotes\n- Absolute imports always (never relative `../`)\n- kebab-case for files, PascalCase for components\n\n### Project Structure\n- `.aiox-core/core/` — Core modules (synapse, session, code-intel, orchestration)\n- `.aiox-core/development/` — Agents, tasks, templates, scripts\n- `docs/research/` — Research outputs (YYYY-MM-DD-slug format)\n- `docs/stories/` — Story files (active development)\n\n### Git Rules\n- NEVER push — delegate to @devops\n- Conventional commits: `feat:`, `fix:`, `docs:`, `test:`, `chore:`, `refactor:`\n\n### Research Conventions\n- Output dir: `docs/research/{YYYY-MM-DD}-{slug}/`\n- Use tech-search skill for deep research\n- Always include sources and methodology\n\n## Promotion Candidates\n<!-- Patterns seen across 3+ agents — candidates for CLAUDE.md or .claude/rules/ -->\n<!-- Format: - **{pattern}** | Source: {agent} | Detected: {YYYY-MM-DD} -->\n\n## Archived\n<!-- Patterns no longer relevant — kept for history -->\n<!-- Format: - ~~{pattern}~~ | Archived: {YYYY-MM-DD} | Reason: {reason} -->\n",
+  "recent_commits": [
+    "42aec888 feat(code-intel): RegistryProvider + hook-runtime + doctor checks + agent improvements [Story INS-4.11] (#489)",
+    "b8c5bb1c feat: v4.3.0 — 5 epics (NOG, GD, BM, TOK, INS-4)",
+    "d4adcaca refactor(agents): remove aios- prefix from .claude/agents filenames"
+  ]
+}
