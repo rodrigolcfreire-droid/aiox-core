@@ -1,0 +1,945 @@
+{
+  "generated_at": "2026-03-18T01:17:14.272Z",
+  "platforms": {
+    "telegram": {
+      "agents": 4,
+      "total_messages": 2030
+    },
+    "whatsapp": {
+      "groups": 1,
+      "total_messages": 155
+    }
+  },
+  "aggregate": {
+    "totals": {
+      "messages": 2185,
+      "duvidas": 94,
+      "dores": 11,
+      "engajamento": 143
+    },
+    "top_questions": [
+      {
+        "text": "SESSÃO DAS ROSAS DE 10X A 50X! Siga os minutos exatos, minuto anterior e minuto seguinte  ⏰\n\n🌹 13:35\n🌹 13:39\n🌹 13:44\n🌹 13:48\n🌹 13:51\n🌹 13:56\n\nÚNICA CASA QUE JOGO!🏠\n➡️ https://bingo.bet.br/?btag=UX-41400_wpp",
+        "count": 3,
+        "agent": "IRIS | COMUNIDADE CLASSE A 🌹✈️",
+        "platform": "whatsapp"
+      },
+      {
+        "text": "Qual os horários das Live",
+        "count": 1,
+        "agent": "Caio Roleta",
+        "platform": "telegram"
+      },
+      {
+        "text": "Como entra nesse grupo",
+        "count": 1,
+        "agent": "Caio Roleta",
+        "platform": "telegram"
+      },
+      {
+        "text": "Galera, vocês lembram hoje que apareceu um hater na live falando que eu tinha perdido dinheiro??? MESMO com todo mundo lucrando",
+        "count": 1,
+        "agent": "Caio Roleta",
+        "platform": "telegram"
+      },
+      {
+        "text": "A mesa voltou a respeita?",
+        "count": 1,
+        "agent": "Caio Roleta",
+        "platform": "telegram"
+      },
+      {
+        "text": "Você jogou pra t1 e mais o que aí? Foi em cima da região?",
+        "count": 1,
+        "agent": "Caio Roleta",
+        "platform": "telegram"
+      },
+      {
+        "text": "Esses 9k vai fazer falta?",
+        "count": 1,
+        "agent": "Caio Roleta",
+        "platform": "telegram"
+      },
+      {
+        "text": "Perdi as lives de hj\nCaio vc disse qual vai ser as novidade?",
+        "count": 1,
+        "agent": "Caio Roleta",
+        "platform": "telegram"
+      },
+      {
+        "text": "galera pra quem que faltou eu mandar banca?",
+        "count": 1,
+        "agent": "Caio Roleta",
+        "platform": "telegram"
+      },
+      {
+        "text": "Teria alguma dica ?\nTipo jogar um com valor alto é colocar uma baixa e uma  valor mínimo com mais vezes ?",
+        "count": 1,
+        "agent": "Professor",
+        "platform": "telegram"
+      }
+    ],
+    "top_pains": [
+      {
+        "text": "Galera, vocês lembram hoje que apareceu um hater na live falando que eu tinha perdido dinheiro??? MESMO com todo mundo lucrando",
+        "count": 1,
+        "agent": "Caio Roleta",
+        "platform": "telegram"
+      },
+      {
+        "text": "Perdi as lives de hj\nCaio vc disse qual vai ser as novidade?",
+        "count": 1,
+        "agent": "Caio Roleta",
+        "platform": "telegram"
+      },
+      {
+        "text": "Vcs tem algum problema na plataforma?",
+        "count": 1,
+        "agent": "Caio Roleta",
+        "platform": "telegram"
+      },
+      {
+        "text": "Tá sendo cancelado sabe me dizer se algum problema hj?",
+        "count": 1,
+        "agent": "Caio Roleta",
+        "platform": "telegram"
+      },
+      {
+        "text": "fiz um debug da pagina é bizarro como o sistema do aviator funciona, são basicamente 2 formas de pagamento que intercalam entre si é como um carro de 4 marchas 1 e 2 marchas de força quando o sistema paga bem 3 e 4 quarta quando o sistema intercala e mantem em fluidez de baixos valores",
+        "count": 1,
+        "agent": "Suhaviator",
+        "platform": "telegram"
+      },
+      {
+        "text": "tivemos um problema com a lista, mas saiu agora no horario das 9h",
+        "count": 1,
+        "agent": "Suhaviator",
+        "platform": "telegram"
+      },
+      {
+        "text": "Porra eu perdi a entrada",
+        "count": 1,
+        "agent": "Suhaviator",
+        "platform": "telegram"
+      },
+      {
+        "text": "Esse é o problema não tô podendo ficar na live esses dias o cara que trampa CMG tá de férias aí se sabe né trabalho dobrado kkkk",
+        "count": 1,
+        "agent": "IRIS | COMUNIDADE CLASSE A 🌹✈️",
+        "platform": "whatsapp"
+      },
+      {
+        "text": "No outro vcs tacavam terror, tô estranhando kkkkk",
+        "count": 1,
+        "agent": "IRIS | COMUNIDADE CLASSE A 🌹✈️",
+        "platform": "whatsapp"
+      },
+      {
+        "text": "Já perdi 2k hoje",
+        "count": 1,
+        "agent": "IRIS | COMUNIDADE CLASSE A 🌹✈️",
+        "platform": "whatsapp"
+      }
+    ],
+    "top_topics": [
+      {
+        "topic": "live exclusiva",
+        "count": 29
+      },
+      {
+        "topic": "exclusiva vivo",
+        "count": 29
+      },
+      {
+        "topic": "clique fale",
+        "count": 21
+      },
+      {
+        "topic": "fale professor",
+        "count": 21
+      },
+      {
+        "topic": "professor converse",
+        "count": 21
+      },
+      {
+        "topic": "plataformas regulamentadas",
+        "count": 21
+      },
+      {
+        "topic": "regulamentadas bingo",
+        "count": 21
+      },
+      {
+        "topic": "bingo reals",
+        "count": 21
+      },
+      {
+        "topic": "converse único",
+        "count": 19
+      },
+      {
+        "topic": "único telegram",
+        "count": 19
+      },
+      {
+        "topic": "tomem cuidado",
+        "count": 11
+      },
+      {
+        "topic": "cuidado golpes",
+        "count": 11
+      },
+      {
+        "topic": "golpes intencionada",
+        "count": 11
+      },
+      {
+        "topic": "intencionada tentando",
+        "count": 11
+      },
+      {
+        "topic": "tentando passar",
+        "count": 11
+      }
+    ],
+    "suggestions": [
+      {
+        "type": "roteiro",
+        "source": "dor_da_audiencia",
+        "suggestion": "Roteiro abordando dor: \"Galera, vocês lembram hoje que apareceu um hater na live falando que eu tinha pe\"",
+        "priority": "high",
+        "format": "video_longo",
+        "agent": "Caio Roleta",
+        "platform": "telegram"
+      },
+      {
+        "type": "roteiro",
+        "source": "dor_da_audiencia",
+        "suggestion": "Roteiro abordando dor: \"Perdi as lives de hj\nCaio vc disse qual vai ser as novidade?\"",
+        "priority": "high",
+        "format": "video_longo",
+        "agent": "Caio Roleta",
+        "platform": "telegram"
+      },
+      {
+        "type": "roteiro",
+        "source": "dor_da_audiencia",
+        "suggestion": "Roteiro abordando dor: \"Vcs tem algum problema na plataforma?\"",
+        "priority": "high",
+        "format": "video_longo",
+        "agent": "Caio Roleta",
+        "platform": "telegram"
+      },
+      {
+        "type": "conteudo",
+        "source": "tema_trending",
+        "suggestion": "Conteudo sobre: \"live exclusiva\" (29 mencoes)",
+        "priority": "high",
+        "format": "post_ou_video",
+        "occurrences": 29,
+        "agent": "Professor",
+        "platform": "telegram"
+      },
+      {
+        "type": "conteudo",
+        "source": "tema_trending",
+        "suggestion": "Conteudo sobre: \"exclusiva vivo\" (29 mencoes)",
+        "priority": "high",
+        "format": "post_ou_video",
+        "occurrences": 29,
+        "agent": "Professor",
+        "platform": "telegram"
+      },
+      {
+        "type": "conteudo",
+        "source": "tema_trending",
+        "suggestion": "Conteudo sobre: \"clique fale\" (21 mencoes)",
+        "priority": "high",
+        "format": "post_ou_video",
+        "occurrences": 21,
+        "agent": "Professor",
+        "platform": "telegram"
+      },
+      {
+        "type": "anuncio",
+        "source": "tema_viral",
+        "suggestion": "Anuncio baseado em tema viral: \"peguei\" (velocidade 3.03x)",
+        "priority": "high",
+        "format": "criativo_pago",
+        "agent": "Professor",
+        "platform": "telegram"
+      },
+      {
+        "type": "roteiro",
+        "source": "dor_da_audiencia",
+        "suggestion": "Roteiro abordando dor: \"fiz um debug da pagina é bizarro como o sistema do aviator funciona, são basicam\"",
+        "priority": "high",
+        "format": "video_longo",
+        "agent": "Suhaviator",
+        "platform": "telegram"
+      },
+      {
+        "type": "roteiro",
+        "source": "dor_da_audiencia",
+        "suggestion": "Roteiro abordando dor: \"tivemos um problema com a lista, mas saiu agora no horario das 9h\"",
+        "priority": "high",
+        "format": "video_longo",
+        "agent": "Suhaviator",
+        "platform": "telegram"
+      },
+      {
+        "type": "roteiro",
+        "source": "dor_da_audiencia",
+        "suggestion": "Roteiro abordando dor: \"Porra eu perdi a entrada\"",
+        "priority": "high",
+        "format": "video_longo",
+        "agent": "Suhaviator",
+        "platform": "telegram"
+      }
+    ]
+  },
+  "agents": [
+    {
+      "id": "caio-roleta",
+      "name": "Caio Roleta",
+      "platform": "telegram",
+      "generated_at": "2026-03-18T00:21:43.229Z",
+      "total_messages": 176,
+      "classification": {
+        "duvidas": 26,
+        "dores": 4,
+        "engajamento": 14
+      },
+      "topics": [
+        {
+          "topic": "aguardando resultado",
+          "count": 8
+        },
+        {
+          "topic": "roleta brasileira",
+          "count": 7
+        },
+        {
+          "topic": "entrada espanco",
+          "count": 6
+        },
+        {
+          "topic": "espanco roleta",
+          "count": 6
+        },
+        {
+          "topic": "brasileira playtech",
+          "count": 6
+        }
+      ],
+      "influencers": [
+        {
+          "name": "Group",
+          "score": 49,
+          "level": "medium"
+        },
+        {
+          "name": "Professor 🧑🏻‍💻💰",
+          "score": 25,
+          "level": "medium"
+        },
+        {
+          "name": "Gisele Souza",
+          "score": 22,
+          "level": "medium"
+        },
+        {
+          "name": "Victor",
+          "score": 10,
+          "level": "low"
+        },
+        {
+          "name": "Rivaldo Felix 🥸",
+          "score": 10,
+          "level": "low"
+        }
+      ],
+      "segments": {
+        "iniciantes": 19,
+        "intermediarios": 11,
+        "avancados": 0
+      },
+      "viral_topics": [],
+      "peak_hours": [
+        {
+          "hour": 13,
+          "count": 26
+        },
+        {
+          "hour": 22,
+          "count": 25
+        },
+        {
+          "hour": 23,
+          "count": 19
+        }
+      ],
+      "content_suggestions": [
+        {
+          "type": "conteudo",
+          "source": "duvida_recorrente",
+          "suggestion": "Tutorial/video respondendo: \"Qual os horários das Live\"",
+          "priority": "medium",
+          "format": "video_curto"
+        },
+        {
+          "type": "conteudo",
+          "source": "duvida_recorrente",
+          "suggestion": "Tutorial/video respondendo: \"Como entra nesse grupo\"",
+          "priority": "medium",
+          "format": "video_curto"
+        },
+        {
+          "type": "conteudo",
+          "source": "duvida_recorrente",
+          "suggestion": "Tutorial/video respondendo: \"Galera, vocês lembram hoje que apareceu um hater na live falando que eu tinha pe\"",
+          "priority": "medium",
+          "format": "video_curto"
+        },
+        {
+          "type": "conteudo",
+          "source": "duvida_recorrente",
+          "suggestion": "Tutorial/video respondendo: \"A mesa voltou a respeita?\"",
+          "priority": "medium",
+          "format": "video_curto"
+        },
+        {
+          "type": "conteudo",
+          "source": "duvida_recorrente",
+          "suggestion": "Tutorial/video respondendo: \"Você jogou pra t1 e mais o que aí? Foi em cima da região?\"",
+          "priority": "medium",
+          "format": "video_curto"
+        }
+      ],
+      "hour_distribution": [
+        2,
+        0,
+        1,
+        16,
+        0,
+        0,
+        0,
+        1,
+        12,
+        0,
+        5,
+        8,
+        4,
+        26,
+        0,
+        14,
+        8,
+        6,
+        4,
+        14,
+        7,
+        4,
+        25,
+        19
+      ]
+    },
+    {
+      "id": "iristhaize",
+      "name": "Iristhaize",
+      "platform": "telegram",
+      "generated_at": "2026-03-18T00:21:43.230Z",
+      "total_messages": 1,
+      "classification": {
+        "duvidas": 0,
+        "dores": 0,
+        "engajamento": 0
+      },
+      "topics": [],
+      "influencers": [
+        {
+          "name": "Rodrigo Freire",
+          "score": 1,
+          "level": "low"
+        }
+      ],
+      "segments": {
+        "iniciantes": 1,
+        "intermediarios": 0,
+        "avancados": 0
+      },
+      "viral_topics": [],
+      "peak_hours": [
+        {
+          "hour": 17,
+          "count": 1
+        },
+        {
+          "hour": 0,
+          "count": 0
+        },
+        {
+          "hour": 1,
+          "count": 0
+        }
+      ],
+      "content_suggestions": [],
+      "hour_distribution": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "professor",
+      "name": "Professor",
+      "platform": "telegram",
+      "generated_at": "2026-03-18T01:09:08.455Z",
+      "total_messages": 1633,
+      "classification": {
+        "duvidas": 26,
+        "dores": 0,
+        "engajamento": 94
+      },
+      "topics": [
+        {
+          "topic": "live exclusiva",
+          "count": 29
+        },
+        {
+          "topic": "exclusiva vivo",
+          "count": 29
+        },
+        {
+          "topic": "clique fale",
+          "count": 21
+        },
+        {
+          "topic": "fale professor",
+          "count": 21
+        },
+        {
+          "topic": "professor converse",
+          "count": 21
+        }
+      ],
+      "influencers": [
+        {
+          "name": "Gui Riet",
+          "score": 391,
+          "level": "high"
+        },
+        {
+          "name": "Andre Lucas",
+          "score": 160,
+          "level": "high"
+        },
+        {
+          "name": "Group",
+          "score": 144,
+          "level": "high"
+        },
+        {
+          "name": "Denao",
+          "score": 116,
+          "level": "high"
+        },
+        {
+          "name": "Sandra",
+          "score": 83,
+          "level": "high"
+        }
+      ],
+      "segments": {
+        "iniciantes": 102,
+        "intermediarios": 49,
+        "avancados": 0
+      },
+      "viral_topics": [
+        {
+          "timestamp": "2026-03-17T14:00:00.000Z",
+          "message_count": 190,
+          "topic": "peguei",
+          "velocity": "3.03"
+        }
+      ],
+      "peak_hours": [
+        {
+          "hour": 11,
+          "count": 194
+        },
+        {
+          "hour": 1,
+          "count": 180
+        },
+        {
+          "hour": 0,
+          "count": 163
+        }
+      ],
+      "content_suggestions": [
+        {
+          "type": "conteudo",
+          "source": "tema_trending",
+          "suggestion": "Conteudo sobre: \"live exclusiva\" (29 mencoes)",
+          "priority": "high",
+          "format": "post_ou_video",
+          "occurrences": 29
+        },
+        {
+          "type": "conteudo",
+          "source": "tema_trending",
+          "suggestion": "Conteudo sobre: \"exclusiva vivo\" (29 mencoes)",
+          "priority": "high",
+          "format": "post_ou_video",
+          "occurrences": 29
+        },
+        {
+          "type": "conteudo",
+          "source": "tema_trending",
+          "suggestion": "Conteudo sobre: \"clique fale\" (21 mencoes)",
+          "priority": "high",
+          "format": "post_ou_video",
+          "occurrences": 21
+        },
+        {
+          "type": "anuncio",
+          "source": "tema_viral",
+          "suggestion": "Anuncio baseado em tema viral: \"peguei\" (velocidade 3.03x)",
+          "priority": "high",
+          "format": "criativo_pago"
+        }
+      ],
+      "hour_distribution": [
+        163,
+        180,
+        7,
+        136,
+        47,
+        15,
+        15,
+        9,
+        23,
+        47,
+        14,
+        194,
+        129,
+        85,
+        77,
+        106,
+        81,
+        35,
+        10,
+        71,
+        36,
+        57,
+        51,
+        45
+      ]
+    },
+    {
+      "id": "suhaviator",
+      "name": "Suhaviator",
+      "platform": "telegram",
+      "generated_at": "2026-03-18T00:21:43.224Z",
+      "total_messages": 220,
+      "classification": {
+        "duvidas": 29,
+        "dores": 3,
+        "engajamento": 12
+      },
+      "topics": [
+        {
+          "topic": "tomem cuidado",
+          "count": 11
+        },
+        {
+          "topic": "cuidado golpes",
+          "count": 11
+        },
+        {
+          "topic": "golpes intencionada",
+          "count": 11
+        },
+        {
+          "topic": "intencionada tentando",
+          "count": 11
+        },
+        {
+          "topic": "tentando passar",
+          "count": 11
+        }
+      ],
+      "influencers": [
+        {
+          "name": "Group",
+          "score": 53,
+          "level": "high"
+        },
+        {
+          "name": "Otavio Souza",
+          "score": 19,
+          "level": "low"
+        },
+        {
+          "name": "{luiziinho021 Rj™}",
+          "score": 18,
+          "level": "low"
+        },
+        {
+          "name": "Catarina Souza",
+          "score": 13,
+          "level": "low"
+        },
+        {
+          "name": "Lenivaldo Vadinho",
+          "score": 13,
+          "level": "low"
+        }
+      ],
+      "segments": {
+        "iniciantes": 46,
+        "intermediarios": 13,
+        "avancados": 0
+      },
+      "viral_topics": [
+        {
+          "timestamp": "2026-03-17T12:00:00.000Z",
+          "message_count": 28,
+          "topic": "ninguém",
+          "velocity": "3.05"
+        }
+      ],
+      "peak_hours": [
+        {
+          "hour": 9,
+          "count": 28
+        },
+        {
+          "hour": 21,
+          "count": 25
+        },
+        {
+          "hour": 15,
+          "count": 24
+        }
+      ],
+      "content_suggestions": [
+        {
+          "type": "conteudo",
+          "source": "duvida_recorrente",
+          "suggestion": "Tutorial/video respondendo: \"Já teve live ? (No período da   noite )\"",
+          "priority": "medium",
+          "format": "video_curto"
+        },
+        {
+          "type": "conteudo",
+          "source": "duvida_recorrente",
+          "suggestion": "Tutorial/video respondendo: \"https://nrnr.ink/#/cashwheel?a=qjbamsro\nReceba R$ 100 de graça,Pix SAQUE RÁPIDO.\"",
+          "priority": "medium",
+          "format": "video_curto"
+        },
+        {
+          "type": "conteudo",
+          "source": "duvida_recorrente",
+          "suggestion": "Tutorial/video respondendo: \"Vai ter Live?\"",
+          "priority": "medium",
+          "format": "video_curto"
+        },
+        {
+          "type": "conteudo",
+          "source": "duvida_recorrente",
+          "suggestion": "Tutorial/video respondendo: \"Como que funciona isso\"",
+          "priority": "medium",
+          "format": "video_curto"
+        },
+        {
+          "type": "conteudo",
+          "source": "duvida_recorrente",
+          "suggestion": "Tutorial/video respondendo: \"Sim, mas como que a gente ganha alguma coisa aqui?\"",
+          "priority": "medium",
+          "format": "video_curto"
+        }
+      ],
+      "hour_distribution": [
+        2,
+        4,
+        1,
+        2,
+        1,
+        1,
+        0,
+        8,
+        9,
+        28,
+        3,
+        3,
+        10,
+        11,
+        7,
+        24,
+        4,
+        8,
+        15,
+        14,
+        16,
+        25,
+        7,
+        17
+      ]
+    },
+    {
+      "id": "iris-comunidade-classe-a",
+      "name": "IRIS | COMUNIDADE CLASSE A 🌹✈️",
+      "platform": "whatsapp",
+      "generated_at": "2026-03-16T00:03:14.347Z",
+      "total_messages": 155,
+      "classification": {
+        "duvidas": 13,
+        "dores": 4,
+        "engajamento": 23
+      },
+      "topics": [
+        {
+          "topic": "minuto anterior",
+          "count": 7
+        },
+        {
+          "topic": "sessão rosas",
+          "count": 5
+        },
+        {
+          "topic": "minutos exatos",
+          "count": 5
+        },
+        {
+          "topic": "exatos minuto",
+          "count": 5
+        },
+        {
+          "topic": "anterior minuto",
+          "count": 5
+        }
+      ],
+      "influencers": [
+        {
+          "name": "73144014512258@lid",
+          "score": 80.5,
+          "level": "high"
+        },
+        {
+          "name": "20599418134771@lid",
+          "score": 16,
+          "level": "low"
+        },
+        {
+          "name": "180199916339351@lid",
+          "score": 15,
+          "level": "low"
+        },
+        {
+          "name": "99969759469612@lid",
+          "score": 10,
+          "level": "low"
+        },
+        {
+          "name": "237610811281472@lid",
+          "score": 8,
+          "level": "low"
+        }
+      ],
+      "segments": {
+        "iniciantes": 10,
+        "intermediarios": 10,
+        "avancados": 0
+      },
+      "viral_topics": [
+        {
+          "timestamp": "2026-03-14T01:00:00.000Z",
+          "message_count": 25,
+          "topic": "noite",
+          "velocity": "5.16"
+        },
+        {
+          "timestamp": "2026-03-13T12:00:00.000Z",
+          "message_count": 23,
+          "topic": "grupo",
+          "velocity": "4.75"
+        }
+      ],
+      "peak_hours": [
+        {
+          "hour": 9,
+          "count": 29
+        },
+        {
+          "hour": 22,
+          "count": 25
+        },
+        {
+          "hour": 10,
+          "count": 18
+        }
+      ],
+      "content_suggestions": [
+        {
+          "type": "conteudo",
+          "source": "duvida_recorrente",
+          "suggestion": "Tutorial/video respondendo: \"SESSÃO DAS ROSAS DE 10X A 50X! Siga os minutos exatos, minuto anterior e minuto \"",
+          "priority": "medium",
+          "format": "video_curto"
+        },
+        {
+          "type": "conteudo",
+          "source": "duvida_recorrente",
+          "suggestion": "Tutorial/video respondendo: \"Bruno não é dono Elder?\"",
+          "priority": "medium",
+          "format": "video_curto"
+        },
+        {
+          "type": "conteudo",
+          "source": "duvida_recorrente",
+          "suggestion": "Tutorial/video respondendo: \"*SESSÃO DAS ROSAS DE 10X A 50X! Minutos exatos, minuto anterior e minuto seguint\"",
+          "priority": "medium",
+          "format": "video_curto"
+        },
+        {
+          "type": "conteudo",
+          "source": "duvida_recorrente",
+          "suggestion": "Tutorial/video respondendo: \"todos em clima de sextou? HEHEHHE\"",
+          "priority": "medium",
+          "format": "video_curto"
+        },
+        {
+          "type": "conteudo",
+          "source": "duvida_recorrente",
+          "suggestion": "Tutorial/video respondendo: \"meta batida logo de manhã é?\"",
+          "priority": "medium",
+          "format": "video_curto"
+        }
+      ],
+      "hour_distribution": []
+    }
+  ]
+}
