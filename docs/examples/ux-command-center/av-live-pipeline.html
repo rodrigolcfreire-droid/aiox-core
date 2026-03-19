@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200">
+  <title>Cortes Inteligentes — Live Pipeline</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0e1a; color: #e2e8f0; font-family: 'Inter', sans-serif; min-height: 100vh; }
+
+    .header { padding: 24px 40px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; }
+    .header h1 { font-family: 'Chakra Petch'; font-size: 24px; background: linear-gradient(135deg, #a78bfa, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .header .status { font-size: 13px; padding: 4px 12px; border-radius: 12px; font-weight: 600; }
+    .status-idle { background: #1e293b; color: #64748b; }
+    .status-running { background: rgba(56,189,248,0.15); color: #38bdf8; animation: pulse 1.5s infinite; }
+    .status-waiting { background: rgba(251,191,36,0.15); color: #fbbf24; }
+    .status-done { background: rgba(52,211,153,0.15); color: #34d399; }
+    .status-error { background: rgba(239,68,68,0.15); color: #f87171; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 32px 40px; }
+
+    /* Input Section */
+    .input-section { background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 24px; margin-bottom: 32px; }
+    .input-row { display: flex; gap: 12px; }
+    .input-field { flex: 1; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px 16px; color: #e2e8f0; font-size: 14px; font-family: 'JetBrains Mono'; outline: none; }
+    .input-field:focus { border-color: #38bdf8; }
+    .input-field::placeholder { color: #475569; }
+    .btn { background: linear-gradient(135deg, #a78bfa, #38bdf8); color: #0a0e1a; border: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .btn:hover { opacity: 0.9; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Pipeline Steps */
+    .pipeline-section { margin-bottom: 32px; }
+    .pipeline-section h2 { font-family: 'Chakra Petch'; font-size: 18px; margin-bottom: 16px; color: #94a3b8; }
+    .steps { display: flex; gap: 8px; }
+    .step { flex: 1; background: #0f172a; border: 1px solid #1e293b; border-radius: 10px; padding: 16px; text-align: center; transition: all 0.3s; position: relative; }
+    .step.running { border-color: #38bdf8; background: rgba(56,189,248,0.05); }
+    .step.running::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: #38bdf8; animation: progress 2s infinite; }
+    @keyframes progress { 0% { width: 0; } 50% { width: 100%; } 100% { width: 0; } }
+    .step.done { border-color: #34d399; }
+    .step.error { border-color: #ef4444; }
+    .step.waiting { border-color: #fbbf24; }
+    .step-icon { font-size: 24px; margin-bottom: 6px; }
+    .step-name { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .step-detail { font-size: 11px; color: #64748b; margin-top: 4px; min-height: 16px; }
+
+    /* Results Panel */
+    .results { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+    .result-card { background: #0f172a; border: 1px solid #1e293b; border-radius: 10px; padding: 20px; display: none; }
+    .result-card.visible { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .result-title { font-size: 14px; font-weight: 600; color: #a78bfa; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* Cuts List */
+    .cuts-section { display: none; margin-bottom: 32px; }
+    .cuts-section.visible { display: block; }
+    .cuts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+    .cut-card { background: #0f172a; border: 1px solid #1e293b; border-radius: 10px; padding: 16px; }
+    .cut-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .cut-id { font-family: 'JetBrains Mono'; font-size: 12px; color: #64748b; }
+    .cut-category { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+    .cut-meta { font-size: 13px; color: #94a3b8; margin-bottom: 8px; }
+    .cut-score { color: #fbbf24; font-weight: 700; }
+    .cut-actions { display: flex; gap: 8px; margin-top: 12px; }
+    .btn-approve { background: #34d399; color: #0a0e1a; border: none; padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .btn-reject { background: #ef4444; color: white; border: none; padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .btn-approve-all { background: linear-gradient(135deg, #34d399, #38bdf8); color: #0a0e1a; border: none; padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 16px; }
+
+    /* Log */
+    .log { background: #0f172a; border: 1px solid #1e293b; border-radius: 10px; padding: 16px; max-height: 300px; overflow-y: auto; font-family: 'JetBrains Mono'; font-size: 12px; }
+    .log-entry { padding: 4px 0; border-bottom: 1px solid #1e293b; }
+    .log-time { color: #475569; }
+    .log-msg { color: #94a3b8; }
+    .log-msg.success { color: #34d399; }
+    .log-msg.error { color: #f87171; }
+    .log-msg.info { color: #38bdf8; }
+
+    .cat-viral { background: rgba(239,68,68,0.2); color: #f87171; }
+    .cat-autoridade { background: rgba(59,130,246,0.2); color: #60a5fa; }
+    .cat-educativo { background: rgba(139,92,246,0.2); color: #a78bfa; }
+    .cat-storytelling { background: rgba(245,158,11,0.2); color: #fbbf24; }
+    .cat-cta { background: rgba(16,185,129,0.2); color: #34d399; }
+    .cat-bastidores { background: rgba(107,114,128,0.2); color: #9ca3af; }
+    .cat-tendencia { background: rgba(236,72,153,0.2); color: #f472b6; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Cortes Inteligentes — Live Pipeline</h1>
+  <span class="status status-idle" id="globalStatus">Aguardando</span>
+</div>
+
+<div class="container">
+  <!-- Input -->
+  <div class="input-section">
+    <div class="input-row">
+      <input type="text" class="input-field" id="sourceInput" placeholder="Cole o link do Google Drive ou caminho do video..." />
+      <button class="btn" id="startBtn" onclick="startPipeline()">Iniciar Analise</button>
+    </div>
+  </div>
+
+  <!-- Pipeline Steps -->
+  <div class="pipeline-section">
+    <h2>Pipeline</h2>
+    <div class="steps">
+      <div class="step" id="step-ingest"><div class="step-icon">📥</div><div class="step-name">Ingestao</div><div class="step-detail" id="detail-ingest"></div></div>
+      <div class="step" id="step-transcribe"><div class="step-icon">📝</div><div class="step-name">Transcricao</div><div class="step-detail" id="detail-transcribe"></div></div>
+      <div class="step" id="step-segment"><div class="step-icon">📦</div><div class="step-name">Segmentacao</div><div class="step-detail" id="detail-segment"></div></div>
+      <div class="step" id="step-describe"><div class="step-icon">📋</div><div class="step-name">Descricao</div><div class="step-detail" id="detail-describe"></div></div>
+      <div class="step" id="step-cuts"><div class="step-icon">✂️</div><div class="step-name">Cortes</div><div class="step-detail" id="detail-cuts"></div></div>
+      <div class="step" id="step-suggestions"><div class="step-icon">💡</div><div class="step-name">Sugestoes</div><div class="step-detail" id="detail-suggestions"></div></div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="results">
+    <div class="result-card" id="card-metadata">
+      <div class="result-title">Metadados do Video</div>
+      <div id="metadata-content"></div>
+    </div>
+    <div class="result-card" id="card-description">
+      <div class="result-title">Descricao do Conteudo</div>
+      <div id="description-content"></div>
+    </div>
+    <div class="result-card" id="card-blocks">
+      <div class="result-title">Blocos Identificados</div>
+      <div id="blocks-content"></div>
+    </div>
+    <div class="result-card" id="card-suggestions">
+      <div class="result-title">Sugestoes de Melhoria</div>
+      <div id="suggestions-content"></div>
+    </div>
+  </div>
+
+  <!-- Cuts for Approval -->
+  <div class="cuts-section" id="cuts-section">
+    <h2>Cortes Sugeridos — Aguardando Aprovacao</h2>
+    <button class="btn-approve-all" onclick="approveAllCuts()">Aprovar Todos</button>
+    <div class="cuts-grid" id="cuts-grid"></div>
+  </div>
+
+  <!-- Log -->
+  <div class="pipeline-section">
+    <h2>Log</h2>
+    <div class="log" id="log"></div>
+  </div>
+</div>
+
+<script>
+const API = window.location.origin;
+let currentProjectId = null;
+let eventSource = null;
+
+function log(msg, type = '') {
+  const el = document.getElementById('log');
+  const time = new Date().toLocaleTimeString('pt-BR');
+  el.innerHTML += `<div class="log-entry"><span class="log-time">${time}</span> <span class="log-msg ${type}">${msg}</span></div>`;
+  el.scrollTop = el.scrollHeight;
+}
+
+function setStatus(status, text) {
+  const el = document.getElementById('globalStatus');
+  el.className = `status status-${status}`;
+  el.textContent = text;
+}
+
+function updateStep(step, status, detail) {
+  const el = document.getElementById(`step-${step}`);
+  if (!el) return;
+  el.className = `step ${status}`;
+  if (detail) document.getElementById(`detail-${step}`).textContent = detail;
+}
+
+async function startPipeline() {
+  const source = document.getElementById('sourceInput').value.trim();
+  if (!source) return alert('Cole um link ou caminho');
+
+  document.getElementById('startBtn').disabled = true;
+  setStatus('running', 'Executando...');
+  log('Pipeline iniciado: ' + source, 'info');
+
+  // Reset steps
+  document.querySelectorAll('.step').forEach(s => { s.className = 'step'; });
+  document.querySelectorAll('.result-card').forEach(c => c.classList.remove('visible'));
+  document.getElementById('cuts-section').classList.remove('visible');
+
+  try {
+    const res = await fetch(`${API}/api/pipeline/start`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ source }),
+    });
+    const data = await res.json();
+    log(data.message || 'Pipeline aceito', 'success');
+
+    // Connect SSE — use 'pending' until we get the real projectId
+    connectSSE('pending');
+
+  } catch (err) {
+    log('Erro: ' + err.message, 'error');
+    setStatus('error', 'Erro');
+    document.getElementById('startBtn').disabled = false;
+  }
+}
+
+function connectSSE(projectId) {
+  if (eventSource) eventSource.close();
+
+  eventSource = new EventSource(`${API}/api/pipeline/${projectId}/events`);
+
+  eventSource.addEventListener('step', (e) => {
+    const data = JSON.parse(e.data);
+
+    // If we get a projectId, reconnect to that specific stream
+    if (data.projectId && data.projectId !== projectId && projectId === 'pending') {
+      currentProjectId = data.projectId;
+      connectSSE(currentProjectId);
+      return;
+    }
+
+    updateStep(data.step, data.status, data.message);
+    log(`[${data.step}] ${data.message}`, data.status === 'error' ? 'error' : data.status === 'done' ? 'success' : 'info');
+
+    // Show metadata
+    if (data.step === 'ingest' && data.status === 'done' && data.metadata) {
+      const card = document.getElementById('card-metadata');
+      card.classList.add('visible');
+      document.getElementById('metadata-content').innerHTML =
+        `<div style="font-size:13px;color:#94a3b8;line-height:1.8;">
+          Duration: <strong>${data.metadata.duration || 'N/A'}</strong><br>
+          Resolution: <strong>${data.metadata.resolution || 'N/A'}</strong><br>
+          FPS: <strong>${data.metadata.fps || 'N/A'}</strong><br>
+          Codec: <strong>${data.metadata.codec || 'N/A'}</strong><br>
+          Bitrate: <strong>${data.metadata.bitrate || 'N/A'}</strong>
+        </div>`;
+      if (data.projectId) currentProjectId = data.projectId;
+    }
+
+    // Show description
+    if (data.step === 'describe' && data.status === 'done') {
+      const card = document.getElementById('card-description');
+      card.classList.add('visible');
+      const kw = (data.keywords || []).join(', ');
+      const titles = (data.suggestedTitles || []).map(t => `<div>• ${t}</div>`).join('');
+      document.getElementById('description-content').innerHTML =
+        `<div style="font-size:13px;color:#94a3b8;line-height:1.6;">
+          ${data.message}<br><br>
+          <strong>Keywords:</strong> ${kw}<br><br>
+          <strong>Titulos sugeridos:</strong><br>${titles}
+        </div>`;
+    }
+
+    // Show blocks
+    if (data.step === 'segment' && data.status === 'done' && data.blocks) {
+      const card = document.getElementById('card-blocks');
+      card.classList.add('visible');
+      const blocks = data.blocks.map(b =>
+        `<div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #1e293b;font-size:12px;">
+          <span style="color:#a78bfa;width:60px;">${b.type}</span>
+          <span style="color:#64748b;width:50px;">${b.duration.toFixed(1)}s</span>
+          <span style="color:#94a3b8;flex:1;">${b.title}</span>
+          <span style="color:#475569;">${b.energyLevel}</span>
+        </div>`
+      ).join('');
+      document.getElementById('blocks-content').innerHTML = blocks;
+    }
+
+    // Show suggestions
+    if (data.step === 'suggestions' && data.status === 'done' && data.suggestions) {
+      const card = document.getElementById('card-suggestions');
+      card.classList.add('visible');
+      const sugs = data.suggestions.map(s =>
+        `<div style="padding:6px 0;border-bottom:1px solid #1e293b;font-size:12px;">
+          <span style="color:${s.priority==='high'?'#f87171':s.priority==='medium'?'#fbbf24':'#64748b'};font-weight:600;">[${s.priority.toUpperCase()}]</span>
+          ${s.message}<br>
+          <span style="color:#38bdf8;">Acao: ${s.action}</span>
+        </div>`
+      ).join('');
+      document.getElementById('suggestions-content').innerHTML = sugs || '<span style="color:#34d399;">Tudo otimo!</span>';
+    }
+
+    // Show cuts for approval
+    if (data.step === 'cuts' && data.status === 'done' && data.cuts) {
+      showCuts(data.cuts);
+    }
+  });
+
+  eventSource.addEventListener('pipeline', (e) => {
+    const data = JSON.parse(e.data);
+    if (data.status === 'waiting_approval') {
+      setStatus('waiting', 'Aguardando Aprovacao');
+      log('Analise completa! Aguardando sua aprovacao.', 'success');
+      document.getElementById('startBtn').disabled = false;
+    } else if (data.status === 'error') {
+      setStatus('error', 'Erro');
+      log('Erro: ' + data.error, 'error');
+      document.getElementById('startBtn').disabled = false;
+    }
+  });
+
+  eventSource.onerror = () => {
+    log('Conexao SSE perdida. Reconectando...', 'error');
+  };
+}
+
+function showCuts(cuts) {
+  const section = document.getElementById('cuts-section');
+  section.classList.add('visible');
+  const grid = document.getElementById('cuts-grid');
+  grid.innerHTML = cuts.map(cut => `
+    <div class="cut-card" id="cut-${cut.id}">
+      <div class="cut-header">
+        <span class="cut-id">${cut.id}</span>
+        <span class="cut-category cat-${cut.category}">${cut.category}</span>
+      </div>
+      <div class="cut-meta">
+        ${cut.duration ? cut.duration.toFixed(0) + 's' : ''} · ${cut.format || ''} · <span class="cut-score">Score: ${cut.engagementScore}</span>
+      </div>
+      <div style="font-size:11px;color:#64748b;">${(cut.platform||[]).join(', ')}</div>
+      ${cut.objective ? `<div style="font-size:12px;color:#94a3b8;margin-top:6px;">${cut.objective}</div>` : ''}
+      <div class="cut-actions">
+        <button class="btn-approve" onclick="approveCut('${cut.id}')">Aprovar</button>
+        <button class="btn-reject" onclick="rejectCut('${cut.id}')">Rejeitar</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function approveCut(cutId) {
+  if (!currentProjectId) return;
+  try {
+    await fetch(`${API}/api/projects/${currentProjectId}/approve`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cutId }),
+    });
+    const card = document.getElementById(`cut-${cutId}`);
+    if (card) { card.style.borderColor = '#34d399'; card.querySelector('.cut-actions').innerHTML = '<span style="color:#34d399;font-weight:700;">APROVADO</span>'; }
+    log(`Corte ${cutId} aprovado`, 'success');
+  } catch (err) { log('Erro ao aprovar: ' + err.message, 'error'); }
+}
+
+async function rejectCut(cutId) {
+  if (!currentProjectId) return;
+  try {
+    await fetch(`${API}/api/projects/${currentProjectId}/reject`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cutId }),
+    });
+    const card = document.getElementById(`cut-${cutId}`);
+    if (card) { card.style.borderColor = '#ef4444'; card.style.opacity = '0.5'; card.querySelector('.cut-actions').innerHTML = '<span style="color:#ef4444;font-weight:700;">REJEITADO</span>'; }
+    log(`Corte ${cutId} rejeitado`, 'error');
+  } catch (err) { log('Erro ao rejeitar: ' + err.message, 'error'); }
+}
+
+async function approveAllCuts() {
+  if (!currentProjectId) return;
+  try {
+    await fetch(`${API}/api/projects/${currentProjectId}/approve`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ all: true }),
+    });
+    document.querySelectorAll('.cut-card').forEach(card => {
+      card.style.borderColor = '#34d399';
+      const actions = card.querySelector('.cut-actions');
+      if (actions) actions.innerHTML = '<span style="color:#34d399;font-weight:700;">APROVADO</span>';
+    });
+    log('Todos os cortes aprovados!', 'success');
+    setStatus('done', 'Aprovado');
+  } catch (err) { log('Erro: ' + err.message, 'error'); }
+}
+</script>
+</body>
+</html>

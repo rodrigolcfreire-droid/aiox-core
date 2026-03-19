@@ -28,6 +28,7 @@ const { generateVariations } = require('./scale');
 const { generateSuggestions } = require('./suggestions');
 const { registerMetrics, analyzePerformance } = require('./performance');
 const { listOutputs, generateOutputReport } = require('./output-manager');
+const { runLivePipeline, addClient, removeClient, getPipelineState } = require('./live-pipeline');
 const { addBrand, updateBrand, removeBrand, listBrands, getBrand } = require('./brand-catalog');
 const { generateThumbnail, generateCutThumbnails } = require('./thumbnail');
 
@@ -254,6 +255,54 @@ async function handleRequest(req, res) {
     if (pathname.match(/^\/api\/brands\/[^/]+$/) && method === 'DELETE') {
       const slug = pathname.split('/')[3];
       return sendJSON(res, removeBrand(slug));
+    }
+
+    // ── Live Pipeline ─────────────────────────────────
+    if (pathname === '/api/pipeline/start' && method === 'POST') {
+      const body = await parseBody(req);
+      if (!body.source) return sendError(res, 'source required');
+      // Start pipeline async, send projectId immediately
+      const promise = runLivePipeline(body.source, { name: body.name, srt: body.srt });
+      promise.catch(() => {}); // errors handled via SSE
+      return sendJSON(res, { status: 'started', message: 'Pipeline iniciado. Conecte ao SSE para acompanhar.' }, 202);
+    }
+
+    // SSE endpoint for live updates
+    if (pathname.match(/^\/api\/pipeline\/[^/]+\/events$/) && method === 'GET') {
+      const projectId = pathname.split('/')[3];
+      res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'Access-Control-Allow-Origin': '*',
+      });
+      res.write(`event: connected\ndata: ${JSON.stringify({ projectId })}\n\n`);
+
+      // Send existing state if any
+      const state = getPipelineState(projectId);
+      if (state && state.events) {
+        for (const evt of state.events) {
+          res.write(`event: ${evt.event}\ndata: ${JSON.stringify(evt.data)}\n\n`);
+        }
+      }
+
+      addClient(projectId, res);
+      req.on('close', () => removeClient(projectId, res));
+      return; // keep connection open
+    }
+
+    if (pathname.match(/^\/api\/pipeline\/[^/]+\/state$/) && method === 'GET') {
+      const projectId = pathname.split('/')[3];
+      const state = getPipelineState(projectId);
+      return sendJSON(res, state || { events: [] });
+    }
+
+    // Serve live pipeline HTML page
+    if (pathname === '/av' || pathname === '/av/') {
+      const htmlPath = path.resolve(__dirname, '..', '..', '..', 'docs', 'examples', 'ux-command-center', 'av-live-pipeline.html');
+      if (!fs.existsSync(htmlPath)) return sendError(res, 'Live pipeline page not found', 404);
+      res.writeHead(200, { 'Content-Type': 'text/html', 'Access-Control-Allow-Origin': '*' });
+      return fs.createReadStream(htmlPath).pipe(res);
     }
 
     // ── Health ────────────────────────────────────────
