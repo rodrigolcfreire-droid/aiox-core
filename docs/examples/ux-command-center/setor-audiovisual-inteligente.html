@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1600">
+  <title>Setor Audiovisual Inteligente — AIOS</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0e1a;
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Starfield */
+    .starfield {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .star {
+      position: absolute;
+      width: 2px; height: 2px;
+      background: rgba(255,255,255,0.4);
+      border-radius: 50%;
+      animation: twinkle 3s infinite alternate;
+    }
+    @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 0.8; } }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 80px 40px 60px;
+      background: linear-gradient(180deg, rgba(10,14,26,0) 0%, rgba(10,14,26,0.8) 100%);
+    }
+    .hero-pre { font-family: 'JetBrains Mono'; font-size: 14px; color: #38bdf8; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 16px; }
+    .hero h1 { font-family: 'Chakra Petch'; font-size: 64px; font-weight: 700; background: linear-gradient(135deg, #e2e8f0, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1; }
+    .hero h1 span { display: block; background: linear-gradient(135deg, #38bdf8, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-sub { font-size: 18px; color: #94a3b8; margin-top: 16px; max-width: 700px; margin-left: auto; margin-right: auto; }
+    .hero-badge { display: inline-block; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); color: #38bdf8; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-family: 'JetBrains Mono'; margin-top: 24px; }
+
+    /* Container */
+    .container { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 0 40px 80px; }
+
+    /* Stats Grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-bottom: 48px; }
+    .stat-card { background: rgba(15,23,42,0.8); border: 1px solid #1e293b; border-radius: 12px; padding: 24px; text-align: center; backdrop-filter: blur(10px); transition: all 0.3s; }
+    .stat-card:hover { border-color: #38bdf8; transform: translateY(-2px); }
+    .stat-value { font-family: 'Chakra Petch'; font-size: 42px; font-weight: 700; }
+    .stat-label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    .stat-card.blue .stat-value { color: #38bdf8; }
+    .stat-card.green .stat-value { color: #34d399; }
+    .stat-card.purple .stat-value { color: #a78bfa; }
+    .stat-card.yellow .stat-value { color: #fbbf24; }
+    .stat-card.pink .stat-value { color: #f472b6; }
+    .stat-card.cyan .stat-value { color: #22d3ee; }
+
+    /* Section */
+    .section { margin-bottom: 48px; }
+    .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .section-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .section-title { font-family: 'Chakra Petch'; font-size: 24px; font-weight: 700; }
+    .section-subtitle { font-size: 14px; color: #64748b; }
+
+    /* Motor Cards */
+    .motors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 48px; }
+    .motor-card { background: rgba(15,23,42,0.8); border: 1px solid #1e293b; border-radius: 16px; padding: 32px; backdrop-filter: blur(10px); transition: all 0.3s; }
+    .motor-card:hover { border-color: #38bdf8; }
+    .motor-card.cerebro { border-left: 4px solid #a78bfa; }
+    .motor-card.producao { border-left: 4px solid #34d399; }
+    .motor-name { font-family: 'Chakra Petch'; font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .motor-role { font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+    .motor-desc { font-size: 14px; color: #94a3b8; line-height: 1.7; margin-bottom: 20px; }
+    .motor-pipeline { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-bottom: 16px; }
+    .pipeline-step { background: rgba(30,41,59,0.8); color: #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-family: 'JetBrains Mono'; }
+    .pipeline-arrow { color: #334155; font-size: 16px; }
+    .motor-cli { background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 16px; }
+    .motor-cli code { font-family: 'JetBrains Mono'; font-size: 13px; color: #38bdf8; }
+    .motor-cli .comment { color: #475569; }
+
+    /* Agents Grid */
+    .agents-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .agent-card { background: rgba(15,23,42,0.8); border: 1px solid #1e293b; border-radius: 10px; padding: 16px; transition: all 0.2s; }
+    .agent-card:hover { border-color: #a78bfa; transform: translateY(-1px); }
+    .agent-name { font-size: 14px; font-weight: 600; color: #e2e8f0; }
+    .agent-persona { font-size: 12px; color: #a78bfa; font-family: 'JetBrains Mono'; }
+    .agent-role { font-size: 12px; color: #64748b; margin-top: 4px; }
+    .agent-nucleo { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 4px; margin-top: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .nucleo-ingestao { background: rgba(56,189,248,0.15); color: #38bdf8; }
+    .nucleo-criativo { background: rgba(167,139,250,0.15); color: #a78bfa; }
+    .nucleo-producao { background: rgba(52,211,153,0.15); color: #34d399; }
+    .nucleo-aprendizado { background: rgba(251,191,36,0.15); color: #fbbf24; }
+    .nucleo-orquestracao { background: rgba(244,114,182,0.15); color: #f472b6; }
+
+    /* Pipeline Visual */
+    .pipeline-visual { background: rgba(15,23,42,0.8); border: 1px solid #1e293b; border-radius: 16px; padding: 32px; }
+    .pipeline-flow { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding: 16px 0; }
+    .pipeline-node { flex: 1; min-width: 120px; text-align: center; position: relative; }
+    .pipeline-node-icon { width: 48px; height: 48px; border-radius: 12px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .pipeline-node-label { font-size: 12px; font-weight: 600; color: #e2e8f0; }
+    .pipeline-node-detail { font-size: 11px; color: #64748b; margin-top: 2px; }
+    .pipeline-node::after { content: '→'; position: absolute; right: -8px; top: 20px; color: #334155; font-size: 20px; }
+    .pipeline-node:last-child::after { display: none; }
+    .pipeline-node.approval { }
+    .pipeline-node.approval .pipeline-node-icon { border: 2px solid #fbbf24; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(251,191,36,0.3); } 50% { box-shadow: 0 0 0 8px rgba(251,191,36,0); } }
+
+    /* DB Table */
+    .db-table { width: 100%; border-collapse: collapse; background: rgba(15,23,42,0.8); border-radius: 12px; overflow: hidden; }
+    .db-table th { background: #1e293b; color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; padding: 12px 16px; text-align: left; }
+    .db-table td { padding: 12px 16px; border-bottom: 1px solid #1e293b; font-size: 13px; }
+    .db-table tr:hover td { background: rgba(30,41,59,0.5); }
+    .db-table .col-name { font-family: 'JetBrains Mono'; color: #38bdf8; }
+    .db-table .col-type { color: #a78bfa; font-family: 'JetBrains Mono'; font-size: 12px; }
+
+    /* Categories */
+    .categories-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
+    .category-card { text-align: center; background: rgba(15,23,42,0.8); border: 1px solid #1e293b; border-radius: 10px; padding: 20px 12px; transition: all 0.2s; }
+    .category-card:hover { transform: translateY(-2px); }
+    .category-icon { font-size: 28px; margin-bottom: 8px; }
+    .category-name { font-size: 13px; font-weight: 600; }
+    .category-desc { font-size: 11px; color: #64748b; margin-top: 4px; }
+
+    /* Platforms */
+    .platforms-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .platform-card { background: rgba(15,23,42,0.8); border: 1px solid #1e293b; border-radius: 10px; padding: 16px; text-align: center; }
+    .platform-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .platform-spec { font-size: 12px; color: #64748b; font-family: 'JetBrains Mono'; }
+
+    /* Gap Analysis */
+    .gap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .gap-card { background: rgba(15,23,42,0.8); border: 1px solid; border-radius: 12px; padding: 20px; }
+    .gap-card.missing { border-color: rgba(239,68,68,0.3); }
+    .gap-card.partial { border-color: rgba(251,191,36,0.3); }
+    .gap-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .gap-desc { font-size: 13px; color: #94a3b8; }
+    .gap-status { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; margin-top: 8px; }
+    .gap-status.missing { background: rgba(239,68,68,0.15); color: #f87171; }
+    .gap-status.partial { background: rgba(251,191,36,0.15); color: #fbbf24; }
+
+    /* Footer */
+    .footer { text-align: center; padding: 40px; color: #334155; font-size: 12px; font-family: 'JetBrains Mono'; }
+  </style>
+</head>
+<body>
+
+<!-- Starfield -->
+<div class="starfield" id="starfield"></div>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-pre">-- Centro de Comando UX --</div>
+  <h1>SETOR AUDIOVISUAL<span>INTELIGENTE</span></h1>
+  <p class="hero-sub">Motor autonomo de producao audiovisual. Dois cerebros independentes: um pensa, outro executa. O humano so aprova.</p>
+  <div class="hero-badge">v1.0 — 7 Phases Completas — 113 Testes — 16 Agentes</div>
+</div>
+
+<!-- Container -->
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card blue"><div class="stat-value">16</div><div class="stat-label">Agentes</div></div>
+    <div class="stat-card green"><div class="stat-value">12</div><div class="stat-label">CLIs</div></div>
+    <div class="stat-card purple"><div class="stat-value">113</div><div class="stat-label">Testes</div></div>
+    <div class="stat-card yellow"><div class="stat-value">19</div><div class="stat-label">Modulos</div></div>
+    <div class="stat-card pink"><div class="stat-value">7</div><div class="stat-label">Tabelas DB</div></div>
+    <div class="stat-card cyan"><div class="stat-value">7.6K</div><div class="stat-label">Linhas</div></div>
+  </div>
+
+  <!-- Dois Motores -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(167,139,250,0.15);">&#9881;</div>
+      <div>
+        <div class="section-title">Dois Motores Independentes</div>
+        <div class="section-subtitle">Operam separados. Podem se alimentar mas nao dependem um do outro.</div>
+      </div>
+    </div>
+
+    <div class="motors-grid">
+      <div class="motor-card cerebro">
+        <div class="motor-name">Cortes Inteligentes</div>
+        <div class="motor-role">Cerebro Criativo</div>
+        <div class="motor-desc">Recebe video bruto, analisa, transcreve, segmenta em blocos, identifica os melhores cortes por categoria, estima engagement e aguarda aprovacao humana. Aprende com cada decisao.</div>
+        <div class="motor-pipeline">
+          <span class="pipeline-step">Ingestao</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">FFprobe</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">Transcricao</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">Segmentacao</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">Cortes</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step" style="border: 1px solid #fbbf24; color: #fbbf24;">Aprovacao</span>
+        </div>
+        <div class="motor-cli">
+          <code><span class="comment"># Pipeline completo</span><br>node bin/av-cortes.js video.mp4<br><br><span class="comment"># Aprovar cortes</span><br>node bin/av-cortes.js &lt;id&gt; approve-all<br><br><span class="comment"># Aprender</span><br>node bin/av-cortes.js &lt;id&gt; learn</code>
+        </div>
+      </div>
+
+      <div class="motor-card producao">
+        <div class="motor-name">Escala de Criativos</div>
+        <div class="motor-role">Motor de Producao</div>
+        <div class="motor-desc">Recebe cortes de qualquer origem, monta o video, aplica legendas inteligentes, branding, valida qualidade, renderiza em batch e organiza outputs prontos pra publicar.</div>
+        <div class="motor-pipeline">
+          <span class="pipeline-step">Montagem</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">Legendas</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">Branding</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">Validacao</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">Render</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">Output</span>
+        </div>
+        <div class="motor-cli">
+          <code><span class="comment"># Produzir aprovados</span><br>node bin/av-escala.js &lt;id&gt;<br><br><span class="comment"># Gerar variacoes</span><br>node bin/av-escala.js &lt;id&gt; variacoes<br><br><span class="comment"># Ver outputs</span><br>node bin/av-escala.js &lt;id&gt; output</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pipeline Principal -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(56,189,248,0.15);">&#10132;</div>
+      <div>
+        <div class="section-title">Pipeline Principal</div>
+        <div class="section-subtitle">O fluxo completo: video bruto ate output final publicado</div>
+      </div>
+    </div>
+
+    <div class="pipeline-visual" style="border-color: rgba(56,189,248,0.3);">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+        <span style="background: #38bdf8; color: #0a0e1a; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono';">PIPELINE COMPLETA</span>
+        <span style="font-size: 12px; color: #64748b;">node bin/av-cortes.js video.mp4 && node bin/av-escala.js &lt;id&gt;</span>
+      </div>
+      <div class="pipeline-flow">
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(56,189,248,0.15);">📥</div>
+          <div class="pipeline-node-label">Input</div>
+          <div class="pipeline-node-detail">Video bruto</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(167,139,250,0.15);">🔍</div>
+          <div class="pipeline-node-label">FFprobe</div>
+          <div class="pipeline-node-detail">Metadados</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(167,139,250,0.15);">📝</div>
+          <div class="pipeline-node-label">Transcricao</div>
+          <div class="pipeline-node-detail">Whisper API</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(167,139,250,0.15);">📦</div>
+          <div class="pipeline-node-label">Segmentacao</div>
+          <div class="pipeline-node-detail">Blocos logicos</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(167,139,250,0.15);">✂️</div>
+          <div class="pipeline-node-label">Cortes</div>
+          <div class="pipeline-node-detail">7 categorias</div>
+        </div>
+        <div class="pipeline-node approval">
+          <div class="pipeline-node-icon" style="background: rgba(251,191,36,0.15);">👤</div>
+          <div class="pipeline-node-label" style="color: #fbbf24;">Aprovacao</div>
+          <div class="pipeline-node-detail">Humano decide</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(52,211,153,0.15);">🎬</div>
+          <div class="pipeline-node-label">Montagem</div>
+          <div class="pipeline-node-detail">FFmpeg</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(52,211,153,0.15);">💬</div>
+          <div class="pipeline-node-label">Legendas</div>
+          <div class="pipeline-node-detail">4 estilos</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(52,211,153,0.15);">🏷️</div>
+          <div class="pipeline-node-label">Branding</div>
+          <div class="pipeline-node-detail">Logo + ID</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(52,211,153,0.15);">✅</div>
+          <div class="pipeline-node-label">Validacao</div>
+          <div class="pipeline-node-detail">Score 0-10</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(52,211,153,0.15);">📤</div>
+          <div class="pipeline-node-label">Output</div>
+          <div class="pipeline-node-detail">Publicado</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pipeline Cortes Inteligentes -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(167,139,250,0.15);">🧠</div>
+      <div>
+        <div class="section-title">Pipeline: Cortes Inteligentes</div>
+        <div class="section-subtitle">Cerebro criativo — recebe video bruto, entrega cortes aprovados</div>
+      </div>
+    </div>
+
+    <div class="pipeline-visual" style="border-color: rgba(167,139,250,0.3);">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+        <span style="background: #a78bfa; color: #0a0e1a; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono';">CEREBRO CRIATIVO</span>
+        <span style="font-size: 12px; color: #64748b;">node bin/av-cortes.js video.mp4</span>
+      </div>
+      <div class="pipeline-flow">
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(167,139,250,0.15); border: 2px solid #a78bfa;">📥</div>
+          <div class="pipeline-node-label" style="color: #a78bfa;">Input</div>
+          <div class="pipeline-node-detail">Video bruto / URL / Drive</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(167,139,250,0.15);">🔍</div>
+          <div class="pipeline-node-label">FFprobe</div>
+          <div class="pipeline-node-detail">Codec, FPS, resolucao</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(167,139,250,0.15);">📝</div>
+          <div class="pipeline-node-label">Transcricao</div>
+          <div class="pipeline-node-detail">Whisper API / SRT</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(167,139,250,0.15);">📦</div>
+          <div class="pipeline-node-label">Segmentacao</div>
+          <div class="pipeline-node-detail">Hook, Content, CTA</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(167,139,250,0.15);">📋</div>
+          <div class="pipeline-node-label">Descricao</div>
+          <div class="pipeline-node-detail">Keywords, topicos</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(167,139,250,0.15);">✂️</div>
+          <div class="pipeline-node-label">Cortes</div>
+          <div class="pipeline-node-detail">Score + categoria</div>
+        </div>
+        <div class="pipeline-node approval">
+          <div class="pipeline-node-icon" style="background: rgba(251,191,36,0.15);">👤</div>
+          <div class="pipeline-node-label" style="color: #fbbf24;">Aprovacao</div>
+          <div class="pipeline-node-detail">Approve / Reject</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(251,191,36,0.15);">🧠</div>
+          <div class="pipeline-node-label">Aprendizado</div>
+          <div class="pipeline-node-detail">Padroes + Playbook</div>
+        </div>
+      </div>
+      <div style="margin-top: 16px; padding: 12px 16px; background: rgba(167,139,250,0.05); border: 1px solid rgba(167,139,250,0.15); border-radius: 8px;">
+        <div style="font-size: 12px; color: #a78bfa; font-weight: 600; margin-bottom: 6px;">SAIDA DO CEREBRO</div>
+        <div style="font-size: 13px; color: #94a3b8; display: flex; gap: 24px; flex-wrap: wrap;">
+          <span>suggested-cuts.json</span>
+          <span>approvals.json</span>
+          <span>segments.json</span>
+          <span>description.json</span>
+          <span>learnings.json</span>
+          <span>playbook.json</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pipeline Escala de Criativos -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(52,211,153,0.15);">⚡</div>
+      <div>
+        <div class="section-title">Pipeline: Escala de Criativos</div>
+        <div class="section-subtitle">Motor de producao — recebe cortes, entrega videos prontos</div>
+      </div>
+    </div>
+
+    <div class="pipeline-visual" style="border-color: rgba(52,211,153,0.3);">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+        <span style="background: #34d399; color: #0a0e1a; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono';">MOTOR DE PRODUCAO</span>
+        <span style="font-size: 12px; color: #64748b;">node bin/av-escala.js &lt;project-id&gt;</span>
+      </div>
+      <div class="pipeline-flow">
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(52,211,153,0.15); border: 2px solid #34d399;">✂️</div>
+          <div class="pipeline-node-label" style="color: #34d399;">Cortes</div>
+          <div class="pipeline-node-detail">Aprovados / externos</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(52,211,153,0.15);">🔄</div>
+          <div class="pipeline-node-label">Variacoes</div>
+          <div class="pipeline-node-detail">Hook + Body + CTA</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(52,211,153,0.15);">🎬</div>
+          <div class="pipeline-node-label">Montagem</div>
+          <div class="pipeline-node-detail">Extrai + rescala</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(52,211,153,0.15);">💬</div>
+          <div class="pipeline-node-label">Legendas</div>
+          <div class="pipeline-node-detail">Minimal/Bold/Karaoke</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(52,211,153,0.15);">🏷️</div>
+          <div class="pipeline-node-label">Branding</div>
+          <div class="pipeline-node-detail">Logo + watermark</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(52,211,153,0.15);">✅</div>
+          <div class="pipeline-node-label">Validacao</div>
+          <div class="pipeline-node-detail">Plataforma check</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(52,211,153,0.15);">⚙️</div>
+          <div class="pipeline-node-label">Render</div>
+          <div class="pipeline-node-detail">h264 + AAC</div>
+        </div>
+        <div class="pipeline-node">
+          <div class="pipeline-node-icon" style="background: rgba(52,211,153,0.15); border: 2px solid #34d399;">📤</div>
+          <div class="pipeline-node-label" style="color: #34d399;">Output</div>
+          <div class="pipeline-node-detail">Pronto pra publicar</div>
+        </div>
+      </div>
+      <div style="margin-top: 16px; padding: 12px 16px; background: rgba(52,211,153,0.05); border: 1px solid rgba(52,211,153,0.15); border-radius: 8px;">
+        <div style="font-size: 12px; color: #34d399; font-weight: 600; margin-bottom: 6px;">SAIDA DO MOTOR</div>
+        <div style="font-size: 13px; color: #94a3b8; display: flex; gap: 24px; flex-wrap: wrap;">
+          <span>final-cut_001.mp4</span>
+          <span>final-cut_002.mp4</span>
+          <span>package.json</span>
+          <span>output-report.json</span>
+          <span>quality-*.json</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 16 Agentes -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(244,114,182,0.15);">🤖</div>
+      <div>
+        <div class="section-title">16 Agentes Especializados</div>
+        <div class="section-subtitle">5 nucleos: Orquestracao, Ingestao, Criativo, Producao, Aprendizado</div>
+      </div>
+    </div>
+
+    <div class="agents-grid">
+      <div class="agent-card"><div class="agent-name">Maestro Audiovisual</div><div class="agent-persona">Vitor</div><div class="agent-role">Orquestra pipeline completo</div><span class="agent-nucleo nucleo-orquestracao">Orquestracao</span></div>
+      <div class="agent-card"><div class="agent-name">Ingestor de Conteudo</div><div class="agent-persona">Iris</div><div class="agent-role">Recebe video, cria projeto</div><span class="agent-nucleo nucleo-ingestao">Ingestao</span></div>
+      <div class="agent-card"><div class="agent-name">Leitor Tecnico</div><div class="agent-persona">Marco</div><div class="agent-role">FFprobe, metadados</div><span class="agent-nucleo nucleo-ingestao">Ingestao</span></div>
+      <div class="agent-card"><div class="agent-name">Transcritor</div><div class="agent-persona">Luna</div><div class="agent-role">Whisper API, timestamps</div><span class="agent-nucleo nucleo-ingestao">Ingestao</span></div>
+      <div class="agent-card"><div class="agent-name">Segmentador</div><div class="agent-persona">Theo</div><div class="agent-role">Divide em blocos logicos</div><span class="agent-nucleo nucleo-ingestao">Ingestao</span></div>
+      <div class="agent-card"><div class="agent-name">Identificador de Cortes</div><div class="agent-persona">Nina</div><div class="agent-role">Sugere cortes por categoria</div><span class="agent-nucleo nucleo-criativo">Criativo</span></div>
+      <div class="agent-card"><div class="agent-name">Curador</div><div class="agent-persona">Clara</div><div class="agent-role">Organiza aprovacao</div><span class="agent-nucleo nucleo-criativo">Criativo</span></div>
+      <div class="agent-card"><div class="agent-name">Montador</div><div class="agent-persona">Rafa</div><div class="agent-role">Monta video final</div><span class="agent-nucleo nucleo-producao">Producao</span></div>
+      <div class="agent-card"><div class="agent-name">Legenda Inteligente</div><div class="agent-persona">Sol</div><div class="agent-role">Legendas otimizadas</div><span class="agent-nucleo nucleo-producao">Producao</span></div>
+      <div class="agent-card"><div class="agent-name">Branding</div><div class="agent-persona">Dani</div><div class="agent-role">Identidade visual</div><span class="agent-nucleo nucleo-producao">Producao</span></div>
+      <div class="agent-card"><div class="agent-name">Validador</div><div class="agent-persona">Hugo</div><div class="agent-role">Quality check</div><span class="agent-nucleo nucleo-producao">Producao</span></div>
+      <div class="agent-card"><div class="agent-name">Render Manager</div><div class="agent-persona">Leo</div><div class="agent-role">Fila de renderizacao</div><span class="agent-nucleo nucleo-producao">Producao</span></div>
+      <div class="agent-card"><div class="agent-name">Output Manager</div><div class="agent-persona">Maya</div><div class="agent-role">Organiza outputs</div><span class="agent-nucleo nucleo-producao">Producao</span></div>
+      <div class="agent-card"><div class="agent-name">Publicador</div><div class="agent-persona">Gabi</div><div class="agent-role">Upload Drive</div><span class="agent-nucleo nucleo-producao">Producao</span></div>
+      <div class="agent-card"><div class="agent-name">Memory Agent</div><div class="agent-persona">Nico</div><div class="agent-role">Padroes aprendidos</div><span class="agent-nucleo nucleo-aprendizado">Aprendizado</span></div>
+      <div class="agent-card"><div class="agent-name">Playbook Agent</div><div class="agent-persona">Tomas</div><div class="agent-role">Documenta boas praticas</div><span class="agent-nucleo nucleo-aprendizado">Aprendizado</span></div>
+    </div>
+  </div>
+
+  <!-- Categorias de Corte -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(167,139,250,0.15);">✂️</div>
+      <div>
+        <div class="section-title">7 Categorias de Corte</div>
+        <div class="section-subtitle">Cada corte e classificado automaticamente com engagement score</div>
+      </div>
+    </div>
+
+    <div class="categories-grid">
+      <div class="category-card" style="border-color: rgba(239,68,68,0.3);"><div class="category-icon">🔥</div><div class="category-name" style="color: #f87171;">Viral</div><div class="category-desc">Alto compartilhamento</div></div>
+      <div class="category-card" style="border-color: rgba(59,130,246,0.3);"><div class="category-icon">👑</div><div class="category-name" style="color: #60a5fa;">Autoridade</div><div class="category-desc">Posicionamento expert</div></div>
+      <div class="category-card" style="border-color: rgba(139,92,246,0.3);"><div class="category-icon">📚</div><div class="category-name" style="color: #a78bfa;">Educativo</div><div class="category-desc">Ensinar rapido</div></div>
+      <div class="category-card" style="border-color: rgba(245,158,11,0.3);"><div class="category-icon">📖</div><div class="category-name" style="color: #fbbf24;">Storytelling</div><div class="category-desc">Conexao emocional</div></div>
+      <div class="category-card" style="border-color: rgba(16,185,129,0.3);"><div class="category-icon">🎯</div><div class="category-name" style="color: #34d399;">CTA</div><div class="category-desc">Conversao direta</div></div>
+      <div class="category-card" style="border-color: rgba(107,114,128,0.3);"><div class="category-icon">🎬</div><div class="category-name" style="color: #9ca3af;">Bastidores</div><div class="category-desc">Autenticidade</div></div>
+      <div class="category-card" style="border-color: rgba(236,72,153,0.3);"><div class="category-icon">📈</div><div class="category-name" style="color: #f472b6;">Tendencia</div><div class="category-desc">Surfar trends</div></div>
+    </div>
+  </div>
+
+  <!-- Plataformas -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(52,211,153,0.15);">📱</div>
+      <div>
+        <div class="section-title">5 Plataformas Otimizadas</div>
+        <div class="section-subtitle">Cada corte e otimizado para formato, duracao e limites da plataforma</div>
+      </div>
+    </div>
+
+    <div class="platforms-grid">
+      <div class="platform-card"><div class="platform-name" style="color: #f472b6;">Instagram Reels</div><div class="platform-spec">15-60s · 9:16 · 250MB</div></div>
+      <div class="platform-card"><div class="platform-name" style="color: #22d3ee;">TikTok</div><div class="platform-spec">15-60s · 9:16 · 287MB</div></div>
+      <div class="platform-card"><div class="platform-name" style="color: #ef4444;">YouTube Shorts</div><div class="platform-spec">15-60s · 9:16 · 256MB</div></div>
+      <div class="platform-card"><div class="platform-name" style="color: #a78bfa;">Instagram Feed</div><div class="platform-spec">30-90s · 4:5 · 250MB</div></div>
+      <div class="platform-card"><div class="platform-name" style="color: #f87171;">YouTube</div><div class="platform-spec">60-180s · 16:9 · 12GB</div></div>
+    </div>
+  </div>
+
+  <!-- Banco de Dados -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(56,189,248,0.15);">🗄️</div>
+      <div>
+        <div class="section-title">Banco de Dados — Schema audiovisual</div>
+        <div class="section-subtitle">7 tabelas com RLS, indexes, triggers</div>
+      </div>
+    </div>
+
+    <table class="db-table">
+      <thead><tr><th>Tabela</th><th>Funcao</th><th>Campos-chave</th><th>Constraints</th></tr></thead>
+      <tbody>
+        <tr><td class="col-name">audiovisual.project</td><td>Projetos de producao</td><td>name, source_type, status</td><td>9 estados, CHECK</td></tr>
+        <tr><td class="col-name">audiovisual.media_asset</td><td>Videos processados</td><td>project_id FK, type, file_path</td><td>5 tipos</td></tr>
+        <tr><td class="col-name">audiovisual.cut</td><td>Cortes identificados</td><td>category, start/end, score</td><td>duration GENERATED, 7 categorias</td></tr>
+        <tr><td class="col-name">audiovisual.approval</td><td>Decisoes de aprovacao</td><td>cut_id FK, decision, feedback</td><td>approved/rejected/edited</td></tr>
+        <tr><td class="col-name">audiovisual.output</td><td>Videos finalizados</td><td>cut_id FK, drive_url, score</td><td>5 status</td></tr>
+        <tr><td class="col-name">audiovisual.preset</td><td>Presets reutilizaveis</td><td>name+type UNIQUE, config</td><td>4 tipos</td></tr>
+        <tr><td class="col-name">audiovisual.learning</td><td>Padroes aprendidos</td><td>pattern_type, confidence</td><td>6 tipos de padrao</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pontos de Melhoria -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(251,191,36,0.15);">⚡</div>
+      <div>
+        <div class="section-title">Pontos de Melhoria Identificados</div>
+        <div class="section-subtitle">O que falta pra fechar 100% da visao original</div>
+      </div>
+    </div>
+
+    <div class="gap-grid">
+      <div class="gap-card missing">
+        <div class="gap-title">Marca/Brand Awareness</div>
+        <div class="gap-desc">Separar presets por marca (Reals, Bingo, Experts). Cada marca com logo, cores, overlay, estilo proprio. Catalogo de marcas no banco.</div>
+        <span class="gap-status missing">Nao implementado</span>
+      </div>
+      <div class="gap-card missing">
+        <div class="gap-title">Sugestor de Melhorias</div>
+        <div class="gap-desc">Agente que recomenda ajustes de ritmo, cortes mais rapidos, inserts visuais, melhorias de hook. Analise pos-montagem.</div>
+        <span class="gap-status missing">Nao implementado</span>
+      </div>
+      <div class="gap-card missing">
+        <div class="gap-title">Analista de Performance</div>
+        <div class="gap-desc">Metricas pos-publicacao: retencao, views, compartilhamentos. Correlacionar formato com resultado real.</div>
+        <span class="gap-status missing">Nao implementado</span>
+      </div>
+      <div class="gap-card partial">
+        <div class="gap-title">Ingestao em Lote (Batch)</div>
+        <div class="gap-desc">Fluxo 2 do documento: entrada em lote, transcricao em massa, producao batch. O motor de escala existe mas nao tem ingestao em lote.</div>
+        <span class="gap-status partial">Parcialmente implementado</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  SETOR AUDIOVISUAL INTELIGENTE v1.0 — AIOS Centro de Comando UX<br>
+  16 agentes · 12 CLIs · 113 testes · 7 tabelas · 7.6K linhas · 0 deps externas<br>
+  Gerado em <span id="gen-date"></span>
+</div>
+
+<script>
+  // Starfield
+  const sf = document.getElementById('starfield');
+  for (let i = 0; i < 150; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.animationDelay = Math.random() * 3 + 's';
+    star.style.animationDuration = (2 + Math.random() * 3) + 's';
+    sf.appendChild(star);
+  }
+  document.getElementById('gen-date').textContent = new Date().toLocaleString('pt-BR');
+</script>
+
+</body>
+</html>
