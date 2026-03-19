@@ -1,0 +1,81 @@
+name: central-audiovisual
+version: 1.0.0
+short-title: "Central Audiovisual"
+description: Squad especializado em producao audiovisual automatizada. Pipeline end-to-end de ingestao, analise, cortes inteligentes, producao e output.
+author: Antigravidade
+license: MIT
+slashPrefix: av
+
+aiox:
+  minVersion: "2.1.0"
+  type: squad
+
+components:
+  agents:
+    - av-maestro.md
+    - av-ingestor.md
+    - av-leitor-tecnico.md
+    - av-transcritor.md
+    - av-segmentador.md
+    - av-identificador-cortes.md
+    - av-curador.md
+    - av-montador.md
+    - av-legenda.md
+    - av-branding.md
+    - av-validador.md
+    - av-render-manager.md
+    - av-output-manager.md
+    - av-publicador.md
+    - av-memory.md
+    - av-playbook.md
+  tasks:
+    - ingerir-video.md
+    - analisar-metadados.md
+    - transcrever-video.md
+    - segmentar-video.md
+    - identificar-cortes.md
+    - aprovar-cortes.md
+    - montar-video.md
+    - aplicar-legendas.md
+    - aplicar-branding.md
+    - validar-qualidade.md
+    - gerar-variacoes.md
+    - renderizar-video.md
+    - organizar-output.md
+    - publicar-video.md
+  workflows:
+    - wf-av-pipeline-analise.yaml
+    - wf-av-pipeline-producao.yaml
+    - wf-av-escala.yaml
+    - wf-av-operacao-principal.yaml
+  checklists:
+    - gate-ingestao.md
+    - gate-cortes.md
+    - gate-producao.md
+    - gate-qualidade.md
+    - gate-output.md
+  templates:
+    - projeto-audiovisual-template.md
+    - corte-sugerido-template.md
+    - output-report-template.md
+  tools: []
+  scripts:
+    - health-check.sh
+    - novo-projeto.js
+
+config:
+  extends: extend
+
+dependencies:
+  node:
+    - fluent-ffmpeg
+  python: []
+  squads:
+    - maquina-de-briefing
+
+tags:
+  - audiovisual
+  - video
+  - producao
+  - cortes
+  - central-av

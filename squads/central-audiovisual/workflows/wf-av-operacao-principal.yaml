@@ -1,0 +1,149 @@
+name: wf-av-operacao-principal
+version: 1.0.0
+description: Pipeline principal da Central Audiovisual — ingestao ate output final.
+
+trigger:
+  command: "*novo-projeto"
+  agent: av-maestro
+
+phases:
+  - name: ingestao
+    agent: av-ingestor
+    task: ingerir-video
+    requires: []
+    creates:
+      - project.json
+      - source/video.*
+    next: analise-tecnica
+
+  - name: analise-tecnica
+    agent: av-leitor-tecnico
+    task: analisar-metadados
+    requires:
+      - source/video.*
+    creates:
+      - analysis/metadata.json
+    next: transcricao
+
+  - name: transcricao
+    agent: av-transcritor
+    task: transcrever-video
+    requires:
+      - source/video.*
+    creates:
+      - analysis/transcription.json
+      - analysis/transcription.srt
+    next: segmentacao
+
+  - name: segmentacao
+    agent: av-segmentador
+    task: segmentar-video
+    requires:
+      - analysis/metadata.json
+      - analysis/transcription.json
+    creates:
+      - analysis/segments.json
+    next: identificacao-cortes
+
+  - name: identificacao-cortes
+    agent: av-identificador-cortes
+    task: identificar-cortes
+    requires:
+      - analysis/segments.json
+      - analysis/transcription.json
+    creates:
+      - cuts/suggested-cuts.json
+    next: aprovacao
+
+  - name: aprovacao
+    agent: av-curador
+    task: aprovar-cortes
+    requires:
+      - cuts/suggested-cuts.json
+    creates:
+      - cuts/approved-cuts.json
+    next: montagem
+    context_rules:
+      - "NON-NEGOTIABLE: Aprovacao humana obrigatoria antes de produzir"
+
+  - name: montagem
+    agent: av-montador
+    task: montar-video
+    requires:
+      - cuts/approved-cuts.json
+      - source/video.*
+    creates:
+      - production/assembled-*.mp4
+    next: legendas
+
+  - name: legendas
+    agent: av-legenda
+    task: aplicar-legendas
+    requires:
+      - production/assembled-*.mp4
+      - analysis/transcription.srt
+    creates:
+      - production/subtitled-*.mp4
+    next: branding
+
+  - name: branding
+    agent: av-branding
+    task: aplicar-branding
+    requires:
+      - production/subtitled-*.mp4
+    creates:
+      - production/branded-*.mp4
+    next: validacao
+
+  - name: validacao
+    agent: av-validador
+    task: validar-qualidade
+    requires:
+      - production/branded-*.mp4
+    creates:
+      - production/quality-report.json
+    next: render
+
+  - name: render
+    agent: av-render-manager
+    task: renderizar-video
+    requires:
+      - production/branded-*.mp4
+      - production/quality-report.json
+    creates:
+      - output/final-*.mp4
+    next: organizacao
+
+  - name: organizacao
+    agent: av-output-manager
+    task: organizar-output
+    requires:
+      - output/final-*.mp4
+    creates:
+      - output/package.json
+    next: publicacao
+
+  - name: publicacao
+    agent: av-publicador
+    task: publicar-video
+    requires:
+      - output/final-*.mp4
+      - output/package.json
+    creates:
+      - output/publish-report.json
+
+  - name: aprendizado
+    agent: av-memory
+    task: registrar-aprendizado
+    requires:
+      - cuts/approved-cuts.json
+      - output/publish-report.json
+    creates:
+      - data/learning-update.json
+    parallel: true
+
+context_rules:
+  - "NON-NEGOTIABLE: Aprovacao humana entre analise e producao"
+  - "NON-NEGOTIABLE: Separar pipeline de analise do de producao"
+  - "MUST: Registrar todas as decisoes para aprendizado"
+  - "MUST: Validar qualidade antes de render final"
