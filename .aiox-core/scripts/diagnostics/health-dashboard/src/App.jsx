@@ -6,6 +6,7 @@ import DomainDetail from './pages/DomainDetail';
 import AgentPanel from './pages/AgentPanel';
 import AgentDetail from './pages/AgentDetail';
 import IntelligenceDashboard from './pages/IntelligenceDashboard';
+import AudiovisualDashboard from './pages/AudiovisualDashboard';
 import { SentinelDashboard } from './components/sentinel';
 import Header from './components/shared/Header';
 import './styles/App.css';
@@ -22,6 +23,7 @@ function App() {
           <Route path="/agents" element={<AgentPanel />} />
           <Route path="/agents/:agentId" element={<AgentDetail />} />
           <Route path="/intelligence" element={<IntelligenceDashboard />} />
+          <Route path="/audiovisual" element={<AudiovisualDashboard />} />
           <Route path="/sentinel" element={<SentinelDashboard />} />
         </Routes>
       </main>

@@ -14,6 +14,7 @@ function Header() {
           <Link to="/" className="nav-link">Dashboard</Link>
           <Link to="/agents" className="nav-link">Agentes</Link>
           <Link to="/intelligence" className="nav-link" style={{ color: '#38bdf8' }}>Intelligence</Link>
+          <Link to="/audiovisual" className="nav-link" style={{ color: '#a78bfa' }}>Audiovisual</Link>
           <Link to="/sentinel" className="nav-link">Sentinel</Link>
           <Link to="/test" className="nav-link" style={{ color: '#D946EF' }}>Test UX</Link>
         </nav>
