@@ -2,7 +2,7 @@
 
 **Epic:** Central Audiovisual (EPIC-AV)
 **Phase:** 10 (Hook Intelligence)
-**Status:** Draft — Implementar na próxima sessão
+**Status:** Done
 **Date:** 2026-03-20
 
 ## Contexto
@@ -22,11 +22,11 @@ Regra de produção: todo corte produzido deve ter um hook de 5 segundos no iní
 
 ## Acceptance Criteria
 
-- [ ] Detectar momento de maior energia por análise de áudio (FFmpeg loudnorm/volumedetect)
-- [ ] Extrair 5s desse momento como clip separado
-- [ ] Concatenar HOOK + CORTE no assembly
-- [ ] Duração total: 90s ou 120s (configurável)
-- [ ] Ajustar smart-cuts para gerar cortes nessas durações
+- [x] Detectar momento de maior energia por análise de áudio (FFmpeg loudnorm/volumedetect)
+- [x] Extrair 5s desse momento como clip separado
+- [x] Concatenar HOOK + CORTE no assembly
+- [x] Duração total: 90s ou 120s (configurável)
+- [x] Ajustar smart-cuts para gerar cortes nessas durações
 - [ ] Preview do hook na página de aprovação
 
 ## Technical Notes
@@ -39,7 +39,7 @@ Regra de produção: todo corte produzido deve ter um hook de 5 segundos no iní
 
 ## File List
 
-- [ ] `packages/audiovisual/lib/energy-detector.js`
-- [ ] Atualizar `packages/audiovisual/lib/assemble.js` com hook automático
-- [ ] Atualizar `packages/audiovisual/lib/smart-cuts.js` com durações 90s/120s
-- [ ] `tests/audiovisual/energy-detector.test.js`
+- [x] `packages/audiovisual/lib/energy-detector.js`
+- [x] Atualizar `packages/audiovisual/lib/assemble.js` com hook automático
+- [x] Atualizar `packages/audiovisual/lib/smart-cuts.js` com durações 90s/120s
+- [x] `tests/audiovisual/energy-detector.test.js`

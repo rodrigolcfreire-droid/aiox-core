@@ -13,6 +13,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 const { getProjectDir, loadProject } = require('./project');
+const { loadEnergyData, HOOK_DURATION } = require('./energy-detector');
 
 const FORMAT_MAP = {
   '9:16': { width: 1080, height: 1920 },
@@ -90,6 +91,36 @@ function concatenateSegments(segmentPaths, outputPath) {
   }
 }
 
+/**
+ * Prepend the energy hook (5s peak moment) before a cut.
+ * Story AV-10: HOOK (5s) + CUT ORIGINAL.
+ * Returns true if hook was prepended, false if no hook available.
+ */
+function prependEnergyHook(projectId, cutPath, outputPath, format) {
+  const energyData = loadEnergyData(projectId);
+  if (!energyData || !energyData.hookPath) {
+    return false;
+  }
+
+  const hookPath = energyData.hookPath;
+  if (!fs.existsSync(hookPath)) {
+    return false;
+  }
+
+  // Rescale hook to match cut format
+  const productionDir = path.dirname(outputPath);
+  const hookScaledPath = path.join(productionDir, 'hook-scaled-tmp.mp4');
+  rescaleVideo(hookPath, hookScaledPath, format);
+
+  // Concatenate: hook + cut
+  concatenateSegments([hookScaledPath, cutPath], outputPath);
+
+  // Cleanup temp
+  if (fs.existsSync(hookScaledPath)) fs.unlinkSync(hookScaledPath);
+
+  return true;
+}
+
 function assemblecut(projectId, cutId) {
   const projectDir = getProjectDir(projectId);
   const cutsDir = path.join(projectDir, 'cuts');
@@ -124,20 +155,34 @@ function assemblecut(projectId, cutId) {
   extractSegment(videoPath, cut.start, cut.end, rawPath);
 
   // Rescale to target format
-  const assembledPath = path.join(productionDir, `assembled-${cutId}.mp4`);
+  const scaledPath = path.join(productionDir, `scaled-${cutId}.mp4`);
   console.log(`  Rescaling to ${cut.format}...`);
-  rescaleVideo(rawPath, assembledPath, cut.format);
+  rescaleVideo(rawPath, scaledPath, cut.format);
 
   // Cleanup raw
   if (fs.existsSync(rawPath)) fs.unlinkSync(rawPath);
 
-  console.log(`  Assembled: assembled-${cutId}.mp4`);
+  // AV-10: Prepend energy hook if available
+  const assembledPath = path.join(productionDir, `assembled-${cutId}.mp4`);
+  const hookPrepended = prependEnergyHook(projectId, scaledPath, assembledPath, cut.format);
+
+  // Cleanup scaled if hook was prepended (assembled replaces it)
+  if (hookPrepended && fs.existsSync(scaledPath)) {
+    fs.unlinkSync(scaledPath);
+  } else if (!hookPrepended) {
+    // No hook — scaled IS the assembled
+    fs.renameSync(scaledPath, assembledPath);
+  }
+
+  const finalDuration = hookPrepended ? cut.duration + HOOK_DURATION : cut.duration;
+  console.log(`  Assembled: assembled-${cutId}.mp4${hookPrepended ? ' (with energy hook)' : ''}`);
 
   return {
     cutId,
     outputPath: assembledPath,
     format: cut.format,
-    duration: cut.duration,
+    duration: finalDuration,
+    hookPrepended,
   };
 }
 
@@ -176,6 +221,7 @@ module.exports = {
   extractSegment,
   rescaleVideo,
   concatenateSegments,
+  prependEnergyHook,
   assemblecut,
   assembleAllApproved,
   FORMAT_MAP,

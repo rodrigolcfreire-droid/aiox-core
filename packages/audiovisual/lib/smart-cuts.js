@@ -24,6 +24,12 @@ const PLATFORM_SPECS = {
   youtube: { minDuration: 60, maxDuration: 180, format: '16:9', name: 'YouTube' },
 };
 
+// Target cut durations (Story AV-10): standard 90s and long 120s
+const TARGET_DURATIONS = {
+  standard: 90,
+  long: 120,
+};
+
 // Category detection keywords
 const CATEGORY_KEYWORDS = {
   viral: [
@@ -226,6 +232,62 @@ function deduplicateCuts(cuts) {
   return unique;
 }
 
+/**
+ * Combine consecutive blocks to reach target durations (90s / 120s).
+ * Story AV-10 — production rule for standard and long cuts.
+ */
+function suggestTargetDurationCuts(blocks) {
+  const cuts = [];
+  const tolerance = 10; // ±10s tolerance around target
+
+  for (const [label, targetDuration] of Object.entries(TARGET_DURATIONS)) {
+    // Sliding window over consecutive blocks
+    for (let i = 0; i < blocks.length; i++) {
+      let accumulated = 0;
+      let endIdx = i;
+
+      while (endIdx < blocks.length && accumulated < targetDuration + tolerance) {
+        accumulated = blocks[endIdx].end - blocks[i].start;
+        if (accumulated >= targetDuration - tolerance && accumulated <= targetDuration + tolerance) {
+          const blockIds = [];
+          for (let k = i; k <= endIdx; k++) {
+            blockIds.push(blocks[k].id);
+          }
+
+          const combinedText = blocks
+            .slice(i, endIdx + 1)
+            .map(b => b.transcriptExcerpt || '')
+            .join(' ');
+          const category = detectCategory(combinedText);
+          const bestEnergy = blocks.slice(i, endIdx + 1)
+            .some(b => b.energyLevel === 'high') ? 'high' : 'medium';
+
+          cuts.push({
+            blocks: blockIds,
+            start: blocks[i].start,
+            end: blocks[endIdx].end,
+            duration: parseFloat(accumulated.toFixed(2)),
+            category,
+            objective: generateObjective(category, blocks[i].type),
+            engagementScore: calculateEngagementScore(
+              { duration: accumulated, energyLevel: bestEnergy, type: blocks[i].type },
+              category
+            ),
+            format: '9:16',
+            platform: ['reels', 'tiktok'],
+            source: `target-${label}`,
+            targetDuration,
+          });
+          break;
+        }
+        endIdx++;
+      }
+    }
+  }
+
+  return cuts;
+}
+
 function generateSmartCuts(projectId) {
   const projectDir = getProjectDir(projectId);
   const analysisDir = path.join(projectDir, 'analysis');
@@ -252,6 +314,10 @@ function generateSmartCuts(projectId) {
     const platformCuts = suggestCutsForPlatform(blocks, platform, spec);
     allCuts.push(...platformCuts);
   }
+
+  // Strategy AV-10: Generate cuts targeting 90s and 120s durations
+  const targetDurationCuts = suggestTargetDurationCuts(blocks);
+  allCuts.push(...targetDurationCuts);
 
   // Merge platform tags for identical cuts
   const merged = [];
@@ -313,6 +379,8 @@ module.exports = {
   calculateEngagementScore,
   generateObjective,
   suggestCutsForPlatform,
+  suggestTargetDurationCuts,
   deduplicateCuts,
   PLATFORM_SPECS,
+  TARGET_DURATIONS,
 };
