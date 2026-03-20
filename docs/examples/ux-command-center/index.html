@@ -2996,6 +2996,51 @@
       color: var(--cyan);
       border-color: rgba(0,229,204,0.2);
     }
+
+    .av-sector-btn {
+      margin-top: 40px;
+      background: linear-gradient(135deg, rgba(56,189,248,0.15), rgba(167,139,250,0.15));
+      border: 1px solid rgba(56,189,248,0.4);
+      color: #38bdf8;
+      padding: 18px 48px;
+      border-radius: 12px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .av-sector-btn:hover {
+      background: linear-gradient(135deg, rgba(56,189,248,0.25), rgba(167,139,250,0.25));
+      border-color: #38bdf8;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(56,189,248,0.2);
+    }
+
+    .av-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .av-breadcrumb a {
+      color: #64748b;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .av-breadcrumb a:hover {
+      color: #38bdf8;
+    }
+    .av-bread-sep {
+      color: #334155;
+    }
+    .av-bread-current {
+      color: #38bdf8;
+    }
   </style>
 </head>
 
@@ -3074,6 +3119,7 @@
         <div class="pre">INICIALIZANDO SISTEMA</div>
         <h2>CENTRO DE<br />COMANDO</h2>
         <h3>UX</h3>
+        <button class="av-sector-btn" onclick="showView('setor-audiovisual'); event.preventDefault();">SETOR AUDIOVISUAL INTELIGENTE</button>
       </div>
     </section>
 
@@ -5113,6 +5159,136 @@
       </div>
     </section>
 
+    <section class="dashboard-section wrap view-section" id="setor-audiovisual">
+      <!-- Breadcrumb -->
+      <div class="av-breadcrumb">
+        <a href="#" onclick="showView('entrada'); event.preventDefault();">Centro de Comando</a>
+        <span class="av-bread-sep">›</span>
+        <span class="av-bread-current">Setor Audiovisual Inteligente</span>
+      </div>
+
+      <!-- Header -->
+      <div style="text-align:center;margin-bottom:40px;">
+        <div style="font-family:'JetBrains Mono';font-size:13px;color:#38bdf8;letter-spacing:4px;text-transform:uppercase;margin-bottom:12px;">-- Setor Audiovisual --</div>
+        <h2 style="font-family:'Chakra Petch';font-size:48px;font-weight:700;background:linear-gradient(135deg,#e2e8f0,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;">AUDIOVISUAL<br><span style="background:linear-gradient(135deg,#38bdf8,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">INTELIGENTE</span></h2>
+        <p style="font-size:16px;color:#94a3b8;margin-top:12px;max-width:600px;margin-left:auto;margin-right:auto;">Motor autonomo de producao audiovisual. Dois cerebros independentes: um pensa, outro executa.</p>
+      </div>
+
+      <!-- Stats -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px;">
+        <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:12px;padding:24px;text-align:center;">
+          <div style="font-family:'Chakra Petch';font-size:36px;font-weight:700;color:#38bdf8;">16</div>
+          <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Agentes</div>
+        </div>
+        <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:12px;padding:24px;text-align:center;">
+          <div style="font-family:'Chakra Petch';font-size:36px;font-weight:700;color:#34d399;">9</div>
+          <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Fases</div>
+        </div>
+        <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:12px;padding:24px;text-align:center;">
+          <div style="font-family:'Chakra Petch';font-size:36px;font-weight:700;color:#a78bfa;">25+</div>
+          <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Endpoints</div>
+        </div>
+        <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:12px;padding:24px;text-align:center;">
+          <div style="font-family:'Chakra Petch';font-size:36px;font-weight:700;color:#fbbf24;">7</div>
+          <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Categorias</div>
+        </div>
+      </div>
+
+      <!-- Two Motors -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:40px;">
+        <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-left:4px solid #a78bfa;border-radius:16px;padding:32px;">
+          <div style="font-family:'Chakra Petch';font-size:22px;font-weight:700;margin-bottom:4px;">Cortes Inteligentes</div>
+          <div style="font-size:13px;color:#a78bfa;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Cerebro Criativo</div>
+          <p style="font-size:14px;color:#94a3b8;line-height:1.7;">Recebe video bruto, analisa, transcreve, segmenta em blocos, identifica os melhores cortes por categoria, estima engagement e aguarda aprovacao humana.</p>
+        </div>
+        <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-left:4px solid #34d399;border-radius:16px;padding:32px;">
+          <div style="font-family:'Chakra Petch';font-size:22px;font-weight:700;margin-bottom:4px;">Escala de Criativos</div>
+          <div style="font-size:13px;color:#34d399;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Motor de Producao</div>
+          <p style="font-size:14px;color:#94a3b8;line-height:1.7;">Recebe cortes aprovados, monta o video, aplica legendas inteligentes, branding, valida qualidade, renderiza em batch e organiza outputs.</p>
+        </div>
+      </div>
+
+      <!-- Pipeline Principal (clickable) -->
+      <div style="background:rgba(15,23,42,0.8);border:1px solid rgba(56,189,248,0.3);border-radius:16px;padding:32px;margin-bottom:40px;cursor:pointer;transition:all 0.3s;" onclick="showView('av-pipeline'); event.preventDefault();" onmouseover="this.style.borderColor='#38bdf8';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(56,189,248,0.3)';this.style.transform='none'">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div>
+            <span style="background:#38bdf8;color:#0a0e1a;padding:4px 12px;border-radius:4px;font-size:11px;font-weight:700;font-family:'JetBrains Mono';">PIPELINE COMPLETA</span>
+            <span style="font-size:12px;color:#64748b;margin-left:12px;">Clique para executar</span>
+          </div>
+          <span style="color:#38bdf8;font-size:24px;">→</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+          <span style="background:rgba(30,41,59,0.8);color:#cbd5e1;padding:8px 14px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono';">Input</span><span style="color:#334155;font-size:16px;">→</span>
+          <span style="background:rgba(30,41,59,0.8);color:#cbd5e1;padding:8px 14px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono';">FFprobe</span><span style="color:#334155;font-size:16px;">→</span>
+          <span style="background:rgba(30,41,59,0.8);color:#cbd5e1;padding:8px 14px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono';">Transcricao</span><span style="color:#334155;font-size:16px;">→</span>
+          <span style="background:rgba(30,41,59,0.8);color:#cbd5e1;padding:8px 14px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono';">Segmentacao</span><span style="color:#334155;font-size:16px;">→</span>
+          <span style="background:rgba(30,41,59,0.8);color:#cbd5e1;padding:8px 14px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono';">Cortes</span><span style="color:#334155;font-size:16px;">→</span>
+          <span style="background:rgba(30,41,59,0.8);color:#cbd5e1;padding:8px 14px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono';">Energia</span><span style="color:#334155;font-size:16px;">→</span>
+          <span style="background:rgba(30,41,59,0.8);color:#cbd5e1;padding:8px 14px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono';">Previews</span><span style="color:#334155;font-size:16px;">→</span>
+          <span style="background:rgba(251,191,36,0.15);border:1px solid #fbbf24;color:#fbbf24;padding:8px 14px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono';">Aprovacao</span>
+        </div>
+      </div>
+
+      <!-- Agents Grid -->
+      <div style="margin-bottom:40px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+          <div style="font-family:'Chakra Petch';font-size:22px;font-weight:700;">Agentes Especializados</div>
+          <span style="font-size:13px;color:#64748b;">5 nucleos de operacao</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+          <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:16px;"><div style="font-size:14px;font-weight:600;">Maestro</div><div style="font-size:12px;color:#f472b6;font-family:'JetBrains Mono';">@av-maestro</div><div style="font-size:12px;color:#64748b;margin-top:4px;">Orquestra todo o fluxo</div><span style="display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;margin-top:6px;font-weight:600;background:rgba(244,114,182,0.15);color:#f472b6;">ORQUESTRACAO</span></div>
+          <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:16px;"><div style="font-size:14px;font-weight:600;">Ingestor</div><div style="font-size:12px;color:#38bdf8;font-family:'JetBrains Mono';">@av-ingestor</div><div style="font-size:12px;color:#64748b;margin-top:4px;">Captura e processa videos</div><span style="display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;margin-top:6px;font-weight:600;background:rgba(56,189,248,0.15);color:#38bdf8;">INGESTAO</span></div>
+          <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:16px;"><div style="font-size:14px;font-weight:600;">Analisador</div><div style="font-size:12px;color:#a78bfa;font-family:'JetBrains Mono';">@av-analisador</div><div style="font-size:12px;color:#64748b;margin-top:4px;">Analisa e segmenta</div><span style="display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;margin-top:6px;font-weight:600;background:rgba(167,139,250,0.15);color:#a78bfa;">CRIATIVO</span></div>
+          <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:16px;"><div style="font-size:14px;font-weight:600;">Cortador</div><div style="font-size:12px;color:#a78bfa;font-family:'JetBrains Mono';">@av-cortador</div><div style="font-size:12px;color:#64748b;margin-top:4px;">Gera cortes inteligentes</div><span style="display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;margin-top:6px;font-weight:600;background:rgba(167,139,250,0.15);color:#a78bfa;">CRIATIVO</span></div>
+          <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:16px;"><div style="font-size:14px;font-weight:600;">Montador</div><div style="font-size:12px;color:#34d399;font-family:'JetBrains Mono';">@av-montador</div><div style="font-size:12px;color:#64748b;margin-top:4px;">Monta videos finais</div><span style="display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;margin-top:6px;font-weight:600;background:rgba(52,211,153,0.15);color:#34d399;">PRODUCAO</span></div>
+          <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:16px;"><div style="font-size:14px;font-weight:600;">Legendador</div><div style="font-size:12px;color:#34d399;font-family:'JetBrains Mono';">@av-legendador</div><div style="font-size:12px;color:#64748b;margin-top:4px;">Aplica legendas inteligentes</div><span style="display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;margin-top:6px;font-weight:600;background:rgba(52,211,153,0.15);color:#34d399;">PRODUCAO</span></div>
+          <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:16px;"><div style="font-size:14px;font-weight:600;">Validador</div><div style="font-size:12px;color:#34d399;font-family:'JetBrains Mono';">@av-validador</div><div style="font-size:12px;color:#64748b;margin-top:4px;">Valida qualidade final</div><span style="display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;margin-top:6px;font-weight:600;background:rgba(52,211,153,0.15);color:#34d399;">PRODUCAO</span></div>
+          <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:16px;"><div style="font-size:14px;font-weight:600;">Aprendiz</div><div style="font-size:12px;color:#fbbf24;font-family:'JetBrains Mono';">@av-aprendiz</div><div style="font-size:12px;color:#64748b;margin-top:4px;">Aprende com decisoes</div><span style="display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;margin-top:6px;font-weight:600;background:rgba(251,191,36,0.15);color:#fbbf24;">APRENDIZADO</span></div>
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div style="margin-bottom:40px;">
+        <div style="font-family:'Chakra Petch';font-size:22px;font-weight:700;margin-bottom:20px;">7 Categorias de Corte</div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:12px;">
+          <div style="text-align:center;background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:20px 8px;"><div style="font-size:24px;margin-bottom:6px;">🔥</div><div style="font-size:12px;font-weight:600;color:#f87171;">Viral</div></div>
+          <div style="text-align:center;background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:20px 8px;"><div style="font-size:24px;margin-bottom:6px;">🏆</div><div style="font-size:12px;font-weight:600;color:#60a5fa;">Autoridade</div></div>
+          <div style="text-align:center;background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:20px 8px;"><div style="font-size:24px;margin-bottom:6px;">📚</div><div style="font-size:12px;font-weight:600;color:#a78bfa;">Educativo</div></div>
+          <div style="text-align:center;background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:20px 8px;"><div style="font-size:24px;margin-bottom:6px;">📖</div><div style="font-size:12px;font-weight:600;color:#fbbf24;">Storytelling</div></div>
+          <div style="text-align:center;background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:20px 8px;"><div style="font-size:24px;margin-bottom:6px;">🎯</div><div style="font-size:12px;font-weight:600;color:#34d399;">CTA</div></div>
+          <div style="text-align:center;background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:20px 8px;"><div style="font-size:24px;margin-bottom:6px;">🎬</div><div style="font-size:12px;font-weight:600;color:#9ca3af;">Bastidores</div></div>
+          <div style="text-align:center;background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:20px 8px;"><div style="font-size:24px;margin-bottom:6px;">📈</div><div style="font-size:12px;font-weight:600;color:#f472b6;">Tendencia</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-section wrap view-section" id="av-pipeline">
+      <div class="av-breadcrumb">
+        <a href="#" onclick="showView('entrada'); event.preventDefault();">Centro de Comando</a>
+        <span class="av-bread-sep">›</span>
+        <a href="#" onclick="showView('setor-audiovisual'); event.preventDefault();">Setor Audiovisual</a>
+        <span class="av-bread-sep">›</span>
+        <span class="av-bread-current">Pipeline</span>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+        <button class="av-sector-btn" style="font-size:14px;padding:12px 32px;letter-spacing:2px;" onclick="showView('av-aprovacao'); event.preventDefault();">RODAR LINK → APROVACAO</button>
+      </div>
+      <iframe id="av-pipeline-frame" style="width:100%;min-height:85vh;border:none;border-radius:12px;background:#0a0e1a;" src="about:blank"></iframe>
+    </section>
+
+    <section class="dashboard-section wrap view-section" id="av-aprovacao">
+      <div class="av-breadcrumb">
+        <a href="#" onclick="showView('entrada'); event.preventDefault();">Centro de Comando</a>
+        <span class="av-bread-sep">›</span>
+        <a href="#" onclick="showView('setor-audiovisual'); event.preventDefault();">Setor Audiovisual</a>
+        <span class="av-bread-sep">›</span>
+        <a href="#" onclick="showView('av-pipeline'); event.preventDefault();">Pipeline</a>
+        <span class="av-bread-sep">›</span>
+        <span class="av-bread-current">Aprovacao</span>
+      </div>
+      <iframe id="av-aprovacao-frame" style="width:100%;min-height:85vh;border:none;border-radius:12px;background:#0a0e1a;" src="about:blank"></iframe>
+    </section>
+
   </main>
 
   <script>
@@ -5181,6 +5357,20 @@
       // Carrega relatorios quando acessado via menu
       if (viewId === 'relatorios') {
         loadSentinelReports();
+      }
+
+      // AV Navigation: load iframes on demand
+      if (viewId === 'av-pipeline') {
+        const frame = document.getElementById('av-pipeline-frame');
+        if (frame && frame.src === 'about:blank') {
+          frame.src = 'av-live-pipeline.html';
+        }
+      }
+      if (viewId === 'av-aprovacao') {
+        const frame = document.getElementById('av-aprovacao-frame');
+        if (frame && frame.src === 'about:blank') {
+          frame.src = 'av-approve.html';
+        }
       }
     }
 
