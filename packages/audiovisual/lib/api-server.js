@@ -410,9 +410,54 @@ async function handleRequest(req, res) {
       return sendJSON(res, JSON.parse(fs.readFileSync(tp, 'utf8')));
     }
 
+    // ── File Upload (local video from browser) ──────
+    if (pathname === '/api/upload' && method === 'POST') {
+      const contentType = req.headers['content-type'] || '';
+      if (!contentType.includes('multipart') && !contentType.includes('octet-stream')) {
+        return sendError(res, 'Expected file upload (multipart or octet-stream)');
+      }
+
+      // Save raw body as temp file
+      const tmpDir = path.join(require('os').tmpdir(), 'aiox-av-uploads');
+      fs.mkdirSync(tmpDir, { recursive: true });
+
+      // Extract filename from Content-Disposition or query
+      const parsed2 = url.parse(req.url, true);
+      const filename = (parsed2.query.filename || `upload-${Date.now()}.mp4`).replace(/[^a-zA-Z0-9._-]/g, '_');
+      const tmpPath = path.join(tmpDir, filename);
+      const ws = fs.createWriteStream(tmpPath);
+
+      req.pipe(ws);
+      ws.on('finish', () => {
+        sendJSON(res, { uploaded: true, path: tmpPath, filename }, 201);
+      });
+      ws.on('error', (err) => {
+        sendError(res, `Upload failed: ${err.message}`, 500);
+      });
+      return;
+    }
+
     // ── Health ────────────────────────────────────────
     if (pathname === '/api/health') {
       return sendJSON(res, { status: 'ok', service: 'central-audiovisual', timestamp: new Date().toISOString() });
+    }
+
+    // ── Serve Dashboard (Centro de Comando) ──────────
+    if (pathname === '/' || pathname === '/index.html') {
+      const dashPath = path.resolve(__dirname, '..', '..', '..', 'docs', 'examples', 'ux-command-center', 'index.html');
+      if (!fs.existsSync(dashPath)) return sendError(res, 'Dashboard not found', 404);
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+      return fs.createReadStream(dashPath).pipe(res);
+    }
+
+    // ── Serve static files from ux-command-center ────
+    const uxDir = path.resolve(__dirname, '..', '..', '..', 'docs', 'examples', 'ux-command-center');
+    const safePath = path.join(uxDir, pathname.replace(/^\//, ''));
+    if (safePath.startsWith(uxDir) && fs.existsSync(safePath) && fs.statSync(safePath).isFile()) {
+      const ext = path.extname(safePath).toLowerCase();
+      const mimeMap = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'application/javascript', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml' };
+      res.writeHead(200, { 'Content-Type': mimeMap[ext] || 'application/octet-stream', 'Access-Control-Allow-Origin': '*' });
+      return fs.createReadStream(safePath).pipe(res);
     }
 
     // 404

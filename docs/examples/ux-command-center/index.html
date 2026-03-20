@@ -5371,9 +5371,19 @@
         <div style="font-size:36px;margin-bottom:12px;">📤</div>
         <div style="font-family:'Chakra Petch';font-size:18px;font-weight:700;color:#a78bfa;margin-bottom:8px;">Enviar Video ou Link</div>
         <p style="font-size:13px;color:#64748b;margin-bottom:16px;">Arraste um video aqui, cole um link do Google Drive, ou clique para selecionar</p>
-        <div style="display:flex;gap:12px;justify-content:center;align-items:center;">
-          <input type="text" id="av-cortes-input" placeholder="Cole o link do Google Drive aqui..." style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:12px 16px;color:#e2e8f0;font-size:14px;font-family:'JetBrains Mono';width:400px;outline:none;" onfocus="this.style.borderColor='#a78bfa'" onblur="this.style.borderColor='#334155'" />
-          <button class="av-sector-btn" style="font-size:13px;padding:10px 24px;letter-spacing:1px;" onclick="showView('av-pipeline'); event.preventDefault();">ANALISAR</button>
+        <div style="display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;">
+          <input type="text" id="av-cortes-input" placeholder="Cole o link do Google Drive aqui..." style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:12px 16px;color:#e2e8f0;font-size:14px;font-family:'JetBrains Mono';width:380px;outline:none;" onfocus="this.style.borderColor='#a78bfa'" onblur="this.style.borderColor='#334155'" />
+          <button class="av-sector-btn" style="font-size:13px;padding:10px 24px;letter-spacing:1px;" onclick="avStartAnalise(); event.preventDefault();">ANALISAR</button>
+        </div>
+        <div style="margin-top:16px;display:flex;align-items:center;justify-content:center;gap:16px;">
+          <div style="height:1px;width:80px;background:#334155;"></div>
+          <span style="font-size:12px;color:#475569;">ou</span>
+          <div style="height:1px;width:80px;background:#334155;"></div>
+        </div>
+        <div style="margin-top:16px;text-align:center;">
+          <input type="file" id="av-cortes-file" accept="video/*" style="display:none;" onchange="avFileSelected(this)" />
+          <button style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);color:#a78bfa;padding:12px 32px;border-radius:8px;font-family:'Chakra Petch';font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='#a78bfa';this.style.background='rgba(167,139,250,0.2)'" onmouseout="this.style.borderColor='rgba(167,139,250,0.3)';this.style.background='rgba(167,139,250,0.1)'" onclick="document.getElementById('av-cortes-file').click()">📂 SELECIONAR VIDEO DO COMPUTADOR</button>
+          <div id="av-cortes-file-name" style="font-size:12px;color:#64748b;margin-top:8px;font-family:'JetBrains Mono';"></div>
         </div>
       </div>
 
@@ -5489,9 +5499,19 @@
         <div style="font-size:36px;margin-bottom:12px;">📤</div>
         <div style="font-family:'Chakra Petch';font-size:18px;font-weight:700;color:#34d399;margin-bottom:8px;">Enviar Cortes Aprovados</div>
         <p style="font-size:13px;color:#64748b;margin-bottom:16px;">Arraste cortes aprovados ou cole o ID do projeto para iniciar a producao</p>
-        <div style="display:flex;gap:12px;justify-content:center;align-items:center;">
-          <input type="text" id="av-escala-input" placeholder="ID do projeto ou caminho dos cortes..." style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:12px 16px;color:#e2e8f0;font-size:14px;font-family:'JetBrains Mono';width:400px;outline:none;" onfocus="this.style.borderColor='#34d399'" onblur="this.style.borderColor='#334155'" />
+        <div style="display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;">
+          <input type="text" id="av-escala-input" placeholder="ID do projeto ou caminho dos cortes..." style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:12px 16px;color:#e2e8f0;font-size:14px;font-family:'JetBrains Mono';width:380px;outline:none;" onfocus="this.style.borderColor='#34d399'" onblur="this.style.borderColor='#334155'" />
           <button class="av-sector-btn" style="font-size:13px;padding:10px 24px;letter-spacing:1px;border-color:rgba(52,211,153,0.4);color:#34d399;" onclick="showView('av-pipeline'); event.preventDefault();">PRODUZIR</button>
+        </div>
+        <div style="margin-top:16px;display:flex;align-items:center;justify-content:center;gap:16px;">
+          <div style="height:1px;width:80px;background:#334155;"></div>
+          <span style="font-size:12px;color:#475569;">ou</span>
+          <div style="height:1px;width:80px;background:#334155;"></div>
+        </div>
+        <div style="margin-top:16px;text-align:center;">
+          <input type="file" id="av-escala-file" accept="video/*" style="display:none;" onchange="avFileSelected(this)" />
+          <button style="background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);color:#34d399;padding:12px 32px;border-radius:8px;font-family:'Chakra Petch';font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='#34d399';this.style.background='rgba(52,211,153,0.2)'" onmouseout="this.style.borderColor='rgba(52,211,153,0.3)';this.style.background='rgba(52,211,153,0.1)'" onclick="document.getElementById('av-escala-file').click()">📂 SELECIONAR VIDEO DO COMPUTADOR</button>
+          <div id="av-escala-file-name" style="font-size:12px;color:#64748b;margin-top:8px;font-family:'JetBrains Mono';"></div>
         </div>
       </div>
 
@@ -6635,6 +6655,69 @@
         hist.style.display = 'none';
         btn.innerHTML = 'Ver historico (' + (sentinelReports.length - 1) + ' relatorios anteriores) &#9660;';
       }
+    }
+
+    // AV API base — use localhost:3456 when served from there, fallback for file://
+    const AV_API = (window.location.protocol === 'file:') ? 'http://localhost:3456' : window.location.origin;
+
+    // Show file name when selected
+    function avFileSelected(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const nameEl = input.id === 'av-cortes-file' ? 'av-cortes-file-name' : 'av-escala-file-name';
+      document.getElementById(nameEl).textContent = file.name + ' (' + (file.size / 1048576).toFixed(1) + ' MB)';
+    }
+
+    // Start analysis: upload file or send link
+    async function avStartAnalise() {
+      const linkInput = document.getElementById('av-cortes-input');
+      const fileInput = document.getElementById('av-cortes-file');
+      const file = fileInput.files[0];
+      const link = linkInput.value.trim();
+
+      if (!file && !link) {
+        alert('Cole um link do Google Drive ou selecione um video do computador.');
+        return;
+      }
+
+      let source = link;
+
+      // If file selected, upload first
+      if (file) {
+        try {
+          document.getElementById('av-cortes-file-name').textContent = 'Enviando ' + file.name + '...';
+          const uploadRes = await fetch(AV_API + '/api/upload?filename=' + encodeURIComponent(file.name), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/octet-stream' },
+            body: file,
+          });
+          const uploadData = await uploadRes.json();
+          if (!uploadData.path) throw new Error(uploadData.error || 'Upload failed');
+          source = uploadData.path;
+          document.getElementById('av-cortes-file-name').textContent = 'Upload completo: ' + file.name;
+        } catch (err) {
+          alert('Erro no upload: ' + err.message);
+          return;
+        }
+      }
+
+      // Navigate to pipeline and trigger it via the iframe
+      showView('av-pipeline');
+      const frame = document.getElementById('av-pipeline-frame');
+      // Wait for iframe to load, then set the source input
+      setTimeout(() => {
+        try {
+          const frameDoc = frame.contentDocument || frame.contentWindow.document;
+          const srcInput = frameDoc.getElementById('sourceInput');
+          if (srcInput) {
+            srcInput.value = source;
+            const startBtn = frameDoc.getElementById('startBtn');
+            if (startBtn) startBtn.click();
+          }
+        } catch (e) {
+          // Cross-origin — fallback: just show pipeline page
+        }
+      }, 1500);
     }
 
     // AV Live Task Animation — cycles through agents highlighting the active one
