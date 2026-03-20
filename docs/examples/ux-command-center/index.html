@@ -5366,6 +5366,17 @@
         </div>
       </div>
 
+      <!-- Upload Zone -->
+      <div style="background:rgba(15,23,42,0.8);border:2px dashed rgba(167,139,250,0.3);border-radius:16px;padding:40px;margin-bottom:32px;text-align:center;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='#a78bfa';this.style.background='rgba(167,139,250,0.05)'" onmouseout="this.style.borderColor='rgba(167,139,250,0.3)';this.style.background='rgba(15,23,42,0.8)'" ondragover="event.preventDefault();this.style.borderColor='#a78bfa';this.style.background='rgba(167,139,250,0.1)'" ondragleave="this.style.borderColor='rgba(167,139,250,0.3)';this.style.background='rgba(15,23,42,0.8)'">
+        <div style="font-size:36px;margin-bottom:12px;">📤</div>
+        <div style="font-family:'Chakra Petch';font-size:18px;font-weight:700;color:#a78bfa;margin-bottom:8px;">Enviar Video ou Link</div>
+        <p style="font-size:13px;color:#64748b;margin-bottom:16px;">Arraste um video aqui, cole um link do Google Drive, ou clique para selecionar</p>
+        <div style="display:flex;gap:12px;justify-content:center;align-items:center;">
+          <input type="text" id="av-cortes-input" placeholder="Cole o link do Google Drive aqui..." style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:12px 16px;color:#e2e8f0;font-size:14px;font-family:'JetBrains Mono';width:400px;outline:none;" onfocus="this.style.borderColor='#a78bfa'" onblur="this.style.borderColor='#334155'" />
+          <button class="av-sector-btn" style="font-size:13px;padding:10px 24px;letter-spacing:1px;" onclick="showView('av-pipeline'); event.preventDefault();">ANALISAR</button>
+        </div>
+      </div>
+
       <!-- Action buttons -->
       <div style="display:flex;gap:16px;">
         <button class="av-sector-btn" style="font-size:14px;padding:12px 32px;letter-spacing:2px;" onclick="showView('av-pipeline'); event.preventDefault();">EXECUTAR PIPELINE</button>
@@ -5433,6 +5444,54 @@
           <div class="av-live-agent-escala" data-step="5" style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(52,211,153,0.08);border:1px solid #1e293b;border-radius:10px;transition:all 0.5s;">
             <span style="font-size:16px;">📤</span><div><div style="font-size:12px;font-weight:600;">Publisher</div><div style="font-size:10px;color:#64748b;">Publicando</div></div>
           </div>
+        </div>
+      </div>
+
+      <!-- Blocos Logicos -->
+      <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:16px;padding:24px;margin-bottom:32px;">
+        <div style="font-size:12px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Blocos Logicos de Producao</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          <div style="background:rgba(52,211,153,0.06);border:1px solid #1e293b;border-radius:10px;padding:16px;text-align:center;">
+            <div style="font-size:24px;margin-bottom:6px;">🎬</div>
+            <div style="font-size:13px;font-weight:600;color:#e2e8f0;">Assembly</div>
+            <div style="font-size:11px;color:#64748b;margin-top:4px;">Hook (5s) + Corte original concatenados via FFmpeg</div>
+          </div>
+          <div style="background:rgba(52,211,153,0.06);border:1px solid #1e293b;border-radius:10px;padding:16px;text-align:center;">
+            <div style="font-size:24px;margin-bottom:6px;">💬</div>
+            <div style="font-size:13px;font-weight:600;color:#e2e8f0;">Legendas ASS</div>
+            <div style="font-size:11px;color:#64748b;margin-top:4px;">4 estilos: bold, minimal, karaoke, glow. Sincronizadas por palavra</div>
+          </div>
+          <div style="background:rgba(52,211,153,0.06);border:1px solid #1e293b;border-radius:10px;padding:16px;text-align:center;">
+            <div style="font-size:24px;margin-bottom:6px;">🏷️</div>
+            <div style="font-size:13px;font-weight:600;color:#e2e8f0;">Branding</div>
+            <div style="font-size:11px;color:#64748b;margin-top:4px;">Logo overlay, paleta de cores, identidade visual por marca</div>
+          </div>
+          <div style="background:rgba(52,211,153,0.06);border:1px solid #1e293b;border-radius:10px;padding:16px;text-align:center;">
+            <div style="font-size:24px;margin-bottom:6px;">✅</div>
+            <div style="font-size:13px;font-weight:600;color:#e2e8f0;">Validacao</div>
+            <div style="font-size:11px;color:#64748b;margin-top:4px;">Score 0-10 por plataforma: duracao, resolucao, codec, bitrate</div>
+          </div>
+          <div style="background:rgba(52,211,153,0.06);border:1px solid #1e293b;border-radius:10px;padding:16px;text-align:center;">
+            <div style="font-size:24px;margin-bottom:6px;">🔄</div>
+            <div style="font-size:13px;font-weight:600;color:#e2e8f0;">Batch Render</div>
+            <div style="font-size:11px;color:#64748b;margin-top:4px;">Fila de renderizacao com prioridades. Variacoes por plataforma</div>
+          </div>
+          <div style="background:rgba(52,211,153,0.06);border:1px solid #1e293b;border-radius:10px;padding:16px;text-align:center;">
+            <div style="font-size:24px;margin-bottom:6px;">📤</div>
+            <div style="font-size:13px;font-weight:600;color:#e2e8f0;">Output Manager</div>
+            <div style="font-size:11px;color:#64748b;margin-top:4px;">Organiza exports por plataforma. Thumbnails + metadata prontos</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Zone -->
+      <div style="background:rgba(15,23,42,0.8);border:2px dashed rgba(52,211,153,0.3);border-radius:16px;padding:40px;margin-bottom:32px;text-align:center;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='#34d399';this.style.background='rgba(52,211,153,0.05)'" onmouseout="this.style.borderColor='rgba(52,211,153,0.3)';this.style.background='rgba(15,23,42,0.8)'" ondragover="event.preventDefault();this.style.borderColor='#34d399';this.style.background='rgba(52,211,153,0.1)'" ondragleave="this.style.borderColor='rgba(52,211,153,0.3)';this.style.background='rgba(15,23,42,0.8)'">
+        <div style="font-size:36px;margin-bottom:12px;">📤</div>
+        <div style="font-family:'Chakra Petch';font-size:18px;font-weight:700;color:#34d399;margin-bottom:8px;">Enviar Cortes Aprovados</div>
+        <p style="font-size:13px;color:#64748b;margin-bottom:16px;">Arraste cortes aprovados ou cole o ID do projeto para iniciar a producao</p>
+        <div style="display:flex;gap:12px;justify-content:center;align-items:center;">
+          <input type="text" id="av-escala-input" placeholder="ID do projeto ou caminho dos cortes..." style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:12px 16px;color:#e2e8f0;font-size:14px;font-family:'JetBrains Mono';width:400px;outline:none;" onfocus="this.style.borderColor='#34d399'" onblur="this.style.borderColor='#334155'" />
+          <button class="av-sector-btn" style="font-size:13px;padding:10px 24px;letter-spacing:1px;border-color:rgba(52,211,153,0.4);color:#34d399;" onclick="showView('av-pipeline'); event.preventDefault();">PRODUZIR</button>
         </div>
       </div>
 
