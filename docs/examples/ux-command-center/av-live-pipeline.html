@@ -187,6 +187,12 @@ async function startPipeline() {
   document.querySelectorAll('.result-card').forEach(c => c.classList.remove('visible'));
   document.getElementById('cuts-section').classList.remove('visible');
 
+  // Connect SSE FIRST, then start pipeline — ensures we catch all events
+  connectSSE('pending');
+
+  // Small delay to ensure SSE is connected before pipeline starts broadcasting
+  await new Promise(r => setTimeout(r, 500));
+
   try {
     const res = await fetch(`${API}/api/pipeline/start`, {
       method: 'POST',
@@ -195,9 +201,6 @@ async function startPipeline() {
     });
     const data = await res.json();
     log(data.message || 'Pipeline aceito', 'success');
-
-    // Connect SSE — use 'pending' until we get the real projectId
-    connectSSE('pending');
 
   } catch (err) {
     log('Erro: ' + err.message, 'error');
