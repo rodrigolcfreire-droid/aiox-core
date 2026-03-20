@@ -35,12 +35,15 @@
     .pipeline-section { margin-bottom: 32px; }
     .pipeline-section h2 { font-family: 'Chakra Petch'; font-size: 18px; margin-bottom: 16px; color: #94a3b8; }
     .steps { display: flex; gap: 8px; }
-    .step { flex: 1; background: #0f172a; border: 1px solid #1e293b; border-radius: 10px; padding: 16px; text-align: center; transition: all 0.3s; position: relative; }
-    .step.running { border-color: #38bdf8; background: rgba(56,189,248,0.05); }
-    .step.running::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: #38bdf8; animation: progress 2s infinite; }
-    @keyframes progress { 0% { width: 0; } 50% { width: 100%; } 100% { width: 0; } }
-    .step.done { border-color: #34d399; }
-    .step.error { border-color: #ef4444; }
+    .step { flex: 1; background: #0f172a; border: 1px solid #1e293b; border-radius: 10px; padding: 16px; text-align: center; transition: all 0.5s; position: relative; }
+    .step.running { border-color: #38bdf8; background: rgba(56,189,248,0.12); box-shadow: 0 0 20px rgba(56,189,248,0.3), inset 0 0 20px rgba(56,189,248,0.05); transform: scale(1.03); }
+    .step.running .step-name { color: #38bdf8; }
+    .step.running::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, #38bdf8, transparent); animation: progress 1.5s infinite; }
+    @keyframes progress { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+    .step.done { border-color: #34d399; background: rgba(52,211,153,0.1); box-shadow: 0 0 15px rgba(52,211,153,0.2); }
+    .step.done .step-name { color: #34d399; }
+    .step.done .step-icon::after { content: ' ✓'; font-size: 14px; color: #34d399; }
+    .step.error { border-color: #ef4444; background: rgba(239,68,68,0.1); box-shadow: 0 0 15px rgba(239,68,68,0.2); }
     .step.waiting { border-color: #fbbf24; }
     .step-icon { font-size: 24px; margin-bottom: 6px; }
     .step-name { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -220,6 +223,9 @@ function connectSSE(projectId) {
     // If we get a projectId, reconnect to that specific stream
     if (data.projectId && data.projectId !== projectId && projectId === 'pending') {
       currentProjectId = data.projectId;
+      // Process this event first, then reconnect
+      updateStep(data.step, data.status, data.message);
+      log('[' + data.step + '] ' + data.message, data.status === 'error' ? 'error' : data.status === 'done' ? 'success' : 'info');
       connectSSE(currentProjectId);
       return;
     }
