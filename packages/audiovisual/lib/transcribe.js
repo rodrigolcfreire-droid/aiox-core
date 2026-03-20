@@ -162,13 +162,6 @@ async function transcribeWithWhisper(projectId) {
   const audioSizeMB = audioStats.size / 1024 / 1024;
   console.log(`  Audio size: ${audioSizeMB.toFixed(1)} MB`);
 
-  if (audioSizeMB > 25) {
-    throw new Error(
-      `Audio file too large (${audioSizeMB.toFixed(1)} MB). ` +
-      'Whisper API limit is 25MB. Split the video first or use manual import.'
-    );
-  }
-
   // Get API key
   const env = loadEnv();
   const apiKey = env.OPENAI_API_KEY;
@@ -180,21 +173,64 @@ async function transcribeWithWhisper(projectId) {
     );
   }
 
-  // Call Whisper API
-  console.log('  Calling Whisper API...');
-  const result = await whisperAPI(audioPath, apiKey);
+  let allSegments = [];
 
-  // Transform to our format
-  const segments = (result.segments || []).map(seg => ({
-    start: seg.start,
-    end: seg.end,
-    text: seg.text.trim(),
-    confidence: seg.avg_logprob ? Math.exp(seg.avg_logprob) : 0.9,
-  }));
+  if (audioSizeMB > 25) {
+    // Split audio into chunks and transcribe each
+    console.log(`  Audio grande (${audioSizeMB.toFixed(1)} MB) — dividindo em partes...`);
+    const chunkDuration = 600; // 10 min per chunk
+    const totalDuration = parseFloat(
+      execSync(`ffprobe -v quiet -show_entries format=duration -of csv=p=0 "${audioPath}"`, { encoding: 'utf8' }).trim()
+    );
+    const numChunks = Math.ceil(totalDuration / chunkDuration);
+    console.log(`  ${numChunks} partes de ${chunkDuration / 60} min`);
+
+    for (let i = 0; i < numChunks; i++) {
+      const start = i * chunkDuration;
+      const chunkPath = path.join(analysisDir, `audio_chunk_${i}.wav`);
+
+      execSync(
+        `ffmpeg -y -ss ${start} -i "${audioPath}" -t ${chunkDuration} -acodec pcm_s16le -ar 16000 -ac 1 "${chunkPath}"`,
+        { stdio: 'pipe', timeout: 120000 }
+      );
+
+      const chunkSize = fs.statSync(chunkPath).size / 1024 / 1024;
+      console.log(`  Parte ${i + 1}/${numChunks} (${chunkSize.toFixed(1)} MB) — transcrevendo...`);
+
+      try {
+        const result = await whisperAPI(chunkPath, apiKey);
+        const chunkSegments = (result.segments || []).map(seg => ({
+          start: seg.start + start,
+          end: seg.end + start,
+          text: seg.text.trim(),
+          confidence: seg.avg_logprob ? Math.exp(seg.avg_logprob) : 0.9,
+        }));
+        allSegments.push(...chunkSegments);
+        console.log(`  Parte ${i + 1}: ${chunkSegments.length} segmentos`);
+      } catch (err) {
+        console.log(`  Parte ${i + 1} falhou: ${err.message}`);
+      }
+
+      // Cleanup chunk
+      if (fs.existsSync(chunkPath)) fs.unlinkSync(chunkPath);
+    }
+  } else {
+    // Single file transcription
+    console.log('  Calling Whisper API...');
+    const result = await whisperAPI(audioPath, apiKey);
+    allSegments = (result.segments || []).map(seg => ({
+      start: seg.start,
+      end: seg.end,
+      text: seg.text.trim(),
+      confidence: seg.avg_logprob ? Math.exp(seg.avg_logprob) : 0.9,
+    }));
+  }
+
+  const segments = allSegments;
 
   const transcription = {
     segments,
-    language: result.language || 'pt',
+    language: 'pt',
     totalWords: segments.reduce((sum, s) => sum + s.text.split(/\s+/).length, 0),
     totalDuration: segments.length > 0 ? segments[segments.length - 1].end : 0,
     source: 'whisper-api',

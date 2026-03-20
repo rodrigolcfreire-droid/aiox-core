@@ -305,6 +305,70 @@ async function handleRequest(req, res) {
       return fs.createReadStream(htmlPath).pipe(res);
     }
 
+    // Serve approval page for a specific project
+    if (pathname.match(/^\/av\/[^/]+\/approve$/) && method === 'GET') {
+      const projectId = pathname.split('/')[2];
+      const approvalHtml = path.resolve(__dirname, '..', '..', '..', 'docs', 'examples', 'ux-command-center', 'av-approve.html');
+      if (!fs.existsSync(approvalHtml)) return sendError(res, 'Approval page not found', 404);
+      let html = fs.readFileSync(approvalHtml, 'utf8');
+      html = html.replace('__PROJECT_ID__', projectId);
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+      return res.end(html);
+    }
+
+    // ── Serve video file for preview ─────────────────
+    if (pathname.match(/^\/api\/projects\/[^/]+\/video$/) && method === 'GET') {
+      const id = pathname.split('/')[3];
+      const sourceDir = path.join(getProjectDir(id), 'source');
+      if (!fs.existsSync(sourceDir)) return sendError(res, 'Not found', 404);
+      const files = fs.readdirSync(sourceDir);
+      const videoFile = files.find(f => /\.(mp4|mov|avi|mkv|webm|m4v)$/i.test(f));
+      if (!videoFile) return sendError(res, 'No video', 404);
+      const videoPath = path.join(sourceDir, videoFile);
+      const stat = fs.statSync(videoPath);
+      const ext = path.extname(videoFile).toLowerCase();
+      const mimeTypes = { '.mp4': 'video/mp4', '.mov': 'video/quicktime', '.webm': 'video/webm' };
+      const mime = mimeTypes[ext] || 'video/mp4';
+      const range = req.headers.range;
+      if (range) {
+        const parts = range.replace(/bytes=/, '').split('-');
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1;
+        res.writeHead(206, { 'Content-Range': `bytes ${start}-${end}/${stat.size}`, 'Accept-Ranges': 'bytes', 'Content-Length': end - start + 1, 'Content-Type': mime, 'Access-Control-Allow-Origin': '*' });
+        return fs.createReadStream(videoPath, { start, end }).pipe(res);
+      }
+      res.writeHead(200, { 'Content-Length': stat.size, 'Content-Type': mime, 'Accept-Ranges': 'bytes', 'Access-Control-Allow-Origin': '*' });
+      return fs.createReadStream(videoPath).pipe(res);
+    }
+
+    // ── Cut preview video ──────────────────────────
+    if (pathname.match(/^\/api\/projects\/[^/]+\/preview\/[^/]+\.mp4$/) && method === 'GET') {
+      const parts = pathname.split('/');
+      const id = parts[3];
+      const filename = parts[5];
+      const pp = path.join(getProjectDir(id), 'cuts', 'previews', filename);
+      if (!fs.existsSync(pp)) return sendError(res, 'Not found', 404);
+      const stat = fs.statSync(pp);
+      const range = req.headers.range;
+      if (range) {
+        const rp = range.replace(/bytes=/, '').split('-');
+        const s = parseInt(rp[0], 10);
+        const e = rp[1] ? parseInt(rp[1], 10) : stat.size - 1;
+        res.writeHead(206, { 'Content-Range': `bytes ${s}-${e}/${stat.size}`, 'Accept-Ranges': 'bytes', 'Content-Length': e - s + 1, 'Content-Type': 'video/mp4', 'Access-Control-Allow-Origin': '*' });
+        return fs.createReadStream(pp, { start: s, end: e }).pipe(res);
+      }
+      res.writeHead(200, { 'Content-Length': stat.size, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Access-Control-Allow-Origin': '*' });
+      return fs.createReadStream(pp).pipe(res);
+    }
+
+    // ── Transcription ─────────────────────────────────
+    if (pathname.match(/^\/api\/projects\/[^/]+\/transcription$/) && method === 'GET') {
+      const id = pathname.split('/')[3];
+      const tp = path.join(getProjectDir(id), 'analysis', 'transcription.json');
+      if (!fs.existsSync(tp)) return sendJSON(res, { segments: [] });
+      return sendJSON(res, JSON.parse(fs.readFileSync(tp, 'utf8')));
+    }
+
     // ── Health ────────────────────────────────────────
     if (pathname === '/api/health') {
       return sendJSON(res, { status: 'ok', service: 'central-audiovisual', timestamp: new Date().toISOString() });

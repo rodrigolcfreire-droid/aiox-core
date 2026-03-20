@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200">
+  <title>Cortes Inteligentes — Aprovacao</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0e1a;color:#e2e8f0;font-family:'Inter',sans-serif;min-height:100vh}
+    .header{padding:24px 40px;border-bottom:1px solid #1e293b;display:flex;align-items:center;justify-content:space-between}
+    .header h1{font-family:'Chakra Petch';font-size:24px;background:linear-gradient(135deg,#a78bfa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .header .info{font-size:13px;color:#64748b;font-family:'JetBrains Mono'}
+    .container{max-width:1200px;margin:0 auto;padding:32px 40px}
+    .stats{display:flex;gap:16px;margin-bottom:24px}
+    .stat{background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:16px 24px;text-align:center;flex:1}
+    .stat-val{font-family:'Chakra Petch';font-size:32px;font-weight:700}
+    .stat-lbl{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+    .actions-bar{display:flex;gap:12px;margin-bottom:24px}
+    .btn{border:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}
+    .btn-approve-all{background:linear-gradient(135deg,#34d399,#38bdf8);color:#0a0e1a}
+    .btn-reject-all{background:#1e293b;color:#f87171;border:1px solid #334155}
+    .cuts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+    .cut{background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:20px;transition:all .3s}
+    .cut.approved{border-color:#34d399;opacity:.85}
+    .cut.rejected{border-color:#ef4444;opacity:.4}
+    .cut-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .cut-id{font-family:'JetBrains Mono';font-size:13px;color:#64748b}
+    .cut-score{font-family:'Chakra Petch';font-size:20px;font-weight:700;color:#fbbf24}
+    .cut-cat{display:inline-block;font-size:11px;padding:3px 10px;border-radius:4px;font-weight:600;background:rgba(239,68,68,.2);color:#f87171}
+    .cut-time{font-size:14px;color:#94a3b8;margin:8px 0}
+    .cut-time strong{color:#e2e8f0}
+    .cut-platforms{display:flex;gap:4px;flex-wrap:wrap;margin:8px 0}
+    .cut-platforms span{font-size:10px;background:#1e293b;color:#94a3b8;padding:3px 8px;border-radius:4px}
+    .cut-text{font-size:12px;color:#475569;margin:8px 0;max-height:60px;overflow:hidden;line-height:1.5}
+    .cut-btns{display:flex;gap:8px;margin-top:12px}
+    .btn-sm{border:none;padding:8px 20px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer}
+    .btn-ok{background:#34d399;color:#0a0e1a}
+    .btn-no{background:#ef4444;color:#fff}
+    .cut-status{font-size:13px;font-weight:700;margin-top:12px;text-align:center;padding:6px;border-radius:6px}
+    .status-approved{background:rgba(52,211,153,.1);color:#34d399}
+    .status-rejected{background:rgba(239,68,68,.1);color:#f87171}
+    .description{background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:20px;margin-bottom:24px}
+    .description h3{font-family:'Chakra Petch';font-size:16px;color:#a78bfa;margin-bottom:8px}
+    .description p{font-size:13px;color:#94a3b8;line-height:1.6}
+    .keywords{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+    .keywords span{font-size:11px;background:rgba(167,139,250,.1);color:#a78bfa;padding:3px 10px;border-radius:12px}
+    .loading{text-align:center;padding:60px;color:#64748b;font-size:16px}
+    .video-section{background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:20px;margin-bottom:24px}
+    .video-section h3{font-family:'Chakra Petch';font-size:16px;color:#38bdf8;margin-bottom:12px}
+    .video-section video{width:100%;max-height:400px;border-radius:8px;background:#000}
+    .transcript-box{max-height:200px;overflow-y:auto;font-size:12px;line-height:1.8;color:#94a3b8;margin-top:12px;padding:12px;background:#1e293b;border-radius:8px}
+    .transcript-box .seg{padding:2px 0;cursor:pointer;transition:background .2s}
+    .transcript-box .seg:hover{background:rgba(56,189,248,.1);color:#e2e8f0}
+    .transcript-box .seg .time{color:#475569;font-family:'JetBrains Mono';font-size:10px;margin-right:8px}
+    .transcript-box .seg.active{background:rgba(167,139,250,.15);color:#e2e8f0}
+    .cut-preview{margin-top:8px}
+    .cut-preview video{width:100%;max-height:200px;border-radius:6px;background:#000}
+    .cut-transcript{font-size:11px;color:#64748b;margin-top:6px;max-height:80px;overflow-y:auto;line-height:1.6;padding:8px;background:#1e293b;border-radius:6px}
+  </style>
+</head>
+<body>
+<div class="header">
+  <h1>Cortes Inteligentes — Aprovacao</h1>
+  <div class="info" id="projectInfo">Carregando...</div>
+</div>
+<div class="container">
+  <div id="content"><div class="loading">Carregando cortes...</div></div>
+</div>
+<script>
+const API = window.location.origin;
+const PID = '__PROJECT_ID__';
+let cutsData = [];
+let transcriptionData = [];
+const videoUrl = `${API}/api/projects/${PID}/video`;
+
+async function load() {
+  const [cutsRes, descRes, transRes] = await Promise.all([
+    fetch(`${API}/api/projects/${PID}/cuts`).then(r=>r.json()).catch(()=>({suggestedCuts:[]})),
+    fetch(`${API}/api/projects/${PID}/describe`).then(r=>r.json()).catch(()=>null),
+    fetch(`${API}/api/projects/${PID}/transcription`).then(r=>r.json()).catch(()=>({segments:[]})),
+  ]);
+  transcriptionData = transRes.segments || [];
+
+  cutsData = cutsRes.suggestedCuts || [];
+  document.getElementById('projectInfo').textContent = `Projeto: ${PID.slice(0,8)}... | ${cutsData.length} cortes`;
+
+  let html = '';
+
+  // Stats
+  const approved = cutsData.filter(c=>c.status==='approved').length;
+  const rejected = cutsData.filter(c=>c.status==='rejected').length;
+  const pending = cutsData.filter(c=>c.status==='suggested').length;
+  html += `<div class="stats">
+    <div class="stat"><div class="stat-val" style="color:#38bdf8">${cutsData.length}</div><div class="stat-lbl">Total</div></div>
+    <div class="stat"><div class="stat-val" style="color:#fbbf24">${pending}</div><div class="stat-lbl">Pendentes</div></div>
+    <div class="stat"><div class="stat-val" style="color:#34d399">${approved}</div><div class="stat-lbl">Aprovados</div></div>
+    <div class="stat"><div class="stat-val" style="color:#ef4444">${rejected}</div><div class="stat-lbl">Rejeitados</div></div>
+  </div>`;
+
+  // Video player
+  html += `<div class="video-section">
+    <h3>Video Completo</h3>
+    <video id="mainVideo" controls preload="metadata" src="${videoUrl}"></video>
+    <div class="transcript-box" id="transcriptBox">
+      ${transcriptionData.map((s,i) => `<div class="seg" data-idx="${i}" onclick="seekTo(${s.start})"><span class="time">${fmt(s.start)}</span>${s.text}</div>`).join('')}
+    </div>
+  </div>`;
+
+  // Description
+  if (descRes && descRes.keywords) {
+    const kw = descRes.keywords.slice(0,10).map(k=>`<span>${k.word}</span>`).join('');
+    html += `<div class="description">
+      <h3>Conteudo do Video</h3>
+      <p>${descRes.summary || ''}</p>
+      <div class="keywords">${kw}</div>
+    </div>`;
+  }
+
+  // Actions
+  html += `<div class="actions-bar">
+    <button class="btn btn-approve-all" onclick="approveAll()">Aprovar Todos (${pending})</button>
+  </div>`;
+
+  // Cuts grid
+  html += '<div class="cuts-grid">';
+  for (const cut of cutsData) {
+    const statusClass = cut.status === 'approved' ? 'approved' : cut.status === 'rejected' ? 'rejected' : '';
+    const time = `${fmt(cut.start)} → ${fmt(cut.end)}`;
+    const dur = cut.duration ? cut.duration.toFixed(0) + 's' : '';
+    const platforms = (cut.platform||[]).map(p=>`<span>${p}</span>`).join('');
+
+    let btns = '';
+    if (cut.status === 'suggested') {
+      btns = `<div class="cut-btns">
+        <button class="btn-sm btn-ok" onclick="approve('${cut.id}')">Aprovar</button>
+        <button class="btn-sm btn-no" onclick="reject('${cut.id}')">Rejeitar</button>
+      </div>`;
+    } else {
+      const stClass = cut.status === 'approved' ? 'status-approved' : 'status-rejected';
+      btns = `<div class="cut-status ${stClass}">${cut.status.toUpperCase()}</div>`;
+    }
+
+    html += `<div class="cut ${statusClass}" id="cut-${cut.id}">
+      <div class="cut-top">
+        <span class="cut-id">${cut.id}</span>
+        <span class="cut-score">${cut.engagementScore}</span>
+      </div>
+      <span class="cut-cat">${cut.category}</span>
+      <div class="cut-time"><strong>${time}</strong> · ${dur} · ${cut.format}</div>
+      <div class="cut-platforms">${platforms}</div>
+      ${cut.objective ? `<div class="cut-text">${cut.objective}</div>` : ''}
+      ${cut.title ? `<div style="font-size:15px;font-weight:700;color:#e2e8f0;margin:8px 0;">"${cut.title}"</div>` : ''}
+      <div class="cut-preview">
+        <video controls preload="metadata" src="${cut.previewFile ? API+'/api/projects/'+PID+'/preview/'+cut.previewFile : videoUrl+'#t='+(cut.start||0)+','+(cut.end||0)}" style="width:100%;max-height:200px;border-radius:6px;background:#000"></video>
+      </div>
+      <div class="cut-transcript">${cut.transcriptText || getTranscriptForCut(cut)}</div>
+      ${btns}
+    </div>`;
+  }
+  html += '</div>';
+
+  document.getElementById('content').innerHTML = html;
+}
+
+function fmt(s) {
+  if (!s && s !== 0) return '??';
+  const m = Math.floor(s/60);
+  const sec = Math.floor(s%60);
+  return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+
+async function approve(cutId) {
+  await fetch(`${API}/api/projects/${PID}/approve`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({cutId})
+  });
+  load();
+}
+
+async function reject(cutId) {
+  await fetch(`${API}/api/projects/${PID}/reject`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({cutId})
+  });
+  load();
+}
+
+async function approveAll() {
+  await fetch(`${API}/api/projects/${PID}/approve`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({all:true})
+  });
+  load();
+}
+
+function getTranscriptForCut(cut) {
+  if (!transcriptionData.length) return '<em>Sem transcricao</em>';
+  const segs = transcriptionData.filter(s => s.start >= (cut.start||0) && s.end <= (cut.end||9999));
+  if (segs.length === 0) return '<em>Sem texto neste trecho</em>';
+  return segs.map(s => `<span style="color:#475569">[${fmt(s.start)}]</span> ${s.text}`).join(' ');
+}
+
+function seekTo(time) {
+  const video = document.getElementById('mainVideo');
+  if (video) { video.currentTime = time; video.play(); }
+}
+
+setInterval(() => {
+  const video = document.getElementById('mainVideo');
+  if (!video) return;
+  const t = video.currentTime;
+  document.querySelectorAll('.transcript-box .seg').forEach(el => {
+    const idx = parseInt(el.dataset.idx);
+    const seg = transcriptionData[idx];
+    if (seg && t >= seg.start && t <= seg.end) {
+      el.classList.add('active');
+      if (!el.dataset.scrolled) { el.scrollIntoView({block:'center',behavior:'smooth'}); el.dataset.scrolled='1'; }
+    } else {
+      el.classList.remove('active');
+      el.dataset.scrolled = '';
+    }
+  });
+}, 300);
+
+load();
+</script>
+</body>
+</html>

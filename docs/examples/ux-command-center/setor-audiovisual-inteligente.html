@@ -161,7 +161,7 @@
   <div class="hero-pre">-- Centro de Comando UX --</div>
   <h1>SETOR AUDIOVISUAL<span>INTELIGENTE</span></h1>
   <p class="hero-sub">Motor autonomo de producao audiovisual. Dois cerebros independentes: um pensa, outro executa. O humano so aprova.</p>
-  <div class="hero-badge">v1.0 — 7 Phases Completas — 113 Testes — 16 Agentes</div>
+  <div class="hero-badge">v2.0 — 9 Phases Completas — 148 Testes — 16 Agentes — 16 CLIs — 25+ Endpoints API</div>
 </div>
 
 <!-- Container -->
@@ -170,11 +170,11 @@
   <!-- Stats -->
   <div class="stats-grid">
     <div class="stat-card blue"><div class="stat-value">16</div><div class="stat-label">Agentes</div></div>
-    <div class="stat-card green"><div class="stat-value">12</div><div class="stat-label">CLIs</div></div>
-    <div class="stat-card purple"><div class="stat-value">113</div><div class="stat-label">Testes</div></div>
-    <div class="stat-card yellow"><div class="stat-value">19</div><div class="stat-label">Modulos</div></div>
-    <div class="stat-card pink"><div class="stat-value">7</div><div class="stat-label">Tabelas DB</div></div>
-    <div class="stat-card cyan"><div class="stat-value">7.6K</div><div class="stat-label">Linhas</div></div>
+    <div class="stat-card green"><div class="stat-value">16</div><div class="stat-label">CLIs</div></div>
+    <div class="stat-card purple"><div class="stat-value">148</div><div class="stat-label">Testes</div></div>
+    <div class="stat-card yellow"><div class="stat-value">24</div><div class="stat-label">Modulos</div></div>
+    <div class="stat-card pink"><div class="stat-value">25+</div><div class="stat-label">API Endpoints</div></div>
+    <div class="stat-card cyan"><div class="stat-value">9.5K</div><div class="stat-label">Linhas</div></div>
   </div>
 
   <!-- Dois Motores -->
@@ -534,36 +534,109 @@
     </table>
   </div>
 
+  <!-- Features Complementares (Phase 8) -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(251,191,36,0.15);">🏷️</div>
+      <div>
+        <div class="section-title">Features Complementares</div>
+        <div class="section-subtitle">Brand Catalog, Sugestoes de Melhoria, Performance Analytics, Batch Processing</div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+      <div style="background: rgba(15,23,42,0.8); border: 1px solid #1e293b; border-radius: 12px; padding: 20px; border-left: 4px solid #f472b6;">
+        <div style="font-family: 'Chakra Petch'; font-size: 18px; font-weight: 700; color: #f472b6;">Brand Catalog</div>
+        <div style="font-size: 13px; color: #94a3b8; margin: 8px 0;">Catalogo de marcas com presets de identidade visual. Cada marca com logo, cores, overlay, estilo de legenda, +18.</div>
+        <div style="font-family: 'JetBrains Mono'; font-size: 12px; color: #38bdf8;">node bin/av-brand.js add "Reals" --logo /logo.png</div>
+      </div>
+      <div style="background: rgba(15,23,42,0.8); border: 1px solid #1e293b; border-radius: 12px; padding: 20px; border-left: 4px solid #a78bfa;">
+        <div style="font-family: 'Chakra Petch'; font-size: 18px; font-weight: 700; color: #a78bfa;">Sugestor de Melhorias</div>
+        <div style="font-size: 13px; color: #94a3b8; margin: 8px 0;">Analisa cortes e sugere ajustes de hook, ritmo, duracao, estrutura. Compara com padroes aprendidos.</div>
+        <div style="font-family: 'JetBrains Mono'; font-size: 12px; color: #38bdf8;">node bin/av-suggest.js &lt;project-id&gt;</div>
+      </div>
+      <div style="background: rgba(15,23,42,0.8); border: 1px solid #1e293b; border-radius: 12px; padding: 20px; border-left: 4px solid #34d399;">
+        <div style="font-family: 'Chakra Petch'; font-size: 18px; font-weight: 700; color: #34d399;">Performance Analytics</div>
+        <div style="font-size: 13px; color: #94a3b8; margin: 8px 0;">Registra metricas pos-publicacao (views, retencao, shares). Ranking de cortes. Correlacao formato vs resultado.</div>
+        <div style="font-family: 'JetBrains Mono'; font-size: 12px; color: #38bdf8;">node bin/av-performance.js &lt;id&gt; analyze</div>
+      </div>
+      <div style="background: rgba(15,23,42,0.8); border: 1px solid #1e293b; border-radius: 12px; padding: 20px; border-left: 4px solid #fbbf24;">
+        <div style="font-family: 'Chakra Petch'; font-size: 18px; font-weight: 700; color: #fbbf24;">Batch Processing</div>
+        <div style="font-size: 13px; color: #94a3b8; margin: 8px 0;">Ingestao em lote. Processa pasta inteira de videos. Cada video vira projeto independente.</div>
+        <div style="font-family: 'JetBrains Mono'; font-size: 12px; color: #38bdf8;">node bin/av-batch.js /pasta-com-videos/</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Integracoes (Phase 9) -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(56,189,248,0.15);">🔌</div>
+      <div>
+        <div class="section-title">Integracoes</div>
+        <div class="section-subtitle">API HTTP, Thumbnails, Supabase, Google Drive, Webhooks</div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;">
+      <div style="background: rgba(15,23,42,0.8); border: 1px solid #1e293b; border-radius: 10px; padding: 16px; text-align: center;">
+        <div style="font-size: 28px; margin-bottom: 8px;">🌐</div>
+        <div style="font-size: 14px; font-weight: 600; color: #38bdf8;">API Server</div>
+        <div style="font-size: 11px; color: #64748b; margin-top: 4px;">25+ endpoints REST<br>Node.js nativo<br>CORS habilitado<br>Porta 3456</div>
+      </div>
+      <div style="background: rgba(15,23,42,0.8); border: 1px solid #1e293b; border-radius: 10px; padding: 16px; text-align: center;">
+        <div style="font-size: 28px; margin-bottom: 8px;">🖼️</div>
+        <div style="font-size: 14px; font-weight: 600; color: #a78bfa;">Thumbnails</div>
+        <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Extracao de frames<br>FFmpeg<br>Preview por corte<br>JPG 640px</div>
+      </div>
+      <div style="background: rgba(15,23,42,0.8); border: 1px solid #1e293b; border-radius: 10px; padding: 16px; text-align: center;">
+        <div style="font-size: 28px; margin-bottom: 8px;">🗄️</div>
+        <div style="font-size: 14px; font-weight: 600; color: #34d399;">Supabase</div>
+        <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Sync com PostgreSQL<br>Projetos + Cortes<br>Aprovacoes<br>7 tabelas</div>
+      </div>
+      <div style="background: rgba(15,23,42,0.8); border: 1px solid #1e293b; border-radius: 10px; padding: 16px; text-align: center;">
+        <div style="font-size: 28px; margin-bottom: 8px;">📁</div>
+        <div style="font-size: 14px; font-weight: 600; color: #fbbf24;">Google Drive</div>
+        <div style="font-size: 11px; color: #64748b; margin-top: 4px;">OAuth2<br>Upload automatico<br>Criar pastas<br>Gerar links</div>
+      </div>
+      <div style="background: rgba(15,23,42,0.8); border: 1px solid #1e293b; border-radius: 10px; padding: 16px; text-align: center;">
+        <div style="font-size: 28px; margin-bottom: 8px;">🔔</div>
+        <div style="font-size: 14px; font-weight: 600; color: #f472b6;">Webhooks</div>
+        <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Eventos internos<br>8 tipos de evento<br>Cross-sector AIOS<br>Fire & forget</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Pontos de Melhoria -->
   <div class="section">
     <div class="section-header">
       <div class="section-icon" style="background: rgba(251,191,36,0.15);">⚡</div>
       <div>
-        <div class="section-title">Pontos de Melhoria Identificados</div>
-        <div class="section-subtitle">O que falta pra fechar 100% da visao original</div>
+        <div class="section-title">Proximas Evolucoes</div>
+        <div class="section-subtitle">Oportunidades de expansao futura</div>
       </div>
     </div>
 
     <div class="gap-grid">
-      <div class="gap-card missing">
-        <div class="gap-title">Marca/Brand Awareness</div>
-        <div class="gap-desc">Separar presets por marca (Reals, Bingo, Experts). Cada marca com logo, cores, overlay, estilo proprio. Catalogo de marcas no banco.</div>
-        <span class="gap-status missing">Nao implementado</span>
+      <div class="gap-card" style="border-color: rgba(56,189,248,0.3);">
+        <div class="gap-title">Meta API + TikTok API</div>
+        <div class="gap-desc">Publicacao direta nas plataformas sociais. Atualmente publica no Google Drive, falta integrar com APIs do Instagram e TikTok.</div>
+        <span class="gap-status" style="background: rgba(56,189,248,0.15); color: #38bdf8;">Futura integracao</span>
       </div>
-      <div class="gap-card missing">
-        <div class="gap-title">Sugestor de Melhorias</div>
-        <div class="gap-desc">Agente que recomenda ajustes de ritmo, cortes mais rapidos, inserts visuais, melhorias de hook. Analise pos-montagem.</div>
-        <span class="gap-status missing">Nao implementado</span>
+      <div class="gap-card" style="border-color: rgba(56,189,248,0.3);">
+        <div class="gap-title">Visao Computacional</div>
+        <div class="gap-desc">Detectar cena, rosto, emocao e movimento via IA multimodal. Enriquece a analise de cortes com contexto visual.</div>
+        <span class="gap-status" style="background: rgba(56,189,248,0.15); color: #38bdf8;">Futura integracao</span>
       </div>
-      <div class="gap-card missing">
-        <div class="gap-title">Analista de Performance</div>
-        <div class="gap-desc">Metricas pos-publicacao: retencao, views, compartilhamentos. Correlacionar formato com resultado real.</div>
-        <span class="gap-status missing">Nao implementado</span>
+      <div class="gap-card" style="border-color: rgba(56,189,248,0.3);">
+        <div class="gap-title">Storage Escalavel (S3/R2)</div>
+        <div class="gap-desc">Migrar armazenamento local para AWS S3 ou Cloudflare R2 para operacao em escala com CDN.</div>
+        <span class="gap-status" style="background: rgba(56,189,248,0.15); color: #38bdf8;">Futura integracao</span>
       </div>
-      <div class="gap-card partial">
-        <div class="gap-title">Ingestao em Lote (Batch)</div>
-        <div class="gap-desc">Fluxo 2 do documento: entrada em lote, transcricao em massa, producao batch. O motor de escala existe mas nao tem ingestao em lote.</div>
-        <span class="gap-status partial">Parcialmente implementado</span>
+      <div class="gap-card" style="border-color: rgba(56,189,248,0.3);">
+        <div class="gap-title">UI Interativa</div>
+        <div class="gap-desc">Upload de video, preview de cortes, aprovacao via botao e download direto na interface. Hoje a UI e read-only (CLI First).</div>
+        <span class="gap-status" style="background: rgba(56,189,248,0.15); color: #38bdf8;">Futura evolucao</span>
       </div>
     </div>
   </div>
@@ -571,8 +644,8 @@
 </div>
 
 <div class="footer">
-  SETOR AUDIOVISUAL INTELIGENTE v1.0 — AIOS Centro de Comando UX<br>
-  16 agentes · 12 CLIs · 113 testes · 7 tabelas · 7.6K linhas · 0 deps externas<br>
+  SETOR AUDIOVISUAL INTELIGENTE v2.0 — AIOS Centro de Comando UX<br>
+  16 agentes · 16 CLIs · 148 testes · 24 modulos · 25+ API endpoints · 9.5K linhas · 0 deps externas<br>
   Gerado em <span id="gen-date"></span>
 </div>
 

@@ -32,6 +32,7 @@ const { approveCut, rejectCut, approveAll, getApprovalSummary } = require(path.r
 const { learnFromProject, getLearningInsights } = require(path.resolve(__dirname, '..', 'packages', 'audiovisual', 'lib', 'learning'));
 const { generatePlaybook } = require(path.resolve(__dirname, '..', 'packages', 'audiovisual', 'lib', 'playbook'));
 const { listProjects, loadProject } = require(path.resolve(__dirname, '..', 'packages', 'audiovisual', 'lib', 'project'));
+const { downloadFromDrive, extractFileId } = require(path.resolve(__dirname, '..', 'packages', 'audiovisual', 'lib', 'drive-stream'));
 
 function formatTime(seconds) {
   const m = Math.floor(seconds / 60);
@@ -46,9 +47,39 @@ async function runFullPipeline(source, options = {}) {
   console.log(`  ${new Date().toLocaleString('pt-BR')}`);
   console.log('  ================================================================');
 
-  // 1. Ingest
+  // 1. Ingest (use Drive API if Drive link detected)
   console.log('\n  ── 1/5 INGESTAO ─────────────────────────────────');
-  const result = await ingest(source, options);
+  let result;
+  if (source.includes('drive.google.com')) {
+    // Download via Drive API (authenticated)
+    console.log('  Google Drive detectado — usando API autenticada');
+    const { generateProjectId, createProjectStructure, getProjectDir, updateProjectStatus, updateProject } = require(path.resolve(__dirname, '..', 'packages', 'audiovisual', 'lib', 'project'));
+    const { extractMetadata } = require(path.resolve(__dirname, '..', 'packages', 'audiovisual', 'lib', 'ffprobe'));
+    const { PROJECT_STATUS } = require(path.resolve(__dirname, '..', 'packages', 'audiovisual', 'lib', 'constants'));
+
+    const fileId = extractFileId(source);
+    const projectId = generateProjectId();
+    const project = createProjectStructure(projectId, options.name || fileId, 'drive', source);
+    const projectDir = getProjectDir(projectId);
+
+    updateProjectStatus(projectId, PROJECT_STATUS.INGESTING);
+    const destPath = path.join(projectDir, 'source', 'video.mov');
+    const { metadata: driveMetadata } = await downloadFromDrive(source, destPath);
+
+    updateProjectStatus(projectId, PROJECT_STATUS.ANALYZING);
+    console.log('  Running FFprobe...');
+    const metadata = extractMetadata(destPath);
+    const fs = require('fs');
+    fs.writeFileSync(path.join(projectDir, 'analysis', 'metadata.json'), JSON.stringify(metadata, null, 2));
+    updateProject(projectId, { status: PROJECT_STATUS.ANALYZED, duration: metadata.durationSeconds, resolution: metadata.resolution, metadata });
+
+    console.log(`  Project ID: ${projectId}`);
+    console.log(`  Duration:   ${metadata.duration}`);
+    console.log(`  Resolution: ${metadata.resolution}`);
+    result = { projectId, project, metadata, videoPath: destPath };
+  } else {
+    result = await ingest(source, options);
+  }
 
   // 2. Transcribe
   console.log('\n  ── 2/5 TRANSCRICAO ──────────────────────────────');
