@@ -66,6 +66,15 @@ async function runLivePipeline(source, options = {}) {
   let result;
   try {
     result = await ingest(source, options);
+
+    // Migrate pending SSE clients to real projectId
+    const pendingClients = clients.get('pending') || [];
+    if (pendingClients.length > 0) {
+      if (!clients.has(result.projectId)) clients.set(result.projectId, []);
+      clients.get(result.projectId).push(...pendingClients);
+      clients.delete('pending');
+    }
+
     broadcast(result.projectId, 'step', {
       step: 'ingest',
       status: 'done',
