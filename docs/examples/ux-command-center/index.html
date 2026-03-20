@@ -5621,7 +5621,7 @@
       // AV Navigation: load iframes on demand
       if (viewId === 'av-pipeline') {
         const frame = document.getElementById('av-pipeline-frame');
-        if (frame && frame.src === 'about:blank') {
+        if (frame && (frame.src === 'about:blank' || frame.src.endsWith('about:blank'))) {
           frame.src = 'av-live-pipeline.html';
         }
       }
@@ -6701,23 +6701,10 @@
         }
       }
 
-      // Navigate to pipeline and trigger it via the iframe
-      showView('av-pipeline');
+      // Navigate to pipeline — pass source via URL param so iframe auto-starts
       const frame = document.getElementById('av-pipeline-frame');
-      // Wait for iframe to load, then set the source input
-      setTimeout(() => {
-        try {
-          const frameDoc = frame.contentDocument || frame.contentWindow.document;
-          const srcInput = frameDoc.getElementById('sourceInput');
-          if (srcInput) {
-            srcInput.value = source;
-            const startBtn = frameDoc.getElementById('startBtn');
-            if (startBtn) startBtn.click();
-          }
-        } catch (e) {
-          // Cross-origin — fallback: just show pipeline page
-        }
-      }, 1500);
+      frame.src = 'av-live-pipeline.html?source=' + encodeURIComponent(source);
+      showView('av-pipeline');
     }
 
     // AV Live Task Animation — cycles through agents highlighting the active one

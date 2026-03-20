@@ -374,6 +374,16 @@ async function approveAllCuts() {
     setStatus('done', 'Aprovado');
   } catch (err) { log('Erro: ' + err.message, 'error'); }
 }
+
+// Auto-start if ?source= is in URL (called from parent dashboard)
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const source = params.get('source');
+  if (source) {
+    document.getElementById('sourceInput').value = source;
+    setTimeout(() => startPipeline(), 500);
+  }
+})();
 </script>
 </body>
 </html>
