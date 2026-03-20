@@ -5194,18 +5194,61 @@
         </div>
       </div>
 
-      <!-- Two Motors -->
+      <!-- Two Motors (clickable, with pipeline + agents inside) -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:40px;">
-        <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-left:4px solid #a78bfa;border-radius:16px;padding:32px;">
+
+        <!-- Motor 1: Cortes Inteligentes -->
+        <div onclick="showView('av-motor-cortes'); event.preventDefault();" style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-left:4px solid #a78bfa;border-radius:16px;padding:32px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='#a78bfa';this.style.boxShadow='0 0 30px rgba(167,139,250,0.15)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#1e293b';this.style.boxShadow='none';this.style.transform='none'">
           <div style="font-family:'Chakra Petch';font-size:22px;font-weight:700;margin-bottom:4px;">Cortes Inteligentes</div>
-          <div style="font-size:13px;color:#a78bfa;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Cerebro Criativo</div>
-          <p style="font-size:14px;color:#94a3b8;line-height:1.7;">Recebe video bruto, analisa, transcreve, segmenta em blocos, identifica os melhores cortes por categoria, estima engagement e aguarda aprovacao humana.</p>
+          <div style="font-size:13px;color:#a78bfa;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Cerebro Criativo</div>
+          <p style="font-size:13px;color:#94a3b8;line-height:1.6;margin-bottom:16px;">Recebe video bruto, analisa, transcreve, segmenta em blocos, identifica os melhores cortes por categoria, estima engagement e aguarda aprovacao humana.</p>
+          <!-- Mini Pipeline -->
+          <div style="display:flex;align-items:center;gap:3px;flex-wrap:wrap;margin-bottom:16px;">
+            <span style="background:rgba(167,139,250,0.12);color:#c4b5fd;padding:4px 8px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono';">Ingestao</span><span style="color:#334155;font-size:12px;">→</span>
+            <span style="background:rgba(167,139,250,0.12);color:#c4b5fd;padding:4px 8px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono';">FFprobe</span><span style="color:#334155;font-size:12px;">→</span>
+            <span style="background:rgba(167,139,250,0.12);color:#c4b5fd;padding:4px 8px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono';">Transcricao</span><span style="color:#334155;font-size:12px;">→</span>
+            <span style="background:rgba(167,139,250,0.12);color:#c4b5fd;padding:4px 8px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono';">Segmentacao</span><span style="color:#334155;font-size:12px;">→</span>
+            <span style="background:rgba(167,139,250,0.12);color:#c4b5fd;padding:4px 8px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono';">Cortes</span><span style="color:#334155;font-size:12px;">→</span>
+            <span style="background:rgba(167,139,250,0.12);color:#c4b5fd;padding:4px 8px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono';">Energia</span><span style="color:#334155;font-size:12px;">→</span>
+            <span style="background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.4);color:#fbbf24;padding:4px 8px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono';">Aprovacao</span>
+          </div>
+          <!-- Agents -->
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span style="background:rgba(244,114,182,0.1);color:#f472b6;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;">Maestro</span>
+            <span style="background:rgba(56,189,248,0.1);color:#38bdf8;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;">Ingestor</span>
+            <span style="background:rgba(167,139,250,0.1);color:#a78bfa;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;">Analisador</span>
+            <span style="background:rgba(167,139,250,0.1);color:#a78bfa;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;">Cortador</span>
+            <span style="background:rgba(251,191,36,0.1);color:#fbbf24;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;">Aprendiz</span>
+          </div>
+          <div style="text-align:right;margin-top:12px;color:#a78bfa;font-size:18px;">→</div>
         </div>
-        <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-left:4px solid #34d399;border-radius:16px;padding:32px;">
+
+        <!-- Motor 2: Escala de Criativos -->
+        <div onclick="showView('av-motor-escala'); event.preventDefault();" style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-left:4px solid #34d399;border-radius:16px;padding:32px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='#34d399';this.style.boxShadow='0 0 30px rgba(52,211,153,0.15)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#1e293b';this.style.boxShadow='none';this.style.transform='none'">
           <div style="font-family:'Chakra Petch';font-size:22px;font-weight:700;margin-bottom:4px;">Escala de Criativos</div>
-          <div style="font-size:13px;color:#34d399;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Motor de Producao</div>
-          <p style="font-size:14px;color:#94a3b8;line-height:1.7;">Recebe cortes aprovados, monta o video, aplica legendas inteligentes, branding, valida qualidade, renderiza em batch e organiza outputs.</p>
+          <div style="font-size:13px;color:#34d399;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Motor de Producao</div>
+          <p style="font-size:13px;color:#94a3b8;line-height:1.6;margin-bottom:16px;">Recebe cortes aprovados, monta o video, aplica legendas inteligentes, branding, valida qualidade, renderiza em batch e organiza outputs.</p>
+          <!-- Mini Pipeline -->
+          <div style="display:flex;align-items:center;gap:3px;flex-wrap:wrap;margin-bottom:16px;">
+            <span style="background:rgba(52,211,153,0.12);color:#6ee7b7;padding:4px 8px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono';">Montagem</span><span style="color:#334155;font-size:12px;">→</span>
+            <span style="background:rgba(52,211,153,0.12);color:#6ee7b7;padding:4px 8px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono';">Legendas</span><span style="color:#334155;font-size:12px;">→</span>
+            <span style="background:rgba(52,211,153,0.12);color:#6ee7b7;padding:4px 8px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono';">Branding</span><span style="color:#334155;font-size:12px;">→</span>
+            <span style="background:rgba(52,211,153,0.12);color:#6ee7b7;padding:4px 8px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono';">Validacao</span><span style="color:#334155;font-size:12px;">→</span>
+            <span style="background:rgba(52,211,153,0.12);color:#6ee7b7;padding:4px 8px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono';">Render</span><span style="color:#334155;font-size:12px;">→</span>
+            <span style="background:rgba(52,211,153,0.12);color:#6ee7b7;padding:4px 8px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono';">Output</span>
+          </div>
+          <!-- Agents -->
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span style="background:rgba(52,211,153,0.1);color:#34d399;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;">Montador</span>
+            <span style="background:rgba(52,211,153,0.1);color:#34d399;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;">Legendador</span>
+            <span style="background:rgba(52,211,153,0.1);color:#34d399;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;">Brandador</span>
+            <span style="background:rgba(52,211,153,0.1);color:#34d399;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;">Validador</span>
+            <span style="background:rgba(52,211,153,0.1);color:#34d399;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;">Renderizador</span>
+            <span style="background:rgba(52,211,153,0.1);color:#34d399;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;">Publisher</span>
+          </div>
+          <div style="text-align:right;margin-top:12px;color:#34d399;font-size:18px;">→</div>
         </div>
+
       </div>
 
       <!-- Pipeline Principal (clickable) -->
@@ -5259,6 +5302,143 @@
           <div style="text-align:center;background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:20px 8px;"><div style="font-size:24px;margin-bottom:6px;">🎬</div><div style="font-size:12px;font-weight:600;color:#9ca3af;">Bastidores</div></div>
           <div style="text-align:center;background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:10px;padding:20px 8px;"><div style="font-size:24px;margin-bottom:6px;">📈</div><div style="font-size:12px;font-weight:600;color:#f472b6;">Tendencia</div></div>
         </div>
+      </div>
+    </section>
+
+    <!-- Motor Cortes Inteligentes (detail view) -->
+    <section class="dashboard-section wrap view-section" id="av-motor-cortes">
+      <div class="av-breadcrumb">
+        <a href="#" onclick="showView('entrada'); event.preventDefault();">Centro de Comando</a>
+        <span class="av-bread-sep">›</span>
+        <a href="#" onclick="showView('setor-audiovisual'); event.preventDefault();">Setor Audiovisual</a>
+        <span class="av-bread-sep">›</span>
+        <span class="av-bread-current">Cortes Inteligentes</span>
+      </div>
+
+      <div style="text-align:center;margin-bottom:32px;">
+        <div style="font-family:'Chakra Petch';font-size:40px;font-weight:700;background:linear-gradient(135deg,#e2e8f0,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Cortes Inteligentes</div>
+        <div style="font-size:14px;color:#a78bfa;text-transform:uppercase;letter-spacing:2px;margin-top:4px;">Cerebro Criativo</div>
+      </div>
+
+      <!-- Pipeline at top -->
+      <div style="background:rgba(15,23,42,0.8);border:1px solid rgba(167,139,250,0.3);border-radius:16px;padding:24px;margin-bottom:32px;">
+        <div style="font-size:12px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Pipeline de Analise</div>
+        <div style="display:flex;align-items:center;gap:0;justify-content:space-between;">
+          <div style="flex:1;text-align:center;padding:12px 4px;background:rgba(167,139,250,0.08);border-radius:10px;margin:0 2px;"><div style="font-size:20px;margin-bottom:4px;">📥</div><div style="font-size:11px;font-weight:600;color:#e2e8f0;">Ingestao</div><div style="font-size:10px;color:#64748b;">Video bruto</div></div>
+          <div style="color:#334155;">→</div>
+          <div style="flex:1;text-align:center;padding:12px 4px;background:rgba(167,139,250,0.08);border-radius:10px;margin:0 2px;"><div style="font-size:20px;margin-bottom:4px;">🔍</div><div style="font-size:11px;font-weight:600;color:#e2e8f0;">FFprobe</div><div style="font-size:10px;color:#64748b;">Metadados</div></div>
+          <div style="color:#334155;">→</div>
+          <div style="flex:1;text-align:center;padding:12px 4px;background:rgba(167,139,250,0.08);border-radius:10px;margin:0 2px;"><div style="font-size:20px;margin-bottom:4px;">📝</div><div style="font-size:11px;font-weight:600;color:#e2e8f0;">Transcricao</div><div style="font-size:10px;color:#64748b;">Whisper API</div></div>
+          <div style="color:#334155;">→</div>
+          <div style="flex:1;text-align:center;padding:12px 4px;background:rgba(167,139,250,0.08);border-radius:10px;margin:0 2px;"><div style="font-size:20px;margin-bottom:4px;">📦</div><div style="font-size:11px;font-weight:600;color:#e2e8f0;">Segmentacao</div><div style="font-size:10px;color:#64748b;">Blocos logicos</div></div>
+          <div style="color:#334155;">→</div>
+          <div style="flex:1;text-align:center;padding:12px 4px;background:rgba(167,139,250,0.08);border-radius:10px;margin:0 2px;"><div style="font-size:20px;margin-bottom:4px;">✂️</div><div style="font-size:11px;font-weight:600;color:#e2e8f0;">Cortes</div><div style="font-size:10px;color:#64748b;">7 categorias</div></div>
+          <div style="color:#334155;">→</div>
+          <div style="flex:1;text-align:center;padding:12px 4px;background:rgba(167,139,250,0.08);border-radius:10px;margin:0 2px;"><div style="font-size:20px;margin-bottom:4px;">⚡</div><div style="font-size:11px;font-weight:600;color:#e2e8f0;">Energia</div><div style="font-size:10px;color:#64748b;">Hook 5s</div></div>
+          <div style="color:#334155;">→</div>
+          <div style="flex:1;text-align:center;padding:12px 4px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:10px;margin:0 2px;"><div style="font-size:20px;margin-bottom:4px;">👤</div><div style="font-size:11px;font-weight:600;color:#fbbf24;">Aprovacao</div><div style="font-size:10px;color:#64748b;">Humano decide</div></div>
+        </div>
+      </div>
+
+      <!-- Live task simulation -->
+      <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:16px;padding:24px;margin-bottom:32px;">
+        <div style="font-size:12px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Tarefa ao Vivo</div>
+        <div id="av-cortes-live-task" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+          <div class="av-live-agent" data-step="0" style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(244,114,182,0.08);border:1px solid #1e293b;border-radius:10px;transition:all 0.5s;">
+            <span style="font-size:16px;">🎭</span><div><div style="font-size:12px;font-weight:600;">Maestro</div><div style="font-size:10px;color:#64748b;">Orquestrando</div></div>
+          </div>
+          <span style="color:#334155;">→</span>
+          <div class="av-live-agent" data-step="1" style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(56,189,248,0.08);border:1px solid #1e293b;border-radius:10px;transition:all 0.5s;">
+            <span style="font-size:16px;">📥</span><div><div style="font-size:12px;font-weight:600;">Ingestor</div><div style="font-size:10px;color:#64748b;">Capturando</div></div>
+          </div>
+          <span style="color:#334155;">→</span>
+          <div class="av-live-agent" data-step="2" style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(167,139,250,0.08);border:1px solid #1e293b;border-radius:10px;transition:all 0.5s;">
+            <span style="font-size:16px;">🔬</span><div><div style="font-size:12px;font-weight:600;">Analisador</div><div style="font-size:10px;color:#64748b;">Segmentando</div></div>
+          </div>
+          <span style="color:#334155;">→</span>
+          <div class="av-live-agent" data-step="3" style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(167,139,250,0.08);border:1px solid #1e293b;border-radius:10px;transition:all 0.5s;">
+            <span style="font-size:16px;">✂️</span><div><div style="font-size:12px;font-weight:600;">Cortador</div><div style="font-size:10px;color:#64748b;">Gerando cortes</div></div>
+          </div>
+          <span style="color:#334155;">→</span>
+          <div class="av-live-agent" data-step="4" style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(251,191,36,0.08);border:1px solid #1e293b;border-radius:10px;transition:all 0.5s;">
+            <span style="font-size:16px;">🧠</span><div><div style="font-size:12px;font-weight:600;">Aprendiz</div><div style="font-size:10px;color:#64748b;">Aprendendo</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div style="display:flex;gap:16px;">
+        <button class="av-sector-btn" style="font-size:14px;padding:12px 32px;letter-spacing:2px;" onclick="showView('av-pipeline'); event.preventDefault();">EXECUTAR PIPELINE</button>
+        <button class="av-sector-btn" style="font-size:14px;padding:12px 32px;letter-spacing:2px;border-color:rgba(251,191,36,0.4);color:#fbbf24;" onclick="showView('av-aprovacao'); event.preventDefault();">IR PARA APROVACAO</button>
+      </div>
+    </section>
+
+    <!-- Motor Escala de Criativos (detail view) -->
+    <section class="dashboard-section wrap view-section" id="av-motor-escala">
+      <div class="av-breadcrumb">
+        <a href="#" onclick="showView('entrada'); event.preventDefault();">Centro de Comando</a>
+        <span class="av-bread-sep">›</span>
+        <a href="#" onclick="showView('setor-audiovisual'); event.preventDefault();">Setor Audiovisual</a>
+        <span class="av-bread-sep">›</span>
+        <span class="av-bread-current">Escala de Criativos</span>
+      </div>
+
+      <div style="text-align:center;margin-bottom:32px;">
+        <div style="font-family:'Chakra Petch';font-size:40px;font-weight:700;background:linear-gradient(135deg,#e2e8f0,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Escala de Criativos</div>
+        <div style="font-size:14px;color:#34d399;text-transform:uppercase;letter-spacing:2px;margin-top:4px;">Motor de Producao</div>
+      </div>
+
+      <!-- Pipeline at top -->
+      <div style="background:rgba(15,23,42,0.8);border:1px solid rgba(52,211,153,0.3);border-radius:16px;padding:24px;margin-bottom:32px;">
+        <div style="font-size:12px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Pipeline de Producao</div>
+        <div style="display:flex;align-items:center;gap:0;justify-content:space-between;">
+          <div style="flex:1;text-align:center;padding:12px 4px;background:rgba(52,211,153,0.08);border-radius:10px;margin:0 2px;"><div style="font-size:20px;margin-bottom:4px;">🎬</div><div style="font-size:11px;font-weight:600;color:#e2e8f0;">Montagem</div><div style="font-size:10px;color:#64748b;">FFmpeg concat</div></div>
+          <div style="color:#334155;">→</div>
+          <div style="flex:1;text-align:center;padding:12px 4px;background:rgba(52,211,153,0.08);border-radius:10px;margin:0 2px;"><div style="font-size:20px;margin-bottom:4px;">💬</div><div style="font-size:11px;font-weight:600;color:#e2e8f0;">Legendas</div><div style="font-size:10px;color:#64748b;">4 estilos ASS</div></div>
+          <div style="color:#334155;">→</div>
+          <div style="flex:1;text-align:center;padding:12px 4px;background:rgba(52,211,153,0.08);border-radius:10px;margin:0 2px;"><div style="font-size:20px;margin-bottom:4px;">🏷️</div><div style="font-size:11px;font-weight:600;color:#e2e8f0;">Branding</div><div style="font-size:10px;color:#64748b;">Logo + identidade</div></div>
+          <div style="color:#334155;">→</div>
+          <div style="flex:1;text-align:center;padding:12px 4px;background:rgba(52,211,153,0.08);border-radius:10px;margin:0 2px;"><div style="font-size:20px;margin-bottom:4px;">✅</div><div style="font-size:11px;font-weight:600;color:#e2e8f0;">Validacao</div><div style="font-size:10px;color:#64748b;">Score 0-10</div></div>
+          <div style="color:#334155;">→</div>
+          <div style="flex:1;text-align:center;padding:12px 4px;background:rgba(52,211,153,0.08);border-radius:10px;margin:0 2px;"><div style="font-size:20px;margin-bottom:4px;">🔄</div><div style="font-size:11px;font-weight:600;color:#e2e8f0;">Render</div><div style="font-size:10px;color:#64748b;">Batch queue</div></div>
+          <div style="color:#334155;">→</div>
+          <div style="flex:1;text-align:center;padding:12px 4px;background:rgba(52,211,153,0.08);border-radius:10px;margin:0 2px;"><div style="font-size:20px;margin-bottom:4px;">📤</div><div style="font-size:11px;font-weight:600;color:#e2e8f0;">Output</div><div style="font-size:10px;color:#64748b;">Publicado</div></div>
+        </div>
+      </div>
+
+      <!-- Live task simulation -->
+      <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:16px;padding:24px;margin-bottom:32px;">
+        <div style="font-size:12px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Tarefa ao Vivo</div>
+        <div id="av-escala-live-task" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+          <div class="av-live-agent-escala" data-step="0" style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(52,211,153,0.08);border:1px solid #1e293b;border-radius:10px;transition:all 0.5s;">
+            <span style="font-size:16px;">🎬</span><div><div style="font-size:12px;font-weight:600;">Montador</div><div style="font-size:10px;color:#64748b;">Montando video</div></div>
+          </div>
+          <span style="color:#334155;">→</span>
+          <div class="av-live-agent-escala" data-step="1" style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(52,211,153,0.08);border:1px solid #1e293b;border-radius:10px;transition:all 0.5s;">
+            <span style="font-size:16px;">💬</span><div><div style="font-size:12px;font-weight:600;">Legendador</div><div style="font-size:10px;color:#64748b;">Aplicando legendas</div></div>
+          </div>
+          <span style="color:#334155;">→</span>
+          <div class="av-live-agent-escala" data-step="2" style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(52,211,153,0.08);border:1px solid #1e293b;border-radius:10px;transition:all 0.5s;">
+            <span style="font-size:16px;">🏷️</span><div><div style="font-size:12px;font-weight:600;">Brandador</div><div style="font-size:10px;color:#64748b;">Identidade visual</div></div>
+          </div>
+          <span style="color:#334155;">→</span>
+          <div class="av-live-agent-escala" data-step="3" style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(52,211,153,0.08);border:1px solid #1e293b;border-radius:10px;transition:all 0.5s;">
+            <span style="font-size:16px;">✅</span><div><div style="font-size:12px;font-weight:600;">Validador</div><div style="font-size:10px;color:#64748b;">Quality check</div></div>
+          </div>
+          <span style="color:#334155;">→</span>
+          <div class="av-live-agent-escala" data-step="4" style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(52,211,153,0.08);border:1px solid #1e293b;border-radius:10px;transition:all 0.5s;">
+            <span style="font-size:16px;">🔄</span><div><div style="font-size:12px;font-weight:600;">Renderizador</div><div style="font-size:10px;color:#64748b;">Batch render</div></div>
+          </div>
+          <span style="color:#334155;">→</span>
+          <div class="av-live-agent-escala" data-step="5" style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(52,211,153,0.08);border:1px solid #1e293b;border-radius:10px;transition:all 0.5s;">
+            <span style="font-size:16px;">📤</span><div><div style="font-size:12px;font-weight:600;">Publisher</div><div style="font-size:10px;color:#64748b;">Publicando</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action -->
+      <div style="display:flex;gap:16px;">
+        <button class="av-sector-btn" style="font-size:14px;padding:12px 32px;letter-spacing:2px;border-color:rgba(52,211,153,0.4);color:#34d399;" onclick="showView('av-pipeline'); event.preventDefault();">EXECUTAR PRODUCAO</button>
       </div>
     </section>
 
@@ -6397,6 +6577,39 @@
         btn.innerHTML = 'Ver historico (' + (sentinelReports.length - 1) + ' relatorios anteriores) &#9660;';
       }
     }
+
+    // AV Live Task Animation — cycles through agents highlighting the active one
+    (function() {
+      let cortesStep = 0;
+      let escalaStep = 0;
+      const COLORS_CORTES = ['#f472b6','#38bdf8','#a78bfa','#a78bfa','#fbbf24'];
+      const COLORS_ESCALA = ['#34d399','#34d399','#34d399','#34d399','#34d399','#34d399'];
+
+      function animateAgents(selector, colors, getCurrentStep, setStep) {
+        const agents = document.querySelectorAll(selector);
+        if (!agents.length) return;
+        agents.forEach((a, i) => {
+          const step = parseInt(a.dataset.step);
+          if (step === getCurrentStep()) {
+            a.style.borderColor = colors[step] || '#38bdf8';
+            a.style.boxShadow = `0 0 20px ${colors[step] || '#38bdf8'}33`;
+            a.style.transform = 'scale(1.05)';
+          } else {
+            a.style.borderColor = '#1e293b';
+            a.style.boxShadow = 'none';
+            a.style.transform = 'scale(1)';
+          }
+        });
+        setStep((getCurrentStep() + 1) % agents.length);
+      }
+
+      setInterval(() => {
+        animateAgents('.av-live-agent', COLORS_CORTES, () => cortesStep, (v) => { cortesStep = v; });
+      }, 2000);
+      setInterval(() => {
+        animateAgents('.av-live-agent-escala', COLORS_ESCALA, () => escalaStep, (v) => { escalaStep = v; });
+      }, 2000);
+    })();
 
   </script>
 </body>
