@@ -217,6 +217,93 @@ function assembleAllApproved(projectId) {
   return results;
 }
 
+/**
+ * Generate lightweight preview clips for all suggested cuts.
+ * Story AV-10: Each preview = HOOK (5s) + CUT segment.
+ * Saved to cuts/previews/{cutId}.mp4 and referenced by previewFile in cuts data.
+ */
+function generateCutPreviews(projectId) {
+  const projectDir = getProjectDir(projectId);
+  const cutsPath = path.join(projectDir, 'cuts', 'suggested-cuts.json');
+  const previewsDir = path.join(projectDir, 'cuts', 'previews');
+  const sourceDir = path.join(projectDir, 'source');
+
+  if (!fs.existsSync(cutsPath)) {
+    throw new Error(`No cuts found for project ${projectId}`);
+  }
+
+  // Find source video
+  const sourceFiles = fs.readdirSync(sourceDir);
+  const videoFile = sourceFiles.find(f => /\.(mp4|mov|avi|mkv|webm|m4v)$/i.test(f));
+  if (!videoFile) {
+    throw new Error(`No source video found in project ${projectId}`);
+  }
+  const videoPath = path.join(sourceDir, videoFile);
+
+  const cutsData = JSON.parse(fs.readFileSync(cutsPath, 'utf8'));
+  const energyData = loadEnergyData(projectId);
+  const hasHook = energyData && energyData.hookPath && fs.existsSync(energyData.hookPath);
+
+  fs.mkdirSync(previewsDir, { recursive: true });
+
+  const results = [];
+  for (const cut of cutsData.suggestedCuts) {
+    const previewFilename = `${cut.id}.mp4`;
+    const previewPath = path.join(previewsDir, previewFilename);
+
+    try {
+      // Extract cut segment from source
+      const cutSegPath = path.join(previewsDir, `tmp-seg-${cut.id}.mp4`);
+      extractSegment(videoPath, cut.start, cut.end, cutSegPath);
+
+      if (hasHook) {
+        // Re-encode hook and segment to ensure compatible streams for concat
+        const hookReencoded = path.join(previewsDir, `tmp-hook-${cut.id}.mp4`);
+        const segReencoded = path.join(previewsDir, `tmp-re-${cut.id}.mp4`);
+
+        const reencode = (input, output) => {
+          const cmd = [
+            'ffmpeg', '-y',
+            '-i', `"${input}"`,
+            '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '28',
+            '-c:a', 'aac', '-b:a', '128k',
+            '-movflags', '+faststart',
+            `"${output}"`,
+          ].join(' ');
+          execSync(cmd, { stdio: 'pipe', timeout: 120000 });
+        };
+
+        reencode(energyData.hookPath, hookReencoded);
+        reencode(cutSegPath, segReencoded);
+
+        // Concat hook + cut
+        concatenateSegments([hookReencoded, segReencoded], previewPath);
+
+        // Cleanup temps
+        for (const tmp of [hookReencoded, segReencoded, cutSegPath]) {
+          if (fs.existsSync(tmp)) fs.unlinkSync(tmp);
+        }
+      } else {
+        // No hook — segment is the preview
+        fs.renameSync(cutSegPath, previewPath);
+      }
+
+      // Update cut data with preview reference
+      cut.previewFile = previewFilename;
+      results.push({ cutId: cut.id, previewFile: previewFilename, hookPrepended: hasHook });
+      console.log(`  Preview: ${previewFilename}${hasHook ? ' (hook + cut)' : ''}`);
+    } catch (err) {
+      console.error(`  Failed preview for ${cut.id}: ${err.message}`);
+      results.push({ cutId: cut.id, error: err.message });
+    }
+  }
+
+  // Save updated cuts data with previewFile references
+  fs.writeFileSync(cutsPath, JSON.stringify(cutsData, null, 2));
+
+  return { previews: results, total: results.length, hookIncluded: hasHook };
+}
+
 module.exports = {
   extractSegment,
   rescaleVideo,
@@ -224,5 +311,6 @@ module.exports = {
   prependEnergyHook,
   assemblecut,
   assembleAllApproved,
+  generateCutPreviews,
   FORMAT_MAP,
 };

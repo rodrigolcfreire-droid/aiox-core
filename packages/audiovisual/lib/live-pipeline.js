@@ -17,6 +17,8 @@ const { generateSmartCuts } = require('./smart-cuts');
 const { generateDescription } = require('./describe');
 const { generateSuggestions } = require('./suggestions');
 const { getProjectDir } = require('./project');
+const { detectEnergy } = require('./energy-detector');
+const { generateCutPreviews } = require('./assemble');
 
 // Active SSE connections
 const clients = new Map();
@@ -149,6 +151,35 @@ async function runLivePipeline(source, options = {}) {
   } catch (err) {
     broadcast(pid, 'step', { step: 'cuts', status: 'error', message: err.message });
     throw err;
+  }
+
+  // Step 5b: Energy Detection (AV-10)
+  broadcast(pid, 'step', { step: 'energy', status: 'running', message: 'Detectando pico de energia...' });
+  try {
+    const energy = detectEnergy(pid);
+    broadcast(pid, 'step', {
+      step: 'energy',
+      status: 'done',
+      message: `Pico em ${energy.peakWindow.start}s (${energy.peakWindow.meanVolume.toFixed(1)} dB)`,
+      peakWindow: energy.peakWindow,
+    });
+  } catch (err) {
+    broadcast(pid, 'step', { step: 'energy', status: 'error', message: err.message });
+  }
+
+  // Step 5c: Generate Previews (AV-10)
+  broadcast(pid, 'step', { step: 'previews', status: 'running', message: 'Gerando previews com hook...' });
+  try {
+    const previews = generateCutPreviews(pid);
+    broadcast(pid, 'step', {
+      step: 'previews',
+      status: 'done',
+      message: `${previews.total} previews gerados${previews.hookIncluded ? ' (com hook)' : ''}`,
+      total: previews.total,
+      hookIncluded: previews.hookIncluded,
+    });
+  } catch (err) {
+    broadcast(pid, 'step', { step: 'previews', status: 'error', message: err.message });
   }
 
   // Step 6: Suggestions

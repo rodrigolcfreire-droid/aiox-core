@@ -22,6 +22,7 @@ const { segmentVideo } = require('./segment');
 const { generateSmartCuts } = require('./smart-cuts');
 const { generateDescription } = require('./describe');
 const { approveCut, rejectCut, approveAll, getApprovalSummary } = require('./approval');
+const { generateCutPreviews } = require('./assemble');
 const { learnFromProject, getLearningInsights } = require('./learning');
 const { generatePlaybook } = require('./playbook');
 const { generateVariations } = require('./scale');
@@ -362,6 +363,13 @@ async function handleRequest(req, res) {
       return fs.createReadStream(pp).pipe(res);
     }
 
+    // ── Cut Previews (AV-10) ─────────────────────────
+    if (pathname.match(/^\/api\/projects\/[^/]+\/previews$/) && method === 'POST') {
+      const id = pathname.split('/')[3];
+      const result = generateCutPreviews(id);
+      return sendJSON(res, result);
+    }
+
     // ── Energy Detection (AV-10) ─────────────────────
     if (pathname.match(/^\/api\/projects\/[^/]+\/energy$/) && method === 'POST') {
       const id = pathname.split('/')[3];
@@ -448,6 +456,7 @@ function createServer(port = DEFAULT_PORT) {
     console.log('    GET  /api/projects/:id/report');
     console.log('    POST /api/projects/:id/thumbnails');
     console.log('    GET  /api/projects/:id/thumbnails/:file');
+    console.log('    POST /api/projects/:id/previews');
     console.log('    POST /api/projects/:id/energy');
     console.log('    GET  /api/projects/:id/energy');
     console.log('    GET  /api/projects/:id/hook');
