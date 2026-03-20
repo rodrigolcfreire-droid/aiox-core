@@ -141,8 +141,17 @@
   <!-- Cuts for Approval -->
   <div class="cuts-section" id="cuts-section">
     <h2>Cortes Sugeridos — Aguardando Aprovacao</h2>
-    <button class="btn-approve-all" onclick="approveAllCuts()">Aprovar Todos</button>
+    <div style="display:flex;gap:12px;margin-bottom:16px;">
+      <button class="btn-approve-all" onclick="approveAllCuts()">Aprovar Todos</button>
+      <button id="finalizeBtn" class="btn-approve-all" style="background:linear-gradient(135deg,#a78bfa,#38bdf8);display:none;" onclick="finalizeAndExport()">FINALIZAR E EXPORTAR</button>
+    </div>
     <div class="cuts-grid" id="cuts-grid"></div>
+  </div>
+
+  <!-- Downloads -->
+  <div class="cuts-section" id="downloads-section" style="display:none;">
+    <h2 style="color:#34d399;">Videos Prontos para Download</h2>
+    <div id="downloads-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;"></div>
   </div>
 
   <!-- Log -->
@@ -349,6 +358,7 @@ async function approveCut(cutId) {
     const card = document.getElementById(`cut-${cutId}`);
     if (card) { card.style.borderColor = '#34d399'; card.querySelector('.cut-actions').innerHTML = '<span style="color:#34d399;font-weight:700;">APROVADO</span>'; }
     log(`Corte ${cutId} aprovado`, 'success');
+    document.getElementById('finalizeBtn').style.display = '';
   } catch (err) { log('Erro ao aprovar: ' + err.message, 'error'); }
 }
 
@@ -381,7 +391,57 @@ async function approveAllCuts() {
     });
     log('Todos os cortes aprovados!', 'success');
     setStatus('done', 'Aprovado');
+    // Show finalize button
+    document.getElementById('finalizeBtn').style.display = '';
   } catch (err) { log('Erro: ' + err.message, 'error'); }
+}
+
+async function finalizeAndExport() {
+  if (!currentProjectId) return;
+  const btn = document.getElementById('finalizeBtn');
+  btn.disabled = true;
+  btn.textContent = 'MONTANDO VIDEOS...';
+  log('Finalizando: montando videos aprovados com hook...', 'info');
+  setStatus('running', 'Finalizando...');
+
+  try {
+    const res = await fetch(`${API}/api/projects/${currentProjectId}/finalize`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const data = await res.json();
+
+    if (data.error) throw new Error(data.error);
+
+    log(`${data.finalized} video(s) finalizado(s)!`, 'success');
+    setStatus('done', 'Exportado');
+    btn.textContent = 'EXPORTADO!';
+    btn.style.background = '#34d399';
+
+    // Show downloads
+    const section = document.getElementById('downloads-section');
+    section.style.display = 'block';
+    const grid = document.getElementById('downloads-grid');
+    grid.innerHTML = data.files.map(f => `
+      <div style="background:#0f172a;border:1px solid #34d399;border-radius:10px;padding:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-family:'JetBrains Mono';font-size:12px;color:#64748b;">${f.cutId}</span>
+          <span style="font-size:12px;color:#34d399;font-weight:600;">${f.sizeMB} MB</span>
+        </div>
+        <div style="font-size:13px;color:#94a3b8;margin-bottom:4px;">${f.duration ? f.duration.toFixed(0) + 's' : ''} ${f.hookPrepended ? '(com hook 5s)' : ''}</div>
+        <a href="${API}${f.downloadUrl}" download style="display:inline-block;margin-top:12px;background:linear-gradient(135deg,#34d399,#38bdf8);color:#0a0e1a;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;text-align:center;width:100%;">BAIXAR VIDEO</a>
+      </div>
+    `).join('');
+
+    // Scroll to downloads
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch (err) {
+    log('Erro ao finalizar: ' + err.message, 'error');
+    setStatus('error', 'Erro');
+    btn.disabled = false;
+    btn.textContent = 'FINALIZAR E EXPORTAR';
+  }
 }
 
 // Auto-start if ?source= is in URL (called from parent dashboard)

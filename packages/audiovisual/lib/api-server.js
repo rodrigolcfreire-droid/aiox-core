@@ -22,7 +22,7 @@ const { segmentVideo } = require('./segment');
 const { generateSmartCuts } = require('./smart-cuts');
 const { generateDescription } = require('./describe');
 const { approveCut, rejectCut, approveAll, getApprovalSummary } = require('./approval');
-const { generateCutPreviews } = require('./assemble');
+const { generateCutPreviews, assembleAllApproved } = require('./assemble');
 const { learnFromProject, getLearningInsights } = require('./learning');
 const { generatePlaybook } = require('./playbook');
 const { generateVariations } = require('./scale');
@@ -159,6 +159,48 @@ async function handleRequest(req, res) {
     if (pathname.match(/^\/api\/projects\/[^/]+\/approval-summary$/) && method === 'GET') {
       const id = pathname.split('/')[3];
       return sendJSON(res, getApprovalSummary(id));
+    }
+
+    // ── Finalize: assemble approved cuts → output ────
+    if (pathname.match(/^\/api\/projects\/[^/]+\/finalize$/) && method === 'POST') {
+      const id = pathname.split('/')[3];
+      const assembled = assembleAllApproved(id);
+
+      // Copy assembled files to output/ as final-{cutId}.mp4
+      const outputDir = path.join(getProjectDir(id), 'output');
+      fs.mkdirSync(outputDir, { recursive: true });
+      const finals = [];
+      for (const a of assembled) {
+        const finalPath = path.join(outputDir, `final-${a.cutId}.mp4`);
+        fs.copyFileSync(a.outputPath, finalPath);
+        const stat = fs.statSync(finalPath);
+        finals.push({
+          cutId: a.cutId,
+          filename: `final-${a.cutId}.mp4`,
+          sizeMB: parseFloat((stat.size / 1048576).toFixed(1)),
+          duration: a.duration,
+          hookPrepended: a.hookPrepended,
+          downloadUrl: `/api/projects/${id}/download/final-${a.cutId}.mp4`,
+        });
+      }
+      return sendJSON(res, { finalized: finals.length, files: finals });
+    }
+
+    // ── Download final video ───────────────────────
+    if (pathname.match(/^\/api\/projects\/[^/]+\/download\/[^/]+\.mp4$/) && method === 'GET') {
+      const parts = pathname.split('/');
+      const id = parts[3];
+      const filename = parts[5];
+      const filePath = path.join(getProjectDir(id), 'output', filename);
+      if (!fs.existsSync(filePath)) return sendError(res, 'File not found', 404);
+      const stat = fs.statSync(filePath);
+      res.writeHead(200, {
+        'Content-Type': 'video/mp4',
+        'Content-Length': stat.size,
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Access-Control-Allow-Origin': '*',
+      });
+      return fs.createReadStream(filePath).pipe(res);
     }
 
     // ── Learn ─────────────────────────────────────────
