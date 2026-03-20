@@ -27,7 +27,7 @@ Regra de produção: todo corte produzido deve ter um hook de 5 segundos no iní
 - [x] Concatenar HOOK + CORTE no assembly
 - [x] Duração total: 90s ou 120s (configurável)
 - [x] Ajustar smart-cuts para gerar cortes nessas durações
-- [ ] Preview do hook na página de aprovação
+- [x] Preview do hook na página de aprovação
 
 ## Technical Notes
 
@@ -43,3 +43,5 @@ Regra de produção: todo corte produzido deve ter um hook de 5 segundos no iní
 - [x] Atualizar `packages/audiovisual/lib/assemble.js` com hook automático
 - [x] Atualizar `packages/audiovisual/lib/smart-cuts.js` com durações 90s/120s
 - [x] `tests/audiovisual/energy-detector.test.js`
+- [x] Atualizar `packages/audiovisual/lib/api-server.js` com endpoints energy/hook
+- [x] Atualizar `docs/examples/ux-command-center/av-approve.html` com preview do hook

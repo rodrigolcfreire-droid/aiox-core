@@ -31,6 +31,7 @@ const { listOutputs, generateOutputReport } = require('./output-manager');
 const { runLivePipeline, addClient, removeClient, getPipelineState } = require('./live-pipeline');
 const { addBrand, updateBrand, removeBrand, listBrands, getBrand } = require('./brand-catalog');
 const { generateThumbnail, generateCutThumbnails } = require('./thumbnail');
+const { detectEnergy, loadEnergyData } = require('./energy-detector');
 
 const DEFAULT_PORT = 3456;
 
@@ -361,6 +362,38 @@ async function handleRequest(req, res) {
       return fs.createReadStream(pp).pipe(res);
     }
 
+    // ── Energy Detection (AV-10) ─────────────────────
+    if (pathname.match(/^\/api\/projects\/[^/]+\/energy$/) && method === 'POST') {
+      const id = pathname.split('/')[3];
+      const result = detectEnergy(id);
+      return sendJSON(res, result);
+    }
+
+    if (pathname.match(/^\/api\/projects\/[^/]+\/energy$/) && method === 'GET') {
+      const id = pathname.split('/')[3];
+      const data = loadEnergyData(id);
+      if (!data) return sendJSON(res, { error: 'No energy data. Run POST /energy first.' }, 404);
+      return sendJSON(res, data);
+    }
+
+    // ── Hook video (AV-10) ─────────────────────────
+    if (pathname.match(/^\/api\/projects\/[^/]+\/hook$/) && method === 'GET') {
+      const id = pathname.split('/')[3];
+      const hookPath = path.join(getProjectDir(id), 'production', 'hook.mp4');
+      if (!fs.existsSync(hookPath)) return sendError(res, 'Hook not found. Run POST /energy first.', 404);
+      const stat = fs.statSync(hookPath);
+      const range = req.headers.range;
+      if (range) {
+        const rp = range.replace(/bytes=/, '').split('-');
+        const s = parseInt(rp[0], 10);
+        const e = rp[1] ? parseInt(rp[1], 10) : stat.size - 1;
+        res.writeHead(206, { 'Content-Range': `bytes ${s}-${e}/${stat.size}`, 'Accept-Ranges': 'bytes', 'Content-Length': e - s + 1, 'Content-Type': 'video/mp4', 'Access-Control-Allow-Origin': '*' });
+        return fs.createReadStream(hookPath, { start: s, end: e }).pipe(res);
+      }
+      res.writeHead(200, { 'Content-Length': stat.size, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Access-Control-Allow-Origin': '*' });
+      return fs.createReadStream(hookPath).pipe(res);
+    }
+
     // ── Transcription ─────────────────────────────────
     if (pathname.match(/^\/api\/projects\/[^/]+\/transcription$/) && method === 'GET') {
       const id = pathname.split('/')[3];
@@ -415,6 +448,9 @@ function createServer(port = DEFAULT_PORT) {
     console.log('    GET  /api/projects/:id/report');
     console.log('    POST /api/projects/:id/thumbnails');
     console.log('    GET  /api/projects/:id/thumbnails/:file');
+    console.log('    POST /api/projects/:id/energy');
+    console.log('    GET  /api/projects/:id/energy');
+    console.log('    GET  /api/projects/:id/hook');
     console.log('    GET  /api/brands');
     console.log('    POST /api/brands                        { name, logo?, ... }');
     console.log('    GET  /api/brands/:slug');

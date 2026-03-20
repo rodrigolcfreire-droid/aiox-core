@@ -74,11 +74,14 @@ let cutsData = [];
 let transcriptionData = [];
 const videoUrl = `${API}/api/projects/${PID}/video`;
 
+const hookUrl = `${API}/api/projects/${PID}/hook`;
+
 async function load() {
-  const [cutsRes, descRes, transRes] = await Promise.all([
+  const [cutsRes, descRes, transRes, energyRes] = await Promise.all([
     fetch(`${API}/api/projects/${PID}/cuts`).then(r=>r.json()).catch(()=>({suggestedCuts:[]})),
     fetch(`${API}/api/projects/${PID}/describe`).then(r=>r.json()).catch(()=>null),
     fetch(`${API}/api/projects/${PID}/transcription`).then(r=>r.json()).catch(()=>({segments:[]})),
+    fetch(`${API}/api/projects/${PID}/energy`).then(r=>r.ok?r.json():null).catch(()=>null),
   ]);
   transcriptionData = transRes.segments || [];
 
@@ -106,6 +109,26 @@ async function load() {
       ${transcriptionData.map((s,i) => `<div class="seg" data-idx="${i}" onclick="seekTo(${s.start})"><span class="time">${fmt(s.start)}</span>${s.text}</div>`).join('')}
     </div>
   </div>`;
+
+  // Hook preview (AV-10)
+  if (energyRes && energyRes.peakWindow) {
+    const peak = energyRes.peakWindow;
+    html += `<div class="video-section" style="border-color:#a78bfa">
+      <h3 style="color:#a78bfa">Hook de Energia (5s)</h3>
+      <div style="display:flex;gap:20px;align-items:flex-start">
+        <div style="flex:1">
+          <video controls preload="metadata" src="${hookUrl}" style="width:100%;max-height:300px;border-radius:8px;background:#000"></video>
+        </div>
+        <div style="flex:0 0 260px">
+          <div style="font-size:12px;color:#64748b;margin-bottom:8px">Momento de maior energia do video</div>
+          <div style="font-size:14px;color:#e2e8f0;margin-bottom:4px"><strong>${fmt(peak.start)}</strong> → <strong>${fmt(peak.end)}</strong></div>
+          <div style="font-size:13px;color:#94a3b8;margin-bottom:8px">Volume: ${peak.meanVolume.toFixed(1)} dB</div>
+          <div style="font-size:11px;color:#475569">Este hook de 5s sera preposto automaticamente no inicio de cada corte montado.</div>
+          <div style="margin-top:12px;font-size:12px;color:#64748b">Janelas analisadas: <strong style="color:#a78bfa">${energyRes.windowCount}</strong></div>
+        </div>
+      </div>
+    </div>`;
+  }
 
   // Description
   if (descRes && descRes.keywords) {
