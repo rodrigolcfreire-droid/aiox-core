@@ -15,6 +15,7 @@ const path = require('path');
 const url = require('url');
 
 // Modules
+const { logAccess, logRateLimitHit, getSecurityStatus } = require('./security-monitor');
 const { ingest } = require('./ingest');
 const { listProjects, loadProject, getProjectDir } = require('./project');
 const { transcribeWithWhisper, importSRT } = require('./transcribe');
@@ -112,10 +113,16 @@ async function handleRequest(req, res) {
     return res.end();
   }
 
+  // Log access for security monitoring
+  if (req.url.startsWith('/api/')) logAccess(req);
+
   // Rate limit check (skip for SSE and static files)
   const isSSE = req.url.includes('/events');
   const isStatic = !req.url.startsWith('/api/');
-  if (!isSSE && !isStatic && !checkRateLimit(req, res)) return;
+  if (!isSSE && !isStatic && !checkRateLimit(req, res)) {
+    logRateLimitHit(req);
+    return;
+  }
 
   const parsed = url.parse(req.url, true);
   const pathname = parsed.pathname;
@@ -527,6 +534,11 @@ async function handleRequest(req, res) {
         sendError(res, `Upload failed: ${err.message}`, 500);
       });
       return;
+    }
+
+    // ── Security Status ─────────────────────────────
+    if (pathname === '/api/security' && method === 'GET') {
+      return sendJSON(res, getSecurityStatus());
     }
 
     // ── Health ────────────────────────────────────────

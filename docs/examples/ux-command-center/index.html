@@ -3120,6 +3120,8 @@
         <h2>CENTRO DE<br />COMANDO</h2>
         <h3>UX</h3>
         <button class="av-sector-btn" onclick="showView('setor-audiovisual'); event.preventDefault();">SETOR AUDIOVISUAL INTELIGENTE</button>
+        <br><br>
+        <button class="av-sector-btn" style="border-color:rgba(52,211,153,0.4);color:#34d399;font-size:14px;padding:14px 36px;" onclick="showView('seguranca'); event.preventDefault();">SEGURANCA DO SISTEMA</button>
       </div>
     </section>
 
@@ -5548,6 +5550,79 @@
       <iframe id="av-aprovacao-frame" style="width:100%;min-height:85vh;border:none;border-radius:12px;background:#0a0e1a;" src="about:blank"></iframe>
     </section>
 
+    <!-- Security Dashboard -->
+    <section class="dashboard-section wrap view-section" id="seguranca">
+      <div class="av-breadcrumb">
+        <a href="#" onclick="showView('entrada'); event.preventDefault();">Centro de Comando</a>
+        <span class="av-bread-sep">›</span>
+        <span class="av-bread-current">Seguranca do Sistema</span>
+      </div>
+
+      <div style="text-align:center;margin-bottom:32px;">
+        <div style="font-family:'Chakra Petch';font-size:40px;font-weight:700;background:linear-gradient(135deg,#34d399,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">SEGURANCA DO SISTEMA</div>
+        <p style="font-size:14px;color:#64748b;margin-top:8px;">Monitoramento em tempo real</p>
+      </div>
+
+      <!-- Status Badge -->
+      <div id="sec-status-banner" style="background:rgba(52,211,153,0.1);border:1px solid #34d399;border-radius:12px;padding:24px;text-align:center;margin-bottom:24px;">
+        <div id="sec-status-icon" style="font-size:48px;margin-bottom:8px;">🛡️</div>
+        <div id="sec-status-text" style="font-family:'Chakra Petch';font-size:28px;font-weight:700;color:#34d399;">CARREGANDO...</div>
+        <div id="sec-status-sub" style="font-size:13px;color:#64748b;margin-top:4px;">Verificando...</div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+        <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:12px;padding:20px;text-align:center;">
+          <div id="sec-access-count" style="font-family:'Chakra Petch';font-size:32px;font-weight:700;color:#38bdf8;">-</div>
+          <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Acessos (1h)</div>
+        </div>
+        <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:12px;padding:20px;text-align:center;">
+          <div id="sec-ips-count" style="font-family:'Chakra Petch';font-size:32px;font-weight:700;color:#a78bfa;">-</div>
+          <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">IPs Unicos</div>
+        </div>
+        <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:12px;padding:20px;text-align:center;">
+          <div id="sec-ratelimit-count" style="font-family:'Chakra Petch';font-size:32px;font-weight:700;color:#fbbf24;">-</div>
+          <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Rate Limits</div>
+        </div>
+        <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:12px;padding:20px;text-align:center;">
+          <div id="sec-blocked-count" style="font-family:'Chakra Petch';font-size:32px;font-weight:700;color:#f87171;">-</div>
+          <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Bloqueados</div>
+        </div>
+      </div>
+
+      <!-- Services + Alerts -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+        <!-- Services -->
+        <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:12px;padding:20px;">
+          <div style="font-family:'Chakra Petch';font-size:16px;font-weight:700;color:#38bdf8;margin-bottom:16px;">Servicos Ativos</div>
+          <div id="sec-services"></div>
+        </div>
+        <!-- Alerts -->
+        <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:12px;padding:20px;">
+          <div style="font-family:'Chakra Petch';font-size:16px;font-weight:700;color:#fbbf24;margin-bottom:16px;">Alertas</div>
+          <div id="sec-alerts"><div style="color:#34d399;font-size:13px;">Nenhum alerta</div></div>
+        </div>
+      </div>
+
+      <!-- System Info -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+        <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:12px;padding:20px;">
+          <div style="font-family:'Chakra Petch';font-size:16px;font-weight:700;color:#a78bfa;margin-bottom:16px;">Sistema</div>
+          <div id="sec-system"></div>
+        </div>
+        <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:12px;padding:20px;">
+          <div style="font-family:'Chakra Petch';font-size:16px;font-weight:700;color:#34d399;margin-bottom:16px;">Firewall</div>
+          <div id="sec-firewall"></div>
+        </div>
+      </div>
+
+      <!-- Recent Events Log -->
+      <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:12px;padding:20px;">
+        <div style="font-family:'Chakra Petch';font-size:16px;font-weight:700;color:#64748b;margin-bottom:16px;">Eventos Recentes</div>
+        <div id="sec-events" style="max-height:300px;overflow-y:auto;font-family:'JetBrains Mono';font-size:12px;"></div>
+      </div>
+    </section>
+
   </main>
 
   <script>
@@ -6706,6 +6781,112 @@
       frame.src = 'av-live-pipeline.html?source=' + encodeURIComponent(source);
       showView('av-pipeline');
     }
+
+    // Security Dashboard — auto-refresh
+    let secInterval = null;
+    async function loadSecurityData() {
+      try {
+        const res = await fetch(AV_API + '/api/security');
+        const data = await res.json();
+
+        // Status banner
+        const banner = document.getElementById('sec-status-banner');
+        const icon = document.getElementById('sec-status-icon');
+        const text = document.getElementById('sec-status-text');
+        const sub = document.getElementById('sec-status-sub');
+
+        if (data.status === 'secure') {
+          banner.style.borderColor = '#34d399'; banner.style.background = 'rgba(52,211,153,0.1)';
+          icon.textContent = '🛡️'; text.textContent = 'SEGURO'; text.style.color = '#34d399';
+        } else if (data.status === 'warning') {
+          banner.style.borderColor = '#fbbf24'; banner.style.background = 'rgba(251,191,36,0.1)';
+          icon.textContent = '⚠️'; text.textContent = 'ATENCAO'; text.style.color = '#fbbf24';
+        } else {
+          banner.style.borderColor = '#f87171'; banner.style.background = 'rgba(239,68,68,0.1)';
+          icon.textContent = '🚨'; text.textContent = 'RISCO'; text.style.color = '#f87171';
+        }
+        sub.textContent = 'Atualizado: ' + new Date(data.timestamp).toLocaleTimeString('pt-BR');
+
+        // Stats
+        document.getElementById('sec-access-count').textContent = data.stats.totalAccessLastHour;
+        document.getElementById('sec-ips-count').textContent = data.stats.uniqueIPs;
+        document.getElementById('sec-ratelimit-count').textContent = data.stats.rateLimitHits;
+        document.getElementById('sec-blocked-count').textContent = data.stats.blockedRequests;
+
+        // Services
+        document.getElementById('sec-services').innerHTML = (data.services || []).map(s =>
+          '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1e293b;font-size:13px;">' +
+          '<span style="color:#e2e8f0;">' + s.name + '</span>' +
+          '<span style="color:' + (s.status === 'active' ? '#34d399' : '#f87171') + ';font-weight:600;">' +
+          (s.status === 'active' ? '● ATIVO' : '○ INATIVO') + '</span></div>'
+        ).join('');
+
+        // Alerts
+        const alertsEl = document.getElementById('sec-alerts');
+        if (data.alerts.length === 0) {
+          alertsEl.innerHTML = '<div style="color:#34d399;font-size:13px;">✓ Nenhum alerta</div>';
+        } else {
+          alertsEl.innerHTML = data.alerts.map(a =>
+            '<div style="padding:8px;margin-bottom:6px;border-radius:6px;font-size:12px;' +
+            'background:' + (a.level === 'critical' ? 'rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171' : 'rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);color:#fbbf24') + ';">' +
+            (a.level === 'critical' ? '🚨 ' : '⚠️ ') + a.message + '</div>'
+          ).join('');
+        }
+
+        // System
+        if (data.system) {
+          document.getElementById('sec-system').innerHTML =
+            '<div style="font-size:13px;color:#94a3b8;line-height:2;">' +
+            'Host: <strong style="color:#e2e8f0;">' + data.system.hostname + '</strong><br>' +
+            'CPUs: <strong style="color:#e2e8f0;">' + data.system.cpus + '</strong><br>' +
+            'RAM: <strong style="color:#e2e8f0;">' + data.system.freeMemoryGB + ' / ' + data.system.totalMemoryGB + ' GB</strong><br>' +
+            'Memoria Node: <strong style="color:#e2e8f0;">' + data.stats.memoryMB + ' MB</strong><br>' +
+            'Uptime: <strong style="color:#e2e8f0;">' + data.stats.uptime + '</strong></div>';
+        }
+
+        // Firewall
+        if (data.firewall) {
+          document.getElementById('sec-firewall').innerHTML =
+            '<div style="font-size:24px;margin-bottom:8px;">' + (data.firewall.enabled ? '✅' : '❌') + '</div>' +
+            '<div style="font-size:16px;font-weight:700;color:' + (data.firewall.enabled ? '#34d399' : '#f87171') + ';">' +
+            (data.firewall.enabled ? 'ATIVADO' : 'DESATIVADO') + '</div>' +
+            '<div style="font-size:12px;color:#64748b;margin-top:4px;">' + data.firewall.raw + '</div>';
+        }
+
+        // Events
+        const eventsEl = document.getElementById('sec-events');
+        if (data.recentEvents && data.recentEvents.length > 0) {
+          eventsEl.innerHTML = data.recentEvents.map(e => {
+            const time = new Date(e.timestamp).toLocaleTimeString('pt-BR');
+            const color = e.type === 'rate_limit' ? '#fbbf24' : e.type === 'blocked' ? '#f87171' : '#64748b';
+            return '<div style="padding:3px 0;border-bottom:1px solid #0f172a;color:' + color + ';">' +
+              '<span style="color:#475569;">' + time + '</span> ' +
+              '<span style="color:#38bdf8;">[' + e.type + ']</span> ' +
+              (e.method || '') + ' ' + (e.url || '') + '</div>';
+          }).join('');
+        } else {
+          eventsEl.innerHTML = '<div style="color:#475569;">Nenhum evento registrado</div>';
+        }
+
+      } catch (err) {
+        document.getElementById('sec-status-text').textContent = 'OFFLINE';
+        document.getElementById('sec-status-text').style.color = '#f87171';
+        document.getElementById('sec-status-icon').textContent = '❌';
+        document.getElementById('sec-status-banner').style.borderColor = '#f87171';
+      }
+    }
+
+    // Auto-refresh security data when viewing security page
+    const origShowView = showView;
+    showView = function(viewId) {
+      origShowView(viewId);
+      if (viewId === 'seguranca') {
+        loadSecurityData();
+        if (!secInterval) secInterval = setInterval(loadSecurityData, 5000);
+      } else {
+        if (secInterval) { clearInterval(secInterval); secInterval = null; }
+      }
+    };
 
     // AV Live Task Animation — cycles through agents highlighting the active one
     (function() {
