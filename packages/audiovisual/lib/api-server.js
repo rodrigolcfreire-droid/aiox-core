@@ -17,6 +17,7 @@ const url = require('url');
 // Modules
 const { logAccess, logRateLimitHit, getSecurityStatus } = require('./security-monitor');
 const { startSecurityAlerts, sendIntrusionAlert, sendAccessAlert, sendRateLimitAlert } = require('./security-alerts');
+const { startSecurityBot } = require('./security-bot');
 const { ingest } = require('./ingest');
 const { listProjects, loadProject, getProjectDir } = require('./project');
 const { transcribeWithWhisper, importSRT } = require('./transcribe');
@@ -657,6 +658,9 @@ function createServer(port = DEFAULT_PORT) {
 
     // Start security alerts (Telegram notifications)
     startSecurityAlerts();
+
+    // Start security bot (Telegram commands)
+    startSecurityBot();
     console.log('  Endpoints:');
     console.log('    GET  /api/health');
     console.log('    GET  /api/projects');
