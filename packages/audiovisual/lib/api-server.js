@@ -103,6 +103,49 @@ function sendError(res, message, status = 400) {
   sendJSON(res, { error: message }, status);
 }
 
+// Simple auth — protects dashboard from unauthorized access
+const AUTH_PASSWORD = process.env.AIOS_PASSWORD || 'aios2026';
+const AUTH_COOKIE = 'aios_session';
+const crypto = require('crypto');
+const AUTH_TOKEN = crypto.createHash('sha256').update(AUTH_PASSWORD).digest('hex').substring(0, 32);
+
+function checkAuth(req, res) {
+  // Skip auth for health/security API (monitoring needs access)
+  if (req.url === '/api/health' || req.url === '/api/security') return true;
+
+  // Check cookie
+  const cookies = (req.headers.cookie || '').split(';').reduce((acc, c) => {
+    const [k, v] = c.trim().split('=');
+    if (k) acc[k] = v;
+    return acc;
+  }, {});
+
+  if (cookies[AUTH_COOKIE] === AUTH_TOKEN) return true;
+
+  // Check if this is the login POST
+  if (req.url === '/api/login' && req.method === 'POST') return true;
+
+  return false;
+}
+
+function serveLoginPage(res) {
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><title>AIOS — Login</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0e1a;color:#e2e8f0;font-family:Inter,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.box{background:rgba(26,31,46,0.9);border:1px solid rgba(255,255,255,0.1);padding:48px;border-radius:16px;text-align:center;width:100%;max-width:400px;box-shadow:0 0 60px rgba(0,229,204,0.08)}
+h1{font-family:'Chakra Petch',sans-serif;font-size:28px;background:linear-gradient(135deg,#00e5cc,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+p{font-size:13px;color:#64748b;margin-bottom:24px}
+input{width:100%;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:14px;color:#e2e8f0;font-size:16px;text-align:center;outline:none;letter-spacing:4px;margin-bottom:16px}
+input:focus{border-color:#00e5cc}
+button{width:100%;background:linear-gradient(135deg,#00e5cc,#38bdf8);color:#0a0e1a;border:none;padding:14px;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer}
+.err{color:#f87171;font-size:13px;margin-top:12px;display:none}</style></head>
+<body><div class="box"><h1>CENTRO DE COMANDO</h1><p>Digite a senha para acessar</p>
+<form onsubmit="login(event)"><input type="password" id="pwd" placeholder="••••••••" autofocus>
+<button type="submit">ENTRAR</button></form><div class="err" id="err">Senha incorreta</div></div>
+<script>async function login(e){e.preventDefault();const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:document.getElementById('pwd').value})});if(r.ok){location.reload()}else{document.getElementById('err').style.display='block'}}</script></body></html>`;
+  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.end(html);
+}
+
 async function handleRequest(req, res) {
   // CORS preflight
   if (req.method === 'OPTIONS') {
@@ -114,8 +157,34 @@ async function handleRequest(req, res) {
     return res.end();
   }
 
+  // Auth check — show login page if not authenticated
+  if (!checkAuth(req, res)) {
+    serveLoginPage(res);
+    return;
+  }
+
+  // Handle login
+  if (req.url === '/api/login' && req.method === 'POST') {
+    const body = await parseBody(req);
+    if (body.password === AUTH_PASSWORD) {
+      res.writeHead(200, {
+        'Content-Type': 'application/json',
+        'Set-Cookie': `${AUTH_COOKIE}=${AUTH_TOKEN}; Path=/; HttpOnly; SameSite=Strict; Max-Age=86400`,
+      });
+      return res.end(JSON.stringify({ ok: true }));
+    }
+    return sendError(res, 'Invalid password', 401);
+  }
+
   // Log access for security monitoring
   if (req.url.startsWith('/api/')) logAccess(req);
+
+  // Detect external access via Cloudflare (X-Forwarded-For header)
+  const cfIP = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'];
+  if (cfIP && !req.url.includes('/api/security') && !req.url.includes('/api/health')) {
+    const host = req.headers['host'] || '';
+    sendIntrusionAlert(cfIP, '443', `Acesso externo via ${host}${req.url}`).catch(() => {});
+  }
 
   // Rate limit check (skip for SSE and static files)
   const isSSE = req.url.includes('/events');
