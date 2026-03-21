@@ -92,6 +92,15 @@ async function handleRequest(req, res) {
       return sendJSON(res, { project: loadProject(id) });
     }
 
+    // ── Batch Processing (AV-12) ─────────────────────
+    if (pathname === '/api/batch' && method === 'POST') {
+      const body = await parseBody(req);
+      if (!body.sources || !Array.isArray(body.sources)) return sendError(res, 'sources array required');
+      const { batchIngest } = require('./batch');
+      const result = await batchIngest(body.sources, { brand: body.brand });
+      return sendJSON(res, result);
+    }
+
     // ── Ingest ────────────────────────────────────────
     if (pathname === '/api/ingest' && method === 'POST') {
       const body = await parseBody(req);

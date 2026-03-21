@@ -161,6 +161,51 @@ function getLearningInsights(projectId) {
   return { insights, patterns: learnings.patterns };
 }
 
+/**
+ * Calculate adjusted viral score using real performance data.
+ * Story AV-12 (Melhoria 7): Combines heuristic score with actual metrics.
+ *
+ * Formula: adjustedScore = (heuristicScore * 0.3) + (performanceScore * 0.7)
+ * performanceScore = normalized(views, likes, shares, comments, saves)
+ */
+function calculateAdjustedScore(heuristicScore, metrics = {}) {
+  const views = metrics.views || 0;
+  const likes = metrics.likes || 0;
+  const shares = metrics.shares || 0;
+  const comments = metrics.comments || 0;
+  const saves = metrics.saves || 0;
+
+  if (views === 0) {
+    // No real data yet — use heuristic only
+    return { adjustedScore: heuristicScore, source: 'heuristic', confidence: 'low' };
+  }
+
+  // Engagement rate
+  const engagementRate = (likes + comments + shares + saves) / views;
+  // Virality rate (shares/views is strongest signal)
+  const viralityRate = shares / views;
+  // Save rate (intent signal)
+  const saveRate = saves / views;
+
+  // Normalize to 0-10 scale
+  const engScore = Math.min(10, engagementRate * 100); // 10% engagement = score 10
+  const viralScore = Math.min(10, viralityRate * 200); // 5% share rate = score 10
+  const saveScore = Math.min(10, saveRate * 200); // 5% save rate = score 10
+
+  const performanceScore = (engScore * 0.4) + (viralScore * 0.35) + (saveScore * 0.25);
+  const adjustedScore = parseFloat(((heuristicScore * 0.3) + (performanceScore * 0.7)).toFixed(1));
+
+  return {
+    adjustedScore: Math.min(10, Math.max(0, adjustedScore)),
+    performanceScore: parseFloat(performanceScore.toFixed(1)),
+    engagementRate: parseFloat(engagementRate.toFixed(4)),
+    viralityRate: parseFloat(viralityRate.toFixed(4)),
+    saveRate: parseFloat(saveRate.toFixed(4)),
+    source: 'real_data',
+    confidence: views > 1000 ? 'high' : views > 100 ? 'medium' : 'low',
+  };
+}
+
 module.exports = {
   learnFromProject,
   getLearningInsights,
@@ -169,4 +214,5 @@ module.exports = {
   analyzeDurationPreferences,
   analyzePlatformPreferences,
   analyzeEngagementCorrelation,
+  calculateAdjustedScore,
 };

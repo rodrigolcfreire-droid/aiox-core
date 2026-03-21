@@ -164,8 +164,49 @@ function addSubtitlesToCut(projectId, cutId, style = 'minimal') {
   return { cutId, style, segments: cutSegments.length, outputPath };
 }
 
+/**
+ * Generate word-by-word animated ASS subtitles (TikTok style).
+ * Story AV-12 (Melhoria 4): Each word appears individually with highlight.
+ */
+function generateWordByWordASS(transcription, cutStart, cutEnd, videoWidth, videoHeight) {
+  const segments = (transcription.segments || [])
+    .filter(s => s.start >= cutStart && s.end <= cutEnd);
+
+  let ass = '[Script Info]\n';
+  ass += 'Title: TikTok Word-by-Word Subtitles\n';
+  ass += 'ScriptType: v4.00+\n';
+  ass += `PlayResX: ${videoWidth}\n`;
+  ass += `PlayResY: ${videoHeight}\n\n`;
+
+  ass += '[V4+ Styles]\n';
+  ass += 'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\n';
+  ass += `Style: Default,Arial Black,${Math.round(videoWidth / 14)},&H00FFFFFF,&H000000FF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,4,0,2,10,10,${Math.round(videoHeight * 0.12)},1\n`;
+  ass += `Style: Highlight,Arial Black,${Math.round(videoWidth / 12)},&H0000FFFF,&H000000FF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,4,0,2,10,10,${Math.round(videoHeight * 0.12)},1\n\n`;
+
+  ass += '[Events]\n';
+  ass += 'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n';
+
+  for (const seg of segments) {
+    const words = (seg.words || seg.text.split(/\s+/).map((w, i, arr) => {
+      const segDur = seg.end - seg.start;
+      const wordDur = segDur / arr.length;
+      return { word: w, start: seg.start + i * wordDur, end: seg.start + (i + 1) * wordDur };
+    }));
+
+    for (const word of words) {
+      const wStart = formatASSTime(word.start - cutStart);
+      const wEnd = formatASSTime(word.end - cutStart);
+      // Show word in highlight style, rest of sentence in default
+      ass += `Dialogue: 0,${wStart},${wEnd},Highlight,,0,0,0,,${word.word || word.text}\n`;
+    }
+  }
+
+  return ass;
+}
+
 module.exports = {
   generateASS,
+  generateWordByWordASS,
   formatASSTime,
   burnSubtitles,
   addSubtitlesToCut,

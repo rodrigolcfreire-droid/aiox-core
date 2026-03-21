@@ -124,6 +124,30 @@ function findPeakWindow(windows) {
 }
 
 /**
+ * Find top N peak energy windows, spaced at least minGap seconds apart.
+ * Story AV-12 (Melhoria 2): Multiple hook candidates.
+ */
+function findTopPeaks(windows, count = 3, minGap = 15) {
+  if (windows.length === 0) return [];
+
+  const sorted = [...windows]
+    .filter(w => w.meanVolume !== null)
+    .sort((a, b) => b.meanVolume - a.meanVolume);
+
+  const peaks = [];
+  for (const w of sorted) {
+    if (peaks.length >= count) break;
+    // Ensure minimum gap between selected peaks
+    const tooClose = peaks.some(p => Math.abs(p.start - w.start) < minGap);
+    if (!tooClose) {
+      peaks.push({ ...w, rank: peaks.length + 1 });
+    }
+  }
+
+  return peaks;
+}
+
+/**
  * Extract a 5-second hook clip from the video at the given start time.
  */
 function extractHookClip(videoPath, startTime, outputPath) {
@@ -177,12 +201,26 @@ function detectEnergy(projectId) {
     throw new Error('Could not detect energy peak — no valid audio windows');
   }
 
+  // Find top 3 peaks (AV-12 Melhoria 2)
+  const topPeaks = findTopPeaks(windows, 3);
+
   console.log(`  Peak energy at ${peakWindow.start}s–${peakWindow.end}s (${peakWindow.meanVolume} dB)`);
+  if (topPeaks.length > 1) {
+    console.log(`  Top ${topPeaks.length} hooks: ${topPeaks.map(p => p.start + 's').join(', ')}`);
+  }
 
   // Extract 5s hook from peak
   fs.mkdirSync(productionDir, { recursive: true });
   const hookPath = path.join(productionDir, 'hook.mp4');
   extractHookClip(videoPath, peakWindow.start, hookPath);
+
+  // Extract alternative hooks
+  const hookPaths = [hookPath];
+  for (let i = 1; i < topPeaks.length; i++) {
+    const altPath = path.join(productionDir, `hook-alt-${i + 1}.mp4`);
+    extractHookClip(videoPath, topPeaks[i].start, altPath);
+    hookPaths.push(altPath);
+  }
 
   // Save energy analysis
   const analysisDir = path.join(projectDir, 'analysis');
@@ -193,9 +231,11 @@ function detectEnergy(projectId) {
     windowStep: WINDOW_STEP,
     hookDuration: HOOK_DURATION,
     peakWindow,
+    topPeaks,
     windowCount: windows.length,
     windows,
     hookPath,
+    hookPaths,
     createdAt: new Date().toISOString(),
   };
   fs.writeFileSync(
@@ -224,6 +264,7 @@ module.exports = {
   loadEnergyData,
   analyzeEnergyWindows,
   findPeakWindow,
+  findTopPeaks,
   extractHookClip,
   measureWindowVolume,
   parseVolumeOutput,
