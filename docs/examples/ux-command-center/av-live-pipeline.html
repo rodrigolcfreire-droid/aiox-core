@@ -229,9 +229,11 @@ function connectSSE(projectId) {
   eventSource.addEventListener('step', (e) => {
     const data = JSON.parse(e.data);
 
+    // Always capture projectId when available
+    if (data.projectId) currentProjectId = data.projectId;
+
     // If we get a projectId, reconnect to that specific stream
     if (data.projectId && data.projectId !== projectId && projectId === 'pending') {
-      currentProjectId = data.projectId;
       // Process this event first, then reconnect
       updateStep(data.step, data.status, data.message);
       log('[' + data.step + '] ' + data.message, data.status === 'error' ? 'error' : data.status === 'done' ? 'success' : 'info');
