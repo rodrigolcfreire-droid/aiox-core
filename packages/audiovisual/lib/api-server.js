@@ -521,7 +521,7 @@ async function handleRequest(req, res) {
 
 function createServer(port = DEFAULT_PORT) {
   const server = http.createServer(handleRequest);
-  server.listen(port, () => {
+  server.listen(port, '127.0.0.1', () => {
     console.log('');
     console.log('  ================================================================');
     console.log('  CENTRAL AUDIOVISUAL — API Server');
