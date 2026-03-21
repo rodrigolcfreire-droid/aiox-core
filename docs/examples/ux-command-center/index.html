@@ -5616,6 +5616,18 @@
         </div>
       </div>
 
+      <!-- Network Connections -->
+      <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:12px;padding:20px;margin-bottom:24px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <div style="font-family:'Chakra Petch';font-size:16px;font-weight:700;color:#38bdf8;">Conexoes de Rede</div>
+          <div style="display:flex;gap:12px;font-size:12px;">
+            <span id="sec-net-out" style="color:#34d399;">↑ Saida: -</span>
+            <span id="sec-net-in" style="color:#f87171;">↓ Entrada: -</span>
+          </div>
+        </div>
+        <div id="sec-network" style="max-height:250px;overflow-y:auto;font-family:'JetBrains Mono';font-size:11px;"></div>
+      </div>
+
       <!-- Recent Events Log -->
       <div style="background:rgba(15,23,42,0.8);border:1px solid #1e293b;border-radius:12px;padding:20px;">
         <div style="font-family:'Chakra Petch';font-size:16px;font-weight:700;color:#64748b;margin-bottom:16px;">Eventos Recentes</div>
@@ -6851,6 +6863,23 @@
             '<div style="font-size:16px;font-weight:700;color:' + (data.firewall.enabled ? '#34d399' : '#f87171') + ';">' +
             (data.firewall.enabled ? 'ATIVADO' : 'DESATIVADO') + '</div>' +
             '<div style="font-size:12px;color:#64748b;margin-top:4px;">' + data.firewall.raw + '</div>';
+        }
+
+        // Network connections
+        if (data.network) {
+          document.getElementById('sec-net-out').textContent = '↑ Saida: ' + data.network.outbound;
+          document.getElementById('sec-net-in').textContent = '↓ Entrada: ' + data.network.inbound;
+          document.getElementById('sec-net-in').style.color = data.network.inbound > 0 ? '#f87171' : '#34d399';
+
+          const netEl = document.getElementById('sec-network');
+          netEl.innerHTML = (data.network.connections || []).map(c => {
+            const dirIcon = c.direction === 'inbound' ? '🔴 ↓' : '🟢 ↑';
+            const color = c.direction === 'inbound' ? '#f87171' : '#64748b';
+            return '<div style="padding:3px 0;border-bottom:1px solid #0f172a;color:' + color + ';">' +
+              dirIcon + ' <span style="color:#94a3b8;">' + c.remoteIP + '</span>:' + c.remotePort +
+              ' <span style="color:#475569;">→ :' + c.localPort + '</span>' +
+              '</div>';
+          }).join('') || '<div style="color:#34d399;">Nenhuma conexao externa</div>';
         }
 
         // Events

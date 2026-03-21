@@ -156,10 +156,18 @@ function getSecurityStatus() {
     alerts.push({ level: 'warning', message: 'API key exposta em ~/.zshrc' });
   }
 
+  const network = getNetworkConnections();
+
+  if (network.inbound > 0) {
+    status = 'warning';
+    alerts.push({ level: 'warning', message: `${network.inbound} conexao(oes) de entrada detectada(s)` });
+  }
+
   return {
     status,
     timestamp: new Date().toISOString(),
     firewall,
+    network,
     services: getActiveServices(),
     stats: {
       totalAccessLastHour: accessEvents.length,
@@ -182,6 +190,68 @@ function getSecurityStatus() {
   };
 }
 
+/**
+ * Get active network connections (external only).
+ * Detects who is connecting TO this machine and FROM this machine.
+ */
+function getNetworkConnections() {
+  try {
+    const output = execSync('netstat -an 2>/dev/null | grep ESTABLISHED', { stdio: 'pipe', timeout: 5000 }).toString();
+    const lines = output.trim().split('\n').filter(Boolean);
+
+    const connections = [];
+    const inbound = [];
+
+    for (const line of lines) {
+      const parts = line.trim().split(/\s+/);
+      const local = parts[3] || '';
+      const remote = parts[4] || '';
+
+      // Skip localhost
+      if (remote.startsWith('127.0.0.1') || remote.startsWith('::1')) continue;
+
+      const remoteIP = remote.replace(/\.\d+$/, '');
+      const remotePort = remote.split('.').pop();
+      const localPort = local.split('.').pop();
+
+      const conn = {
+        localPort,
+        remoteIP,
+        remotePort,
+        direction: 'outbound',
+      };
+
+      // If local port is a known service port, it's inbound
+      const servicePorts = ['3456', '22', '80', '443', '8080'];
+      if (servicePorts.includes(localPort)) {
+        conn.direction = 'inbound';
+        inbound.push(conn);
+      }
+
+      connections.push(conn);
+    }
+
+    // Log inbound connections as security events
+    for (const conn of inbound) {
+      logSecurityEvent('inbound_connection', {
+        ip: conn.remoteIP,
+        port: conn.localPort,
+        remotePort: conn.remotePort,
+      });
+    }
+
+    return {
+      total: connections.length,
+      outbound: connections.filter(c => c.direction === 'outbound').length,
+      inbound: inbound.length,
+      connections: connections.slice(0, 20),
+      inboundDetails: inbound,
+    };
+  } catch {
+    return { total: 0, outbound: 0, inbound: 0, connections: [], inboundDetails: [] };
+  }
+}
+
 module.exports = {
   logSecurityEvent,
   logAccess,
@@ -190,4 +260,5 @@ module.exports = {
   getSecurityStatus,
   getActiveServices,
   getFirewallStatus,
+  getNetworkConnections,
 };
