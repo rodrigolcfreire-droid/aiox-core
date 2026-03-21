@@ -77,6 +77,32 @@ async function sendIntrusionAlert(ip, port, details = '') {
 }
 
 /**
+ * Send authorized access alert (green — login successful).
+ */
+async function sendAccessAlert(ip, details = '') {
+  const key = `access:${ip}`;
+  const now = Date.now();
+
+  if (alertCooldown.has(key) && now - alertCooldown.get(key) < COOLDOWN_MS) {
+    return;
+  }
+  alertCooldown.set(key, now);
+
+  const time = new Date().toLocaleTimeString('pt-BR');
+  const msg = `🟢 <b>ACESSO AUTORIZADO</b>\n\n` +
+    `✅ Login bem-sucedido\n\n` +
+    `🟢 IP: <code>${ip}</code>\n` +
+    `🕐 Hora: ${time}\n` +
+    (details ? `📋 ${details}\n` : '');
+
+  try {
+    await sendTelegram(msg);
+  } catch (err) {
+    console.error(`Failed to send access alert: ${err.message}`);
+  }
+}
+
+/**
  * Send rate limit alert.
  */
 async function sendRateLimitAlert(ip, count) {
@@ -191,6 +217,7 @@ function startSecurityAlerts() {
 module.exports = {
   sendTelegram,
   sendIntrusionAlert,
+  sendAccessAlert,
   sendRateLimitAlert,
   sendDailyReport,
   scheduleDailyReport,

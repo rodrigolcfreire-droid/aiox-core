@@ -16,7 +16,7 @@ const url = require('url');
 
 // Modules
 const { logAccess, logRateLimitHit, getSecurityStatus } = require('./security-monitor');
-const { startSecurityAlerts, sendIntrusionAlert, sendRateLimitAlert } = require('./security-alerts');
+const { startSecurityAlerts, sendIntrusionAlert, sendAccessAlert, sendRateLimitAlert } = require('./security-alerts');
 const { ingest } = require('./ingest');
 const { listProjects, loadProject, getProjectDir } = require('./project');
 const { transcribeWithWhisper, importSRT } = require('./transcribe');
@@ -167,24 +167,24 @@ async function handleRequest(req, res) {
   if (req.url === '/api/login' && req.method === 'POST') {
     const body = await parseBody(req);
     if (body.password === AUTH_PASSWORD) {
+      const loginIP = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+      sendAccessAlert(loginIP, 'Login no Centro de Comando').catch(() => {});
       res.writeHead(200, {
         'Content-Type': 'application/json',
         'Set-Cookie': `${AUTH_COOKIE}=${AUTH_TOKEN}; Path=/; HttpOnly; SameSite=Strict; Max-Age=86400`,
       });
       return res.end(JSON.stringify({ ok: true }));
     }
+    // Failed login — send red alert
+    const failIP = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+    sendIntrusionAlert(failIP, '443', 'Tentativa de login com senha INCORRETA').catch(() => {});
     return sendError(res, 'Invalid password', 401);
   }
 
   // Log access for security monitoring
   if (req.url.startsWith('/api/')) logAccess(req);
 
-  // Detect external access via Cloudflare (X-Forwarded-For header)
-  const cfIP = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'];
-  if (cfIP && !req.url.includes('/api/security') && !req.url.includes('/api/health')) {
-    const host = req.headers['host'] || '';
-    sendIntrusionAlert(cfIP, '443', `Acesso externo via ${host}${req.url}`).catch(() => {});
-  }
+  // External access tracking (only log, alerts handled by login flow)
 
   // Rate limit check (skip for SSE and static files)
   const isSSE = req.url.includes('/events');
