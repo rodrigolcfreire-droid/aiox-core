@@ -19,6 +19,7 @@ const { generateSuggestions } = require('./suggestions');
 const { getProjectDir } = require('./project');
 const { detectEnergy } = require('./energy-detector');
 const { generateCutPreviews } = require('./assemble');
+const { detectHooksWithLLM, generateViralTitles, isLLMAvailable } = require('./llm-hooks');
 
 // Active SSE connections
 const clients = new Map();
@@ -114,6 +115,24 @@ async function runLivePipeline(source, options = {}) {
     throw err;
   }
 
+  // Step 2b: LLM Hook Detection (AV-11)
+  if (isLLMAvailable()) {
+    broadcast(pid, 'step', { step: 'llm-hooks', status: 'running', message: 'IA analisando melhores hooks...' });
+    try {
+      const llmHooks = await detectHooksWithLLM(pid);
+      if (llmHooks && llmHooks.hooks) {
+        broadcast(pid, 'step', {
+          step: 'llm-hooks',
+          status: 'done',
+          message: `IA encontrou ${llmHooks.hooks.length} hooks semanticos`,
+          hooks: llmHooks.hooks,
+        });
+      }
+    } catch (err) {
+      broadcast(pid, 'step', { step: 'llm-hooks', status: 'error', message: err.message });
+    }
+  }
+
   // Step 3: Segment
   broadcast(pid, 'step', { step: 'segment', status: 'running', message: 'Segmentando em blocos...' });
   try {
@@ -160,6 +179,24 @@ async function runLivePipeline(source, options = {}) {
   } catch (err) {
     broadcast(pid, 'step', { step: 'cuts', status: 'error', message: err.message });
     throw err;
+  }
+
+  // Step 5a: LLM Viral Titles (AV-11)
+  if (isLLMAvailable()) {
+    broadcast(pid, 'step', { step: 'llm-titles', status: 'running', message: 'IA gerando titulos virais...' });
+    try {
+      const titles = await generateViralTitles(pid);
+      if (titles && titles.titles) {
+        broadcast(pid, 'step', {
+          step: 'llm-titles',
+          status: 'done',
+          message: `IA gerou titulos para ${titles.titles.length} cortes`,
+          titles: titles.titles,
+        });
+      }
+    } catch (err) {
+      broadcast(pid, 'step', { step: 'llm-titles', status: 'error', message: err.message });
+    }
   }
 
   // Step 5b: Energy Detection (AV-10)
