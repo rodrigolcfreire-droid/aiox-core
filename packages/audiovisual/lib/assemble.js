@@ -62,6 +62,27 @@ function rescaleVideo(inputPath, outputPath, format) {
   }
 }
 
+/**
+ * Re-encode a video for safe concat (uniform codec, resolution, framerate).
+ */
+function reencodeForConcat(inputPath, outputPath) {
+  const cmd = [
+    'ffmpeg', '-y',
+    '-i', `"${inputPath}"`,
+    '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23',
+    '-c:a', 'aac', '-b:a', '128k', '-ar', '48000', '-ac', '2',
+    '-r', '30',
+    '-movflags', '+faststart',
+    `"${outputPath}"`,
+  ].join(' ');
+
+  try {
+    execSync(cmd, { stdio: 'pipe', timeout: 300000 });
+  } catch (err) {
+    throw new Error(`Failed to re-encode for concat: ${err.message}`);
+  }
+}
+
 function concatenateSegments(segmentPaths, outputPath) {
   if (segmentPaths.length === 1) {
     fs.copyFileSync(segmentPaths[0], outputPath);
@@ -162,20 +183,72 @@ function assemblecut(projectId, cutId) {
   // Cleanup raw
   if (fs.existsSync(rawPath)) fs.unlinkSync(rawPath);
 
-  // AV-10: Prepend energy hook if available
-  const assembledPath = path.join(productionDir, `assembled-${cutId}.mp4`);
-  const hookPrepended = prependEnergyHook(projectId, scaledPath, assembledPath, cut.format);
+  // Build segments list: HOOK + DEVELOPMENT + CTA
+  const segments = [];
+  let hookPrepended = false;
+  let ctaAppended = false;
+  let extraDuration = 0;
 
-  // Cleanup scaled if hook was prepended (assembled replaces it)
-  if (hookPrepended && fs.existsSync(scaledPath)) {
-    fs.unlinkSync(scaledPath);
-  } else if (!hookPrepended) {
-    // No hook — scaled IS the assembled
-    fs.renameSync(scaledPath, assembledPath);
+  // 1. HOOK: energy peak 5s
+  const energyData = loadEnergyData(projectId);
+  if (energyData && energyData.hookPath && fs.existsSync(energyData.hookPath)) {
+    const hookScaledPath = path.join(productionDir, `hook-scaled-${cutId}.mp4`);
+    rescaleVideo(energyData.hookPath, hookScaledPath, cut.format);
+    const hookReencoded = path.join(productionDir, `hook-re-${cutId}.mp4`);
+    reencodeForConcat(hookScaledPath, hookReencoded);
+    segments.push(hookReencoded);
+    hookPrepended = true;
+    extraDuration += HOOK_DURATION;
+    if (fs.existsSync(hookScaledPath)) fs.unlinkSync(hookScaledPath);
+    console.log(`  Hook: ${HOOK_DURATION}s energy peak`);
   }
 
-  const finalDuration = hookPrepended ? cut.duration + HOOK_DURATION : cut.duration;
-  console.log(`  Assembled: assembled-${cutId}.mp4${hookPrepended ? ' (with energy hook)' : ''}`);
+  // 2. DEVELOPMENT: the main cut
+  const devReencoded = path.join(productionDir, `dev-re-${cutId}.mp4`);
+  reencodeForConcat(scaledPath, devReencoded);
+  segments.push(devReencoded);
+  if (fs.existsSync(scaledPath)) fs.unlinkSync(scaledPath);
+
+  // 3. CTA: find CTA block from segments.json and append
+  const segmentsPath = path.join(projectDir, 'analysis', 'segments.json');
+  if (fs.existsSync(segmentsPath)) {
+    const segData = JSON.parse(fs.readFileSync(segmentsPath, 'utf8'));
+    const ctaBlock = (segData.blocks || []).find(b => b.type === 'cta');
+    if (ctaBlock && ctaBlock.start !== undefined && ctaBlock.end !== undefined) {
+      // Only append CTA if it's not already part of the cut
+      if (ctaBlock.start >= cut.end || ctaBlock.end <= cut.start) {
+        const ctaRawPath = path.join(productionDir, `cta-raw-${cutId}.mp4`);
+        const ctaScaledPath = path.join(productionDir, `cta-scaled-${cutId}.mp4`);
+        const ctaReencoded = path.join(productionDir, `cta-re-${cutId}.mp4`);
+        extractSegment(videoPath, ctaBlock.start, ctaBlock.end, ctaRawPath);
+        rescaleVideo(ctaRawPath, ctaScaledPath, cut.format);
+        reencodeForConcat(ctaScaledPath, ctaReencoded);
+        segments.push(ctaReencoded);
+        ctaAppended = true;
+        extraDuration += (ctaBlock.end - ctaBlock.start);
+        // Cleanup
+        if (fs.existsSync(ctaRawPath)) fs.unlinkSync(ctaRawPath);
+        if (fs.existsSync(ctaScaledPath)) fs.unlinkSync(ctaScaledPath);
+        console.log(`  CTA: ${(ctaBlock.end - ctaBlock.start).toFixed(1)}s from ${ctaBlock.start}s`);
+      }
+    }
+  }
+
+  // Concatenate all segments
+  const assembledPath = path.join(productionDir, `assembled-${cutId}.mp4`);
+  if (segments.length === 1) {
+    fs.renameSync(segments[0], assembledPath);
+  } else {
+    concatenateSegments(segments, assembledPath);
+    // Cleanup temp re-encoded files
+    for (const seg of segments) {
+      if (fs.existsSync(seg)) fs.unlinkSync(seg);
+    }
+  }
+
+  const finalDuration = cut.duration + extraDuration;
+  const parts = [hookPrepended ? 'hook' : null, 'dev', ctaAppended ? 'cta' : null].filter(Boolean).join(' + ');
+  console.log(`  Assembled: ${cutId}.mp4 [${parts}] ${finalDuration.toFixed(0)}s`);
 
   return {
     cutId,
@@ -183,6 +256,7 @@ function assemblecut(projectId, cutId) {
     format: cut.format,
     duration: finalDuration,
     hookPrepended,
+    ctaAppended,
   };
 }
 
