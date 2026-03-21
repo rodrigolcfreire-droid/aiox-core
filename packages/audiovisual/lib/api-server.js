@@ -36,6 +36,42 @@ const { detectEnergy, loadEnergyData } = require('./energy-detector');
 
 const DEFAULT_PORT = 3456;
 
+// Rate limiting — 30 requests per minute per IP (zero deps)
+const RATE_LIMIT = 30;
+const RATE_WINDOW = 60000; // 1 minute
+const rateLimitMap = new Map();
+
+function checkRateLimit(req, res) {
+  const ip = req.socket.remoteAddress || '127.0.0.1';
+  const now = Date.now();
+
+  if (!rateLimitMap.has(ip)) {
+    rateLimitMap.set(ip, []);
+  }
+
+  const timestamps = rateLimitMap.get(ip).filter(t => now - t < RATE_WINDOW);
+  timestamps.push(now);
+  rateLimitMap.set(ip, timestamps);
+
+  if (timestamps.length > RATE_LIMIT) {
+    res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': '60' });
+    res.end(JSON.stringify({ error: 'Too many requests. Limit: 30/min.' }));
+    return false;
+  }
+
+  return true;
+}
+
+// Cleanup old entries every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, timestamps] of rateLimitMap) {
+    const valid = timestamps.filter(t => now - t < RATE_WINDOW);
+    if (valid.length === 0) rateLimitMap.delete(ip);
+    else rateLimitMap.set(ip, valid);
+  }
+}, 300000);
+
 function parseBody(req) {
   return new Promise((resolve, reject) => {
     let body = '';
@@ -75,6 +111,11 @@ async function handleRequest(req, res) {
     });
     return res.end();
   }
+
+  // Rate limit check (skip for SSE and static files)
+  const isSSE = req.url.includes('/events');
+  const isStatic = !req.url.startsWith('/api/');
+  if (!isSSE && !isStatic && !checkRateLimit(req, res)) return;
 
   const parsed = url.parse(req.url, true);
   const pathname = parsed.pathname;
