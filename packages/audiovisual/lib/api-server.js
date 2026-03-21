@@ -16,6 +16,7 @@ const url = require('url');
 
 // Modules
 const { logAccess, logRateLimitHit, getSecurityStatus } = require('./security-monitor');
+const { startSecurityAlerts, sendIntrusionAlert, sendRateLimitAlert } = require('./security-alerts');
 const { ingest } = require('./ingest');
 const { listProjects, loadProject, getProjectDir } = require('./project');
 const { transcribeWithWhisper, importSRT } = require('./transcribe');
@@ -121,6 +122,8 @@ async function handleRequest(req, res) {
   const isStatic = !req.url.startsWith('/api/');
   if (!isSSE && !isStatic && !checkRateLimit(req, res)) {
     logRateLimitHit(req);
+    const ip = req.socket.remoteAddress || '127.0.0.1';
+    sendRateLimitAlert(ip, RATE_LIMIT).catch(() => {});
     return;
   }
 
@@ -582,6 +585,9 @@ function createServer(port = DEFAULT_PORT) {
     console.log(`  ${new Date().toLocaleString('pt-BR')}`);
     console.log('  ================================================================');
     console.log('');
+
+    // Start security alerts (Telegram notifications)
+    startSecurityAlerts();
     console.log('  Endpoints:');
     console.log('    GET  /api/health');
     console.log('    GET  /api/projects');
