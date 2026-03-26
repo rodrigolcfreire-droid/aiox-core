@@ -579,7 +579,7 @@ function showCuts(cuts) {
       <div style="font-size:13px;color:#cbd5e1;margin:8px 0;line-height:1.5;font-weight:500">"${excerpt.slice(0,120)}${excerpt.length>120?'...':''}"</div>
       ${cut.objective ? `<div style="font-size:11px;color:#475569;font-style:italic">${cut.objective}</div>` : ''}
       <div style="margin-top:8px;border-radius:6px;overflow:hidden;background:#000">
-        <video controls preload="none" src="${videoSrc}" style="width:100%;max-height:180px;display:block" poster="${API}/api/projects/${currentProjectId}/video#t=${(cut.start||0).toFixed(1)}"></video>
+        <video controls preload="metadata" src="${videoSrc}" style="max-width:100%;max-height:300px;display:block;object-fit:contain;margin:0 auto" onloadedmetadata="adaptVideoContainer(this)"></video>
       </div>
       <div class="cut-actions">
         <button class="btn-approve" onclick="approveCut('${cut.id}')">Aprovar</button>
@@ -778,6 +778,24 @@ async function loadExportHistory() {
     setTimeout(() => startPipeline(), 500);
   }
 })();
+
+// Auto-adapt video container to aspect ratio
+function adaptVideoContainer(video) {
+  var w = video.videoWidth;
+  var h = video.videoHeight;
+  if (!w || !h) return;
+  var ratio = w / h;
+  var card = video.closest('.cut-card');
+  if (ratio < 0.85) {
+    // Vertical (9:16) — constrain width
+    video.style.maxWidth = '180px';
+    if (card) card.style.textAlign = 'center';
+  } else if (ratio <= 1.15) {
+    // Square (1:1)
+    video.style.maxWidth = '240px';
+    if (card) card.style.textAlign = 'center';
+  }
+}
 </script>
 </body>
 </html>
