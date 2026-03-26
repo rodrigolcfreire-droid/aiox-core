@@ -312,13 +312,16 @@ async function handleRequest(req, res) {
       const id = pathname.split('/')[3];
       const assembled = assembleAllApproved(id);
 
-      // Copy assembled files to output/ as final-{cutId}.mp4
+      // Copy final files to output/ — prefer subtitled over assembled
       const outputDir = path.join(getProjectDir(id), 'output');
       fs.mkdirSync(outputDir, { recursive: true });
       const finals = [];
       for (const a of assembled) {
         const finalPath = path.join(outputDir, `final-${a.cutId}.mp4`);
-        fs.copyFileSync(a.outputPath, finalPath);
+        // Use subtitled version if it exists (has burned-in animated captions)
+        const subtitledPath = a.outputPath.replace('assembled-', 'subtitled-');
+        const sourcePath = fs.existsSync(subtitledPath) ? subtitledPath : a.outputPath;
+        fs.copyFileSync(sourcePath, finalPath);
         const stat = fs.statSync(finalPath);
         finals.push({
           cutId: a.cutId,
