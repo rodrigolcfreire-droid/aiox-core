@@ -17,27 +17,46 @@
     .stat-val{font-family:'Chakra Petch';font-size:32px;font-weight:700}
     .stat-lbl{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
     .actions-bar{display:flex;gap:12px;margin-bottom:24px}
-    .btn{border:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}
+    .btn{border:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:transform .15s}
+    .btn:hover{transform:scale(1.03)}
     .btn-approve-all{background:linear-gradient(135deg,#34d399,#38bdf8);color:#0a0e1a}
     .btn-reject-all{background:#1e293b;color:#f87171;border:1px solid #334155}
-    .cuts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+    .cuts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px}
     .cut{background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:20px;transition:all .3s}
     .cut.approved{border-color:#34d399;opacity:.85}
     .cut.rejected{border-color:#ef4444;opacity:.4}
-    .cut-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .cut-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
     .cut-id{font-family:'JetBrains Mono';font-size:13px;color:#64748b}
-    .cut-score{font-family:'Chakra Petch';font-size:20px;font-weight:700;color:#fbbf24}
-    .cut-cat{display:inline-block;font-size:11px;padding:3px 10px;border-radius:4px;font-weight:600;background:rgba(239,68,68,.2);color:#f87171}
-    .cut-time{font-size:14px;color:#94a3b8;margin:8px 0}
-    .cut-time strong{color:#e2e8f0}
-    .cut-platforms{display:flex;gap:4px;flex-wrap:wrap;margin:8px 0}
+    .cut-meta{font-size:12px;color:#64748b;display:flex;align-items:center;gap:6px;margin-bottom:4px}
+    .cut-meta strong{color:#e2e8f0}
+    .cut-score{font-family:'Chakra Petch';font-size:20px;font-weight:700}
+    .score-high{color:#34d399}
+    .score-mid{color:#fbbf24}
+    .score-low{color:#f87171}
+    .cut-cat{display:inline-block;font-size:11px;padding:3px 10px;border-radius:4px;font-weight:600}
+    .cat-viral{background:rgba(239,68,68,.15);color:#f87171}
+    .cat-storytelling{background:rgba(167,139,250,.15);color:#a78bfa}
+    .cat-educativo{background:rgba(56,189,248,.15);color:#38bdf8}
+    .cat-autoridade{background:rgba(251,191,36,.15);color:#fbbf24}
+    .cat-cta{background:rgba(52,211,153,.15);color:#34d399}
+    .cat-bastidores{background:rgba(148,163,184,.15);color:#94a3b8}
+    .cat-tendencia{background:rgba(244,114,182,.15);color:#f472b6}
+    .cut-platforms{display:flex;gap:4px;flex-wrap:wrap;margin:6px 0}
     .cut-platforms span{font-size:10px;background:#1e293b;color:#94a3b8;padding:3px 8px;border-radius:4px}
-    .cut-text{font-size:12px;color:#475569;margin:8px 0;max-height:60px;overflow:hidden;line-height:1.5}
+    .cut-excerpt{font-size:13px;color:#cbd5e1;margin:10px 0;line-height:1.5;font-weight:500}
+    .cut-objective{font-size:11px;color:#475569;margin-top:4px;font-style:italic}
+    .cut-source{font-size:10px;color:#334155;margin-top:2px;font-family:'JetBrains Mono'}
+    .cut-preview{margin-top:10px;border-radius:8px;overflow:hidden;background:#000;position:relative}
+    .cut-preview video{width:100%;max-height:220px;display:block}
+    .cut-preview .play-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;background:rgba(0,0,0,.6);border-radius:50%;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:opacity .3s}
+    .cut-preview video:not([paused]) ~ .play-overlay{opacity:0}
+    .cut-transcript{font-size:11px;color:#64748b;margin-top:8px;max-height:60px;overflow-y:auto;line-height:1.6;padding:8px;background:#1e293b;border-radius:6px}
     .cut-btns{display:flex;gap:8px;margin-top:12px}
-    .btn-sm{border:none;padding:8px 20px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer}
+    .btn-sm{border:none;padding:10px 24px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+    .btn-sm:hover{transform:scale(1.05)}
     .btn-ok{background:#34d399;color:#0a0e1a}
     .btn-no{background:#ef4444;color:#fff}
-    .cut-status{font-size:13px;font-weight:700;margin-top:12px;text-align:center;padding:6px;border-radius:6px}
+    .cut-status{font-size:13px;font-weight:700;margin-top:12px;text-align:center;padding:8px;border-radius:6px}
     .status-approved{background:rgba(52,211,153,.1);color:#34d399}
     .status-rejected{background:rgba(239,68,68,.1);color:#f87171}
     .description{background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:20px;margin-bottom:24px}
@@ -54,9 +73,35 @@
     .transcript-box .seg:hover{background:rgba(56,189,248,.1);color:#e2e8f0}
     .transcript-box .seg .time{color:#475569;font-family:'JetBrains Mono';font-size:10px;margin-right:8px}
     .transcript-box .seg.active{background:rgba(167,139,250,.15);color:#e2e8f0}
-    .cut-preview{margin-top:8px}
-    .cut-preview video{width:100%;max-height:200px;border-radius:6px;background:#000}
-    .cut-transcript{font-size:11px;color:#64748b;margin-top:6px;max-height:80px;overflow-y:auto;line-height:1.6;padding:8px;background:#1e293b;border-radius:6px}
+    .toast{position:fixed;bottom:24px;right:24px;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;z-index:999;animation:slideIn .3s ease}
+    .toast-ok{background:#34d399;color:#0a0e1a}
+    .toast-no{background:#ef4444;color:#fff}
+    .toast-err{background:#f59e0b;color:#0a0e1a}
+    @keyframes slideIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+    /* Export Modal */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;display:none;align-items:center;justify-content:center}
+    .modal-overlay.active{display:flex}
+    .modal{background:#0f172a;border:1px solid #1e293b;border-radius:16px;padding:32px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto}
+    .modal h2{font-family:'Chakra Petch';font-size:20px;background:linear-gradient(135deg,#a78bfa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px}
+    .modal-row{margin-bottom:16px}
+    .modal-row label{font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px}
+    .modal-row select,.modal-row input{width:100%;padding:10px 12px;background:#1e293b;border:1px solid #334155;color:#e2e8f0;border-radius:8px;font-size:14px;font-family:inherit}
+    .modal-row select:focus,.modal-row input:focus{outline:none;border-color:#a78bfa}
+    .modal-summary{background:#1e293b;border-radius:8px;padding:16px;margin:16px 0;font-size:13px;color:#94a3b8;line-height:1.8}
+    .modal-summary strong{color:#e2e8f0}
+    .modal-btns{display:flex;gap:12px;margin-top:20px}
+    .btn-export{background:linear-gradient(135deg,#a78bfa,#38bdf8);color:#0a0e1a;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}
+    .btn-export:hover{transform:scale(1.03)}
+    .btn-cancel{background:#1e293b;color:#94a3b8;border:1px solid #334155;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
+    .btn-cancel:hover{color:#e2e8f0}
+    .btn-xml{background:#1e293b;color:#a78bfa;border:1px solid rgba(167,139,250,.3);padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+    .btn-xml:hover{background:rgba(167,139,250,.15);transform:scale(1.03)}
+    .export-bar{display:flex;gap:8px;align-items:center}
+    .export-history{margin-top:24px;padding:20px;background:#0f172a;border:1px solid #1e293b;border-radius:12px}
+    .export-history h3{font-family:'Chakra Petch';font-size:14px;color:#64748b;margin-bottom:12px}
+    .export-history-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#1e293b;border-radius:6px;margin-bottom:6px;font-size:12px}
+    .export-history-item .info{color:#94a3b8}
+    .export-history-item .dl{color:#a78bfa;cursor:pointer;text-decoration:underline}
   </style>
 </head>
 <body>
@@ -67,24 +112,79 @@
 <div class="container">
   <div id="content"><div class="loading">Carregando cortes...</div></div>
 </div>
+<!-- Export Modal -->
+<div class="modal-overlay" id="exportModal">
+  <div class="modal">
+    <h2>Exportar Timeline XML</h2>
+    <div class="modal-row">
+      <label>Editor</label>
+      <select id="exportEditor">
+        <option value="premiere">Adobe Premiere Pro</option>
+        <option value="davinci">DaVinci Resolve</option>
+      </select>
+    </div>
+    <div class="modal-row">
+      <label>Modo de Exportacao</label>
+      <select id="exportMode" onchange="updateExportSummary()">
+        <option value="approved">Todos os Aprovados</option>
+        <option value="single">Corte Individual</option>
+        <option value="final">Timeline Final (Assembly)</option>
+      </select>
+    </div>
+    <div class="modal-row" id="cutIdRow" style="display:none">
+      <label>Cut ID</label>
+      <select id="exportCutId"></select>
+    </div>
+    <div class="modal-summary" id="exportSummary">Selecione as opcoes acima...</div>
+    <div class="modal-btns">
+      <button class="btn-export" onclick="doExport('xml')">Gerar XML</button>
+      <button class="btn-export" style="background:linear-gradient(135deg,#34d399,#38bdf8)" onclick="doExport('package')">Baixar Pacote ZIP</button>
+      <button class="btn-cancel" onclick="closeExportModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+<div id="toastContainer"></div>
 <script>
 const API = window.location.origin;
 const PID = '__PROJECT_ID__';
 let cutsData = [];
 let transcriptionData = [];
 const videoUrl = `${API}/api/projects/${PID}/video`;
-
 const hookUrl = `${API}/api/projects/${PID}/hook`;
+
+// Auth token — from URL param (iframe), parent sessionStorage, or own sessionStorage
+function getAuthToken() {
+  const urlToken = new URLSearchParams(window.location.search).get('token');
+  if (urlToken) { sessionStorage.setItem('aios_token', urlToken); return urlToken; }
+  try { const pt = window.parent.sessionStorage.getItem('aios_token'); if (pt) return pt; }
+  catch (e) { /* cross-origin */ }
+  return sessionStorage.getItem('aios_token') || '';
+}
+// All fetches include credentials + Bearer token (Cloudflare-safe)
+const F = (url, opts = {}) => {
+  const t = getAuthToken();
+  opts.credentials = 'same-origin';
+  opts.headers = { ...(opts.headers || {}) };
+  if (t) opts.headers['Authorization'] = 'Bearer ' + t;
+  return fetch(url, opts);
+};
+
+function toast(msg, type = 'ok') {
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.textContent = msg;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
 
 async function load() {
   const [cutsRes, descRes, transRes, energyRes] = await Promise.all([
-    fetch(`${API}/api/projects/${PID}/cuts`).then(r=>r.json()).catch(()=>({suggestedCuts:[]})),
-    fetch(`${API}/api/projects/${PID}/describe`).then(r=>r.json()).catch(()=>null),
-    fetch(`${API}/api/projects/${PID}/transcription`).then(r=>r.json()).catch(()=>({segments:[]})),
-    fetch(`${API}/api/projects/${PID}/energy`).then(r=>r.ok?r.json():null).catch(()=>null),
+    F(`${API}/api/projects/${PID}/cuts`).then(r=>r.json()).catch(()=>({suggestedCuts:[]})),
+    F(`${API}/api/projects/${PID}/describe`).then(r=>r.json()).catch(()=>null),
+    F(`${API}/api/projects/${PID}/transcription`).then(r=>r.json()).catch(()=>({segments:[]})),
+    F(`${API}/api/projects/${PID}/energy`).then(r=>r.ok?r.json():null).catch(()=>null),
   ]);
   transcriptionData = transRes.segments || [];
-
   cutsData = cutsRes.suggestedCuts || [];
   document.getElementById('projectInfo').textContent = `Projeto: ${PID.slice(0,8)}... | ${cutsData.length} cortes`;
 
@@ -143,48 +243,67 @@ async function load() {
   // Actions
   html += `<div class="actions-bar">
     <button class="btn btn-approve-all" onclick="approveAll()">Aprovar Todos (${pending})</button>
+    <div class="export-bar" style="margin-left:auto">
+      <button class="btn-xml" onclick="openExportModal()">Exportar XML</button>
+      <button class="btn-xml" style="color:#34d399;border-color:rgba(52,211,153,.3)" onclick="openExportModal('package')">Baixar Pacote</button>
+    </div>
   </div>`;
 
   // Cuts grid
   html += '<div class="cuts-grid">';
   for (const cut of cutsData) {
     const statusClass = cut.status === 'approved' ? 'approved' : cut.status === 'rejected' ? 'rejected' : '';
-    const time = `${fmt(cut.start)} → ${fmt(cut.end)}`;
     const dur = cut.duration ? cut.duration.toFixed(0) + 's' : '';
     const platforms = (cut.platform||[]).map(p=>`<span>${p}</span>`).join('');
+    const catClass = `cat-${cut.category || 'viral'}`;
+
+    // Score color based on value
+    const scoreVal = cut.engagementScore || 0;
+    const scoreClass = scoreVal >= 8 ? 'score-high' : scoreVal >= 5 ? 'score-mid' : 'score-low';
+
+    // Transcript excerpt for this cut — the real content, not the generic objective
+    const excerpt = getExcerptForCut(cut);
+
+    // Video preview URL — use previewFile if available, else time-range on source
+    const previewSrc = cut.previewFile
+      ? `${API}/api/projects/${PID}/preview/${cut.previewFile}`
+      : `${videoUrl}#t=${(cut.start||0).toFixed(1)},${(cut.end||0).toFixed(1)}`;
 
     let btns = '';
     if (cut.status === 'suggested') {
       btns = `<div class="cut-btns">
         <button class="btn-sm btn-ok" onclick="approve('${cut.id}')">Aprovar</button>
         <button class="btn-sm btn-no" onclick="reject('${cut.id}')">Rejeitar</button>
+        <button class="btn-xml" onclick="exportSingleCut('${cut.id}')" style="margin-left:auto">XML</button>
       </div>`;
     } else {
       const stClass = cut.status === 'approved' ? 'status-approved' : 'status-rejected';
-      btns = `<div class="cut-status ${stClass}">${cut.status.toUpperCase()}</div>`;
+      const stLabel = cut.status === 'approved' ? 'APROVADO' : 'REJEITADO';
+      btns = `<div class="cut-status ${stClass}">${stLabel}</div>
+      <div style="text-align:center;margin-top:4px"><button class="btn-xml" onclick="exportSingleCut('${cut.id}')">Exportar XML</button></div>`;
     }
 
     html += `<div class="cut ${statusClass}" id="cut-${cut.id}">
       <div class="cut-top">
         <span class="cut-id">${cut.id}</span>
-        <span class="cut-score">${cut.engagementScore}</span>
+        <span class="cut-score ${scoreClass}">Score: ${scoreVal}</span>
       </div>
-      <span class="cut-cat">${cut.category}</span>
-      <div class="cut-time"><strong>${time}</strong> · ${dur} · ${cut.format}</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span class="cut-cat ${catClass}">${cut.category}</span>
+        <span class="cut-source">${cut.source || ''}</span>
+      </div>
+      <div class="cut-meta">
+        <strong>${dur}</strong> · ${cut.format} · ${fmt(cut.start)} → ${fmt(cut.end)}
+      </div>
       <div class="cut-platforms">${platforms}</div>
-      ${cut.objective ? `<div class="cut-text">${cut.objective}</div>` : ''}
-      ${cut.title ? `<div style="font-size:15px;font-weight:700;color:#e2e8f0;margin:8px 0;">"${cut.title}"</div>` : ''}
+
+      <div class="cut-excerpt">"${excerpt}"</div>
+      <div class="cut-objective">${cut.objective || ''}</div>
+
       <div class="cut-preview">
-        ${energyRes && energyRes.peakWindow ? `<div style="margin-bottom:4px">
-          <div style="font-size:10px;color:#a78bfa;font-weight:600;margin-bottom:3px">HOOK (5s)</div>
-          <video controls preload="metadata" src="${hookUrl}" style="width:100%;max-height:120px;border-radius:6px 6px 0 0;background:#000"></video>
-        </div>` : ''}
-        <div>
-          ${energyRes && energyRes.peakWindow ? '<div style="font-size:10px;color:#38bdf8;font-weight:600;margin-bottom:3px">CORTE</div>' : ''}
-          <video controls preload="metadata" src="${cut.previewFile ? API+'/api/projects/'+PID+'/preview/'+cut.previewFile : videoUrl+'#t='+(cut.start||0)+','+(cut.end||0)}" style="width:100%;max-height:${energyRes && energyRes.peakWindow ? '120' : '200'}px;border-radius:${energyRes && energyRes.peakWindow ? '0 0 6px 6px' : '6px'};background:#000"></video>
-        </div>
+        <video controls preload="metadata" src="${previewSrc}" onclick="this.paused?this.play():this.pause()"></video>
       </div>
-      <div class="cut-transcript">${cut.transcriptText || getTranscriptForCut(cut)}</div>
+
       ${btns}
     </div>`;
   }
@@ -200,35 +319,109 @@ function fmt(s) {
   return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
 }
 
+function getExcerptForCut(cut) {
+  // 1st priority: transcriptExcerpt from the cut data itself
+  if (cut.transcriptExcerpt && cut.transcriptExcerpt.length > 10) {
+    return cut.transcriptExcerpt;
+  }
+  // 2nd priority: transcriptText
+  if (cut.transcriptText && cut.transcriptText.length > 10) {
+    return cut.transcriptText;
+  }
+  // 3rd priority: build from transcription segments
+  if (transcriptionData.length > 0) {
+    const segs = transcriptionData.filter(s => s.start >= (cut.start||0) && s.end <= (cut.end||9999));
+    if (segs.length > 0) {
+      const text = segs.map(s => s.text).join(' ');
+      return text.length > 120 ? text.slice(0, 120) + '...' : text;
+    }
+  }
+  return cut.objective || 'Sem transcricao disponivel';
+}
+
 async function approve(cutId) {
-  await fetch(`${API}/api/projects/${PID}/approve`, {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({cutId})
-  });
-  load();
+  try {
+    const r = await F(`${API}/api/projects/${PID}/approve`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cutId }),
+    });
+    if (r.ok) {
+      toast(`${cutId} aprovado!`, 'ok');
+      // Update card instantly without full reload
+      const card = document.getElementById(`cut-${cutId}`);
+      if (card) {
+        card.classList.add('approved');
+        const btnsDiv = card.querySelector('.cut-btns');
+        if (btnsDiv) btnsDiv.innerHTML = '<div class="cut-status status-approved">APROVADO</div>';
+      }
+      updateStats('approve');
+    } else {
+      const err = await r.text();
+      toast(`Erro ao aprovar: ${err}`, 'err');
+    }
+  } catch (e) {
+    toast(`Erro de conexao: ${e.message}`, 'err');
+  }
 }
 
 async function reject(cutId) {
-  await fetch(`${API}/api/projects/${PID}/reject`, {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({cutId})
-  });
-  load();
+  try {
+    const r = await F(`${API}/api/projects/${PID}/reject`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cutId }),
+    });
+    if (r.ok) {
+      toast(`${cutId} rejeitado`, 'no');
+      const card = document.getElementById(`cut-${cutId}`);
+      if (card) {
+        card.classList.add('rejected');
+        const btnsDiv = card.querySelector('.cut-btns');
+        if (btnsDiv) btnsDiv.innerHTML = '<div class="cut-status status-rejected">REJEITADO</div>';
+      }
+      updateStats('reject');
+    } else {
+      const err = await r.text();
+      toast(`Erro ao rejeitar: ${err}`, 'err');
+    }
+  } catch (e) {
+    toast(`Erro de conexao: ${e.message}`, 'err');
+  }
 }
 
 async function approveAll() {
-  await fetch(`${API}/api/projects/${PID}/approve`, {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({all:true})
-  });
-  load();
+  try {
+    const r = await F(`${API}/api/projects/${PID}/approve`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ all: true }),
+    });
+    if (r.ok) {
+      const data = await r.json();
+      toast(`${data.approved || 'Todos'} cortes aprovados!`, 'ok');
+      load(); // full reload for approve all
+    } else {
+      toast('Erro ao aprovar todos', 'err');
+    }
+  } catch (e) {
+    toast(`Erro de conexao: ${e.message}`, 'err');
+  }
 }
 
-function getTranscriptForCut(cut) {
-  if (!transcriptionData.length) return '<em>Sem transcricao</em>';
-  const segs = transcriptionData.filter(s => s.start >= (cut.start||0) && s.end <= (cut.end||9999));
-  if (segs.length === 0) return '<em>Sem texto neste trecho</em>';
-  return segs.map(s => `<span style="color:#475569">[${fmt(s.start)}]</span> ${s.text}`).join(' ');
+function updateStats(action) {
+  // Quick stat update without full reload
+  const stats = document.querySelectorAll('.stat-val');
+  if (stats.length >= 4) {
+    let pending = parseInt(stats[1].textContent) || 0;
+    let approved = parseInt(stats[2].textContent) || 0;
+    let rejected = parseInt(stats[3].textContent) || 0;
+    if (action === 'approve') { pending--; approved++; }
+    if (action === 'reject') { pending--; rejected++; }
+    stats[1].textContent = Math.max(0, pending);
+    stats[2].textContent = approved;
+    stats[3].textContent = rejected;
+  }
 }
 
 function seekTo(time) {
@@ -253,7 +446,166 @@ setInterval(() => {
   });
 }, 300);
 
+// ── Export XML Functions (AV-13) ──────────────────────
+
+function openExportModal(defaultAction) {
+  const modal = document.getElementById('exportModal');
+  modal.classList.add('active');
+
+  // Populate cut IDs dropdown
+  const select = document.getElementById('exportCutId');
+  select.innerHTML = cutsData.map(c =>
+    `<option value="${c.id}">${c.id} — ${c.category} (${c.engagementScore})</option>`
+  ).join('');
+
+  updateExportSummary();
+}
+
+function closeExportModal() {
+  document.getElementById('exportModal').classList.remove('active');
+}
+
+function updateExportSummary() {
+  const mode = document.getElementById('exportMode').value;
+  const cutIdRow = document.getElementById('cutIdRow');
+  cutIdRow.style.display = mode === 'single' ? 'block' : 'none';
+
+  const summary = document.getElementById('exportSummary');
+  const approved = cutsData.filter(c => c.status === 'approved').length;
+  const total = cutsData.length;
+
+  if (mode === 'approved') {
+    const dur = cutsData.filter(c => c.status === 'approved').reduce((s, c) => s + (c.duration || 0), 0);
+    summary.innerHTML = `<strong>${approved}</strong> cortes aprovados<br>Duracao total: <strong>${fmtDur(dur)}</strong><br>Formato: Timeline sequencial com markers`;
+  } else if (mode === 'single') {
+    summary.innerHTML = `Exportar <strong>1 corte individual</strong> como sequencia XML<br>Selecione o corte acima`;
+  } else if (mode === 'final') {
+    summary.innerHTML = `Timeline final montada: <strong>HOOK + DESENVOLVIMENTO + CTA</strong><br>Inclui fade in/out e remocao de silencio`;
+  }
+}
+
+function fmtDur(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${String(sec).padStart(2, '0')}`;
+}
+
+async function doExport(type) {
+  const editor = document.getElementById('exportEditor').value;
+  const mode = document.getElementById('exportMode').value;
+  const cutId = mode === 'single' ? document.getElementById('exportCutId').value : undefined;
+
+  if (mode === 'single' && !cutId) {
+    toast('Selecione um corte', 'err');
+    return;
+  }
+
+  try {
+    let url, body;
+    if (type === 'package') {
+      url = `${API}/api/projects/${PID}/export/package`;
+      body = { mode, editor, cutId };
+    } else {
+      url = `${API}/api/projects/${PID}/export/xml/${editor}`;
+      body = { mode, cutId };
+    }
+
+    const res = await F(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const filename = data.filename;
+      toast(`Exportado: ${filename}`, 'ok');
+      closeExportModal();
+
+      // Trigger download
+      const dlUrl = `${API}/api/projects/${PID}/export/download/${encodeURIComponent(filename)}`;
+      const a = document.createElement('a');
+      a.href = dlUrl;
+      a.download = filename;
+      a.click();
+
+      // Reload export history
+      loadExportHistory();
+    } else {
+      const err = await res.text();
+      toast(`Erro: ${err}`, 'err');
+    }
+  } catch (e) {
+    toast(`Erro de conexao: ${e.message}`, 'err');
+  }
+}
+
+async function exportSingleCut(cutId) {
+  const editor = 'premiere'; // default for quick export
+  try {
+    const res = await F(`${API}/api/projects/${PID}/export/xml/${editor}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'single', cutId }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      toast(`XML gerado: ${data.filename}`, 'ok');
+      const dlUrl = `${API}/api/projects/${PID}/export/download/${encodeURIComponent(data.filename)}`;
+      const a = document.createElement('a');
+      a.href = dlUrl;
+      a.download = data.filename;
+      a.click();
+    } else {
+      toast('Erro ao exportar', 'err');
+    }
+  } catch (e) {
+    toast(`Erro: ${e.message}`, 'err');
+  }
+}
+
+async function loadExportHistory() {
+  try {
+    const res = await F(`${API}/api/projects/${PID}/export/history`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const exports = data.exports || [];
+    if (exports.length === 0) return;
+
+    let existing = document.getElementById('exportHistorySection');
+    if (!existing) {
+      existing = document.createElement('div');
+      existing.id = 'exportHistorySection';
+      existing.className = 'export-history';
+      document.querySelector('.container').appendChild(existing);
+    }
+
+    existing.innerHTML = `<h3>Historico de Exports (${exports.length})</h3>` +
+      exports.slice(-10).reverse().map(e =>
+        `<div class="export-history-item">
+          <span class="info">${e.editor} · ${e.mode} · ${e.clipCount} clips · ${new Date(e.createdAt).toLocaleString('pt-BR')}</span>
+          <span class="dl" onclick="downloadExport('${e.filename}')">Baixar</span>
+        </div>`
+      ).join('');
+  } catch (e) { /* ignore */ }
+}
+
+function downloadExport(filename) {
+  const dlUrl = `${API}/api/projects/${PID}/export/download/${encodeURIComponent(filename)}`;
+  const a = document.createElement('a');
+  a.href = dlUrl;
+  a.download = filename;
+  a.click();
+}
+
+// Close modal on overlay click
+document.getElementById('exportModal').addEventListener('click', function(e) {
+  if (e.target === this) closeExportModal();
+});
+
 load();
+// Load export history after initial load
+setTimeout(loadExportHistory, 1500);
 </script>
 </body>
 </html>

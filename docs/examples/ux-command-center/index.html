@@ -3981,8 +3981,184 @@
             <span class="arrow">&#x2192;</span>
           </div>
         </div>
+
+        <!-- radar-editorial -->
+        <div class="agent-card" data-status="active" data-squad="no" onclick="showView('agent-radar-editorial')" style="border-color:rgba(251,191,36,0.3)">
+          <div class="agent-card-header">
+            <span class="agent-card-icon">&#x1F4E1;</span>
+            <div class="agent-card-identity">
+              <span class="agent-card-persona">Radar</span>
+              <span class="agent-card-tag">@radar-editorial</span>
+            </div>
+            <span style="color:#34d399" id="radar-status-dot">&#x2B24;</span>
+          </div>
+          <p class="agent-card-title">Radar Editorial dos Experts</p>
+          <div style="font-size:11px;color:#64748b;margin:4px 0">Monitoramento diario dos calendarios editoriais</div>
+          <div class="agent-card-stats">
+            <span class="agent-card-stat"><strong id="radar-expert-count">0</strong> experts</span>
+            <span class="agent-card-stat"><strong id="radar-last-run">Nunca</strong></span>
+          </div>
+          <div class="agent-card-footer">
+            <span class="status-label" style="color:#fbbf24">Operacional</span>
+            <span class="arrow">&#x2192;</span>
+          </div>
+        </div>
       </div>
     </section>
+
+    <!-- ═══════════ AGENT DETAIL: Radar Editorial ═══════════ -->
+    <section class="dashboard-section wrap view-section" id="agent-radar-editorial">
+      <div class="agent-detail-page">
+        <a href="#" class="back-btn" onclick="showView('painel-agentes'); event.preventDefault();">&#8592; Voltar ao Painel</a>
+        <div style="display:flex;align-items:center;gap:16px;margin:20px 0">
+          <span style="font-size:48px">&#x1F4E1;</span>
+          <div>
+            <h2 style="font-family:'Chakra Petch';font-size:28px;margin:0">RADAR EDITORIAL DOS EXPERTS</h2>
+            <p style="color:#64748b;font-size:13px;margin:4px 0">Monitoramento diario dos calendarios editoriais via Notion</p>
+          </div>
+        </div>
+
+        <!-- Status cards -->
+        <div class="agents-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:24px" id="radar-status-cards">
+          <div class="squad-card" style="text-align:center">
+            <div style="font-size:11px;color:#64748b;text-transform:uppercase">Status</div>
+            <div style="font-size:20px;font-weight:700;color:#34d399" id="radar-detail-status">Carregando...</div>
+          </div>
+          <div class="squad-card" style="text-align:center">
+            <div style="font-size:11px;color:#64748b;text-transform:uppercase">Ultima Execucao</div>
+            <div style="font-size:14px;font-weight:600;color:#e2e8f0" id="radar-detail-lastrun">-</div>
+          </div>
+          <div class="squad-card" style="text-align:center">
+            <div style="font-size:11px;color:#64748b;text-transform:uppercase">Proximo Envio</div>
+            <div style="font-size:14px;font-weight:600;color:#38bdf8" id="radar-detail-nextrun">08:00</div>
+          </div>
+          <div class="squad-card" style="text-align:center">
+            <div style="font-size:11px;color:#64748b;text-transform:uppercase">Telegram</div>
+            <div style="font-size:14px;font-weight:600" id="radar-detail-telegram">-</div>
+          </div>
+          <div class="squad-card" style="text-align:center">
+            <div style="font-size:11px;color:#64748b;text-transform:uppercase">Experts</div>
+            <div style="font-size:24px;font-weight:700;color:#fbbf24" id="radar-detail-experts">0</div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div style="display:flex;gap:12px;margin-bottom:24px">
+          <button class="btn-primary" onclick="runRadarNow()" id="radar-run-btn" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0a0e1a">Executar Agora</button>
+          <button class="btn-secondary" onclick="loadRadarStatus()">Atualizar</button>
+        </div>
+
+        <!-- Experts list -->
+        <div class="squad-card" style="margin-bottom:24px">
+          <h3 style="font-family:'Chakra Petch';font-size:16px;color:#fbbf24;margin-bottom:12px">Experts Monitorados</h3>
+          <div id="radar-experts-list" style="font-size:13px;color:#94a3b8">Carregando...</div>
+        </div>
+
+        <!-- Config info -->
+        <div class="squad-card" style="margin-bottom:24px">
+          <h3 style="font-family:'Chakra Petch';font-size:16px;color:#38bdf8;margin-bottom:12px">Configuracao</h3>
+          <div style="font-size:12px;color:#64748b;font-family:'JetBrains Mono';line-height:2">
+            <div>CLI: <span style="color:#e2e8f0">node bin/radar-editorial.js</span></div>
+            <div>Adicionar expert: <span style="color:#e2e8f0">node bin/radar-editorial.js add-expert "Nome" "database-id"</span></div>
+            <div>Configurar Notion: <span style="color:#e2e8f0">node bin/radar-editorial.js set-notion "secret_xxx"</span></div>
+            <div>Configurar Telegram: <span style="color:#e2e8f0">node bin/radar-editorial.js set-telegram "bot-token" "chat-id"</span></div>
+          </div>
+        </div>
+
+        <!-- History -->
+        <div class="squad-card">
+          <h3 style="font-family:'Chakra Petch';font-size:16px;color:#a78bfa;margin-bottom:12px">Historico</h3>
+          <div id="radar-history-list" style="font-size:13px;color:#94a3b8">Carregando...</div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+    async function loadRadarStatus() {
+      try {
+        const res = await authFetch('/api/radar/status');
+        const data = await res.json();
+
+        // Update card on main panel
+        const countEl = document.getElementById('radar-expert-count');
+        if (countEl) countEl.textContent = data.expertCount || 0;
+        const lastEl = document.getElementById('radar-last-run');
+        if (lastEl) lastEl.textContent = data.lastRun ? new Date(data.lastRun).toLocaleDateString('pt-BR') : 'Nunca';
+        const dotEl = document.getElementById('radar-status-dot');
+        if (dotEl) dotEl.style.color = data.status === 'online' ? '#34d399' : '#ef4444';
+
+        // Update detail page
+        const ds = document.getElementById('radar-detail-status');
+        if (ds) { ds.textContent = data.status === 'online' ? 'Online' : 'Offline'; ds.style.color = data.status === 'online' ? '#34d399' : '#ef4444'; }
+        const dl = document.getElementById('radar-detail-lastrun');
+        if (dl) dl.textContent = data.lastRun ? new Date(data.lastRun).toLocaleString('pt-BR') : 'Nunca';
+        const dn = document.getElementById('radar-detail-nextrun');
+        if (dn) dn.textContent = data.nextRun ? new Date(data.nextRun).toLocaleString('pt-BR') : `${String(data.schedule.hour).padStart(2,'0')}:${String(data.schedule.minute).padStart(2,'0')}`;
+        const de = document.getElementById('radar-detail-experts');
+        if (de) de.textContent = data.expertCount;
+        const dt = document.getElementById('radar-detail-telegram');
+        if (dt) { dt.textContent = data.telegram.configured ? 'Ativo' : 'Nao configurado'; dt.style.color = data.telegram.configured ? '#34d399' : '#f87171'; }
+
+        // Experts list
+        const el = document.getElementById('radar-experts-list');
+        if (el) {
+          if (data.experts.length === 0) {
+            el.innerHTML = '<div style="color:#475569">Nenhum expert configurado. Use o CLI para adicionar.</div>';
+          } else {
+            el.innerHTML = data.experts.map(e => `
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1e293b">
+                <div>
+                  <span style="color:#e2e8f0;font-weight:600">${e.name}</span>
+                  <span style="color:#475569;margin-left:8px">${e.calendarName}</span>
+                </div>
+                <span style="color:${e.status === 'active' ? '#34d399' : '#64748b'};font-size:11px;text-transform:uppercase">${e.status}</span>
+              </div>
+            `).join('');
+          }
+        }
+
+        // History
+        const hl = document.getElementById('radar-history-list');
+        if (hl && data.recentHistory) {
+          if (data.recentHistory.length === 0) {
+            hl.innerHTML = '<div style="color:#475569">Nenhum relatorio no historico.</div>';
+          } else {
+            hl.innerHTML = data.recentHistory.map(h => `
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #1e293b">
+                <span style="color:#e2e8f0">${h.date ? new Date(h.date).toLocaleDateString('pt-BR') : '?'}</span>
+                <span style="color:#94a3b8">${h.totalContents} conteudos</span>
+                <span style="color:${h.alerts > 0 ? '#fbbf24' : '#34d399'}">${h.alerts} alertas</span>
+                <span style="color:${h.status === 'ok' ? '#34d399' : '#ef4444'}">${h.status}</span>
+              </div>
+            `).join('');
+          }
+        }
+      } catch (err) {
+        console.log('Radar status error:', err);
+      }
+    }
+
+    async function runRadarNow() {
+      const btn = document.getElementById('radar-run-btn');
+      btn.disabled = true; btn.textContent = 'Executando...';
+      try {
+        const res = await authFetch('/api/radar/run', { method: 'POST' });
+        const data = await res.json();
+        if (data.ok) {
+          btn.textContent = 'Enviado!'; btn.style.background = '#34d399';
+          setTimeout(() => { btn.disabled = false; btn.textContent = 'Executar Agora'; btn.style.background = ''; loadRadarStatus(); }, 3000);
+        } else {
+          btn.textContent = data.error || 'Erro'; btn.style.background = '#ef4444';
+          setTimeout(() => { btn.disabled = false; btn.textContent = 'Executar Agora'; btn.style.background = ''; }, 3000);
+        }
+      } catch (err) {
+        btn.textContent = err.message; btn.disabled = false;
+      }
+    }
+
+    // Load radar status on page load
+    setTimeout(loadRadarStatus, 1000);
+    </script>
 
     <!-- ═══════════ AGENT DETAIL: Sentinel ═══════════ -->
     <section class="dashboard-section wrap view-section" id="agent-autoavaliativo">
@@ -5389,11 +5565,7 @@
         </div>
       </div>
 
-      <!-- Action buttons -->
-      <div style="display:flex;gap:16px;">
-        <button class="av-sector-btn" style="font-size:14px;padding:12px 32px;letter-spacing:2px;" onclick="showView('av-pipeline'); event.preventDefault();">EXECUTAR PIPELINE</button>
-        <button class="av-sector-btn" style="font-size:14px;padding:12px 32px;letter-spacing:2px;border-color:rgba(251,191,36,0.4);color:#fbbf24;" onclick="showView('av-aprovacao'); event.preventDefault();">IR PARA APROVACAO</button>
-      </div>
+      <!-- Action buttons removed — pipeline is accessed via /av -->
     </section>
 
     <!-- Motor Escala de Criativos (detail view) -->
@@ -5705,17 +5877,17 @@
         loadSentinelReports();
       }
 
-      // AV Navigation: load iframes on demand
+      // AV Navigation: load iframes on demand (cache-bust + token)
       if (viewId === 'av-pipeline') {
         const frame = document.getElementById('av-pipeline-frame');
         if (frame && (frame.src === 'about:blank' || frame.src.endsWith('about:blank'))) {
-          frame.src = 'av-live-pipeline.html';
+          frame.src = 'av-live-pipeline.html?v=' + Date.now();
         }
       }
       if (viewId === 'av-aprovacao') {
         const frame = document.getElementById('av-aprovacao-frame');
         if (frame && frame.src === 'about:blank') {
-          frame.src = 'av-approve.html';
+          frame.src = 'av-approve.html?v=' + Date.now();
         }
       }
     }
@@ -6486,7 +6658,7 @@
         for (const p of paths) {
           if (reports.length > 0) break;
           try {
-            const resp = await fetch(p);
+            const resp = await authFetch(p);
             if (resp.ok) reports = await resp.json();
           } catch (e) { /* try next */ }
         }
@@ -6498,7 +6670,7 @@
           ];
           for (const p of histPaths) {
             try {
-              const resp = await fetch(p);
+              const resp = await authFetch(p);
               if (resp.ok) { reports = await resp.json(); break; }
             } catch (e) { /* try next */ }
           }
@@ -6747,6 +6919,27 @@
     // AV API base — use localhost:3456 when served from there, fallback for file://
     const AV_API = (window.location.protocol === 'file:') ? 'http://localhost:3456' : window.location.origin;
 
+    // Auth token helper — sends Bearer token on all requests (Cloudflare-safe)
+    // Fetch token from server on page load (cookie auth gets us the token)
+    (async () => {
+      try {
+        const r = await fetch('/api/token', { credentials: 'same-origin' });
+        if (r.ok) { const d = await r.json(); if (d.token) sessionStorage.setItem('aios_token', d.token); }
+      } catch (e) { /* server offline or no cookie */ }
+    })();
+    function getAuthToken() { return sessionStorage.getItem('aios_token') || ''; }
+    function authHeaders(extra = {}) {
+      const t = getAuthToken();
+      const h = { ...extra };
+      if (t) h['Authorization'] = 'Bearer ' + t;
+      return h;
+    }
+    function authFetch(url, opts = {}) {
+      opts.headers = authHeaders(opts.headers || {});
+      opts.credentials = 'same-origin';
+      return fetch(url, opts);
+    }
+
     // Show file name when selected
     function avFileSelected(input) {
       const file = input.files[0];
@@ -6762,6 +6955,7 @@
       const file = fileInput.files[0];
       const link = linkInput.value.trim();
 
+      // Link has priority over file — if both, use link
       if (!file && !link) {
         alert('Cole um link do Google Drive ou selecione um video do computador.');
         return;
@@ -6769,28 +6963,39 @@
 
       let source = link;
 
-      // If file selected, upload first
-      if (file) {
+      // If file selected AND no link provided, upload first
+      if (file && !link) {
+        // Check size limit (2GB)
+        const MAX_SIZE = 2 * 1024 * 1024 * 1024;
+        if (file.size > MAX_SIZE) {
+          alert('Arquivo muito grande (' + (file.size / 1048576).toFixed(0) + 'MB). Limite: 2GB por video.');
+          return;
+        }
         try {
-          document.getElementById('av-cortes-file-name').textContent = 'Enviando ' + file.name + '...';
-          const uploadRes = await fetch(AV_API + '/api/upload?filename=' + encodeURIComponent(file.name), {
+          const nameEl = document.getElementById('av-cortes-file-name');
+          nameEl.textContent = 'Enviando ' + file.name + ' (' + (file.size / 1048576).toFixed(1) + 'MB)...';
+          const uploadRes = await authFetch(AV_API + '/api/upload?filename=' + encodeURIComponent(file.name), {
             method: 'POST',
             headers: { 'Content-Type': 'application/octet-stream' },
             body: file,
           });
+          if (!uploadRes.ok) {
+            const errText = await uploadRes.text();
+            throw new Error('Servidor retornou ' + uploadRes.status + ': ' + errText.substring(0, 200));
+          }
           const uploadData = await uploadRes.json();
           if (!uploadData.path) throw new Error(uploadData.error || 'Upload failed');
           source = uploadData.path;
-          document.getElementById('av-cortes-file-name').textContent = 'Upload completo: ' + file.name;
+          nameEl.textContent = 'Upload completo: ' + file.name;
         } catch (err) {
-          alert('Erro no upload: ' + err.message);
+          alert('Erro no upload: ' + err.message + '\n\nDica: use um link do Google Drive para evitar problemas de upload.');
           return;
         }
       }
 
       // Navigate to pipeline — pass source via URL param so iframe auto-starts
       const frame = document.getElementById('av-pipeline-frame');
-      frame.src = 'av-live-pipeline.html?source=' + encodeURIComponent(source);
+      frame.src = 'av-live-pipeline.html?source=' + encodeURIComponent(source) + '&v=' + Date.now();
       showView('av-pipeline');
     }
 
@@ -6798,7 +7003,7 @@
     let secInterval = null;
     async function loadSecurityData() {
       try {
-        const res = await fetch(AV_API + '/api/security');
+        const res = await authFetch(AV_API + '/api/security');
         const data = await res.json();
 
         // Status banner

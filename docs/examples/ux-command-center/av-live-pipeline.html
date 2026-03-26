@@ -99,11 +99,34 @@
 <div class="container">
   <!-- Input -->
   <div class="input-section">
+    <div style="font-size:11px;color:#475569;margin-bottom:8px;font-family:'JetBrains Mono'">YouTube · Google Drive · Link direto · Caminho local</div>
     <div class="input-row">
-      <input type="text" class="input-field" id="sourceInput" placeholder="Cole o link do Google Drive ou caminho do video..." />
+      <input type="text" class="input-field" id="sourceInput" placeholder="Cole o link do YouTube, Google Drive, ou caminho do video..." />
       <button class="btn" id="startBtn" onclick="startPipeline()">Iniciar Analise</button>
     </div>
+    <div id="sourcePreview" style="margin-top:8px;font-size:12px;display:none"></div>
   </div>
+  <script>
+    document.getElementById('sourceInput').addEventListener('input', function(e) {
+      const val = e.target.value.trim();
+      const preview = document.getElementById('sourcePreview');
+      if (/youtube\.com\/(watch|shorts|live)|youtu\.be\//i.test(val)) {
+        preview.style.display = 'block';
+        preview.innerHTML = '<span style="color:#f87171;font-weight:600">YouTube</span> <span style="color:#64748b">— sera baixado via yt-dlp (melhor qualidade mp4)</span>';
+      } else if (val.includes('drive.google.com')) {
+        preview.style.display = 'block';
+        preview.innerHTML = '<span style="color:#fbbf24;font-weight:600">Google Drive</span> <span style="color:#64748b">— download direto</span>';
+      } else if (val.startsWith('http')) {
+        preview.style.display = 'block';
+        preview.innerHTML = '<span style="color:#38bdf8;font-weight:600">URL direta</span> <span style="color:#64748b">— download do video</span>';
+      } else if (val.length > 3) {
+        preview.style.display = 'block';
+        preview.innerHTML = '<span style="color:#34d399;font-weight:600">Arquivo local</span> <span style="color:#64748b">— copia para o projeto</span>';
+      } else {
+        preview.style.display = 'none';
+      }
+    });
+  </script>
 
   <!-- Pipeline Steps -->
   <div class="pipeline-section">
@@ -150,8 +173,16 @@
 
   <!-- Downloads -->
   <div class="cuts-section" id="downloads-section" style="display:none;">
-    <h2 style="color:#34d399;">Videos Prontos para Download</h2>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h2 style="color:#34d399;margin:0;">Videos Prontos para Download</h2>
+      <div style="display:flex;gap:8px;" id="export-bar">
+        <button onclick="exportXml('premiere','approved')" style="background:#1e293b;color:#a78bfa;border:1px solid rgba(167,139,250,.3);padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">XML Premiere</button>
+        <button onclick="exportXml('davinci','approved')" style="background:#1e293b;color:#38bdf8;border:1px solid rgba(56,189,248,.3);padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">XML DaVinci</button>
+        <button onclick="exportPackage('premiere','approved')" style="background:#1e293b;color:#34d399;border:1px solid rgba(52,211,153,.3);padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">ZIP Pacote</button>
+      </div>
+    </div>
     <div id="downloads-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;"></div>
+    <div id="export-history" style="margin-top:16px;display:none;"></div>
   </div>
 
   <!-- Log -->
@@ -165,6 +196,29 @@
 const API = window.location.origin;
 let currentProjectId = null;
 let eventSource = null;
+
+// Auth token — from URL param (iframe), parent sessionStorage, or own sessionStorage
+function getAuthToken() {
+  const urlToken = new URLSearchParams(window.location.search).get('token');
+  if (urlToken) { sessionStorage.setItem('aios_token', urlToken); return urlToken; }
+  try { const pt = window.parent.sessionStorage.getItem('aios_token'); if (pt) return pt; }
+  catch (e) { /* cross-origin */ }
+  return sessionStorage.getItem('aios_token') || '';
+}
+// Wrapper to always include auth credentials + Bearer token
+const F = (url, opts = {}) => {
+  const t = getAuthToken();
+  opts.credentials = 'same-origin';
+  opts.headers = { ...(opts.headers || {}) };
+  if (t) opts.headers['Authorization'] = 'Bearer ' + t;
+  return fetch(url, opts);
+};
+// Append token to URL for SSE (EventSource can't send headers)
+function authUrl(url) {
+  const t = getAuthToken();
+  if (!t) return url;
+  return url + (url.includes('?') ? '&' : '?') + 'token=' + t;
+}
 
 function log(msg, type = '') {
   const el = document.getElementById('log');
@@ -206,7 +260,7 @@ async function startPipeline() {
   await new Promise(r => setTimeout(r, 500));
 
   try {
-    const res = await fetch(`${API}/api/pipeline/start`, {
+    const res = await F(`${API}/api/pipeline/start`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ source }),
@@ -224,7 +278,7 @@ async function startPipeline() {
 function connectSSE(projectId) {
   if (eventSource) eventSource.close();
 
-  eventSource = new EventSource(`${API}/api/pipeline/${projectId}/events`);
+  eventSource = new EventSource(authUrl(`${API}/api/pipeline/${projectId}/events`));
 
   eventSource.addEventListener('step', (e) => {
     const data = JSON.parse(e.data);
@@ -321,38 +375,89 @@ function connectSSE(projectId) {
     }
   });
 
+  let sseErrorCount = 0;
   eventSource.onerror = () => {
-    log('Conexao SSE perdida. Reconectando...', 'error');
+    sseErrorCount++;
+    // Only log first disconnect, not every reconnect attempt
+    if (sseErrorCount === 1) {
+      log('Conexao SSE perdida. Reconectando automaticamente...', 'error');
+    }
+    // EventSource auto-reconnects. After 5 failures, start polling
+    if (sseErrorCount >= 5 && currentProjectId) {
+      eventSource.close();
+      log('Alternando para polling...', 'info');
+      startPolling(currentProjectId);
+    }
   };
+
+  eventSource.onopen = () => {
+    if (sseErrorCount > 0) {
+      log('Conexao SSE restaurada', 'success');
+      sseErrorCount = 0;
+    }
+  };
+}
+
+// Polling fallback when SSE keeps disconnecting
+let pollingInterval = null;
+function startPolling(projectId) {
+  if (pollingInterval) return;
+  pollingInterval = setInterval(async () => {
+    try {
+      const res = await F(`${API}/api/projects/${projectId}/cuts`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.suggestedCuts && data.suggestedCuts.length > 0) {
+          showCuts(data.suggestedCuts);
+          updateStep('cuts', 'done', `${data.suggestedCuts.length} cortes`);
+          setStatus('done', 'Completo');
+          clearInterval(pollingInterval);
+          pollingInterval = null;
+          log('Pipeline completo (via polling)', 'success');
+          document.getElementById('startBtn').disabled = false;
+          document.getElementById('finalizeBtn').style.display = '';
+        }
+      }
+    } catch { /* ignore polling errors */ }
+  }, 5000);
 }
 
 function showCuts(cuts) {
   const section = document.getElementById('cuts-section');
   section.classList.add('visible');
   const grid = document.getElementById('cuts-grid');
-  grid.innerHTML = cuts.map(cut => `
+  grid.innerHTML = cuts.map(cut => {
+    const excerpt = cut.transcriptExcerpt || cut.objective || '';
+    const videoSrc = cut.previewFile ? `${API}/api/projects/${currentProjectId}/preview/${cut.previewFile}` : `${API}/api/projects/${currentProjectId}/video#t=${(cut.start||0).toFixed(1)},${(cut.end||0).toFixed(1)}`;
+    const scoreVal = cut.engagementScore || 0;
+    const scoreColor = scoreVal >= 8 ? '#34d399' : scoreVal >= 5 ? '#fbbf24' : '#f87171';
+    return `
     <div class="cut-card" id="cut-${cut.id}">
       <div class="cut-header">
         <span class="cut-id">${cut.id}</span>
         <span class="cut-category cat-${cut.category}">${cut.category}</span>
       </div>
       <div class="cut-meta">
-        ${cut.duration ? cut.duration.toFixed(0) + 's' : ''} · ${cut.format || ''} · <span class="cut-score">Score: ${cut.engagementScore}</span>
+        ${cut.duration ? cut.duration.toFixed(0) + 's' : ''} · ${cut.format || ''} · <span style="color:${scoreColor};font-weight:700;">Score: ${scoreVal}</span>
       </div>
-      <div style="font-size:11px;color:#64748b;">${(cut.platform||[]).join(', ')}</div>
-      ${cut.objective ? `<div style="font-size:12px;color:#94a3b8;margin-top:6px;">${cut.objective}</div>` : ''}
+      <div style="font-size:11px;color:#64748b;margin:4px 0">${(cut.platform||[]).join(', ')} · ${cut.source || ''}</div>
+      <div style="font-size:13px;color:#cbd5e1;margin:8px 0;line-height:1.5;font-weight:500">"${excerpt.slice(0,120)}${excerpt.length>120?'...':''}"</div>
+      ${cut.objective ? `<div style="font-size:11px;color:#475569;font-style:italic">${cut.objective}</div>` : ''}
+      <div style="margin-top:8px;border-radius:6px;overflow:hidden;background:#000">
+        <video controls preload="none" src="${videoSrc}" style="width:100%;max-height:180px;display:block" poster="${API}/api/projects/${currentProjectId}/video#t=${(cut.start||0).toFixed(1)}"></video>
+      </div>
       <div class="cut-actions">
         <button class="btn-approve" onclick="approveCut('${cut.id}')">Aprovar</button>
         <button class="btn-reject" onclick="rejectCut('${cut.id}')">Rejeitar</button>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 async function approveCut(cutId) {
   if (!currentProjectId) return;
   try {
-    await fetch(`${API}/api/projects/${currentProjectId}/approve`, {
+    await F(`${API}/api/projects/${currentProjectId}/approve`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ cutId }),
@@ -367,7 +472,7 @@ async function approveCut(cutId) {
 async function rejectCut(cutId) {
   if (!currentProjectId) return;
   try {
-    await fetch(`${API}/api/projects/${currentProjectId}/reject`, {
+    await F(`${API}/api/projects/${currentProjectId}/reject`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ cutId }),
@@ -381,7 +486,7 @@ async function rejectCut(cutId) {
 async function approveAllCuts() {
   if (!currentProjectId) return;
   try {
-    await fetch(`${API}/api/projects/${currentProjectId}/approve`, {
+    await F(`${API}/api/projects/${currentProjectId}/approve`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ all: true }),
@@ -407,7 +512,7 @@ async function finalizeAndExport() {
   setStatus('running', 'Finalizando...');
 
   try {
-    const res = await fetch(`${API}/api/projects/${currentProjectId}/finalize`, {
+    const res = await F(`${API}/api/projects/${currentProjectId}/finalize`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     });
@@ -432,6 +537,10 @@ async function finalizeAndExport() {
         </div>
         <div style="font-size:13px;color:#94a3b8;margin-bottom:4px;">${f.duration ? f.duration.toFixed(0) + 's' : ''} ${f.hookPrepended ? '(com hook 5s)' : ''}</div>
         <a href="${API}${f.downloadUrl}" download style="display:inline-block;margin-top:12px;background:linear-gradient(135deg,#34d399,#38bdf8);color:#0a0e1a;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;text-align:center;width:100%;">BAIXAR VIDEO</a>
+        <div style="display:flex;gap:6px;margin-top:8px;">
+          <button onclick="exportXml('premiere','single','${f.cutId}')" style="flex:1;background:#1e293b;color:#a78bfa;border:1px solid rgba(167,139,250,.2);padding:6px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;">XML Premiere</button>
+          <button onclick="exportXml('davinci','single','${f.cutId}')" style="flex:1;background:#1e293b;color:#38bdf8;border:1px solid rgba(56,189,248,.2);padding:6px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;">XML DaVinci</button>
+        </div>
       </div>
     `).join('');
 
@@ -444,6 +553,85 @@ async function finalizeAndExport() {
     btn.disabled = false;
     btn.textContent = 'FINALIZAR E EXPORTAR';
   }
+}
+
+// ── XML Export Functions (AV-13) ──────────────────────
+
+async function exportXml(editor, mode, cutId) {
+  if (!currentProjectId) { log('Nenhum projeto ativo', 'error'); return; }
+  try {
+    log(`Exportando XML ${editor} (${mode})...`, 'info');
+    const body = { mode };
+    if (cutId) body.cutId = cutId;
+    const res = await F(`${API}/api/projects/${currentProjectId}/export/xml/${editor}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      log(`XML gerado: ${data.filename} (${data.clipCount} clips)`, 'success');
+      // Trigger download
+      const a = document.createElement('a');
+      a.href = `${API}/api/projects/${currentProjectId}/export/download/${encodeURIComponent(data.filename)}`;
+      a.download = data.filename;
+      a.click();
+      loadExportHistory();
+    } else {
+      const err = await res.text();
+      log(`Erro ao exportar XML: ${err}`, 'error');
+    }
+  } catch (e) {
+    log(`Erro: ${e.message}`, 'error');
+  }
+}
+
+async function exportPackage(editor, mode, cutId) {
+  if (!currentProjectId) { log('Nenhum projeto ativo', 'error'); return; }
+  try {
+    log(`Gerando pacote ZIP ${editor} (${mode})...`, 'info');
+    const body = { mode, editor };
+    if (cutId) body.cutId = cutId;
+    const res = await F(`${API}/api/projects/${currentProjectId}/export/package`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      log(`Pacote gerado: ${data.filename} (${data.sizeFormatted})`, 'success');
+      const a = document.createElement('a');
+      a.href = `${API}/api/projects/${currentProjectId}/export/download/${encodeURIComponent(data.filename)}`;
+      a.download = data.filename;
+      a.click();
+      loadExportHistory();
+    } else {
+      const err = await res.text();
+      log(`Erro ao gerar pacote: ${err}`, 'error');
+    }
+  } catch (e) {
+    log(`Erro: ${e.message}`, 'error');
+  }
+}
+
+async function loadExportHistory() {
+  if (!currentProjectId) return;
+  try {
+    const res = await F(`${API}/api/projects/${currentProjectId}/export/history`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const exports = data.exports || [];
+    if (exports.length === 0) return;
+    const el = document.getElementById('export-history');
+    el.style.display = 'block';
+    el.innerHTML = `<h3 style="font-family:'Chakra Petch';font-size:13px;color:#64748b;margin-bottom:8px;">Historico de Exports (${exports.length})</h3>` +
+      exports.slice(-5).reverse().map(e =>
+        `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#1e293b;border-radius:6px;margin-bottom:4px;font-size:11px;">
+          <span style="color:#94a3b8;">${e.editor} · ${e.mode} · ${e.clipCount} clips · ${new Date(e.createdAt).toLocaleString('pt-BR')}</span>
+          <a href="${API}/api/projects/${currentProjectId}/export/download/${encodeURIComponent(e.filename)}" download style="color:#a78bfa;text-decoration:underline;cursor:pointer;">Baixar</a>
+        </div>`
+      ).join('');
+  } catch (e) { /* ignore */ }
 }
 
 // Auto-start if ?source= is in URL (called from parent dashboard)
