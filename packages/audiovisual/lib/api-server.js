@@ -679,6 +679,65 @@ async function handleRequest(req, res) {
       return;
     }
 
+    // ── Chunked Upload (bypass Cloudflare 100MB limit) ──────
+    if (pathname === '/api/upload/init' && method === 'POST') {
+      const body = await parseBody(req);
+      const uploadId = require('crypto').randomUUID();
+      const tmpDir = path.join(require('os').tmpdir(), 'aiox-av-uploads', uploadId);
+      fs.mkdirSync(tmpDir, { recursive: true });
+      const filename = (body.filename || `upload-${Date.now()}.mp4`).replace(/[^a-zA-Z0-9._-]/g, '_');
+      fs.writeFileSync(path.join(tmpDir, 'meta.json'), JSON.stringify({
+        filename, totalSize: body.totalSize || 0, totalChunks: body.totalChunks || 0, received: 0
+      }));
+      return sendJSON(res, { uploadId, filename }, 201);
+    }
+
+    if (pathname === '/api/upload/chunk' && method === 'POST') {
+      const parsed2 = url.parse(req.url, true);
+      const uploadId = parsed2.query.uploadId;
+      const chunkIndex = parseInt(parsed2.query.chunk || '0', 10);
+      if (!uploadId) return sendError(res, 'uploadId required');
+      const tmpDir = path.join(require('os').tmpdir(), 'aiox-av-uploads', uploadId);
+      if (!fs.existsSync(tmpDir)) return sendError(res, 'Upload session not found', 404);
+      const chunkPath = path.join(tmpDir, `chunk-${String(chunkIndex).padStart(5, '0')}`);
+      const ws = fs.createWriteStream(chunkPath);
+      req.pipe(ws);
+      ws.on('finish', () => {
+        const meta = JSON.parse(fs.readFileSync(path.join(tmpDir, 'meta.json'), 'utf8'));
+        meta.received = (meta.received || 0) + 1;
+        fs.writeFileSync(path.join(tmpDir, 'meta.json'), JSON.stringify(meta));
+        sendJSON(res, { ok: true, chunk: chunkIndex, received: meta.received });
+      });
+      ws.on('error', (err) => sendError(res, `Chunk upload failed: ${err.message}`, 500));
+      return;
+    }
+
+    if (pathname === '/api/upload/complete' && method === 'POST') {
+      const body = await parseBody(req);
+      const uploadId = body.uploadId;
+      if (!uploadId) return sendError(res, 'uploadId required');
+      const tmpDir = path.join(require('os').tmpdir(), 'aiox-av-uploads', uploadId);
+      if (!fs.existsSync(tmpDir)) return sendError(res, 'Upload session not found', 404);
+      const meta = JSON.parse(fs.readFileSync(path.join(tmpDir, 'meta.json'), 'utf8'));
+      // Assemble chunks into final file
+      const outputDir = path.join(require('os').tmpdir(), 'aiox-av-uploads');
+      const finalPath = path.join(outputDir, meta.filename);
+      const ws = fs.createWriteStream(finalPath);
+      const chunks = fs.readdirSync(tmpDir).filter(f => f.startsWith('chunk-')).sort();
+      for (const chunk of chunks) {
+        const data = fs.readFileSync(path.join(tmpDir, chunk));
+        ws.write(data);
+      }
+      ws.end();
+      ws.on('finish', () => {
+        // Cleanup chunks
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+        sendJSON(res, { uploaded: true, path: finalPath, filename: meta.filename }, 201);
+      });
+      ws.on('error', (err) => sendError(res, `Assembly failed: ${err.message}`, 500));
+      return;
+    }
+
     // ── Security Status ─────────────────────────────
     if (pathname === '/api/security' && method === 'GET') {
       return sendJSON(res, getSecurityStatus());

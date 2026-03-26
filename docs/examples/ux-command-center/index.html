@@ -6987,23 +6987,74 @@
         }
         try {
           const nameEl = document.getElementById('av-cortes-file-name');
-          nameEl.innerHTML = 'Enviando ' + file.name + ' (' + (file.size / 1048576).toFixed(1) + 'MB)...' +
-            '<div style="margin-top:6px;color:#fbbf24;font-size:12px;">&#9881; Preparando seu video...</div>';
-          const uploadRes = await authFetch(AV_API + '/api/upload?filename=' + encodeURIComponent(file.name), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/octet-stream' },
-            body: file,
-          });
-          if (!uploadRes.ok) {
-            const errText = await uploadRes.text();
-            throw new Error('Servidor retornou ' + uploadRes.status + ': ' + errText.substring(0, 200));
+          const sizeMB = (file.size / 1048576).toFixed(1);
+          const CHUNK_SIZE = 50 * 1024 * 1024; // 50MB chunks (under Cloudflare 100MB limit)
+
+          if (file.size > CHUNK_SIZE) {
+            // ── Chunked upload for large files ──
+            nameEl.innerHTML = 'Iniciando upload em partes... ' + file.name + ' (' + sizeMB + 'MB)' +
+              '<div id="upload-progress" style="margin-top:8px;">' +
+              '<div style="background:#1e293b;border-radius:6px;height:6px;overflow:hidden;margin-bottom:4px;">' +
+              '<div id="upload-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#a78bfa,#38bdf8);border-radius:6px;transition:width 0.3s;"></div></div>' +
+              '<div id="upload-pct" style="color:#38bdf8;font-size:11px;">0%</div></div>';
+
+            const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+
+            // 1. Init
+            const initRes = await authFetch(AV_API + '/api/upload/init', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ filename: file.name, totalSize: file.size, totalChunks }),
+            });
+            const initData = await initRes.json();
+            if (!initData.uploadId) throw new Error(initData.error || 'Init failed');
+
+            // 2. Send chunks
+            for (var i = 0; i < totalChunks; i++) {
+              var start = i * CHUNK_SIZE;
+              var end = Math.min(start + CHUNK_SIZE, file.size);
+              var chunk = file.slice(start, end);
+              var chunkRes = await authFetch(
+                AV_API + '/api/upload/chunk?uploadId=' + initData.uploadId + '&chunk=' + i, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/octet-stream' },
+                  body: chunk,
+                });
+              if (!chunkRes.ok) throw new Error('Chunk ' + i + ' falhou');
+              var pct = Math.round(((i + 1) / totalChunks) * 100);
+              document.getElementById('upload-bar').style.width = pct + '%';
+              document.getElementById('upload-pct').textContent = pct + '% — parte ' + (i + 1) + ' de ' + totalChunks;
+            }
+
+            // 3. Complete
+            var completeRes = await authFetch(AV_API + '/api/upload/complete', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ uploadId: initData.uploadId }),
+            });
+            var completeData = await completeRes.json();
+            if (!completeData.path) throw new Error(completeData.error || 'Assembly failed');
+            source = completeData.path;
+          } else {
+            // ── Single upload for small files ──
+            nameEl.innerHTML = 'Enviando ' + file.name + ' (' + sizeMB + 'MB)...' +
+              '<div style="margin-top:6px;color:#fbbf24;font-size:12px;">&#9881; Preparando seu video...</div>';
+            const uploadRes = await authFetch(AV_API + '/api/upload?filename=' + encodeURIComponent(file.name), {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/octet-stream' },
+              body: file,
+            });
+            if (!uploadRes.ok) {
+              const errText = await uploadRes.text();
+              throw new Error('Servidor retornou ' + uploadRes.status + ': ' + errText.substring(0, 200));
+            }
+            const uploadData = await uploadRes.json();
+            if (!uploadData.path) throw new Error(uploadData.error || 'Upload failed');
+            source = uploadData.path;
           }
-          const uploadData = await uploadRes.json();
-          if (!uploadData.path) throw new Error(uploadData.error || 'Upload failed');
-          source = uploadData.path;
           nameEl.textContent = 'Upload completo: ' + file.name;
         } catch (err) {
-          alert('Erro no upload: ' + err.message + '\n\nDica: use um link do Google Drive para evitar problemas de upload.');
+          alert('Erro no upload: ' + err.message);
           return;
         }
       }
