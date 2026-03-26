@@ -378,31 +378,32 @@ async function startPipeline() {
   var urlSizeMB = new URLSearchParams(window.location.search).get('sizeMB');
   initEstimate(urlSizeMB ? parseFloat(urlSizeMB) : 200);
 
-  // Start pipeline FIRST, then connect SSE
+  // Fire-and-forget: start pipeline via beacon (never fails from browser perspective)
   try {
-    const res = await F(`${API}/api/pipeline/start`, {
+    navigator.sendBeacon(
+      `${API}/api/pipeline/start`,
+      new Blob([JSON.stringify({ source })], { type: 'application/json' })
+    );
+    log('Pipeline enviado ao servidor', 'success');
+  } catch (e) {
+    // Fallback to fetch if sendBeacon not supported
+    F(`${API}/api/pipeline/start`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ source }),
-    });
-    const data = await res.json();
-    log(data.message || 'Pipeline aceito', 'success');
-  } catch (err) {
-    // Non-fatal: pipeline may already be running, SSE/polling will pick it up
-    log('Iniciando pipeline...', 'info');
+    }).catch(() => {});
+    log('Pipeline enviado', 'info');
   }
 
-  // Connect SSE after POST to avoid connection contention
-  await new Promise(r => setTimeout(r, 300));
+  // Connect SSE
+  await new Promise(r => setTimeout(r, 500));
   connectSSE('pending');
 
-  // Also start polling immediately as backup
+  // Always start polling as backup after 3s
   setTimeout(() => {
-    if (!currentProjectId) {
-      log('Ativando polling de seguranca...', 'info');
-      startPolling('pending');
-    }
-  }, 5000);
+    log('Polling ativado', 'info');
+    startPolling(currentProjectId || 'pending');
+  }, 3000);
 }
 
 function connectSSE(projectId) {
