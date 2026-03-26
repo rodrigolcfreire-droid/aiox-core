@@ -141,6 +141,26 @@
     </div>
   </div>
 
+  <!-- Time Estimate Panel -->
+  <div id="time-estimate-panel" style="display:none;background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:16px 24px;margin-bottom:24px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span id="time-icon" style="font-size:20px;">&#9201;</span>
+        <div>
+          <div id="time-label" style="font-size:13px;color:#94a3b8;">Tempo estimado</div>
+          <div id="time-value" style="font-family:'Chakra Petch';font-size:22px;font-weight:700;color:#38bdf8;">--</div>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div id="time-step-msg" style="font-size:13px;color:#a78bfa;font-weight:500;">Preparando...</div>
+        <div id="time-progress-text" style="font-size:11px;color:#64748b;margin-top:2px;"></div>
+      </div>
+    </div>
+    <div style="margin-top:12px;background:#1e293b;border-radius:6px;height:6px;overflow:hidden;">
+      <div id="time-progress-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#a78bfa,#38bdf8);border-radius:6px;transition:width 0.5s ease;"></div>
+    </div>
+  </div>
+
   <!-- Results -->
   <div class="results">
     <div class="result-card" id="card-metadata">
@@ -233,11 +253,111 @@ function setStatus(status, text) {
   el.textContent = text;
 }
 
+// ── Time Estimation Engine ─────────────────────────────────
+const PIPELINE_STEPS = ['ingest', 'transcribe', 'segment', 'describe', 'cuts', 'suggestions'];
+const STEP_WEIGHTS = { ingest: 30, transcribe: 25, segment: 15, describe: 10, cuts: 15, suggestions: 5 };
+const STEP_MESSAGES = {
+  ingest:     'Preparando seu video...',
+  transcribe: 'Transcrevendo o audio...',
+  segment:    'Analisando estrutura do conteudo...',
+  describe:   'Aplicando inteligencia artificial...',
+  cuts:       'Gerando cortes inteligentes...',
+  suggestions:'Finalizando sugestoes...',
+};
+let estimateState = { startTime: 0, totalEstimate: 0, currentStep: '', stepsCompleted: 0, interval: null };
+
+function formatEst(seconds) {
+  if (seconds <= 0) return '--';
+  if (seconds < 60) return '~' + Math.ceil(seconds) + 's';
+  var m = Math.floor(seconds / 60);
+  var s = Math.ceil(seconds % 60);
+  return '~' + m + 'min ' + (s > 0 ? s + 's' : '');
+}
+
+function initEstimate(sizeMB) {
+  var factor = 2.0; // IA completa
+  estimateState.totalEstimate = Math.max(sizeMB * factor, 15); // min 15s
+  estimateState.startTime = Date.now();
+  estimateState.stepsCompleted = 0;
+  estimateState.currentStep = '';
+  var panel = document.getElementById('time-estimate-panel');
+  panel.style.display = 'block';
+  updateEstimateUI();
+  if (estimateState.interval) clearInterval(estimateState.interval);
+  estimateState.interval = setInterval(updateEstimateUI, 3000);
+}
+
+function updateEstimateUI() {
+  var elapsed = (Date.now() - estimateState.startTime) / 1000;
+  var pctDone = 0;
+  for (var i = 0; i < estimateState.stepsCompleted && i < PIPELINE_STEPS.length; i++) {
+    pctDone += STEP_WEIGHTS[PIPELINE_STEPS[i]] || 0;
+  }
+  // If currently running a step, add partial credit
+  if (estimateState.currentStep && estimateState.stepsCompleted < PIPELINE_STEPS.length) {
+    pctDone += (STEP_WEIGHTS[estimateState.currentStep] || 0) * 0.3;
+  }
+  pctDone = Math.min(pctDone, 99);
+
+  // Dynamic recalc: if we have progress, extrapolate
+  var remaining;
+  if (pctDone > 5 && elapsed > 2) {
+    var totalProjected = (elapsed / pctDone) * 100;
+    remaining = Math.max(totalProjected - elapsed, 0);
+  } else {
+    remaining = estimateState.totalEstimate - elapsed;
+  }
+
+  var bar = document.getElementById('time-progress-bar');
+  var val = document.getElementById('time-value');
+  var lbl = document.getElementById('time-label');
+  var icon = document.getElementById('time-icon');
+  var stepMsg = document.getElementById('time-step-msg');
+  var progText = document.getElementById('time-progress-text');
+
+  bar.style.width = Math.round(pctDone) + '%';
+  val.textContent = formatEst(remaining);
+  progText.textContent = Math.round(pctDone) + '% concluido';
+
+  if (pctDone <= 0) {
+    lbl.textContent = 'Tempo estimado';
+    icon.textContent = '\u23F1';
+  } else {
+    lbl.textContent = 'Tempo restante';
+    icon.textContent = '\u2699';
+  }
+
+  stepMsg.textContent = STEP_MESSAGES[estimateState.currentStep] || 'Processando...';
+}
+
+function onStepUpdate(step, status) {
+  if (status === 'running') {
+    estimateState.currentStep = step;
+  } else if (status === 'done') {
+    var idx = PIPELINE_STEPS.indexOf(step);
+    if (idx >= 0) estimateState.stepsCompleted = idx + 1;
+    estimateState.currentStep = PIPELINE_STEPS[idx + 1] || '';
+  }
+  updateEstimateUI();
+
+  // Pipeline complete
+  if (estimateState.stepsCompleted >= PIPELINE_STEPS.length) {
+    if (estimateState.interval) clearInterval(estimateState.interval);
+    document.getElementById('time-value').textContent = 'Concluido!';
+    document.getElementById('time-label').textContent = 'Pipeline completo';
+    document.getElementById('time-icon').textContent = '\u2705';
+    document.getElementById('time-step-msg').textContent = 'Todos os passos finalizados';
+    document.getElementById('time-progress-bar').style.width = '100%';
+    document.getElementById('time-progress-text').textContent = '100% concluido';
+  }
+}
+
 function updateStep(step, status, detail) {
   const el = document.getElementById(`step-${step}`);
   if (!el) return;
   el.className = `step ${status}`;
   if (detail) document.getElementById(`detail-${step}`).textContent = detail;
+  onStepUpdate(step, status);
 }
 
 async function startPipeline() {
@@ -252,6 +372,10 @@ async function startPipeline() {
   document.querySelectorAll('.step').forEach(s => { s.className = 'step'; });
   document.querySelectorAll('.result-card').forEach(c => c.classList.remove('visible'));
   document.getElementById('cuts-section').classList.remove('visible');
+
+  // Init time estimate — use sizeMB from URL if available, else default
+  var urlSizeMB = new URLSearchParams(window.location.search).get('sizeMB');
+  initEstimate(urlSizeMB ? parseFloat(urlSizeMB) : 200);
 
   // Connect SSE FIRST, then start pipeline — ensures we catch all events
   connectSSE('pending');
@@ -311,6 +435,10 @@ function connectSSE(projectId) {
           Bitrate: <strong>${data.metadata.bitrate || 'N/A'}</strong>
         </div>`;
       if (data.projectId) currentProjectId = data.projectId;
+      // Refine estimate with real duration
+      if (data.metadata.durationSeconds) {
+        estimateState.totalEstimate = Math.max(data.metadata.durationSeconds * 0.8, 15);
+      }
     }
 
     // Show description
@@ -368,6 +496,14 @@ function connectSSE(projectId) {
       setStatus('waiting', 'Aguardando Aprovacao');
       log('Analise completa! Aguardando sua aprovacao.', 'success');
       document.getElementById('startBtn').disabled = false;
+      // Stop estimate timer
+      if (estimateState.interval) clearInterval(estimateState.interval);
+      document.getElementById('time-value').textContent = 'Concluido!';
+      document.getElementById('time-label').textContent = 'Analise completa';
+      document.getElementById('time-icon').textContent = '\u2705';
+      document.getElementById('time-step-msg').textContent = 'Pronto para aprovacao';
+      document.getElementById('time-progress-bar').style.width = '100%';
+      document.getElementById('time-progress-text').textContent = '100% concluido';
     } else if (data.status === 'error') {
       setStatus('error', 'Erro');
       log('Erro: ' + data.error, 'error');
