@@ -14,6 +14,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 const { getProjectDir, loadProject } = require('./project');
 const { loadEnergyData, HOOK_DURATION } = require('./energy-detector');
+const { removeSilence } = require('./silence-remover');
 
 const FORMAT_MAP = {
   '9:16': { width: 1080, height: 1920 },
@@ -142,6 +143,44 @@ function prependEnergyHook(projectId, cutPath, outputPath, format) {
   return true;
 }
 
+/**
+ * Apply fade in (0.5s) and fade out (0.8s) transitions.
+ * Uses both video and audio fades for smooth entry/exit.
+ */
+function applyFadeTransitions(inputPath, outputPath, fadeIn = 0.5, fadeOut = 0.8) {
+  // Get duration for fade out calculation
+  const durCmd = [
+    'ffprobe', '-v', 'error',
+    '-show_entries', 'format=duration',
+    '-of', 'default=noprint_wrappers=1:nokey=1',
+    `"${inputPath}"`,
+  ].join(' ');
+
+  let duration;
+  try {
+    duration = parseFloat(execSync(durCmd, { stdio: 'pipe', timeout: 30000 }).toString().trim());
+  } catch {
+    throw new Error('Cannot get duration for fade');
+  }
+
+  const fadeOutStart = Math.max(0, duration - fadeOut);
+  const cmd = [
+    'ffmpeg', '-y',
+    '-i', `"${inputPath}"`,
+    '-vf', `"fade=t=in:st=0:d=${fadeIn},fade=t=out:st=${fadeOutStart}:d=${fadeOut}"`,
+    '-af', `"afade=t=in:st=0:d=${fadeIn},afade=t=out:st=${fadeOutStart}:d=${fadeOut}"`,
+    '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23',
+    '-c:a', 'aac', '-b:a', '128k',
+    `"${outputPath}"`,
+  ].join(' ');
+
+  try {
+    execSync(cmd, { stdio: 'pipe', timeout: 300000 });
+  } catch (err) {
+    throw new Error(`Fade transition failed: ${err.message}`);
+  }
+}
+
 function assemblecut(projectId, cutId) {
   const projectDir = getProjectDir(projectId);
   const cutsDir = path.join(projectDir, 'cuts');
@@ -182,6 +221,24 @@ function assemblecut(projectId, cutId) {
 
   // Cleanup raw
   if (fs.existsSync(rawPath)) fs.unlinkSync(rawPath);
+
+  // Remove silence from main cut before assembly
+  const cleanPath = path.join(productionDir, `clean-${cutId}.mp4`);
+  let silenceResult = null;
+  try {
+    silenceResult = removeSilence(scaledPath, cleanPath);
+    if (silenceResult.removed > 0) {
+      console.log(`  Silence removed: ${silenceResult.removed}s stripped`);
+      // Replace scaled with clean version
+      fs.unlinkSync(scaledPath);
+      fs.renameSync(cleanPath, scaledPath);
+    } else if (fs.existsSync(cleanPath)) {
+      fs.unlinkSync(cleanPath);
+    }
+  } catch (err) {
+    console.log(`  Silence removal skipped: ${err.message}`);
+    if (fs.existsSync(cleanPath)) fs.unlinkSync(cleanPath);
+  }
 
   // Build segments list: HOOK + DEVELOPMENT + CTA
   const segments = [];
@@ -246,7 +303,19 @@ function assemblecut(projectId, cutId) {
     }
   }
 
-  const finalDuration = cut.duration + extraDuration;
+  // Apply fade in/out for polished transitions
+  const fadedPath = path.join(productionDir, `faded-${cutId}.mp4`);
+  try {
+    applyFadeTransitions(assembledPath, fadedPath);
+    fs.unlinkSync(assembledPath);
+    fs.renameSync(fadedPath, assembledPath);
+    console.log(`  Fade in/out applied`);
+  } catch (err) {
+    console.log(`  Fade skipped: ${err.message}`);
+    if (fs.existsSync(fadedPath)) fs.unlinkSync(fadedPath);
+  }
+
+  const finalDuration = cut.duration + extraDuration - (silenceResult ? silenceResult.removed : 0);
   const parts = [hookPrepended ? 'hook' : null, 'dev', ctaAppended ? 'cta' : null].filter(Boolean).join(' + ');
   console.log(`  Assembled: ${cutId}.mp4 [${parts}] ${finalDuration.toFixed(0)}s`);
 
@@ -257,6 +326,7 @@ function assemblecut(projectId, cutId) {
     duration: finalDuration,
     hookPrepended,
     ctaAppended,
+    silenceRemoved: silenceResult ? silenceResult.removed : 0,
   };
 }
 
@@ -335,20 +405,22 @@ function generateCutPreviews(projectId) {
         const hookReencoded = path.join(previewsDir, `tmp-hook-${cut.id}.mp4`);
         const segReencoded = path.join(previewsDir, `tmp-re-${cut.id}.mp4`);
 
-        const reencode = (input, output) => {
+        const reencodePreview = (input, output) => {
           const cmd = [
             'ffmpeg', '-y',
             '-i', `"${input}"`,
-            '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '28',
-            '-c:a', 'aac', '-b:a', '128k',
+            '-vf', '"scale=-2:720"',
+            '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '32',
+            '-c:a', 'aac', '-b:a', '96k', '-ar', '44100',
+            '-r', '24',
             '-movflags', '+faststart',
             `"${output}"`,
           ].join(' ');
           execSync(cmd, { stdio: 'pipe', timeout: 120000 });
         };
 
-        reencode(energyData.hookPath, hookReencoded);
-        reencode(cutSegPath, segReencoded);
+        reencodePreview(energyData.hookPath, hookReencoded);
+        reencodePreview(cutSegPath, segReencoded);
 
         // Concat hook + cut
         concatenateSegments([hookReencoded, segReencoded], previewPath);
@@ -358,8 +430,24 @@ function generateCutPreviews(projectId) {
           if (fs.existsSync(tmp)) fs.unlinkSync(tmp);
         }
       } else {
-        // No hook — segment is the preview
-        fs.renameSync(cutSegPath, previewPath);
+        // No hook — re-encode to 720p for lightweight preview
+        const cmd = [
+          'ffmpeg', '-y',
+          '-i', `"${cutSegPath}"`,
+          '-vf', '"scale=-2:720"',
+          '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '32',
+          '-c:a', 'aac', '-b:a', '96k', '-ar', '44100',
+          '-r', '24',
+          '-movflags', '+faststart',
+          `"${previewPath}"`,
+        ].join(' ');
+        try {
+          execSync(cmd, { stdio: 'pipe', timeout: 120000 });
+          if (fs.existsSync(cutSegPath)) fs.unlinkSync(cutSegPath);
+        } catch {
+          // Fallback: use raw segment
+          fs.renameSync(cutSegPath, previewPath);
+        }
       }
 
       // Update cut data with preview reference
@@ -383,6 +471,7 @@ module.exports = {
   rescaleVideo,
   concatenateSegments,
   prependEnergyHook,
+  applyFadeTransitions,
   assemblecut,
   assembleAllApproved,
   generateCutPreviews,

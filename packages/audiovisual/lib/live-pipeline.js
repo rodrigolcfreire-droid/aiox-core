@@ -16,7 +16,7 @@ const { segmentVideo } = require('./segment');
 const { generateSmartCuts } = require('./smart-cuts');
 const { generateDescription } = require('./describe');
 const { generateSuggestions } = require('./suggestions');
-const { getProjectDir } = require('./project');
+const { getProjectDir, loadProject } = require('./project');
 const { detectEnergy } = require('./energy-detector');
 const { generateCutPreviews } = require('./assemble');
 const { detectHooksWithLLM, generateViralTitles, isLLMAvailable } = require('./llm-hooks');
@@ -90,29 +90,48 @@ async function runLivePipeline(source, options = {}) {
   }
 
   const pid = result.projectId;
+  const projectDir = getProjectDir(pid);
+
+  // Helper: check if a file exists and is non-empty
+  const hasCache = (relPath) => {
+    const fullPath = path.join(projectDir, relPath);
+    return fs.existsSync(fullPath) && fs.statSync(fullPath).size > 10;
+  };
 
   // Step 2: Transcribe
-  broadcast(pid, 'step', { step: 'transcribe', status: 'running', message: 'Transcrevendo audio...' });
-  try {
-    if (options.srt) {
-      importSRT(pid, options.srt);
-    } else {
-      await transcribeWithWhisper(pid);
-    }
-    const transcriptionPath = path.join(getProjectDir(pid), 'analysis', 'transcription.json');
+  const transcriptionPath = path.join(projectDir, 'analysis', 'transcription.json');
+  if (hasCache('analysis/transcription.json')) {
     const transcription = JSON.parse(fs.readFileSync(transcriptionPath, 'utf8'));
     broadcast(pid, 'step', {
       step: 'transcribe',
       status: 'done',
-      message: `${transcription.segments.length} segmentos, ${transcription.totalWords} palavras`,
+      message: `(cache) ${transcription.segments.length} segmentos, ${transcription.totalWords} palavras`,
       segments: transcription.segments.length,
       words: transcription.totalWords,
       language: transcription.language,
     });
-  } catch (err) {
-    broadcast(pid, 'step', { step: 'transcribe', status: 'error', message: err.message });
-    broadcast(pid, 'pipeline', { status: 'error', step: 'transcribe', error: err.message });
-    throw err;
+  } else {
+    broadcast(pid, 'step', { step: 'transcribe', status: 'running', message: 'Transcrevendo audio...' });
+    try {
+      if (options.srt) {
+        importSRT(pid, options.srt);
+      } else {
+        await transcribeWithWhisper(pid);
+      }
+      const transcription = JSON.parse(fs.readFileSync(transcriptionPath, 'utf8'));
+      broadcast(pid, 'step', {
+        step: 'transcribe',
+        status: 'done',
+        message: `${transcription.segments.length} segmentos, ${transcription.totalWords} palavras`,
+        segments: transcription.segments.length,
+        words: transcription.totalWords,
+        language: transcription.language,
+      });
+    } catch (err) {
+      broadcast(pid, 'step', { step: 'transcribe', status: 'error', message: err.message });
+      broadcast(pid, 'pipeline', { status: 'error', step: 'transcribe', error: err.message });
+      throw err;
+    }
   }
 
   // Step 2b: LLM Hook Detection (AV-11)
@@ -134,51 +153,85 @@ async function runLivePipeline(source, options = {}) {
   }
 
   // Step 3: Segment
-  broadcast(pid, 'step', { step: 'segment', status: 'running', message: 'Segmentando em blocos...' });
-  try {
-    const segments = segmentVideo(pid);
+  if (hasCache('analysis/segments.json')) {
+    const segData = JSON.parse(fs.readFileSync(path.join(projectDir, 'analysis', 'segments.json'), 'utf8'));
     broadcast(pid, 'step', {
       step: 'segment',
       status: 'done',
-      message: `${segments.totalBlocks} blocos identificados`,
-      blocks: segments.blocks,
-      totalBlocks: segments.totalBlocks,
+      message: `(cache) ${segData.totalBlocks} blocos identificados`,
+      blocks: segData.blocks,
+      totalBlocks: segData.totalBlocks,
     });
-  } catch (err) {
-    broadcast(pid, 'step', { step: 'segment', status: 'error', message: err.message });
-    throw err;
+  } else {
+    broadcast(pid, 'step', { step: 'segment', status: 'running', message: 'Segmentando em blocos...' });
+    try {
+      const segments = segmentVideo(pid);
+      broadcast(pid, 'step', {
+        step: 'segment',
+        status: 'done',
+        message: `${segments.totalBlocks} blocos identificados`,
+        blocks: segments.blocks,
+        totalBlocks: segments.totalBlocks,
+      });
+    } catch (err) {
+      broadcast(pid, 'step', { step: 'segment', status: 'error', message: err.message });
+      throw err;
+    }
   }
 
   // Step 4: Describe
-  broadcast(pid, 'step', { step: 'describe', status: 'running', message: 'Descrevendo conteudo...' });
-  try {
-    const desc = generateDescription(pid);
+  if (hasCache('analysis/description.json')) {
+    const desc = JSON.parse(fs.readFileSync(path.join(projectDir, 'analysis', 'description.json'), 'utf8'));
     broadcast(pid, 'step', {
       step: 'describe',
       status: 'done',
-      message: desc.summary.slice(0, 100),
-      keywords: desc.keywords.slice(0, 5).map(k => k.word),
-      topics: desc.topics.slice(0, 5),
+      message: `(cache) ${(desc.summary || '').slice(0, 100)}`,
+      keywords: (desc.keywords || []).slice(0, 5).map(k => k.word),
+      topics: (desc.topics || []).slice(0, 5),
       suggestedTitles: desc.suggestedTitles,
     });
-  } catch (err) {
-    broadcast(pid, 'step', { step: 'describe', status: 'error', message: err.message });
+  } else {
+    broadcast(pid, 'step', { step: 'describe', status: 'running', message: 'Descrevendo conteudo...' });
+    try {
+      const desc = generateDescription(pid);
+      broadcast(pid, 'step', {
+        step: 'describe',
+        status: 'done',
+        message: desc.summary.slice(0, 100),
+        keywords: desc.keywords.slice(0, 5).map(k => k.word),
+        topics: desc.topics.slice(0, 5),
+        suggestedTitles: desc.suggestedTitles,
+      });
+    } catch (err) {
+      broadcast(pid, 'step', { step: 'describe', status: 'error', message: err.message });
+    }
   }
 
   // Step 5: Smart Cuts
-  broadcast(pid, 'step', { step: 'cuts', status: 'running', message: 'Gerando cortes inteligentes...' });
-  try {
-    const cuts = generateSmartCuts(pid);
+  if (hasCache('cuts/suggested-cuts.json')) {
+    const cutsData = JSON.parse(fs.readFileSync(path.join(projectDir, 'cuts', 'suggested-cuts.json'), 'utf8'));
     broadcast(pid, 'step', {
       step: 'cuts',
       status: 'done',
-      message: `${cuts.totalSuggested} cortes sugeridos`,
-      cuts: cuts.suggestedCuts,
-      totalSuggested: cuts.totalSuggested,
+      message: `(cache) ${cutsData.totalSuggested} cortes sugeridos`,
+      cuts: cutsData.suggestedCuts,
+      totalSuggested: cutsData.totalSuggested,
     });
-  } catch (err) {
-    broadcast(pid, 'step', { step: 'cuts', status: 'error', message: err.message });
-    throw err;
+  } else {
+    broadcast(pid, 'step', { step: 'cuts', status: 'running', message: 'Gerando cortes inteligentes...' });
+    try {
+      const cuts = generateSmartCuts(pid);
+      broadcast(pid, 'step', {
+        step: 'cuts',
+        status: 'done',
+        message: `${cuts.totalSuggested} cortes sugeridos`,
+        cuts: cuts.suggestedCuts,
+        totalSuggested: cuts.totalSuggested,
+      });
+    } catch (err) {
+      broadcast(pid, 'step', { step: 'cuts', status: 'error', message: err.message });
+      throw err;
+    }
   }
 
   // Step 5a: LLM Viral Titles (AV-11)
@@ -200,32 +253,54 @@ async function runLivePipeline(source, options = {}) {
   }
 
   // Step 5b: Energy Detection (AV-10)
-  broadcast(pid, 'step', { step: 'energy', status: 'running', message: 'Detectando pico de energia...' });
-  try {
-    const energy = detectEnergy(pid);
+  // Skip for long videos (>600s) — FFmpeg volumedetect blocks the event loop
+  const MAX_ENERGY_DURATION = 600; // 10 minutes
+  const projectMeta = loadProject(pid);
+  const videoDuration = projectMeta.duration || result.metadata?.durationSeconds || 0;
+
+  if (videoDuration > MAX_ENERGY_DURATION) {
     broadcast(pid, 'step', {
       step: 'energy',
-      status: 'done',
-      message: `Pico em ${energy.peakWindow.start}s (${energy.peakWindow.meanVolume.toFixed(1)} dB)`,
-      peakWindow: energy.peakWindow,
+      status: 'skipped',
+      message: `Energy detection pulada (video ${Math.floor(videoDuration / 60)}min > limite 10min). Use o CLI para rodar offline.`,
     });
-  } catch (err) {
-    broadcast(pid, 'step', { step: 'energy', status: 'error', message: err.message });
+  } else {
+    broadcast(pid, 'step', { step: 'energy', status: 'running', message: 'Detectando pico de energia...' });
+    try {
+      const energy = detectEnergy(pid);
+      broadcast(pid, 'step', {
+        step: 'energy',
+        status: 'done',
+        message: `Pico em ${energy.peakWindow.start}s (${energy.peakWindow.meanVolume.toFixed(1)} dB)`,
+        peakWindow: energy.peakWindow,
+      });
+    } catch (err) {
+      broadcast(pid, 'step', { step: 'energy', status: 'error', message: err.message });
+    }
   }
 
   // Step 5c: Generate Previews (AV-10)
-  broadcast(pid, 'step', { step: 'previews', status: 'running', message: 'Gerando previews com hook...' });
-  try {
-    const previews = generateCutPreviews(pid);
+  // Also skip for long videos — previews use FFmpeg per cut
+  if (videoDuration > MAX_ENERGY_DURATION) {
     broadcast(pid, 'step', {
       step: 'previews',
-      status: 'done',
-      message: `${previews.total} previews gerados${previews.hookIncluded ? ' (com hook)' : ''}`,
-      total: previews.total,
-      hookIncluded: previews.hookIncluded,
+      status: 'skipped',
+      message: `Previews pulados (video longo). Use o CLI para gerar offline.`,
     });
-  } catch (err) {
-    broadcast(pid, 'step', { step: 'previews', status: 'error', message: err.message });
+  } else {
+    broadcast(pid, 'step', { step: 'previews', status: 'running', message: 'Gerando previews com hook...' });
+    try {
+      const previews = generateCutPreviews(pid);
+      broadcast(pid, 'step', {
+        step: 'previews',
+        status: 'done',
+        message: `${previews.total} previews gerados${previews.hookIncluded ? ' (com hook)' : ''}`,
+        total: previews.total,
+        hookIncluded: previews.hookIncluded,
+      });
+    } catch (err) {
+      broadcast(pid, 'step', { step: 'previews', status: 'error', message: err.message });
+    }
   }
 
   // Step 6: Suggestions

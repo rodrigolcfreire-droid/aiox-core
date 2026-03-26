@@ -15,6 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 const { loadProject, getProjectDir } = require('./project');
+const { classifyScenes } = require('./scene-detector');
 
 const PAUSE_THRESHOLD = 2.0; // seconds — gap that indicates a new block
 const MIN_BLOCK_DURATION = 5.0; // minimum block duration in seconds
@@ -171,18 +172,40 @@ function segmentVideo(projectId) {
     }
   }
 
-  // Split blocks that are too long
+  // Split blocks that are too long — recursively until all fit MAX_BLOCK_DURATION
+  function splitBlock(segments) {
+    if (segments.length <= 1) return [segments];
+    const duration = segments[segments.length - 1].end - segments[0].start;
+    if (duration <= MAX_BLOCK_DURATION) return [segments];
+
+    // Find best split point: largest gap near the middle
+    const midTime = segments[0].start + duration / 2;
+    let bestIdx = Math.floor(segments.length / 2);
+    let bestScore = -1;
+
+    // Search around the middle for a natural pause
+    const searchStart = Math.max(1, Math.floor(segments.length * 0.3));
+    const searchEnd = Math.min(segments.length - 1, Math.ceil(segments.length * 0.7));
+    for (let i = searchStart; i < searchEnd; i++) {
+      const gap = segments[i].start - segments[i - 1].end;
+      const distFromMid = Math.abs(segments[i].start - midTime);
+      // Prefer larger gaps closer to the middle
+      const score = gap * 2 - distFromMid / duration;
+      if (score > bestScore) {
+        bestScore = score;
+        bestIdx = i;
+      }
+    }
+
+    const left = segments.slice(0, bestIdx);
+    const right = segments.slice(bestIdx);
+    return [...splitBlock(left), ...splitBlock(right)];
+  }
+
   const finalBlocks = [];
   for (const block of mergedBlocks) {
-    const duration = block[block.length - 1].end - block[0].start;
-    if (duration > MAX_BLOCK_DURATION && block.length > 1) {
-      // Split in half
-      const mid = Math.floor(block.length / 2);
-      finalBlocks.push(block.slice(0, mid));
-      finalBlocks.push(block.slice(mid));
-    } else {
-      finalBlocks.push(block);
-    }
+    const parts = splitBlock(block);
+    finalBlocks.push(...parts);
   }
 
   // Build block objects
@@ -205,6 +228,39 @@ function segmentVideo(projectId) {
       segmentCount: blockSegments.length,
     };
   });
+
+  // Enrich blocks with visual scene type (fala vs tela)
+  // Skip for videos > 10min to avoid blocking the server too long
+  const sourceDir = path.join(projectDir, 'source');
+  if (transcription.totalDuration <= 600) {
+    try {
+      const sourceFiles = fs.readdirSync(sourceDir);
+      const videoFile = sourceFiles.find(f => /\.(mp4|mov|avi|mkv|webm|m4v)$/i.test(f));
+      if (videoFile) {
+        const videoPath = path.join(sourceDir, videoFile);
+        const scenes = classifyScenes(videoPath, transcription.totalDuration);
+        for (const block of blocks) {
+          const blockMid = (block.start + block.end) / 2;
+          const scene = scenes.find(s => blockMid >= s.start && blockMid < s.end);
+          block.sceneType = scene ? scene.type : 'fala';
+          block.sceneChangeRate = scene ? scene.changeRate : 0;
+        }
+        console.log(`  Scene detection: ${scenes.length} scenes classified`);
+      }
+    } catch (err) {
+      console.log(`  Scene detection skipped: ${err.message}`);
+      for (const block of blocks) {
+        block.sceneType = 'fala';
+        block.sceneChangeRate = 0;
+      }
+    }
+  } else {
+    console.log(`  Scene detection skipped: video too long (${Math.floor(transcription.totalDuration / 60)}min > 10min limit)`);
+    for (const block of blocks) {
+      block.sceneType = 'fala';
+      block.sceneChangeRate = 0;
+    }
+  }
 
   const result = {
     blocks,

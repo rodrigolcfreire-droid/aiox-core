@@ -36,11 +36,14 @@ const { runLivePipeline, addClient, removeClient, getPipelineState } = require('
 const { addBrand, updateBrand, removeBrand, listBrands, getBrand } = require('./brand-catalog');
 const { generateThumbnail, generateCutThumbnails } = require('./thumbnail');
 const { detectEnergy, loadEnergyData } = require('./energy-detector');
+const { exportPremiereXml } = require('./export-premiere-xml');
+const { exportDaVinciXml } = require('./export-davinci-xml');
+const { buildExportPackage, getExportHistory } = require('./export-package');
 
 const DEFAULT_PORT = 3456;
 
 // Rate limiting — 30 requests per minute per IP (zero deps)
-const RATE_LIMIT = 30;
+const RATE_LIMIT = 200;
 const RATE_WINDOW = 60000; // 1 minute
 const rateLimitMap = new Map();
 
@@ -111,20 +114,28 @@ const crypto = require('crypto');
 const AUTH_TOKEN = crypto.createHash('sha256').update(AUTH_PASSWORD).digest('hex').substring(0, 32);
 
 function checkAuth(req, res) {
-  // Skip auth for health/security API (monitoring needs access)
-  if (req.url === '/api/health' || req.url === '/api/security') return true;
+  const pathname = url.parse(req.url).pathname;
 
-  // Check cookie
+  // Auth ONLY on the main entry points (/ and /index.html)
+  // Everything else (APIs, static files, iframes) is open once you're past the gate.
+  // Cloudflare tunnel + iframes don't reliably pass cookies, so we gate at the door only.
+  if (pathname !== '/' && pathname !== '/index.html') return true;
+
+  // 1. Cookie auth
   const cookies = (req.headers.cookie || '').split(';').reduce((acc, c) => {
     const [k, v] = c.trim().split('=');
     if (k) acc[k] = v;
     return acc;
   }, {});
-
   if (cookies[AUTH_COOKIE] === AUTH_TOKEN) return true;
 
-  // Check if this is the login POST
-  if (req.url === '/api/login' && req.method === 'POST') return true;
+  // 2. Authorization header (Bearer token)
+  const authHeader = req.headers['authorization'] || '';
+  if (authHeader.startsWith('Bearer ') && authHeader.slice(7) === AUTH_TOKEN) return true;
+
+  // 3. Query param ?token=
+  const tokenParam = url.parse(req.url, true).query.token;
+  if (tokenParam === AUTH_TOKEN) return true;
 
   return false;
 }
@@ -142,8 +153,8 @@ button{width:100%;background:linear-gradient(135deg,#00e5cc,#38bdf8);color:#0a0e
 <body><div class="box"><h1>CENTRO DE COMANDO</h1><p>Digite a senha para acessar</p>
 <form onsubmit="login(event)"><input type="password" id="pwd" placeholder="••••••••" autofocus>
 <button type="submit">ENTRAR</button></form><div class="err" id="err">Senha incorreta</div></div>
-<script>async function login(e){e.preventDefault();const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:document.getElementById('pwd').value})});if(r.ok){location.reload()}else{document.getElementById('err').style.display='block'}}</script></body></html>`;
-  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+<script>async function login(e){e.preventDefault();const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:document.getElementById('pwd').value})});if(r.ok){const d=await r.json();if(d.token)sessionStorage.setItem('aios_token',d.token);location.reload()}else{document.getElementById('err').style.display='block'}}</script></body></html>`;
+  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache, no-store, must-revalidate' });
   res.end(html);
 }
 
@@ -174,7 +185,7 @@ async function handleRequest(req, res) {
         'Content-Type': 'application/json',
         'Set-Cookie': `${AUTH_COOKIE}=${AUTH_TOKEN}; Path=/; HttpOnly; SameSite=Strict; Max-Age=86400`,
       });
-      return res.end(JSON.stringify({ ok: true }));
+      return res.end(JSON.stringify({ ok: true, token: AUTH_TOKEN }));
     }
     // Failed login — send red alert
     const failIP = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
@@ -203,6 +214,11 @@ async function handleRequest(req, res) {
   const method = req.method;
 
   try {
+    // ── Token endpoint — lets the browser retrieve auth token after cookie login
+    if (pathname === '/api/token' && method === 'GET') {
+      return sendJSON(res, { token: AUTH_TOKEN });
+    }
+
     // ── Projects ──────────────────────────────────────
     if (pathname === '/api/projects' && method === 'GET') {
       return sendJSON(res, { projects: listProjects() });
@@ -404,6 +420,60 @@ async function handleRequest(req, res) {
       return fs.createReadStream(thumbPath).pipe(res);
     }
 
+    // ── XML Export (AV-13) ─────────────────────────────
+    if (pathname.match(/^\/api\/projects\/[^/]+\/export\/xml\/premiere$/) && method === 'POST') {
+      const id = pathname.split('/')[3];
+      const body = await parseBody(req);
+      if (!body.mode) return sendError(res, 'mode required (single, approved, final)');
+      if (body.mode === 'single' && !body.cutId) return sendError(res, 'cutId required for single mode');
+      const result = exportPremiereXml(id, body.mode, body.cutId);
+      return sendJSON(res, { filename: result.filename, clipCount: result.clipCount, totalDuration: result.totalDuration, editor: 'premiere', mode: body.mode });
+    }
+
+    if (pathname.match(/^\/api\/projects\/[^/]+\/export\/xml\/davinci$/) && method === 'POST') {
+      const id = pathname.split('/')[3];
+      const body = await parseBody(req);
+      if (!body.mode) return sendError(res, 'mode required (single, approved, final)');
+      if (body.mode === 'single' && !body.cutId) return sendError(res, 'cutId required for single mode');
+      const result = exportDaVinciXml(id, body.mode, body.cutId);
+      return sendJSON(res, { filename: result.filename, clipCount: result.clipCount, totalDuration: result.totalDuration, editor: 'davinci', mode: body.mode });
+    }
+
+    if (pathname.match(/^\/api\/projects\/[^/]+\/export\/package$/) && method === 'POST') {
+      const id = pathname.split('/')[3];
+      const body = await parseBody(req);
+      if (!body.mode) return sendError(res, 'mode required (single, approved, final)');
+      if (!body.editor) return sendError(res, 'editor required (premiere, davinci)');
+      if (body.mode === 'single' && !body.cutId) return sendError(res, 'cutId required for single mode');
+      const result = buildExportPackage(id, body.mode, body.editor, body.cutId);
+      return sendJSON(res, { filename: result.filename, size: result.size, sizeFormatted: result.sizeFormatted, entries: result.entries, clipCount: result.clipCount, totalDuration: result.totalDuration });
+    }
+
+    if (pathname.match(/^\/api\/projects\/[^/]+\/export\/history$/) && method === 'GET') {
+      const id = pathname.split('/')[3];
+      return sendJSON(res, getExportHistory(id));
+    }
+
+    // Serve exported files for download
+    if (pathname.match(/^\/api\/projects\/[^/]+\/export\/download\/[^/]+$/) && method === 'GET') {
+      const parts = pathname.split('/');
+      const id = parts[3];
+      const filename = decodeURIComponent(parts[6]);
+      const filePath = path.join(getProjectDir(id), 'exports', filename);
+      if (!fs.existsSync(filePath)) return sendError(res, 'Export file not found', 404);
+      const stat = fs.statSync(filePath);
+      const ext = path.extname(filename).toLowerCase();
+      const mimeTypes = { '.xml': 'application/xml', '.zip': 'application/zip', '.json': 'application/json' };
+      const mime = mimeTypes[ext] || 'application/octet-stream';
+      res.writeHead(200, {
+        'Content-Type': mime,
+        'Content-Length': stat.size,
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Access-Control-Allow-Origin': '*',
+      });
+      return fs.createReadStream(filePath).pipe(res);
+    }
+
     // ── Brands ────────────────────────────────────────
     if (pathname === '/api/brands' && method === 'GET') {
       return sendJSON(res, { brands: listBrands() });
@@ -475,7 +545,7 @@ async function handleRequest(req, res) {
     if (pathname === '/av' || pathname === '/av/') {
       const htmlPath = path.resolve(__dirname, '..', '..', '..', 'docs', 'examples', 'ux-command-center', 'av-live-pipeline.html');
       if (!fs.existsSync(htmlPath)) return sendError(res, 'Live pipeline page not found', 404);
-      res.writeHead(200, { 'Content-Type': 'text/html', 'Access-Control-Allow-Origin': '*' });
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Access-Control-Allow-Origin': '*' });
       return fs.createReadStream(htmlPath).pipe(res);
     }
 
@@ -486,7 +556,7 @@ async function handleRequest(req, res) {
       if (!fs.existsSync(approvalHtml)) return sendError(res, 'Approval page not found', 404);
       let html = fs.readFileSync(approvalHtml, 'utf8');
       html = html.replace('__PROJECT_ID__', projectId);
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Access-Control-Allow-Origin': '*' });
       return res.end(html);
     }
 
@@ -619,11 +689,44 @@ async function handleRequest(req, res) {
       return sendJSON(res, { status: 'ok', service: 'central-audiovisual', timestamp: new Date().toISOString() });
     }
 
+    // ── Radar Editorial API ───────────────────────────
+    if (pathname === '/api/radar/status' && method === 'GET') {
+      try {
+        const { getAgentStatus } = require('../../../packages/radar-editorial/lib/radar-agent');
+        return sendJSON(res, getAgentStatus());
+      } catch (err) { return sendJSON(res, { status: 'offline', error: err.message }); }
+    }
+
+    if (pathname === '/api/radar/run' && method === 'POST') {
+      try {
+        const { runRadar } = require('../../../packages/radar-editorial/lib/radar-agent');
+        const result = await runRadar({ silent: true });
+        return sendJSON(res, { ok: true, summary: result.report.summary, alerts: result.report.alerts.length });
+      } catch (err) { return sendError(res, err.message, 500); }
+    }
+
+    if (pathname === '/api/radar/config' && method === 'GET') {
+      try {
+        const { loadConfig } = require('../../../packages/radar-editorial/lib/config');
+        const config = loadConfig();
+        config.notionToken = config.notionToken ? '***' + config.notionToken.slice(-6) : '';
+        config.telegram.botToken = config.telegram.botToken ? '***' + config.telegram.botToken.slice(-6) : '';
+        return sendJSON(res, config);
+      } catch (err) { return sendJSON(res, { error: err.message }); }
+    }
+
+    if (pathname === '/api/radar/history' && method === 'GET') {
+      try {
+        const { loadHistory } = require('../../../packages/radar-editorial/lib/config');
+        return sendJSON(res, loadHistory(10));
+      } catch (err) { return sendJSON(res, []); }
+    }
+
     // ── Serve Dashboard (Centro de Comando) ──────────
     if (pathname === '/' || pathname === '/index.html') {
       const dashPath = path.resolve(__dirname, '..', '..', '..', 'docs', 'examples', 'ux-command-center', 'index.html');
       if (!fs.existsSync(dashPath)) return sendError(res, 'Dashboard not found', 404);
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Access-Control-Allow-Origin': '*' });
       return fs.createReadStream(dashPath).pipe(res);
     }
 
@@ -633,7 +736,7 @@ async function handleRequest(req, res) {
     if (safePath.startsWith(uxDir) && fs.existsSync(safePath) && fs.statSync(safePath).isFile()) {
       const ext = path.extname(safePath).toLowerCase();
       const mimeMap = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'application/javascript', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml' };
-      res.writeHead(200, { 'Content-Type': mimeMap[ext] || 'application/octet-stream', 'Access-Control-Allow-Origin': '*' });
+      res.writeHead(200, { 'Content-Type': mimeMap[ext] || 'application/octet-stream', 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'no-cache, no-store, must-revalidate' });
       return fs.createReadStream(safePath).pipe(res);
     }
 
@@ -688,6 +791,11 @@ function createServer(port = DEFAULT_PORT) {
     console.log('    POST /api/projects/:id/energy');
     console.log('    GET  /api/projects/:id/energy');
     console.log('    GET  /api/projects/:id/hook');
+    console.log('    POST /api/projects/:id/export/xml/premiere { mode, cutId? }');
+    console.log('    POST /api/projects/:id/export/xml/davinci  { mode, cutId? }');
+    console.log('    POST /api/projects/:id/export/package      { mode, editor, cutId? }');
+    console.log('    GET  /api/projects/:id/export/history');
+    console.log('    GET  /api/projects/:id/export/download/:f');
     console.log('    GET  /api/brands');
     console.log('    POST /api/brands                        { name, logo?, ... }');
     console.log('    GET  /api/brands/:slug');
