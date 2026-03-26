@@ -379,27 +379,32 @@ async function startPipeline() {
   var urlSizeMB = new URLSearchParams(window.location.search).get('sizeMB');
   initEstimate(urlSizeMB ? parseFloat(urlSizeMB) : 200);
 
-  // Fire-and-forget: start pipeline via beacon (never fails from browser perspective)
-  try {
-    const beaconResult = navigator.sendBeacon(
-      `${API}/api/pipeline/start`,
-      new Blob([JSON.stringify({ source })], { type: 'application/json' })
-    );
-    console.log('[AV-DEBUG] sendBeacon fired — result:', beaconResult);
-    log('Pipeline enviado ao servidor', 'success');
-  } catch (e) {
-    console.log('[AV-DEBUG] sendBeacon failed, falling back to fetch — error:', e.message);
-    // Fallback to fetch if sendBeacon not supported
-    F(`${API}/api/pipeline/start`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ source }),
-    }).catch(() => {});
-    log('Pipeline enviado', 'info');
+  // Start pipeline with retry (max 3 attempts)
+  async function startWithRetry(src, attempts) {
+    for (var a = 0; a < attempts; a++) {
+      try {
+        console.log('[AV-DEBUG] Pipeline start attempt', a + 1);
+        var r = await fetch(`${API}/api/pipeline/start`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ source: src }),
+        });
+        var d = await r.json();
+        console.log('[AV-DEBUG] Pipeline start OK:', d);
+        log('Pipeline iniciado!', 'success');
+        return true;
+      } catch (e) {
+        console.log('[AV-DEBUG] Pipeline start attempt', a + 1, 'failed:', e.message);
+        if (a < attempts - 1) await new Promise(r => setTimeout(r, 1000 * (a + 1)));
+      }
+    }
+    log('Pipeline enviado (sem confirmacao)', 'info');
+    return false;
   }
+  await startWithRetry(source, 3);
 
   // Connect SSE
-  await new Promise(r => setTimeout(r, 500));
+  await new Promise(r => setTimeout(r, 300));
   connectSSE('pending');
 
   // Always start polling as backup after 3s
