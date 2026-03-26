@@ -513,15 +513,14 @@ function connectSSE(projectId) {
   let sseErrorCount = 0;
   eventSource.onerror = () => {
     sseErrorCount++;
-    // Only log first disconnect, not every reconnect attempt
     if (sseErrorCount === 1) {
-      log('Conexao SSE perdida. Reconectando automaticamente...', 'error');
+      log('Conexao SSE perdida. Reconectando...', 'error');
     }
-    // EventSource auto-reconnects. After 5 failures, start polling
-    if (sseErrorCount >= 5 && currentProjectId) {
+    // After 2 failures, switch to polling
+    if (sseErrorCount >= 2) {
       eventSource.close();
-      log('Alternando para polling...', 'info');
-      startPolling(currentProjectId);
+      log('Alternando para polling automatico...', 'info');
+      startPolling(currentProjectId || 'pending');
     }
   };
 
@@ -535,26 +534,54 @@ function connectSSE(projectId) {
 
 // Polling fallback when SSE keeps disconnecting
 let pollingInterval = null;
+let pollingEventIndex = 0;
 function startPolling(projectId) {
   if (pollingInterval) return;
+  log('Polling ativo (a cada 3s)...', 'info');
   pollingInterval = setInterval(async () => {
     try {
-      const res = await F(`${API}/api/projects/${projectId}/cuts`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data.suggestedCuts && data.suggestedCuts.length > 0) {
-          showCuts(data.suggestedCuts);
-          updateStep('cuts', 'done', `${data.suggestedCuts.length} cortes`);
-          setStatus('done', 'Completo');
-          clearInterval(pollingInterval);
-          pollingInterval = null;
-          log('Pipeline completo (via polling)', 'success');
-          document.getElementById('startBtn').disabled = false;
-          document.getElementById('finalizeBtn').style.display = '';
+      // Try state endpoint first (has all events)
+      const res = await F(`${API}/api/pipeline/${projectId}/state`);
+      if (!res.ok) return;
+      const state = await res.json();
+      if (!state.events) return;
+
+      // Process new events only
+      for (var i = pollingEventIndex; i < state.events.length; i++) {
+        var evt = state.events[i];
+        if (evt.event === 'step') {
+          if (evt.data.projectId && !currentProjectId) {
+            currentProjectId = evt.data.projectId;
+            // Re-poll with real projectId
+            if (projectId === 'pending') {
+              clearInterval(pollingInterval);
+              pollingInterval = null;
+              pollingEventIndex = 0;
+              startPolling(currentProjectId);
+              return;
+            }
+          }
+          updateStep(evt.data.step, evt.data.status, evt.data.message);
+          log('[' + evt.data.step + '] ' + evt.data.message,
+            evt.data.status === 'error' ? 'error' : evt.data.status === 'done' ? 'success' : 'info');
+
+          if (evt.data.step === 'cuts' && evt.data.status === 'done' && evt.data.cuts) {
+            showCuts(evt.data.cuts);
+          }
+        }
+        if (evt.event === 'pipeline') {
+          if (evt.data.status === 'waiting_approval') {
+            setStatus('waiting', 'Aguardando Aprovacao');
+            log('Analise completa! Aguardando aprovacao.', 'success');
+            document.getElementById('startBtn').disabled = false;
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+          }
         }
       }
-    } catch { /* ignore polling errors */ }
-  }, 5000);
+      pollingEventIndex = state.events.length;
+    } catch { /* ignore */ }
+  }, 3000);
 }
 
 function showCuts(cuts) {
