@@ -221,22 +221,80 @@ function generateASS(segments, style, videoWidth, videoHeight) {
   return ass;
 }
 
-// ── Burn Subtitles ─────────────────────────────────────────
+// ── Burn Subtitles (Self-Healing: 3 strategies) ───────────
 
 function burnSubtitles(videoPath, assPath, outputPath) {
-  const cmd = [
-    'ffmpeg', '-y',
-    '-i', `"${videoPath}"`,
-    '-vf', `"ass=${assPath.replace(/'/g, "'\\''")}"`,
-    '-c:a', 'copy',
-    `"${outputPath}"`,
-  ].join(' ');
+  const errors = [];
 
+  // Strategy 1: ass filter (requires --enable-libass)
   try {
-    execSync(cmd, { stdio: 'pipe', timeout: 600000 });
+    const cmd1 = `ffmpeg -y -i "${videoPath}" -vf "ass='${assPath.replace(/'/g, "'\\''")}'" -c:a copy "${outputPath}"`;
+    execSync(cmd1, { stdio: 'pipe', timeout: 600000 });
+    console.log('    [subs] Strategy 1 OK (ass filter)');
+    return;
   } catch (err) {
-    throw new Error(`Failed to burn subtitles: ${err.message}`);
+    errors.push(`ass: ${err.stderr ? err.stderr.toString().split('\n').pop() : err.message}`);
   }
+
+  // Strategy 2: subtitles filter (also libass but different path handling)
+  try {
+    // Copy ASS to /tmp with simple name to avoid path issues
+    const tmpAss = `/tmp/aiox-subs-${Date.now()}.ass`;
+    fs.copyFileSync(assPath, tmpAss);
+    const cmd2 = `ffmpeg -y -i "${videoPath}" -vf "subtitles='${tmpAss}'" -c:a copy "${outputPath}"`;
+    execSync(cmd2, { stdio: 'pipe', timeout: 600000 });
+    if (fs.existsSync(tmpAss)) fs.unlinkSync(tmpAss);
+    console.log('    [subs] Strategy 2 OK (subtitles filter + tmp path)');
+    return;
+  } catch (err) {
+    errors.push(`subtitles: ${err.stderr ? err.stderr.toString().split('\n').pop() : err.message}`);
+  }
+
+  // Strategy 3: drawtext filter (no libass needed, basic but works everywhere)
+  try {
+    const assContent = fs.readFileSync(assPath, 'utf8');
+    const dialogues = assContent.split('\n')
+      .filter(l => l.startsWith('Dialogue:'))
+      .map(l => {
+        const parts = l.split(',');
+        const start = parts[1] ? assTimeToSeconds(parts[1].trim()) : 0;
+        const end = parts[2] ? assTimeToSeconds(parts[2].trim()) : 0;
+        const text = parts.slice(9).join(',').replace(/\{[^}]*\}/g, '').trim();
+        return { start, end, text };
+      })
+      .filter(d => d.text && d.end > d.start);
+
+    if (dialogues.length === 0) throw new Error('No dialogues parsed');
+
+    // Build complex drawtext filter chain (max 30 to avoid arg limits)
+    const limited = dialogues.slice(0, 30);
+    const filters = limited.map(d => {
+      const escaped = d.text.replace(/'/g, '').replace(/:/g, '\\:').replace(/\\/g, '');
+      return `drawtext=text='${escaped}':fontfile=/System/Library/Fonts/Helvetica.ttc:fontsize=48:fontcolor=white:borderw=3:bordercolor=black:x=(w-text_w)/2:y=h-h/6:enable='between(t,${d.start.toFixed(2)},${d.end.toFixed(2)})'`;
+    });
+
+    const cmd3 = `ffmpeg -y -i "${videoPath}" -vf "${filters.join(',')}" -c:a copy "${outputPath}"`;
+    execSync(cmd3, { stdio: 'pipe', timeout: 600000 });
+    console.log(`    [subs] Strategy 3 OK (drawtext, ${limited.length} lines)`);
+    return;
+  } catch (err) {
+    errors.push(`drawtext: ${err.stderr ? err.stderr.toString().split('\n').pop() : err.message}`);
+  }
+
+  // All strategies failed
+  const msg = errors.map((e, i) => `  Strategy ${i + 1}: ${e}`).join('\n');
+  throw new Error(`All 3 subtitle strategies failed:\n${msg}`);
+}
+
+function assTimeToSeconds(time) {
+  const parts = time.split(':');
+  if (parts.length !== 3) return 0;
+  const h = parseInt(parts[0]) || 0;
+  const m = parseInt(parts[1]) || 0;
+  const scs = parts[2].split('.');
+  const s = parseInt(scs[0]) || 0;
+  const cs = parseInt(scs[1]) || 0;
+  return h * 3600 + m * 60 + s + cs / 100;
 }
 
 // ── Add Subtitles to Cut ───────────────────────────────────
