@@ -368,6 +368,7 @@ async function startPipeline() {
   document.getElementById('startBtn').disabled = true;
   setStatus('running', 'Executando...');
   log('Pipeline iniciado: ' + source, 'info');
+  console.log('[AV-DEBUG] Pipeline start requested — source:', source);
 
   // Reset steps
   document.querySelectorAll('.step').forEach(s => { s.className = 'step'; });
@@ -380,12 +381,14 @@ async function startPipeline() {
 
   // Fire-and-forget: start pipeline via beacon (never fails from browser perspective)
   try {
-    navigator.sendBeacon(
+    const beaconResult = navigator.sendBeacon(
       `${API}/api/pipeline/start`,
       new Blob([JSON.stringify({ source })], { type: 'application/json' })
     );
+    console.log('[AV-DEBUG] sendBeacon fired — result:', beaconResult);
     log('Pipeline enviado ao servidor', 'success');
   } catch (e) {
+    console.log('[AV-DEBUG] sendBeacon failed, falling back to fetch — error:', e.message);
     // Fallback to fetch if sendBeacon not supported
     F(`${API}/api/pipeline/start`, {
       method: 'POST',
@@ -408,11 +411,13 @@ async function startPipeline() {
 
 function connectSSE(projectId) {
   if (eventSource) eventSource.close();
+  console.log('[AV-DEBUG] SSE connecting — projectId:', projectId);
 
   eventSource = new EventSource(authUrl(`${API}/api/pipeline/${projectId}/events`));
 
   eventSource.addEventListener('step', (e) => {
     const data = JSON.parse(e.data);
+    console.log('[AV-DEBUG] SSE event received — step:', data.step, 'status:', data.status);
 
     // Always capture projectId when available
     if (data.projectId) currentProjectId = data.projectId;
@@ -497,6 +502,7 @@ function connectSSE(projectId) {
 
   eventSource.addEventListener('pipeline', (e) => {
     const data = JSON.parse(e.data);
+    console.log('[AV-DEBUG] SSE pipeline event — status:', data.status);
     if (data.status === 'waiting_approval') {
       setStatus('waiting', 'Aguardando Aprovacao');
       log('Analise completa! Aguardando sua aprovacao.', 'success');
@@ -519,6 +525,7 @@ function connectSSE(projectId) {
   let sseErrorCount = 0;
   eventSource.onerror = () => {
     sseErrorCount++;
+    console.log('[AV-DEBUG] SSE error #' + sseErrorCount + ' — readyState:', eventSource.readyState);
     if (sseErrorCount === 1) {
       log('Conexao SSE perdida. Reconectando...', 'error');
     }
@@ -531,6 +538,7 @@ function connectSSE(projectId) {
   };
 
   eventSource.onopen = () => {
+    console.log('[AV-DEBUG] SSE connected — projectId:', projectId);
     if (sseErrorCount > 0) {
       log('Conexao SSE restaurada', 'success');
       sseErrorCount = 0;
@@ -543,6 +551,7 @@ let pollingInterval = null;
 let pollingEventIndex = 0;
 function startPolling(projectId) {
   if (pollingInterval) return;
+  console.log('[AV-DEBUG] Polling started — projectId:', projectId);
   log('Polling ativo (a cada 3s)...', 'info');
   pollingInterval = setInterval(async () => {
     try {
@@ -551,6 +560,8 @@ function startPolling(projectId) {
       if (!res.ok) return;
       const state = await res.json();
       if (!state.events) return;
+      const newEvents = state.events.length - pollingEventIndex;
+      if (newEvents > 0) console.log('[AV-DEBUG] Polling response — ' + newEvents + ' new events');
 
       // Process new events only
       for (var i = pollingEventIndex; i < state.events.length; i++) {

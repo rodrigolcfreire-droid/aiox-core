@@ -508,9 +508,13 @@ async function handleRequest(req, res) {
     if (pathname === '/api/pipeline/start' && method === 'POST') {
       const body = await parseBody(req);
       if (!body.source) return sendError(res, 'source required');
+      console.log(`[${new Date().toISOString()}] [PIPELINE] Start requested — source: ${body.source}`);
       // Start pipeline async, send projectId immediately
       const promise = runLivePipeline(body.source, { name: body.name, srt: body.srt });
-      promise.catch(() => {}); // errors handled via SSE
+      promise.catch((err) => {
+        console.error(`[${new Date().toISOString()}] [PIPELINE] Failed — source: ${body.source}, error: ${err.message}`);
+      });
+      console.log(`[${new Date().toISOString()}] [PIPELINE] Job started — source: ${body.source}`);
       return sendJSON(res, { status: 'started', message: 'Pipeline iniciado. Conecte ao SSE para acompanhar.' }, 202);
     }
 
@@ -524,6 +528,7 @@ async function handleRequest(req, res) {
         'Access-Control-Allow-Origin': '*',
       });
       res.write(`event: connected\ndata: ${JSON.stringify({ projectId })}\n\n`);
+      console.log(`[${new Date().toISOString()}] [SSE] Connection opened — projectId: ${projectId}`);
 
       // Send existing state if any
       const state = getPipelineState(projectId);
@@ -534,12 +539,25 @@ async function handleRequest(req, res) {
       }
 
       // Heartbeat every 15s to keep Cloudflare tunnel alive
+      let heartbeatCount = 0;
       const heartbeat = setInterval(() => {
-        try { res.write(': heartbeat\n\n'); } catch { clearInterval(heartbeat); }
+        try {
+          res.write(': heartbeat\n\n');
+          heartbeatCount++;
+          if (heartbeatCount % 4 === 0) {
+            const clientCount = (require('./live-pipeline').clients.get(projectId) || []).length;
+            console.log(`[${new Date().toISOString()}] [SSE] Heartbeat #${heartbeatCount} — projectId: ${projectId}, clients: ${clientCount}`);
+          }
+        } catch { clearInterval(heartbeat); }
       }, 15000);
 
       addClient(projectId, res);
-      req.on('close', () => { clearInterval(heartbeat); removeClient(projectId, res); });
+      req.on('close', () => {
+        clearInterval(heartbeat);
+        removeClient(projectId, res);
+        const remainingClients = (require('./live-pipeline').clients.get(projectId) || []).length;
+        console.log(`[${new Date().toISOString()}] [SSE] Connection closed — projectId: ${projectId}, heartbeats: ${heartbeatCount}, remaining clients: ${remainingClients}`);
+      });
       return; // keep connection open
     }
 
@@ -668,7 +686,10 @@ async function handleRequest(req, res) {
         return sendError(res, 'Expected file upload (multipart or octet-stream)');
       }
       const contentLength = parseInt(req.headers['content-length'] || '0', 10);
+      const ext = path.extname((url.parse(req.url, true).query.filename || '')).toLowerCase() || '.mp4';
+      console.log(`[${new Date().toISOString()}] [UPLOAD] Single upload started — size: ${(contentLength / 1048576).toFixed(1)}MB, ext: ${ext}`);
       if (contentLength > 2 * 1024 * 1024 * 1024) {
+        console.error(`[${new Date().toISOString()}] [UPLOAD] Rejected — file too large: ${(contentLength / 1048576).toFixed(0)}MB`);
         return sendError(res, 'Arquivo muito grande. Limite: 2GB.', 413);
       }
 
@@ -680,13 +701,16 @@ async function handleRequest(req, res) {
       const parsed2 = url.parse(req.url, true);
       const filename = (parsed2.query.filename || `upload-${Date.now()}.mp4`).replace(/[^a-zA-Z0-9._-]/g, '_');
       const tmpPath = path.join(tmpDir, filename);
+      console.log(`[${new Date().toISOString()}] [UPLOAD] Saving to: ${tmpPath}, filename: ${filename}`);
       const ws = fs.createWriteStream(tmpPath);
 
       req.pipe(ws);
       ws.on('finish', () => {
+        console.log(`[${new Date().toISOString()}] [UPLOAD] Success — saved: ${tmpPath}`);
         sendJSON(res, { uploaded: true, path: tmpPath, filename }, 201);
       });
       ws.on('error', (err) => {
+        console.error(`[${new Date().toISOString()}] [UPLOAD] Failed — ${err.message}`);
         sendError(res, `Upload failed: ${err.message}`, 500);
       });
       return;
@@ -697,7 +721,9 @@ async function handleRequest(req, res) {
 
     if (pathname === '/api/upload/init' && method === 'POST') {
       const body = await parseBody(req);
+      console.log(`[${new Date().toISOString()}] [UPLOAD] Chunked init — filename: ${body.filename || 'unknown'}, totalSize: ${((body.totalSize || 0) / 1048576).toFixed(1)}MB, totalChunks: ${body.totalChunks || 0}`);
       if (body.totalSize && body.totalSize > MAX_UPLOAD_SIZE) {
+        console.error(`[${new Date().toISOString()}] [UPLOAD] Chunked init rejected — too large: ${(body.totalSize / 1048576).toFixed(0)}MB`);
         return sendError(res, `Arquivo muito grande (${(body.totalSize / 1048576).toFixed(0)}MB). Limite: 2GB.`, 413);
       }
       const uploadId = require('crypto').randomUUID();
@@ -707,6 +733,7 @@ async function handleRequest(req, res) {
       fs.writeFileSync(path.join(tmpDir, 'meta.json'), JSON.stringify({
         filename, totalSize: body.totalSize || 0, totalChunks: body.totalChunks || 0, received: 0
       }));
+      console.log(`[${new Date().toISOString()}] [UPLOAD] Chunked session created — uploadId: ${uploadId}, filename: ${filename}`);
       return sendJSON(res, { uploadId, filename }, 201);
     }
 
@@ -724,9 +751,13 @@ async function handleRequest(req, res) {
         const meta = JSON.parse(fs.readFileSync(path.join(tmpDir, 'meta.json'), 'utf8'));
         meta.received = (meta.received || 0) + 1;
         fs.writeFileSync(path.join(tmpDir, 'meta.json'), JSON.stringify(meta));
+        console.log(`[${new Date().toISOString()}] [UPLOAD] Chunk ${chunkIndex + 1}/${meta.totalChunks || '?'} received — uploadId: ${uploadId}`);
         sendJSON(res, { ok: true, chunk: chunkIndex, received: meta.received });
       });
-      ws.on('error', (err) => sendError(res, `Chunk upload failed: ${err.message}`, 500));
+      ws.on('error', (err) => {
+        console.error(`[${new Date().toISOString()}] [UPLOAD] Chunk ${chunkIndex} failed — uploadId: ${uploadId}, error: ${err.message}`);
+        sendError(res, `Chunk upload failed: ${err.message}`, 500);
+      });
       return;
     }
 
@@ -737,6 +768,7 @@ async function handleRequest(req, res) {
       const tmpDir = path.join(require('os').tmpdir(), 'aiox-av-uploads', uploadId);
       if (!fs.existsSync(tmpDir)) return sendError(res, 'Upload session not found', 404);
       const meta = JSON.parse(fs.readFileSync(path.join(tmpDir, 'meta.json'), 'utf8'));
+      console.log(`[${new Date().toISOString()}] [UPLOAD] Assembling ${meta.received || '?'} chunks — uploadId: ${uploadId}, filename: ${meta.filename}`);
       // Assemble chunks into final file
       const outputDir = path.join(require('os').tmpdir(), 'aiox-av-uploads');
       const finalPath = path.join(outputDir, meta.filename);
@@ -750,9 +782,14 @@ async function handleRequest(req, res) {
       ws.on('finish', () => {
         // Cleanup chunks
         fs.rmSync(tmpDir, { recursive: true, force: true });
+        const finalSize = fs.existsSync(finalPath) ? fs.statSync(finalPath).size : 0;
+        console.log(`[${new Date().toISOString()}] [UPLOAD] Complete — filename: ${meta.filename}, finalSize: ${(finalSize / 1048576).toFixed(1)}MB, path: ${finalPath}`);
         sendJSON(res, { uploaded: true, path: finalPath, filename: meta.filename }, 201);
       });
-      ws.on('error', (err) => sendError(res, `Assembly failed: ${err.message}`, 500));
+      ws.on('error', (err) => {
+        console.error(`[${new Date().toISOString()}] [UPLOAD] Assembly failed — uploadId: ${uploadId}, error: ${err.message}`);
+        sendError(res, `Assembly failed: ${err.message}`, 500);
+      });
       return;
     }
 

@@ -60,9 +60,13 @@ function broadcast(projectId, event, data) {
 
 async function runLivePipeline(source, options = {}) {
   const projectId = options.projectId || null;
+  const pipelineStart = Date.now();
+  console.log(`[${new Date().toISOString()}] [PIPELINE] === Pipeline started === source: ${source}`);
 
   // Step 1: Ingest
   broadcast(projectId || 'pending', 'step', { step: 'ingest', status: 'running', message: 'Ingerindo video...' });
+  const stepStart_ingest = Date.now();
+  console.log(`[${new Date().toISOString()}] [PIPELINE] Step started: ingest`);
 
   let result;
   try {
@@ -76,6 +80,7 @@ async function runLivePipeline(source, options = {}) {
       clients.delete('pending');
     }
 
+    console.log(`[${new Date().toISOString()}] [PIPELINE] Step completed: ingest (${Date.now() - stepStart_ingest}ms) — projectId: ${result.projectId}`);
     broadcast(result.projectId, 'step', {
       step: 'ingest',
       status: 'done',
@@ -84,6 +89,7 @@ async function runLivePipeline(source, options = {}) {
       metadata: result.metadata,
     });
   } catch (err) {
+    console.error(`[${new Date().toISOString()}] [PIPELINE] Step failed: ingest (${Date.now() - stepStart_ingest}ms) — ${err.message}`);
     broadcast(projectId || 'pending', 'step', { step: 'ingest', status: 'error', message: err.message });
     broadcast(projectId || 'pending', 'pipeline', { status: 'error', error: err.message });
     throw err;
@@ -99,8 +105,11 @@ async function runLivePipeline(source, options = {}) {
   };
 
   // Step 2: Transcribe
+  const stepStart_transcribe = Date.now();
+  console.log(`[${new Date().toISOString()}] [PIPELINE] Step started: transcribe`);
   const transcriptionPath = path.join(projectDir, 'analysis', 'transcription.json');
   if (hasCache('analysis/transcription.json')) {
+    console.log(`[${new Date().toISOString()}] [PIPELINE] Step completed: transcribe (cache hit, ${Date.now() - stepStart_transcribe}ms)`);
     const transcription = JSON.parse(fs.readFileSync(transcriptionPath, 'utf8'));
     broadcast(pid, 'step', {
       step: 'transcribe',
@@ -114,11 +123,15 @@ async function runLivePipeline(source, options = {}) {
     broadcast(pid, 'step', { step: 'transcribe', status: 'running', message: 'Transcrevendo audio...' });
     try {
       if (options.srt) {
+        console.log(`[${new Date().toISOString()}] [PIPELINE] Whisper: using SRT import`);
         importSRT(pid, options.srt);
       } else {
+        console.log(`[${new Date().toISOString()}] [PIPELINE] Whisper: starting transcription`);
         await transcribeWithWhisper(pid);
       }
+      console.log(`[${new Date().toISOString()}] [PIPELINE] Whisper: success (${Date.now() - stepStart_transcribe}ms)`);
       const transcription = JSON.parse(fs.readFileSync(transcriptionPath, 'utf8'));
+      console.log(`[${new Date().toISOString()}] [PIPELINE] Step completed: transcribe (${Date.now() - stepStart_transcribe}ms) — ${transcription.segments.length} segments, ${transcription.totalWords} words`);
       broadcast(pid, 'step', {
         step: 'transcribe',
         status: 'done',
@@ -128,6 +141,7 @@ async function runLivePipeline(source, options = {}) {
         language: transcription.language,
       });
     } catch (err) {
+      console.error(`[${new Date().toISOString()}] [PIPELINE] Whisper: failed (${Date.now() - stepStart_transcribe}ms) — ${err.message}`);
       broadcast(pid, 'step', { step: 'transcribe', status: 'error', message: err.message });
       broadcast(pid, 'pipeline', { status: 'error', step: 'transcribe', error: err.message });
       throw err;
@@ -136,10 +150,13 @@ async function runLivePipeline(source, options = {}) {
 
   // Step 2b: LLM Hook Detection (AV-11)
   if (isLLMAvailable()) {
+    const stepStart_llmHooks = Date.now();
+    console.log(`[${new Date().toISOString()}] [PIPELINE] Step started: llm-hooks`);
     broadcast(pid, 'step', { step: 'llm-hooks', status: 'running', message: 'IA analisando melhores hooks...' });
     try {
       const llmHooks = await detectHooksWithLLM(pid);
       if (llmHooks && llmHooks.hooks) {
+        console.log(`[${new Date().toISOString()}] [PIPELINE] Step completed: llm-hooks (${Date.now() - stepStart_llmHooks}ms) — ${llmHooks.hooks.length} hooks found`);
         broadcast(pid, 'step', {
           step: 'llm-hooks',
           status: 'done',
@@ -148,12 +165,16 @@ async function runLivePipeline(source, options = {}) {
         });
       }
     } catch (err) {
+      console.error(`[${new Date().toISOString()}] [PIPELINE] Step failed: llm-hooks (${Date.now() - stepStart_llmHooks}ms) — ${err.message}`);
       broadcast(pid, 'step', { step: 'llm-hooks', status: 'error', message: err.message });
     }
   }
 
   // Step 3: Segment
+  const stepStart_segment = Date.now();
+  console.log(`[${new Date().toISOString()}] [PIPELINE] Step started: segment`);
   if (hasCache('analysis/segments.json')) {
+    console.log(`[${new Date().toISOString()}] [PIPELINE] Step completed: segment (cache hit, ${Date.now() - stepStart_segment}ms)`);
     const segData = JSON.parse(fs.readFileSync(path.join(projectDir, 'analysis', 'segments.json'), 'utf8'));
     broadcast(pid, 'step', {
       step: 'segment',
@@ -166,6 +187,7 @@ async function runLivePipeline(source, options = {}) {
     broadcast(pid, 'step', { step: 'segment', status: 'running', message: 'Segmentando em blocos...' });
     try {
       const segments = segmentVideo(pid);
+      console.log(`[${new Date().toISOString()}] [PIPELINE] Step completed: segment (${Date.now() - stepStart_segment}ms) — ${segments.totalBlocks} blocks`);
       broadcast(pid, 'step', {
         step: 'segment',
         status: 'done',
@@ -174,13 +196,17 @@ async function runLivePipeline(source, options = {}) {
         totalBlocks: segments.totalBlocks,
       });
     } catch (err) {
+      console.error(`[${new Date().toISOString()}] [PIPELINE] Step failed: segment (${Date.now() - stepStart_segment}ms) — ${err.message}`);
       broadcast(pid, 'step', { step: 'segment', status: 'error', message: err.message });
       throw err;
     }
   }
 
   // Step 4: Describe
+  const stepStart_describe = Date.now();
+  console.log(`[${new Date().toISOString()}] [PIPELINE] Step started: describe`);
   if (hasCache('analysis/description.json')) {
+    console.log(`[${new Date().toISOString()}] [PIPELINE] Step completed: describe (cache hit, ${Date.now() - stepStart_describe}ms)`);
     const desc = JSON.parse(fs.readFileSync(path.join(projectDir, 'analysis', 'description.json'), 'utf8'));
     broadcast(pid, 'step', {
       step: 'describe',
@@ -194,6 +220,7 @@ async function runLivePipeline(source, options = {}) {
     broadcast(pid, 'step', { step: 'describe', status: 'running', message: 'Descrevendo conteudo...' });
     try {
       const desc = generateDescription(pid);
+      console.log(`[${new Date().toISOString()}] [PIPELINE] Step completed: describe (${Date.now() - stepStart_describe}ms)`);
       broadcast(pid, 'step', {
         step: 'describe',
         status: 'done',
@@ -203,12 +230,16 @@ async function runLivePipeline(source, options = {}) {
         suggestedTitles: desc.suggestedTitles,
       });
     } catch (err) {
+      console.error(`[${new Date().toISOString()}] [PIPELINE] Step failed: describe (${Date.now() - stepStart_describe}ms) — ${err.message}`);
       broadcast(pid, 'step', { step: 'describe', status: 'error', message: err.message });
     }
   }
 
   // Step 5: Smart Cuts
+  const stepStart_cuts = Date.now();
+  console.log(`[${new Date().toISOString()}] [PIPELINE] Step started: cuts`);
   if (hasCache('cuts/suggested-cuts.json')) {
+    console.log(`[${new Date().toISOString()}] [PIPELINE] Step completed: cuts (cache hit, ${Date.now() - stepStart_cuts}ms)`);
     const cutsData = JSON.parse(fs.readFileSync(path.join(projectDir, 'cuts', 'suggested-cuts.json'), 'utf8'));
     broadcast(pid, 'step', {
       step: 'cuts',
@@ -221,6 +252,7 @@ async function runLivePipeline(source, options = {}) {
     broadcast(pid, 'step', { step: 'cuts', status: 'running', message: 'Gerando cortes inteligentes...' });
     try {
       const cuts = generateSmartCuts(pid);
+      console.log(`[${new Date().toISOString()}] [PIPELINE] Step completed: cuts (${Date.now() - stepStart_cuts}ms) — ${cuts.totalSuggested} cuts`);
       broadcast(pid, 'step', {
         step: 'cuts',
         status: 'done',
@@ -229,6 +261,7 @@ async function runLivePipeline(source, options = {}) {
         totalSuggested: cuts.totalSuggested,
       });
     } catch (err) {
+      console.error(`[${new Date().toISOString()}] [PIPELINE] Step failed: cuts (${Date.now() - stepStart_cuts}ms) — ${err.message}`);
       broadcast(pid, 'step', { step: 'cuts', status: 'error', message: err.message });
       throw err;
     }
@@ -236,10 +269,13 @@ async function runLivePipeline(source, options = {}) {
 
   // Step 5a: LLM Viral Titles (AV-11)
   if (isLLMAvailable()) {
+    const stepStart_llmTitles = Date.now();
+    console.log(`[${new Date().toISOString()}] [PIPELINE] Step started: llm-titles`);
     broadcast(pid, 'step', { step: 'llm-titles', status: 'running', message: 'IA gerando titulos virais...' });
     try {
       const titles = await generateViralTitles(pid);
       if (titles && titles.titles) {
+        console.log(`[${new Date().toISOString()}] [PIPELINE] Step completed: llm-titles (${Date.now() - stepStart_llmTitles}ms) — ${titles.titles.length} titles`);
         broadcast(pid, 'step', {
           step: 'llm-titles',
           status: 'done',
@@ -248,6 +284,7 @@ async function runLivePipeline(source, options = {}) {
         });
       }
     } catch (err) {
+      console.error(`[${new Date().toISOString()}] [PIPELINE] Step failed: llm-titles (${Date.now() - stepStart_llmTitles}ms) — ${err.message}`);
       broadcast(pid, 'step', { step: 'llm-titles', status: 'error', message: err.message });
     }
   }
@@ -259,15 +296,20 @@ async function runLivePipeline(source, options = {}) {
   const videoDuration = projectMeta.duration || result.metadata?.durationSeconds || 0;
 
   if (videoDuration > MAX_ENERGY_DURATION) {
+    console.log(`[${new Date().toISOString()}] [PIPELINE] Step skipped: energy (video ${Math.floor(videoDuration / 60)}min > 10min limit)`);
     broadcast(pid, 'step', {
       step: 'energy',
       status: 'skipped',
       message: `Energy detection pulada (video ${Math.floor(videoDuration / 60)}min > limite 10min). Use o CLI para rodar offline.`,
     });
   } else {
+    const stepStart_energy = Date.now();
+    console.log(`[${new Date().toISOString()}] [PIPELINE] Step started: energy (FFmpeg volumedetect)`);
     broadcast(pid, 'step', { step: 'energy', status: 'running', message: 'Detectando pico de energia...' });
     try {
       const energy = detectEnergy(pid);
+      console.log(`[${new Date().toISOString()}] [PIPELINE] FFmpeg volumedetect: success (${Date.now() - stepStart_energy}ms)`);
+      console.log(`[${new Date().toISOString()}] [PIPELINE] Step completed: energy (${Date.now() - stepStart_energy}ms) — peak at ${energy.peakWindow.start}s`);
       broadcast(pid, 'step', {
         step: 'energy',
         status: 'done',
@@ -275,6 +317,7 @@ async function runLivePipeline(source, options = {}) {
         peakWindow: energy.peakWindow,
       });
     } catch (err) {
+      console.error(`[${new Date().toISOString()}] [PIPELINE] FFmpeg volumedetect: failed (${Date.now() - stepStart_energy}ms) — ${err.message}`);
       broadcast(pid, 'step', { step: 'energy', status: 'error', message: err.message });
     }
   }
@@ -282,9 +325,13 @@ async function runLivePipeline(source, options = {}) {
   // Step 5c: Generate Previews (AV-10)
   // Always generate previews — they are fast (just extract segments)
   {
+    const stepStart_previews = Date.now();
+    console.log(`[${new Date().toISOString()}] [PIPELINE] Step started: previews (FFmpeg extract)`);
     broadcast(pid, 'step', { step: 'previews', status: 'running', message: 'Gerando previews com hook...' });
     try {
       const previews = generateCutPreviews(pid);
+      console.log(`[${new Date().toISOString()}] [PIPELINE] FFmpeg extract: success (${Date.now() - stepStart_previews}ms)`);
+      console.log(`[${new Date().toISOString()}] [PIPELINE] Step completed: previews (${Date.now() - stepStart_previews}ms) — ${previews.total} previews`);
       broadcast(pid, 'step', {
         step: 'previews',
         status: 'done',
@@ -293,14 +340,18 @@ async function runLivePipeline(source, options = {}) {
         hookIncluded: previews.hookIncluded,
       });
     } catch (err) {
+      console.error(`[${new Date().toISOString()}] [PIPELINE] FFmpeg extract: failed (${Date.now() - stepStart_previews}ms) — ${err.message}`);
       broadcast(pid, 'step', { step: 'previews', status: 'error', message: err.message });
     }
   }
 
   // Step 6: Suggestions
+  const stepStart_suggestions = Date.now();
+  console.log(`[${new Date().toISOString()}] [PIPELINE] Step started: suggestions`);
   broadcast(pid, 'step', { step: 'suggestions', status: 'running', message: 'Analisando melhorias...' });
   try {
     const suggestions = generateSuggestions(pid);
+    console.log(`[${new Date().toISOString()}] [PIPELINE] Step completed: suggestions (${Date.now() - stepStart_suggestions}ms) — ${suggestions.totalSuggestions} suggestions`);
     broadcast(pid, 'step', {
       step: 'suggestions',
       status: 'done',
@@ -310,6 +361,8 @@ async function runLivePipeline(source, options = {}) {
   } catch { /* optional */ }
 
   // Pipeline complete — waiting for approval
+  const totalDuration = Date.now() - pipelineStart;
+  console.log(`[${new Date().toISOString()}] [PIPELINE] === Pipeline complete === projectId: ${pid}, total duration: ${totalDuration}ms (${(totalDuration / 1000).toFixed(1)}s)`);
   broadcast(pid, 'pipeline', {
     status: 'waiting_approval',
     projectId: pid,
