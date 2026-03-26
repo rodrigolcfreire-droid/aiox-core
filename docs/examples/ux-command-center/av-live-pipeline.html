@@ -275,8 +275,8 @@ function formatEst(seconds) {
 }
 
 function initEstimate(sizeMB) {
-  var factor = 2.0; // IA completa
-  estimateState.totalEstimate = Math.max(sizeMB * factor, 15); // min 15s
+  var factor = 1.5; // Pipeline completo com IA
+  estimateState.totalEstimate = Math.max(sizeMB * factor, 30); // min 30s
   estimateState.startTime = Date.now();
   estimateState.stepsCompleted = 0;
   estimateState.currentStep = '';
@@ -299,13 +299,14 @@ function updateEstimateUI() {
   }
   pctDone = Math.min(pctDone, 99);
 
-  // Dynamic recalc: if we have progress, extrapolate
+  // Dynamic recalc: always use real progress to project remaining time
   var remaining;
-  if (pctDone > 5 && elapsed > 2) {
-    var totalProjected = (elapsed / pctDone) * 100;
-    remaining = Math.max(totalProjected - elapsed, 0);
+  if (pctDone > 3 && elapsed > 1) {
+    // Extrapolate total time from current pace, then subtract elapsed
+    remaining = Math.max(((elapsed / pctDone) * (100 - pctDone)), 0);
   } else {
-    remaining = estimateState.totalEstimate - elapsed;
+    // Initial estimate before we have real data
+    remaining = Math.max(estimateState.totalEstimate - elapsed, 0);
   }
 
   var bar = document.getElementById('time-progress-bar');
@@ -435,10 +436,8 @@ function connectSSE(projectId) {
           Bitrate: <strong>${data.metadata.bitrate || 'N/A'}</strong>
         </div>`;
       if (data.projectId) currentProjectId = data.projectId;
-      // Refine estimate with real duration
-      if (data.metadata.durationSeconds) {
-        estimateState.totalEstimate = Math.max(data.metadata.durationSeconds * 0.8, 15);
-      }
+      // Note: don't use video duration for time estimate — pipeline speed
+      // is independent of video length (transcription is the main bottleneck)
     }
 
     // Show description

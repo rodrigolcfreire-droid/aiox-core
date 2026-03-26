@@ -6953,7 +6953,7 @@
       if (!file) return;
       const nameEl = input.id === 'av-cortes-file' ? 'av-cortes-file-name' : 'av-escala-file-name';
       const sizeMB = file.size / 1048576;
-      const estimate = sizeMB * 2.0; // Pesado (IA completa): 2s/MB
+      const estimate = sizeMB * 1.5; // Pipeline completo com IA: 1.5s/MB
       document.getElementById(nameEl).innerHTML =
         '<span style="color:#34d399;">&#10003;</span> ' + file.name + ' (' + sizeMB.toFixed(1) + 'MB)' +
         '<div style="margin-top:6px;display:flex;align-items:center;gap:6px;justify-content:center;">' +
