@@ -2,7 +2,7 @@
 
 **Epic:** Central Audiovisual (EPIC-AV)
 **Phase:** 12 (Melhorias)
-**Status:** InProgress
+**Status:** Done
 **Date:** 2026-03-21
 
 ## Melhorias
@@ -31,10 +31,10 @@
 
 - [x] 1. Silencedetect remove pausas >1.5s do corte final
 - [x] 2. Energy detector retorna top 3 hooks rankeados
-- [ ] 3. Approval page tem player inline com video do corte
+- [x] 3. Approval page tem player inline com video do corte
 - [x] 4. Legendas word-by-word animadas geradas automaticamente
 - [x] 5. Classificar blocos como "fala" ou "tela" na segmentacao
-- [ ] 6. Endpoint POST /api/batch aceita array de sources
+- [x] 6. Endpoint POST /api/batch aceita array de sources
 - [x] 7. Learning engine calcula score ajustado com metricas reais
 - [x] 8. Thumbnail extrai frame de maior expressividade
 - [x] 9. Silence removal integrado no assembly (remove ar morto antes de montar)
@@ -52,7 +52,7 @@
 - [x] `packages/audiovisual/lib/energy-detector.js` (top 3)
 - [x] `packages/audiovisual/lib/subtitles.js` (word-by-word)
 - [x] `packages/audiovisual/lib/scene-detector.js`
-- [ ] `packages/audiovisual/lib/batch.js` (endpoint)
+- [x] `packages/audiovisual/lib/batch.js` (endpoint)
 - [x] `packages/audiovisual/lib/learning.js` (score real)
 - [x] `packages/audiovisual/lib/thumbnail.js` (expressividade)
 - [x] `packages/audiovisual/lib/smart-cuts.js` (cut boundaries, multi-factor score, narrative arc, overlap dedup, positional category)
