@@ -658,6 +658,10 @@ async function handleRequest(req, res) {
       if (!contentType.includes('multipart') && !contentType.includes('octet-stream')) {
         return sendError(res, 'Expected file upload (multipart or octet-stream)');
       }
+      const contentLength = parseInt(req.headers['content-length'] || '0', 10);
+      if (contentLength > 2 * 1024 * 1024 * 1024) {
+        return sendError(res, 'Arquivo muito grande. Limite: 2GB.', 413);
+      }
 
       // Save raw body as temp file
       const tmpDir = path.join(require('os').tmpdir(), 'aiox-av-uploads');
@@ -680,8 +684,13 @@ async function handleRequest(req, res) {
     }
 
     // ── Chunked Upload (bypass Cloudflare 100MB limit) ──────
+    const MAX_UPLOAD_SIZE = 2 * 1024 * 1024 * 1024; // 2GB
+
     if (pathname === '/api/upload/init' && method === 'POST') {
       const body = await parseBody(req);
+      if (body.totalSize && body.totalSize > MAX_UPLOAD_SIZE) {
+        return sendError(res, `Arquivo muito grande (${(body.totalSize / 1048576).toFixed(0)}MB). Limite: 2GB.`, 413);
+      }
       const uploadId = require('crypto').randomUUID();
       const tmpDir = path.join(require('os').tmpdir(), 'aiox-av-uploads', uploadId);
       fs.mkdirSync(tmpDir, { recursive: true });
