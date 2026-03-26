@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatorio Professor — 24/03/2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #0a0e1a; color: #e0e0e0; padding: 24px; }
+  .container { max-width: 900px; margin: 0 auto; }
+  h1 { color: #00e5cc; font-size: 1.6rem; margin-bottom: 4px; }
+  h2 { color: #00e5cc; font-size: 1.1rem; margin: 24px 0 12px; border-bottom: 1px solid rgba(0,229,204,0.2); padding-bottom: 6px; }
+  .subtitle { color: #888; font-size: 0.85rem; margin-bottom: 20px; }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  .stat-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 14px; text-align: center; }
+  .stat-val { font-size: 1.8rem; font-weight: 700; color: #00e5cc; }
+  .stat-val.red { color: #ef4444; }
+  .stat-val.yellow { color: #eab308; }
+  .stat-label { font-size: 0.72rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 0.85rem; }
+  th { text-align: left; color: #00e5cc; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; padding: 8px 12px; border-bottom: 1px solid rgba(0,229,204,0.2); }
+  td { padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .badge { padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; }
+  .badge-high { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .badge-medium { background: rgba(249,115,22,0.15); color: #f97316; }
+  .badge-low { background: rgba(0,229,204,0.1); color: #00e5cc; }
+  .hour-bar { display: flex; align-items: center; gap: 8px; margin: 2px 0; }
+  .hour-label { width: 30px; font-size: 0.72rem; color: #888; text-align: right; }
+  .bar { height: 16px; background: linear-gradient(90deg, #00e5cc, #0088cc); border-radius: 3px; min-width: 2px; }
+  .hour-count { font-size: 0.72rem; color: #888; }
+  .segments { display: flex; gap: 16px; margin: 10px 0; }
+  .seg-block { flex: 1; background: rgba(255,255,255,0.04); border-radius: 8px; padding: 14px; text-align: center; }
+  .seg-val { font-size: 1.4rem; font-weight: 700; color: #00e5cc; }
+  .seg-label { font-size: 0.72rem; color: #888; }
+  .footer { margin-top: 30px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 0.72rem; color: #555; text-align: center; }
+  @media print {
+    body { background: #fff; color: #222; }
+    .stat-card, .seg-block { border-color: #ddd; }
+    .stat-val, h1, h2, th, .badge-low { color: #0088cc; }
+    .bar { background: #0088cc; }
+    td { border-bottom-color: #eee; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>RELATORIO — Professor</h1>
+  <div class="subtitle">Squad Telegram Intelligence | Gerado em 24/03/2026 as 20:16:35 | 14035 mensagens analisadas</div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-val">14035</div><div class="stat-label">Mensagens</div></div>
+    <div class="stat-card"><div class="stat-val">192</div><div class="stat-label">Duvidas</div></div>
+    <div class="stat-card"><div class="stat-val red">9</div><div class="stat-label">Dores</div></div>
+    <div class="stat-card"><div class="stat-val">823</div><div class="stat-label">Engajamento</div></div>
+    <div class="stat-card"><div class="stat-val">15</div><div class="stat-label">Influenciadores</div></div>
+    <div class="stat-card"><div class="stat-val">8</div><div class="stat-label">Temas Virais</div></div>
+  </div>
+
+  <h2>Topicos Mais Discutidos</h2>
+  <table><tr><th>Topico</th><th>Frequencia</th></tr><tr><td>bingo reals</td><td>159</td></tr><tr><td>clique fale</td><td>158</td></tr><tr><td>fale professor</td><td>158</td></tr><tr><td>professor converse</td><td>158</td></tr><tr><td>plataformas regulamentadas</td><td>158</td></tr><tr><td>regulamentadas bingo</td><td>158</td></tr><tr><td>converse único</td><td>143</td></tr><tr><td>único telegram</td><td>143</td></tr><tr><td>telegram deste</td><td>143</td></tr><tr><td>deste link</td><td>143</td></tr></table>
+
+  <h2>Duvidas Recorrentes</h2>
+  <table><tr><th>Duvida</th><th>Vezes</th></tr><tr><td>Bora pra live tropa ?</td><td>2</td></tr><tr><td>Bora pra live ???</td><td>2</td></tr><tr><td>Hj tem live??</td><td>2</td></tr><tr><td>Vai ter live hoje?</td><td>2</td></tr><tr><td>Teria alguma dica ?
+Tipo jogar um com valor alto é colocar uma baixa e uma  valor mínimo com mais vezes ?</td><td>1</td></tr><tr><td>Tão fazendo entrada?</td><td>1</td></tr><tr><td>Bravo mesmo gráfico da reals ?</td><td>1</td></tr><tr><td>O gráfico da bravo é o mesmo da reals ?</td><td>1</td></tr></table>
+
+  <h2>Dores da Audiencia</h2>
+  <table><tr><th>Dor</th><th>Vezes</th></tr><tr><td>Já tinha falado com o adm quando começou a desabilitar minha proteção sozinho.
+Ele mandou entrar em contato com o suport</td><td>1</td></tr><tr><td>Galará vcs que são mais antigos aqui, vê meu raciocínio: eu coloco 100 de banca e toda vez eu saco o 100 e o lucro, quan</td><td>1</td></tr><tr><td>Pessoal o Pix está dando erro no banco de vocês?</td><td>1</td></tr><tr><td>Nao consigo entrar nos horários</td><td>1</td></tr><tr><td>Pessoal o gráfico de vocês aí tá travando tá parando algumas entradas não tá deixando vocês entrar também o meu duas vel</td><td>1</td></tr><tr><td>Essa plataforma reals cada dia tá dando uma coisa diferente  dar até medo de depositar dinheiro   pois fui entrar lá ago</td><td>1</td></tr><tr><td>Pedi o saque faz tempo e não caiu</td><td>1</td></tr><tr><td>o galera, tô com uma dúvida, coloquei 50 e fiz 100 botei para sacar mas não caiu o dinheiro ele volta para conta d novo </td><td>1</td></tr></table>
+
+  <h2>Influenciadores</h2>
+  <table><tr><th>#</th><th>Nome</th><th>Msgs</th><th>Score</th><th>Nivel</th></tr><tr><td>1</td><td>TIAADA 🌹🔥</td><td>1335</td><td>1337.0</td><td><span class="badge badge-high">high</span></td></tr><tr><td>2</td><td>Group</td><td>535</td><td>1047.5</td><td><span class="badge badge-high">high</span></td></tr><tr><td>3</td><td>Gui Riet</td><td>904</td><td>934.0</td><td><span class="badge badge-high">high</span></td></tr><tr><td>4</td><td>Sandra</td><td>625</td><td>625.0</td><td><span class="badge badge-high">high</span></td></tr><tr><td>5</td><td>Jhean Dos Santos</td><td>606</td><td>608.0</td><td><span class="badge badge-high">high</span></td></tr><tr><td>6</td><td>Denao</td><td>435</td><td>435.0</td><td><span class="badge badge-high">high</span></td></tr><tr><td>7</td><td>Peter</td><td>381</td><td>383.0</td><td><span class="badge badge-high">high</span></td></tr><tr><td>8</td><td>Andre Lucas</td><td>298</td><td>298.0</td><td><span class="badge badge-high">high</span></td></tr><tr><td>9</td><td>Natanael Nathan</td><td>285</td><td>285.0</td><td><span class="badge badge-high">high</span></td></tr><tr><td>10</td><td>Fernando Santos</td><td>241</td><td>251.0</td><td><span class="badge badge-high">high</span></td></tr></table>
+
+  <h2>Segmentacao de Usuarios</h2>
+  <div class="segments">
+    <div class="seg-block"><div class="seg-val">405</div><div class="seg-label">Iniciantes</div></div>
+    <div class="seg-block"><div class="seg-val">293</div><div class="seg-label">Intermediarios</div></div>
+    <div class="seg-block"><div class="seg-val">6</div><div class="seg-label">Avancados</div></div>
+  </div>
+
+  <h2>Temas Virais</h2><table><tr><th>Topico</th><th>Msgs</th><th>Velocidade</th><th>Data</th></tr><tr><td>minuto</td><td>513</td><td>6.62x</td><td>2026-03-19</td></tr><tr><td>kkkkk</td><td>428</td><td>5.52x</td><td>2026-03-19</td></tr><tr><td>banca</td><td>401</td><td>5.17x</td><td>2026-03-19</td></tr><tr><td>corujão</td><td>313</td><td>4.04x</td><td>2026-03-20</td></tr><tr><td>kkkkk</td><td>301</td><td>3.88x</td><td>2026-03-19</td></tr><tr><td>minuto</td><td>274</td><td>3.53x</td><td>2026-03-20</td></tr><tr><td>pagou</td><td>269</td><td>3.47x</td><td>2026-03-18</td></tr><tr><td>corujão</td><td>259</td><td>3.34x</td><td>2026-03-20</td></tr></table>
+
+  <h2>Distribuicao por Horario</h2>
+  <div style="margin-bottom: 16px;"><div class="hour-bar"><span class="hour-label">0h</span><div class="bar" style="width:100%"></div><span class="hour-count">1326</span></div><div class="hour-bar"><span class="hour-label">1h</span><div class="bar" style="width:59.653092006033184%"></div><span class="hour-count">791</span></div><div class="hour-bar"><span class="hour-label">2h</span><div class="bar" style="width:31.598793363499244%"></div><span class="hour-count">419</span></div><div class="hour-bar"><span class="hour-label">3h</span><div class="bar" style="width:24.20814479638009%"></div><span class="hour-count">321</span></div><div class="hour-bar"><span class="hour-label">4h</span><div class="bar" style="width:4.751131221719457%"></div><span class="hour-count">63</span></div><div class="hour-bar"><span class="hour-label">5h</span><div class="bar" style="width:12.669683257918551%"></div><span class="hour-count">168</span></div><div class="hour-bar"><span class="hour-label">6h</span><div class="bar" style="width:7.6923076923076925%"></div><span class="hour-count">102</span></div><div class="hour-bar"><span class="hour-label">7h</span><div class="bar" style="width:8.823529411764707%"></div><span class="hour-count">117</span></div><div class="hour-bar"><span class="hour-label">8h</span><div class="bar" style="width:21.49321266968326%"></div><span class="hour-count">285</span></div><div class="hour-bar"><span class="hour-label">9h</span><div class="bar" style="width:65.68627450980392%"></div><span class="hour-count">871</span></div><div class="hour-bar"><span class="hour-label">10h</span><div class="bar" style="width:49.01960784313725%"></div><span class="hour-count">650</span></div><div class="hour-bar"><span class="hour-label">11h</span><div class="bar" style="width:65.46003016591251%"></div><span class="hour-count">868</span></div><div class="hour-bar"><span class="hour-label">12h</span><div class="bar" style="width:64.47963800904978%"></div><span class="hour-count">855</span></div><div class="hour-bar"><span class="hour-label">13h</span><div class="bar" style="width:25.791855203619914%"></div><span class="hour-count">342</span></div><div class="hour-bar"><span class="hour-label">14h</span><div class="bar" style="width:30.165912518853695%"></div><span class="hour-count">400</span></div><div class="hour-bar"><span class="hour-label">15h</span><div class="bar" style="width:62.29260935143288%"></div><span class="hour-count">826</span></div><div class="hour-bar"><span class="hour-label">16h</span><div class="bar" style="width:29.638009049773757%"></div><span class="hour-count">393</span></div><div class="hour-bar"><span class="hour-label">17h</span><div class="bar" style="width:54.90196078431373%"></div><span class="hour-count">728</span></div><div class="hour-bar"><span class="hour-label">18h</span><div class="bar" style="width:57.315233785822016%"></div><span class="hour-count">760</span></div><div class="hour-bar"><span class="hour-label">19h</span><div class="bar" style="width:40.723981900452486%"></div><span class="hour-count">540</span></div><div class="hour-bar"><span class="hour-label">20h</span><div class="bar" style="width:20.81447963800905%"></div><span class="hour-count">276</span></div><div class="hour-bar"><span class="hour-label">21h</span><div class="bar" style="width:50.452488687782804%"></div><span class="hour-count">669</span></div><div class="hour-bar"><span class="hour-label">22h</span><div class="bar" style="width:76.09351432880844%"></div><span class="hour-count">1009</span></div><div class="hour-bar"><span class="hour-label">23h</span><div class="bar" style="width:94.7209653092006%"></div><span class="hour-count">1256</span></div></div>
+
+  <h2>Sugestoes de Conteudo</h2>
+  <table><tr><th>Prioridade</th><th>Tipo</th><th>Sugestao</th><th>Formato</th></tr><tr><td><span class="badge badge-high">high</span></td><td>conteudo</td><td>Conteudo sobre: "bingo reals" (159 mencoes)</td><td>post_ou_video</td></tr><tr><td><span class="badge badge-high">high</span></td><td>conteudo</td><td>Conteudo sobre: "clique fale" (158 mencoes)</td><td>post_ou_video</td></tr><tr><td><span class="badge badge-high">high</span></td><td>conteudo</td><td>Conteudo sobre: "fale professor" (158 mencoes)</td><td>post_ou_video</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "minuto" (velocidade 6.62x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "kkkkk" (velocidade 5.52x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "banca" (velocidade 5.17x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "corujão" (velocidade 4.04x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "kkkkk" (velocidade 3.88x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "minuto" (velocidade 3.53x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "pagou" (velocidade 3.47x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "corujão" (velocidade 3.34x)</td><td>criativo_pago</td></tr></table>
+
+  <div class="footer">AIOX Squad Telegram Intelligence — Relatorio gerado automaticamente pelo agente Sentinel (@autoavaliativo)</div>
+</div>
+</body>
+</html>
