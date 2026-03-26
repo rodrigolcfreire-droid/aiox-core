@@ -469,6 +469,32 @@ function generateCutPreviews(projectId) {
         }
       }
 
+      // Burn subtitles into preview
+      try {
+        const { generateAnimatedASS, burnSubtitles } = require('./subtitles');
+        const analysisDir = path.join(projectDir, 'analysis');
+        const jsonPath = path.join(analysisDir, 'transcription.json');
+        if (fs.existsSync(jsonPath)) {
+          const transcription = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+          // Get preview dimensions
+          const probCmd = `ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 "${previewPath}"`;
+          const dims = execSync(probCmd, { stdio: 'pipe', timeout: 10000 }).toString().trim().split(',');
+          const pw = parseInt(dims[0]) || 720;
+          const ph = parseInt(dims[1]) || 1280;
+          const assContent = generateAnimatedASS(transcription, cut.start, cut.end, pw, ph, 'viral');
+          const assPath = path.join(previewsDir, `subs-${cut.id}.ass`);
+          fs.writeFileSync(assPath, assContent);
+          const subbedPath = path.join(previewsDir, `subbed-${cut.id}.mp4`);
+          burnSubtitles(previewPath, assPath, subbedPath);
+          fs.unlinkSync(previewPath);
+          fs.renameSync(subbedPath, previewPath);
+          if (fs.existsSync(assPath)) fs.unlinkSync(assPath);
+        }
+      } catch (subErr) {
+        // Non-fatal — preview without subs is fine
+        console.log(`  Subs skipped for ${cut.id}: ${subErr.message}`);
+      }
+
       // Update cut data with preview reference
       cut.previewFile = previewFilename;
       results.push({ cutId: cut.id, previewFile: previewFilename, hookPrepended: hasHook });
