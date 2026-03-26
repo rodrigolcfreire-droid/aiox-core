@@ -280,14 +280,8 @@ async function runLivePipeline(source, options = {}) {
   }
 
   // Step 5c: Generate Previews (AV-10)
-  // Also skip for long videos — previews use FFmpeg per cut
-  if (videoDuration > MAX_ENERGY_DURATION) {
-    broadcast(pid, 'step', {
-      step: 'previews',
-      status: 'skipped',
-      message: `Previews pulados (video longo). Use o CLI para gerar offline.`,
-    });
-  } else {
+  // Always generate previews — they are fast (just extract segments)
+  {
     broadcast(pid, 'step', { step: 'previews', status: 'running', message: 'Gerando previews com hook...' });
     try {
       const previews = generateCutPreviews(pid);
