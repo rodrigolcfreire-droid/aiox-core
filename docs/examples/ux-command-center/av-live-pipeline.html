@@ -379,39 +379,30 @@ async function startPipeline() {
   var urlSizeMB = new URLSearchParams(window.location.search).get('sizeMB');
   initEstimate(urlSizeMB ? parseFloat(urlSizeMB) : 200);
 
-  // Start pipeline with retry (max 3 attempts)
-  async function startWithRetry(src, attempts) {
-    for (var a = 0; a < attempts; a++) {
-      try {
-        console.log('[AV-DEBUG] Pipeline start attempt', a + 1);
-        var r = await fetch(`${API}/api/pipeline/start`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ source: src }),
-        });
-        var d = await r.json();
-        console.log('[AV-DEBUG] Pipeline start OK:', d);
-        log('Pipeline iniciado!', 'success');
-        return true;
-      } catch (e) {
-        console.log('[AV-DEBUG] Pipeline start attempt', a + 1, 'failed:', e.message);
-        if (a < attempts - 1) await new Promise(r => setTimeout(r, 1000 * (a + 1)));
-      }
-    }
-    log('Pipeline enviado (sem confirmacao)', 'info');
-    return false;
-  }
-  await startWithRetry(source, 3);
-
-  // Connect SSE
-  await new Promise(r => setTimeout(r, 300));
+  // 1. Connect SSE FIRST (so we catch fast pipelines)
   connectSSE('pending');
+  log('SSE conectado', 'info');
 
-  // Always start polling as backup after 3s
-  setTimeout(() => {
-    log('Polling ativado', 'info');
-    startPolling(currentProjectId || 'pending');
-  }, 3000);
+  // 2. Start polling IMMEDIATELY (guaranteed fallback)
+  startPolling('pending');
+  log('Polling ativado', 'info');
+
+  // 3. THEN start pipeline (SSE + polling already listening)
+  await new Promise(r => setTimeout(r, 500)); // give SSE time to connect
+  try {
+    console.log('[AV-DEBUG] Pipeline start...');
+    var r = await fetch(`${API}/api/pipeline/start`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ source }),
+    });
+    var d = await r.json();
+    console.log('[AV-DEBUG] Pipeline start OK:', d);
+    log('Pipeline iniciado!', 'success');
+  } catch (e) {
+    console.log('[AV-DEBUG] Pipeline start failed:', e.message, '— polling will recover');
+    log('Pipeline enviado (polling ativo)', 'info');
+  }
 }
 
 function connectSSE(projectId) {
