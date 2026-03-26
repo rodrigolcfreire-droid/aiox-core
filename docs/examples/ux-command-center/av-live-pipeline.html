@@ -378,12 +378,7 @@ async function startPipeline() {
   var urlSizeMB = new URLSearchParams(window.location.search).get('sizeMB');
   initEstimate(urlSizeMB ? parseFloat(urlSizeMB) : 200);
 
-  // Connect SSE FIRST, then start pipeline — ensures we catch all events
-  connectSSE('pending');
-
-  // Small delay to ensure SSE is connected before pipeline starts broadcasting
-  await new Promise(r => setTimeout(r, 500));
-
+  // Start pipeline FIRST, then connect SSE
   try {
     const res = await F(`${API}/api/pipeline/start`, {
       method: 'POST',
@@ -392,12 +387,22 @@ async function startPipeline() {
     });
     const data = await res.json();
     log(data.message || 'Pipeline aceito', 'success');
-
   } catch (err) {
-    log('Erro: ' + err.message, 'error');
-    setStatus('error', 'Erro');
-    document.getElementById('startBtn').disabled = false;
+    // Non-fatal: pipeline may already be running, SSE/polling will pick it up
+    log('Iniciando pipeline...', 'info');
   }
+
+  // Connect SSE after POST to avoid connection contention
+  await new Promise(r => setTimeout(r, 300));
+  connectSSE('pending');
+
+  // Also start polling immediately as backup
+  setTimeout(() => {
+    if (!currentProjectId) {
+      log('Ativando polling de seguranca...', 'info');
+      startPolling('pending');
+    }
+  }, 5000);
 }
 
 function connectSSE(projectId) {
