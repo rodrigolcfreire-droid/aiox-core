@@ -6955,10 +6955,13 @@
       const sizeMB = file.size / 1048576;
       const estimate = sizeMB * 2.0; // Pesado (IA completa): 2s/MB
       document.getElementById(nameEl).innerHTML =
-        file.name + ' (' + sizeMB.toFixed(1) + 'MB)' +
+        '<span style="color:#34d399;">&#10003;</span> ' + file.name + ' (' + sizeMB.toFixed(1) + 'MB)' +
         '<div style="margin-top:6px;display:flex;align-items:center;gap:6px;justify-content:center;">' +
         '<span style="color:#38bdf8;font-size:14px;">&#9201;</span>' +
-        '<span style="color:#94a3b8;font-size:12px;">Tempo estimado: <strong style="color:#38bdf8;">' + formatEstimate(estimate) + '</strong></span>' +
+        '<span style="color:#94a3b8;font-size:12px;">Tempo estimado de processamento: <strong style="color:#38bdf8;">' + formatEstimate(estimate) + '</strong></span>' +
+        '</div>' +
+        '<div style="margin-top:10px;">' +
+        '<button onclick="avStartAnalise(); event.preventDefault();" style="background:linear-gradient(135deg,#34d399,#38bdf8);color:#0a0e1a;border:none;padding:12px 32px;border-radius:8px;font-family:\'Chakra Petch\';font-size:15px;font-weight:700;cursor:pointer;animation:pulse 1.5s infinite;">&#9654; INICIAR ANALISE</button>' +
         '</div>';
     }
 
