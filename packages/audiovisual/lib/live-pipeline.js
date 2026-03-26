@@ -36,6 +36,9 @@ function removeClient(projectId, res) {
   else clients.set(projectId, arr);
 }
 
+// In-memory pipeline state — works for 'pending' and real projectIds
+const pipelineStates = new Map();
+
 function broadcast(projectId, event, data) {
   const conns = clients.get(projectId) || [];
   const msg = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
@@ -43,19 +46,32 @@ function broadcast(projectId, event, data) {
     try { res.write(msg); } catch { /* client disconnected */ }
   }
 
-  // Also save to state file for page refresh
-  const stateDir = path.join(getProjectDir(projectId));
-  if (fs.existsSync(stateDir)) {
-    const statePath = path.join(stateDir, 'pipeline-state.json');
-    let state = { events: [] };
-    if (fs.existsSync(statePath)) {
-      try { state = JSON.parse(fs.readFileSync(statePath, 'utf8')); } catch { /* ignore */ }
+  // Save to in-memory state (works for 'pending' too)
+  if (!pipelineStates.has(projectId)) pipelineStates.set(projectId, { events: [] });
+  const state = pipelineStates.get(projectId);
+  state.events.push({ event, data, timestamp: new Date().toISOString() });
+  state.lastEvent = event;
+  state.lastData = data;
+
+  // If we get a real projectId from a pending pipeline, copy state
+  if (data.projectId && projectId === data.projectId && pipelineStates.has('pending')) {
+    const pendingState = pipelineStates.get('pending');
+    // Merge pending events into real project state
+    for (const evt of pendingState.events) {
+      if (!state.events.find(e => e.timestamp === evt.timestamp)) {
+        state.events.unshift(evt);
+      }
     }
-    state.events.push({ event, data, timestamp: new Date().toISOString() });
-    state.lastEvent = event;
-    state.lastData = data;
-    fs.writeFileSync(statePath, JSON.stringify(state, null, 2));
+    pipelineStates.delete('pending');
   }
+
+  // Also persist to disk if project dir exists
+  try {
+    const stateDir = getProjectDir(projectId);
+    if (fs.existsSync(stateDir)) {
+      fs.writeFileSync(path.join(stateDir, 'pipeline-state.json'), JSON.stringify(state, null, 2));
+    }
+  } catch { /* ignore for 'pending' */ }
 }
 
 async function runLivePipeline(source, options = {}) {
@@ -373,9 +389,18 @@ async function runLivePipeline(source, options = {}) {
 }
 
 function getPipelineState(projectId) {
-  const statePath = path.join(getProjectDir(projectId), 'pipeline-state.json');
-  if (!fs.existsSync(statePath)) return null;
-  return JSON.parse(fs.readFileSync(statePath, 'utf8'));
+  // Check in-memory first (always up to date)
+  if (pipelineStates.has(projectId)) {
+    return pipelineStates.get(projectId);
+  }
+  // Fall back to disk
+  try {
+    const statePath = path.join(getProjectDir(projectId), 'pipeline-state.json');
+    if (fs.existsSync(statePath)) {
+      return JSON.parse(fs.readFileSync(statePath, 'utf8'));
+    }
+  } catch { /* ignore */ }
+  return null;
 }
 
 module.exports = {
@@ -384,5 +409,6 @@ module.exports = {
   removeClient,
   broadcast,
   getPipelineState,
+  pipelineStates,
   clients,
 };

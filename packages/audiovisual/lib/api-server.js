@@ -562,8 +562,20 @@ async function handleRequest(req, res) {
     }
 
     if (pathname.match(/^\/api\/pipeline\/[^/]+\/state$/) && method === 'GET') {
-      const projectId = pathname.split('/')[3];
-      const state = getPipelineState(projectId);
+      const requestedId = pathname.split('/')[3];
+      let state = getPipelineState(requestedId);
+      // If 'pending' has no state, find the most recent active pipeline
+      if ((!state || !state.events || state.events.length === 0) && requestedId === 'pending') {
+        const livePipeline = require('./live-pipeline');
+        if (livePipeline.pipelineStates) {
+          for (const [pid, pState] of livePipeline.pipelineStates) {
+            if (pid !== 'pending' && pState.events && pState.events.length > 0) {
+              state = pState;
+              break;
+            }
+          }
+        }
+      }
       return sendJSON(res, state || { events: [] });
     }
 
