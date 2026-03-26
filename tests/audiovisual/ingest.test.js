@@ -50,14 +50,14 @@ describe('parseGoogleDriveUrl', () => {
   test('parses /file/d/ format', () => {
     const url = 'https://drive.google.com/file/d/1a2b3c4d5e/view?usp=sharing';
     const result = parseGoogleDriveUrl(url);
-    expect(result).toContain('1a2b3c4d5e');
-    expect(result).toContain('export=download');
+    expect(result.fileId).toBe('1a2b3c4d5e');
+    expect(result.url).toContain('export=download');
   });
 
   test('parses ?id= format', () => {
     const url = 'https://drive.google.com/open?id=xyz789';
     const result = parseGoogleDriveUrl(url);
-    expect(result).toContain('xyz789');
+    expect(result.fileId).toBe('xyz789');
   });
 
   test('throws on invalid Drive URL', () => {

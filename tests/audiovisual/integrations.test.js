@@ -38,8 +38,18 @@ describe('API Server', () => {
     expect(typeof handleRequest).toBe('function');
   });
 
+  function mockReq(method, url) {
+    return {
+      method,
+      url,
+      on: () => {},
+      socket: { remoteAddress: '127.0.0.1' },
+      headers: { 'user-agent': 'jest-test' },
+    };
+  }
+
   test('health endpoint works', (done) => {
-    const req = { method: 'GET', url: '/api/health', on: () => {} };
+    const req = mockReq('GET', '/api/health');
     const res = {
       writeHead: jest.fn(),
       end: jest.fn((data) => {
@@ -53,7 +63,7 @@ describe('API Server', () => {
   });
 
   test('404 for unknown routes', (done) => {
-    const req = { method: 'GET', url: '/api/nonexistent', on: () => {} };
+    const req = mockReq('GET', '/api/nonexistent');
     const res = {
       writeHead: jest.fn(),
       end: jest.fn((data) => {
@@ -67,7 +77,7 @@ describe('API Server', () => {
   });
 
   test('projects endpoint works', (done) => {
-    const req = { method: 'GET', url: '/api/projects', on: () => {} };
+    const req = mockReq('GET', '/api/projects');
     const res = {
       writeHead: jest.fn(),
       end: jest.fn((data) => {
@@ -155,7 +165,17 @@ describe('Webhooks', () => {
 // ── Drive ───────────────────────────────────────────────────
 
 describe('Drive Upload', () => {
-  test('loadToken returns null when no token', () => {
-    expect(loadToken()).toBeNull();
+  test('loadToken returns null when no token file exists', () => {
+    const origExistsSync = fs.existsSync;
+    // Mock existsSync to return false for token path
+    fs.existsSync = (p) => {
+      if (typeof p === 'string' && p.includes('drive-token')) return false;
+      return origExistsSync(p);
+    };
+    try {
+      expect(loadToken()).toBeNull();
+    } finally {
+      fs.existsSync = origExistsSync;
+    }
   });
 });
