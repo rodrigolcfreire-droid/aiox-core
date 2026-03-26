@@ -270,8 +270,9 @@ async function load() {
     const excerpt = getExcerptForCut(cut);
 
     // Video preview URL — use previewFile if available, else time-range on source
+    const cacheBust = Date.now();
     const previewSrc = cut.previewFile
-      ? `${API}/api/projects/${PID}/preview/${cut.previewFile}`
+      ? `${API}/api/projects/${PID}/preview/${cut.previewFile}?v=${cacheBust}`
       : `${videoUrl}#t=${(cut.start||0).toFixed(1)},${(cut.end||0).toFixed(1)}`;
 
     let btns = '';

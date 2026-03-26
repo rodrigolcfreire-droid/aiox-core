@@ -596,15 +596,16 @@ async function handleRequest(req, res) {
       const pp = path.join(getProjectDir(id), 'cuts', 'previews', filename);
       if (!fs.existsSync(pp)) return sendError(res, 'Not found', 404);
       const stat = fs.statSync(pp);
+      const noCacheHeaders = { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0' };
       const range = req.headers.range;
       if (range) {
         const rp = range.replace(/bytes=/, '').split('-');
         const s = parseInt(rp[0], 10);
         const e = rp[1] ? parseInt(rp[1], 10) : stat.size - 1;
-        res.writeHead(206, { 'Content-Range': `bytes ${s}-${e}/${stat.size}`, 'Accept-Ranges': 'bytes', 'Content-Length': e - s + 1, 'Content-Type': 'video/mp4', 'Access-Control-Allow-Origin': '*' });
+        res.writeHead(206, { 'Content-Range': `bytes ${s}-${e}/${stat.size}`, 'Accept-Ranges': 'bytes', 'Content-Length': e - s + 1, 'Content-Type': 'video/mp4', 'Access-Control-Allow-Origin': '*', ...noCacheHeaders });
         return fs.createReadStream(pp, { start: s, end: e }).pipe(res);
       }
-      res.writeHead(200, { 'Content-Length': stat.size, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Access-Control-Allow-Origin': '*' });
+      res.writeHead(200, { 'Content-Length': stat.size, 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Access-Control-Allow-Origin': '*', ...noCacheHeaders });
       return fs.createReadStream(pp).pipe(res);
     }
 
