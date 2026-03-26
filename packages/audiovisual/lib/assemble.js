@@ -15,6 +15,7 @@ const { execSync } = require('child_process');
 const { getProjectDir, loadProject } = require('./project');
 const { loadEnergyData, HOOK_DURATION } = require('./energy-detector');
 const { removeSilence } = require('./silence-remover');
+const { addSubtitlesToCut } = require('./subtitles');
 
 const FORMAT_MAP = {
   '9:16': { width: 1080, height: 1920 },
@@ -52,7 +53,9 @@ function rescaleVideo(inputPath, outputPath, format) {
     'ffmpeg', '-y',
     '-i', `"${inputPath}"`,
     '-vf', `"scale=${dims.width}:${dims.height}:force_original_aspect_ratio=decrease,pad=${dims.width}:${dims.height}:(ow-iw)/2:(oh-ih)/2"`,
-    '-c:a', 'copy',
+    '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23',
+    '-c:a', 'aac', '-b:a', '128k', '-ar', '48000', '-ac', '2',
+    '-movflags', '+faststart',
     `"${outputPath}"`,
   ].join(' ');
 
@@ -313,6 +316,22 @@ function assemblecut(projectId, cutId) {
   } catch (err) {
     console.log(`  Fade skipped: ${err.message}`);
     if (fs.existsSync(fadedPath)) fs.unlinkSync(fadedPath);
+  }
+
+  // Burn animated subtitles (viral preset)
+  try {
+    const subResult = addSubtitlesToCut(projectId, cutId, 'viral');
+    if (subResult && subResult.segments > 0) {
+      // Replace assembled with subtitled version
+      const subtitledPath = path.join(productionDir, `subtitled-${cutId}.mp4`);
+      if (fs.existsSync(subtitledPath)) {
+        fs.unlinkSync(assembledPath);
+        fs.renameSync(subtitledPath, assembledPath);
+        console.log(`  Subtitles: ${subResult.segments} segments burned (viral preset)`);
+      }
+    }
+  } catch (err) {
+    console.log(`  Subtitles skipped: ${err.message}`);
   }
 
   const finalDuration = cut.duration + extraDuration - (silenceResult ? silenceResult.removed : 0);
