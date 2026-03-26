@@ -533,8 +533,13 @@ async function handleRequest(req, res) {
         }
       }
 
+      // Heartbeat every 15s to keep Cloudflare tunnel alive
+      const heartbeat = setInterval(() => {
+        try { res.write(': heartbeat\n\n'); } catch { clearInterval(heartbeat); }
+      }, 15000);
+
       addClient(projectId, res);
-      req.on('close', () => removeClient(projectId, res));
+      req.on('close', () => { clearInterval(heartbeat); removeClient(projectId, res); });
       return; // keep connection open
     }
 
