@@ -87,11 +87,16 @@ function whisperAPI(audioPath, apiKey) {
       'verbose_json\r\n'
     );
 
-    // Timestamp granularities
+    // Timestamp granularities — segment + word level
     parts.push(
       `--${boundary}\r\n` +
       'Content-Disposition: form-data; name="timestamp_granularities[]"\r\n\r\n' +
       'segment\r\n'
+    );
+    parts.push(
+      `--${boundary}\r\n` +
+      'Content-Disposition: form-data; name="timestamp_granularities[]"\r\n\r\n' +
+      'word\r\n'
     );
 
     parts.push(`--${boundary}--\r\n`);
