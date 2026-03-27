@@ -16,6 +16,7 @@ const { getProjectDir, loadProject } = require('./project');
 const { loadEnergyData, HOOK_DURATION } = require('./energy-detector');
 const { removeSilence } = require('./silence-remover');
 const { addSubtitlesToCut } = require('./subtitles');
+const { generateHeadline, burnHeadline } = require('./hook-headline');
 
 const FORMAT_MAP = {
   '9:16': { width: 1080, height: 1920 },
@@ -332,6 +333,31 @@ function assemblecut(projectId, cutId) {
     }
   } catch (err) {
     console.log(`  Subtitles skipped: ${err.message}`);
+  }
+
+  // Burn hook headline for high-scoring cuts
+  if ((cut.engagementScore || 0) >= 8) {
+    try {
+      const analysisDir = path.join(projectDir, 'analysis');
+      const jsonPath = path.join(analysisDir, 'transcription.json');
+      if (fs.existsSync(jsonPath)) {
+        const transcription = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+        const headline = generateHeadline(cut, transcription);
+        if (headline) {
+          const probCmd = `ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 "${assembledPath}"`;
+          const dims = execSync(probCmd, { stdio: 'pipe', timeout: 10000 }).toString().trim().split(',');
+          const w = parseInt(dims[0]) || 1080;
+          const h = parseInt(dims[1]) || 1920;
+          const headlinedPath = path.join(productionDir, `headlined-${cutId}.mp4`);
+          burnHeadline(assembledPath, headline, headlinedPath, w, h);
+          fs.unlinkSync(assembledPath);
+          fs.renameSync(headlinedPath, assembledPath);
+          console.log(`  Headline: "${headline.text}" (${headline.type})`);
+        }
+      }
+    } catch (err) {
+      console.log(`  Headline skipped: ${err.message}`);
+    }
   }
 
   const finalDuration = cut.duration + extraDuration - (silenceResult ? silenceResult.removed : 0);
