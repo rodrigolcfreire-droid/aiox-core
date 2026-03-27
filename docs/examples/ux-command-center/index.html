@@ -6991,7 +6991,7 @@
         try {
           const nameEl = document.getElementById('av-cortes-file-name');
           const sizeMB = (file.size / 1048576).toFixed(1);
-          const CHUNK_SIZE = 50 * 1024 * 1024; // 50MB chunks (under Cloudflare 100MB limit)
+          const CHUNK_SIZE = 10 * 1024 * 1024; // 10MB chunks (fast through Cloudflare)
 
           if (file.size > CHUNK_SIZE) {
             // ── Chunked upload for large files ──
@@ -7003,8 +7003,8 @@
 
             const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
 
-            // 1. Init
-            const initRes = await authFetch(AV_API + '/api/upload/init', {
+            // 1. Init (no auth needed — upload endpoints are open)
+            const initRes = await fetch(AV_API + '/api/upload/init', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ filename: file.name, totalSize: file.size, totalChunks }),
@@ -7012,25 +7012,24 @@
             const initData = await initRes.json();
             if (!initData.uploadId) throw new Error(initData.error || 'Init failed');
 
-            // 2. Send chunks
+            // 2. Send chunks (plain fetch — no Authorization header = no CORS preflight)
             for (var i = 0; i < totalChunks; i++) {
               var start = i * CHUNK_SIZE;
               var end = Math.min(start + CHUNK_SIZE, file.size);
               var chunk = file.slice(start, end);
-              var chunkRes = await authFetch(
+              var chunkRes = await fetch(
                 AV_API + '/api/upload/chunk?uploadId=' + initData.uploadId + '&chunk=' + i, {
                   method: 'POST',
-                  headers: { 'Content-Type': 'application/octet-stream' },
                   body: chunk,
                 });
-              if (!chunkRes.ok) throw new Error('Chunk ' + i + ' falhou');
+              if (!chunkRes.ok) throw new Error('Chunk ' + (i + 1) + '/' + totalChunks + ' falhou');
               var pct = Math.round(((i + 1) / totalChunks) * 100);
               document.getElementById('upload-bar').style.width = pct + '%';
               document.getElementById('upload-pct').textContent = pct + '% — parte ' + (i + 1) + ' de ' + totalChunks;
             }
 
             // 3. Complete
-            var completeRes = await authFetch(AV_API + '/api/upload/complete', {
+            var completeRes = await fetch(AV_API + '/api/upload/complete', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ uploadId: initData.uploadId }),
