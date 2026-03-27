@@ -42,13 +42,16 @@ const { buildExportPackage, getExportHistory } = require('./export-package');
 
 const DEFAULT_PORT = 3456;
 
-// Rate limiting — 30 requests per minute per IP (zero deps)
-const RATE_LIMIT = 200;
-const RATE_WINDOW = 60000; // 1 minute
+// Rate limiting — per IP (zero deps)
+const RATE_LIMIT_EXTERNAL = 60;  // external IPs: 60/min
+const RATE_LIMIT_LOCAL = 500;    // localhost: 500/min (polling, SSE, etc)
+const RATE_WINDOW = 60000;       // 1 minute
 const rateLimitMap = new Map();
 
 function checkRateLimit(req, res) {
   const ip = req.socket.remoteAddress || '127.0.0.1';
+  const isLocal = ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+  const limit = isLocal ? RATE_LIMIT_LOCAL : RATE_LIMIT_EXTERNAL;
   const now = Date.now();
 
   if (!rateLimitMap.has(ip)) {
@@ -59,9 +62,9 @@ function checkRateLimit(req, res) {
   timestamps.push(now);
   rateLimitMap.set(ip, timestamps);
 
-  if (timestamps.length > RATE_LIMIT) {
-    res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': '60' });
-    res.end(JSON.stringify({ error: 'Too many requests. Limit: 30/min.' }));
+  if (timestamps.length > limit) {
+    res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': '30' });
+    res.end(JSON.stringify({ error: `Rate limit: ${timestamps.length}/${limit} req/min`, limit }));
     return false;
   }
 
@@ -198,10 +201,12 @@ async function handleRequest(req, res) {
 
   // External access tracking (only log, alerts handled by login flow)
 
-  // Rate limit check (skip for SSE and static files)
+  // Rate limit check (skip for SSE, static files, polling, upload chunks, health)
   const isSSE = req.url.includes('/events');
   const isStatic = !req.url.startsWith('/api/');
-  if (!isSSE && !isStatic && !checkRateLimit(req, res)) {
+  const isPolling = req.url.includes('/state') || req.url.includes('/health');
+  const isUploadChunk = req.url.includes('/upload/chunk');
+  if (!isSSE && !isStatic && !isPolling && !isUploadChunk && !checkRateLimit(req, res)) {
     logRateLimitHit(req);
     const ip = req.socket.remoteAddress || '127.0.0.1';
     sendRateLimitAlert(ip, RATE_LIMIT).catch(() => {});
