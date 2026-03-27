@@ -154,16 +154,21 @@ function generateAnimatedASS(transcription, cutStart, cutEnd, videoWidth, videoH
   for (const seg of segments) {
     // Use word-level timestamps if available, else estimate from segment
     const words = seg.words || seg.text.split(/\s+/).map((w, i, arr) => {
+      // Weight by word length for more natural timing
+      const totalChars = arr.reduce((sum, word) => sum + word.length, 0);
       const segDur = seg.end - seg.start;
-      const wordDur = segDur / arr.length;
-      return { word: w, start: seg.start + i * wordDur, end: seg.start + (i + 1) * wordDur };
+      let cumChars = 0;
+      for (let j = 0; j < i; j++) cumChars += arr[j].length;
+      const wordStart = seg.start + (cumChars / totalChars) * segDur;
+      const wordEnd = seg.start + ((cumChars + w.length) / totalChars) * segDur;
+      return { word: w, start: wordStart, end: wordEnd };
     });
 
     // Group into blocks of 2-4 words
     const blocks = groupWordsIntoBlocks(words, 3);
 
     for (const block of blocks) {
-      const blockStart = (block[0].start || block[0].start) - cutStart;
+      const blockStart = Math.max(0, (block[0].start) - cutStart - 0.15); // -150ms to compensate render latency
       const blockEnd = (block[block.length - 1].end || block[block.length - 1].end) - cutStart;
 
       if (blockStart < 0 || blockEnd < 0) continue;

@@ -55,6 +55,10 @@
     .result-card.visible { display: block; animation: fadeIn 0.3s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
     .result-title { font-size: 14px; font-weight: 600; color: #a78bfa; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    #card-blocks { max-height: 200px; overflow: hidden; position: relative; cursor: pointer; }
+    #card-blocks.expanded { max-height: none; }
+    #card-blocks .blocks-toggle { position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: linear-gradient(transparent, #0f172a); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; font-size: 11px; color: #64748b; }
+    #card-blocks.expanded .blocks-toggle { position: static; background: none; height: auto; padding-top: 8px; }
 
     /* Cuts List */
     .cuts-section { display: none; margin-bottom: 32px; }
@@ -171,9 +175,10 @@
       <div class="result-title">Descricao do Conteudo</div>
       <div id="description-content"></div>
     </div>
-    <div class="result-card" id="card-blocks">
-      <div class="result-title">Blocos Identificados</div>
+    <div class="result-card" id="card-blocks" onclick="this.classList.toggle('expanded')">
+      <div class="result-title">Blocos Identificados <span style="font-size:11px;color:#64748b;font-weight:400;" id="blocks-count"></span></div>
       <div id="blocks-content"></div>
+      <div class="blocks-toggle" id="blocks-toggle">▼ Ver todos</div>
     </div>
     <div class="result-card" id="card-suggestions">
       <div class="result-title">Sugestoes de Melhoria</div>
@@ -466,14 +471,16 @@ function connectSSE(projectId) {
       const card = document.getElementById('card-blocks');
       card.classList.add('visible');
       const blocks = data.blocks.map(b =>
-        `<div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #1e293b;font-size:12px;">
-          <span style="color:#a78bfa;width:60px;">${b.type}</span>
-          <span style="color:#64748b;width:50px;">${b.duration.toFixed(1)}s</span>
-          <span style="color:#94a3b8;flex:1;">${b.title}</span>
-          <span style="color:#475569;">${b.energyLevel}</span>
+        `<div style="display:flex;gap:8px;padding:3px 0;border-bottom:1px solid #1e293b;font-size:11px;align-items:center;">
+          <span style="color:#a78bfa;width:55px;font-weight:600;">${b.type}</span>
+          <span style="color:#64748b;width:45px;">${b.duration.toFixed(0)}s</span>
+          <span style="color:#475569;font-size:10px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${b.title}</span>
+          <span style="color:${b.energyLevel==='high'?'#34d399':b.energyLevel==='medium'?'#fbbf24':'#64748b'};font-size:10px;">${b.energyLevel}</span>
         </div>`
       ).join('');
       document.getElementById('blocks-content').innerHTML = blocks;
+      document.getElementById('blocks-count').textContent = '(' + data.blocks.length + ')';
+      document.getElementById('blocks-toggle').textContent = data.blocks.length > 8 ? '▼ Ver todos (' + data.blocks.length + ')' : '';
     }
 
     // Show suggestions
