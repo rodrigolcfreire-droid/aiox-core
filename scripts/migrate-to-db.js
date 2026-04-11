@@ -21,15 +21,26 @@ const PROJECT_ROOT = path.resolve(__dirname, '..');
 
 // Config
 const IS_REMOTE = process.argv.includes('--remote');
+
+function requireEnv(name) {
+  const value = process.env[name];
+  if (!value) {
+    console.error(`[migrate-to-db] Missing required env var: ${name}`);
+    console.error('[migrate-to-db] Set it in your .env or export before running.');
+    process.exit(1);
+  }
+  return value;
+}
+
 const DB_CONFIG = IS_REMOTE
   ? {
-    url: 'https://gfftqwmxiwejbimwgedc.supabase.co',
-    serviceKey: process.env.SUPABASE_SERVICE_KEY || 'REDACTED_SUPABASE_SERVICE_KEY',
+    url: process.env.SUPABASE_URL || 'https://gfftqwmxiwejbimwgedc.supabase.co',
+    serviceKey: requireEnv('SUPABASE_SERVICE_KEY'),
     mode: 'database',
   }
   : {
-    url: 'http://127.0.0.1:54321',
-    serviceKey: 'REDACTED_LOCAL_SUPABASE_KEY',
+    url: process.env.SUPABASE_LOCAL_URL || 'http://127.0.0.1:54321',
+    serviceKey: requireEnv('SUPABASE_LOCAL_SERVICE_KEY'),
     mode: 'database',
   };
 
