@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatorio Suhaviator — 03/04/2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #0a0e1a; color: #e0e0e0; padding: 24px; }
+  .container { max-width: 900px; margin: 0 auto; }
+  h1 { color: #00e5cc; font-size: 1.6rem; margin-bottom: 4px; }
+  h2 { color: #00e5cc; font-size: 1.1rem; margin: 24px 0 12px; border-bottom: 1px solid rgba(0,229,204,0.2); padding-bottom: 6px; }
+  .subtitle { color: #888; font-size: 0.85rem; margin-bottom: 20px; }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  .stat-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 14px; text-align: center; }
+  .stat-val { font-size: 1.8rem; font-weight: 700; color: #00e5cc; }
+  .stat-val.red { color: #ef4444; }
+  .stat-val.yellow { color: #eab308; }
+  .stat-label { font-size: 0.72rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 0.85rem; }
+  th { text-align: left; color: #00e5cc; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; padding: 8px 12px; border-bottom: 1px solid rgba(0,229,204,0.2); }
+  td { padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .badge { padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; }
+  .badge-high { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .badge-medium { background: rgba(249,115,22,0.15); color: #f97316; }
+  .badge-low { background: rgba(0,229,204,0.1); color: #00e5cc; }
+  .hour-bar { display: flex; align-items: center; gap: 8px; margin: 2px 0; }
+  .hour-label { width: 30px; font-size: 0.72rem; color: #888; text-align: right; }
+  .bar { height: 16px; background: linear-gradient(90deg, #00e5cc, #0088cc); border-radius: 3px; min-width: 2px; }
+  .hour-count { font-size: 0.72rem; color: #888; }
+  .segments { display: flex; gap: 16px; margin: 10px 0; }
+  .seg-block { flex: 1; background: rgba(255,255,255,0.04); border-radius: 8px; padding: 14px; text-align: center; }
+  .seg-val { font-size: 1.4rem; font-weight: 700; color: #00e5cc; }
+  .seg-label { font-size: 0.72rem; color: #888; }
+  .footer { margin-top: 30px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 0.72rem; color: #555; text-align: center; }
+  @media print {
+    body { background: #fff; color: #222; }
+    .stat-card, .seg-block { border-color: #ddd; }
+    .stat-val, h1, h2, th, .badge-low { color: #0088cc; }
+    .bar { background: #0088cc; }
+    td { border-bottom-color: #eee; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>RELATORIO — Suhaviator</h1>
+  <div class="subtitle">Squad Telegram Intelligence | Gerado em 03/04/2026 as 20:38:16 | 8911 mensagens analisadas</div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-val">8911</div><div class="stat-label">Mensagens</div></div>
+    <div class="stat-card"><div class="stat-val">223</div><div class="stat-label">Duvidas</div></div>
+    <div class="stat-card"><div class="stat-val red">30</div><div class="stat-label">Dores</div></div>
+    <div class="stat-card"><div class="stat-val">423</div><div class="stat-label">Engajamento</div></div>
+    <div class="stat-card"><div class="stat-val">15</div><div class="stat-label">Influenciadores</div></div>
+    <div class="stat-card"><div class="stat-val">25</div><div class="stat-label">Temas Virais</div></div>
+  </div>
+
+  <h2>Topicos Mais Discutidos</h2>
+  <table><tr><th>Topico</th><th>Frequencia</th></tr><tr><td>tomem cuidado</td><td>197</td></tr><tr><td>ninguém privado</td><td>197</td></tr><tr><td>cuidado golpes</td><td>195</td></tr><tr><td>banca vocês</td><td>193</td></tr><tr><td>golpes intencionada</td><td>192</td></tr><tr><td>intencionada tentando</td><td>192</td></tr><tr><td>tentando passar</td><td>192</td></tr><tr><td>passar mentor</td><td>192</td></tr><tr><td>mentor admin</td><td>192</td></tr><tr><td>admin suporte</td><td>192</td></tr></table>
+
+  <h2>Duvidas Recorrentes</h2>
+  <table><tr><th>Duvida</th><th>Vezes</th></tr><tr><td>Vai ter live hoje ainda ?</td><td>2</td></tr><tr><td>Não vai ter live ?</td><td>2</td></tr><tr><td>Vai ter live AGR ?</td><td>2</td></tr><tr><td>Cadê o link da Live?</td><td>2</td></tr><tr><td>Que horas sai os sinais?</td><td>1</td></tr><tr><td>Parabéns 👏🏾👏🏾👏🏾 Vc faz entradas de quanto em cada boleta? Tira a 1° mão em 2x?</td><td>1</td></tr><tr><td>Com banca de quanto?</td><td>1</td></tr><tr><td>Onde consigo acompanhar a live?</td><td>1</td></tr></table>
+
+  <h2>Dores da Audiencia</h2>
+  <table><tr><th>Dor</th><th>Vezes</th></tr><tr><td>Fiz o saque e ainda não caiu kkkkk</td><td>1</td></tr><tr><td>Também fiz o saque o dinheiro não caiu</td><td>1</td></tr><tr><td>Galera uma vez eu saquei e aconteceu isso, quando fui ver tinha extornado, e na segunda vez caiu em outro banco, ou seja</td><td>1</td></tr><tr><td>Ó dinheiro de vc já caiu na conta de vcs?</td><td>1</td></tr><tr><td>Fui transferir o dinheiro e não caiu ainda</td><td>1</td></tr><tr><td>Alguém tá conseguindo receber na conta via Pix normal o saque ,até ontem tava normal e hoje não caiu nada deve ser por c</td><td>1</td></tr><tr><td>Mas não caiu nada até agora e já tem 10min q fiz o saque e nada até agora</td><td>1</td></tr><tr><td>Nao consigo subir banca de 20 so de 50 pra cima kkk</td><td>1</td></tr></table>
+
+  <h2>Influenciadores</h2>
+  <table><tr><th>#</th><th>Nome</th><th>Msgs</th><th>Score</th><th>Nivel</th></tr><tr><td>1</td><td>Group</td><td>422</td><td>937.0</td><td><span class="badge badge-high">high</span></td></tr><tr><td>2</td><td>Suporte Software Spinataque</td><td>375</td><td>390.0</td><td><span class="badge badge-high">high</span></td></tr><tr><td>3</td><td>Geice Ravani</td><td>308</td><td>308.0</td><td><span class="badge badge-high">high</span></td></tr><tr><td>4</td><td>Douglas Silva</td><td>93</td><td>237.0</td><td><span class="badge badge-high">high</span></td></tr><tr><td>5</td><td>Maciel Lemos Da Silva Soares</td><td>219</td><td>233.0</td><td><span class="badge badge-high">high</span></td></tr><tr><td>6</td><td>Capitão</td><td>231</td><td>232.5</td><td><span class="badge badge-high">high</span></td></tr><tr><td>7</td><td>Jeni</td><td>222</td><td>222.0</td><td><span class="badge badge-high">high</span></td></tr><tr><td>8</td><td>Edcley Najar</td><td>177</td><td>179.0</td><td><span class="badge badge-high">high</span></td></tr><tr><td>9</td><td>Claudia</td><td>175</td><td>175.0</td><td><span class="badge badge-high">high</span></td></tr><tr><td>10</td><td>Beatriz Santana</td><td>153</td><td>161.0</td><td><span class="badge badge-high">high</span></td></tr></table>
+
+  <h2>Segmentacao de Usuarios</h2>
+  <div class="segments">
+    <div class="seg-block"><div class="seg-val">403</div><div class="seg-label">Iniciantes</div></div>
+    <div class="seg-block"><div class="seg-val">273</div><div class="seg-label">Intermediarios</div></div>
+    <div class="seg-block"><div class="seg-val">6</div><div class="seg-label">Avancados</div></div>
+  </div>
+
+  <h2>Temas Virais</h2><table><tr><th>Topico</th><th>Msgs</th><th>Velocidade</th><th>Data</th></tr><tr><td>dinheiro</td><td>279</td><td>12.37x</td><td>2026-03-25</td></tr><tr><td>rapaz</td><td>262</td><td>11.61x</td><td>2026-03-23</td></tr><tr><td>banca</td><td>237</td><td>10.51x</td><td>2026-03-25</td></tr><tr><td>gráfico</td><td>213</td><td>9.44x</td><td>2026-03-20</td></tr><tr><td>gráfico</td><td>198</td><td>8.78x</td><td>2026-03-20</td></tr><tr><td>banca</td><td>195</td><td>8.64x</td><td>2026-03-26</td></tr><tr><td>bateu</td><td>174</td><td>7.71x</td><td>2026-03-21</td></tr><tr><td>banca</td><td>155</td><td>6.87x</td><td>2026-03-19</td></tr><tr><td>grupo</td><td>150</td><td>6.65x</td><td>2026-03-23</td></tr><tr><td>grupo</td><td>148</td><td>6.56x</td><td>2026-03-23</td></tr><tr><td>golpista</td><td>141</td><td>6.25x</td><td>2026-03-23</td></tr><tr><td>manda</td><td>112</td><td>4.96x</td><td>2026-03-25</td></tr><tr><td>golpe</td><td>111</td><td>4.92x</td><td>2026-03-21</td></tr><tr><td>banca</td><td>98</td><td>4.34x</td><td>2026-03-20</td></tr><tr><td>perdi</td><td>98</td><td>4.34x</td><td>2026-04-01</td></tr><tr><td>banca</td><td>90</td><td>3.99x</td><td>2026-03-20</td></tr><tr><td>entrar</td><td>88</td><td>3.90x</td><td>2026-03-20</td></tr><tr><td>conta</td><td>85</td><td>3.77x</td><td>2026-03-19</td></tr><tr><td>banca</td><td>84</td><td>3.72x</td><td>2026-03-20</td></tr><tr><td>gráfico</td><td>81</td><td>3.59x</td><td>2026-03-28</td></tr><tr><td>👇🏾👇🏾👇🏾</td><td>76</td><td>3.37x</td><td>2026-03-22</td></tr><tr><td>fiquei</td><td>75</td><td>3.32x</td><td>2026-03-27</td></tr><tr><td>dinheiro</td><td>72</td><td>3.19x</td><td>2026-03-18</td></tr><tr><td>🔡🔡🔤🔡🔡</td><td>71</td><td>3.15x</td><td>2026-03-24</td></tr><tr><td>🔡🔡🔤🔡🔡</td><td>70</td><td>3.10x</td><td>2026-03-28</td></tr></table>
+
+  <h2>Distribuicao por Horario</h2>
+  <div style="margin-bottom: 16px;"><div class="hour-bar"><span class="hour-label">0h</span><div class="bar" style="width:32.25806451612903%"></div><span class="hour-count">240</span></div><div class="hour-bar"><span class="hour-label">1h</span><div class="bar" style="width:32.795698924731184%"></div><span class="hour-count">244</span></div><div class="hour-bar"><span class="hour-label">2h</span><div class="bar" style="width:9.811827956989246%"></div><span class="hour-count">73</span></div><div class="hour-bar"><span class="hour-label">3h</span><div class="bar" style="width:8.46774193548387%"></div><span class="hour-count">63</span></div><div class="hour-bar"><span class="hour-label">4h</span><div class="bar" style="width:5.241935483870968%"></div><span class="hour-count">39</span></div><div class="hour-bar"><span class="hour-label">5h</span><div class="bar" style="width:9.811827956989246%"></div><span class="hour-count">73</span></div><div class="hour-bar"><span class="hour-label">6h</span><div class="bar" style="width:11.021505376344086%"></div><span class="hour-count">82</span></div><div class="hour-bar"><span class="hour-label">7h</span><div class="bar" style="width:23.790322580645164%"></div><span class="hour-count">177</span></div><div class="hour-bar"><span class="hour-label">8h</span><div class="bar" style="width:92.20430107526882%"></div><span class="hour-count">686</span></div><div class="hour-bar"><span class="hour-label">9h</span><div class="bar" style="width:87.76881720430107%"></div><span class="hour-count">653</span></div><div class="hour-bar"><span class="hour-label">10h</span><div class="bar" style="width:97.98387096774194%"></div><span class="hour-count">729</span></div><div class="hour-bar"><span class="hour-label">11h</span><div class="bar" style="width:34.274193548387096%"></div><span class="hour-count">255</span></div><div class="hour-bar"><span class="hour-label">12h</span><div class="bar" style="width:47.8494623655914%"></div><span class="hour-count">356</span></div><div class="hour-bar"><span class="hour-label">13h</span><div class="bar" style="width:45.026881720430104%"></div><span class="hour-count">335</span></div><div class="hour-bar"><span class="hour-label">14h</span><div class="bar" style="width:25.672043010752688%"></div><span class="hour-count">191</span></div><div class="hour-bar"><span class="hour-label">15h</span><div class="bar" style="width:44.623655913978496%"></div><span class="hour-count">332</span></div><div class="hour-bar"><span class="hour-label">16h</span><div class="bar" style="width:61.02150537634409%"></div><span class="hour-count">454</span></div><div class="hour-bar"><span class="hour-label">17h</span><div class="bar" style="width:100%"></div><span class="hour-count">744</span></div><div class="hour-bar"><span class="hour-label">18h</span><div class="bar" style="width:27.1505376344086%"></div><span class="hour-count">202</span></div><div class="hour-bar"><span class="hour-label">19h</span><div class="bar" style="width:61.29032258064516%"></div><span class="hour-count">456</span></div><div class="hour-bar"><span class="hour-label">20h</span><div class="bar" style="width:80.3763440860215%"></div><span class="hour-count">598</span></div><div class="hour-bar"><span class="hour-label">21h</span><div class="bar" style="width:92.8763440860215%"></div><span class="hour-count">691</span></div><div class="hour-bar"><span class="hour-label">22h</span><div class="bar" style="width:97.58064516129032%"></div><span class="hour-count">726</span></div><div class="hour-bar"><span class="hour-label">23h</span><div class="bar" style="width:68.81720430107528%"></div><span class="hour-count">512</span></div></div>
+
+  <h2>Sugestoes de Conteudo</h2>
+  <table><tr><th>Prioridade</th><th>Tipo</th><th>Sugestao</th><th>Formato</th></tr><tr><td><span class="badge badge-high">high</span></td><td>conteudo</td><td>Conteudo sobre: "tomem cuidado" (197 mencoes)</td><td>post_ou_video</td></tr><tr><td><span class="badge badge-high">high</span></td><td>conteudo</td><td>Conteudo sobre: "ninguém privado" (197 mencoes)</td><td>post_ou_video</td></tr><tr><td><span class="badge badge-high">high</span></td><td>conteudo</td><td>Conteudo sobre: "cuidado golpes" (195 mencoes)</td><td>post_ou_video</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "dinheiro" (velocidade 12.37x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "rapaz" (velocidade 11.61x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "banca" (velocidade 10.51x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "gráfico" (velocidade 9.44x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "gráfico" (velocidade 8.78x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "banca" (velocidade 8.64x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "bateu" (velocidade 7.71x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "banca" (velocidade 6.87x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "grupo" (velocidade 6.65x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "grupo" (velocidade 6.56x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "golpista" (velocidade 6.25x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "manda" (velocidade 4.96x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "golpe" (velocidade 4.92x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "banca" (velocidade 4.34x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "perdi" (velocidade 4.34x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "banca" (velocidade 3.99x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "entrar" (velocidade 3.90x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "conta" (velocidade 3.77x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "banca" (velocidade 3.72x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "gráfico" (velocidade 3.59x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "👇🏾👇🏾👇🏾" (velocidade 3.37x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "fiquei" (velocidade 3.32x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "dinheiro" (velocidade 3.19x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "🔡🔡🔤🔡🔡" (velocidade 3.15x)</td><td>criativo_pago</td></tr><tr><td><span class="badge badge-high">high</span></td><td>anuncio</td><td>Anuncio baseado em tema viral: "🔡🔡🔤🔡🔡" (velocidade 3.10x)</td><td>criativo_pago</td></tr></table>
+
+  <div class="footer">AIOX Squad Telegram Intelligence — Relatorio gerado automaticamente pelo agente Sentinel (@autoavaliativo)</div>
+</div>
+</body>
+</html>
