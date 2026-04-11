@@ -131,7 +131,7 @@ describe('segmentVideo', () => {
     const analysisDir = path.join(getProjectDir(testProjectId), 'analysis');
     fs.writeFileSync(
       path.join(analysisDir, 'transcription.json'),
-      JSON.stringify(transcription, null, 2)
+      JSON.stringify(transcription, null, 2),
     );
   });
 

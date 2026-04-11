@@ -94,7 +94,7 @@ function applyBranding(projectId, cutId) {
     console.log(`  Applying logo watermark (${preset.logoPosition})...`);
     applyLogoWatermark(
       inputPath, preset.logo, outputPath,
-      preset.logoPosition, preset.logoScale, preset.logoOpacity
+      preset.logoPosition, preset.logoScale, preset.logoOpacity,
     );
   } else {
     // No branding to apply, just copy

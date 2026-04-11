@@ -24,7 +24,7 @@ function loadCredentials() {
     throw new Error(
       'Google Drive credentials not found.\n' +
       `Place your credentials.json at: ${CREDENTIALS_PATH}\n` +
-      'Get it from: https://console.cloud.google.com/apis/credentials'
+      'Get it from: https://console.cloud.google.com/apis/credentials',
     );
   }
   return JSON.parse(fs.readFileSync(CREDENTIALS_PATH, 'utf8'));
@@ -146,7 +146,7 @@ async function uploadFile(filePath, folderId, token) {
     'POST',
     '/upload/drive/v3/files?uploadType=resumable',
     token,
-    metadata
+    metadata,
   );
 
   // For simplicity, use simple upload for files < 5MB
@@ -200,7 +200,7 @@ async function publishProject(projectId) {
   if (!token) {
     throw new Error(
       'Google Drive not authenticated.\n' +
-      'Run: node bin/av-drive.js auth'
+      'Run: node bin/av-drive.js auth',
     );
   }
 

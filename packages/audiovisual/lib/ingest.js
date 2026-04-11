@@ -216,7 +216,7 @@ function validateFormat(filePath) {
   if (!SUPPORTED_FORMATS.includes(ext)) {
     throw new Error(
       `Unsupported format: ${ext}\n` +
-      `Supported: ${SUPPORTED_FORMATS.join(', ')}`
+      `Supported: ${SUPPORTED_FORMATS.join(', ')}`,
     );
   }
   return ext;
@@ -340,7 +340,7 @@ async function ingest(source, options = {}) {
   const analysisDir = path.join(projectDir, 'analysis');
   fs.writeFileSync(
     path.join(analysisDir, 'metadata.json'),
-    JSON.stringify(metadata, null, 2)
+    JSON.stringify(metadata, null, 2),
   );
 
   // Update project with metadata

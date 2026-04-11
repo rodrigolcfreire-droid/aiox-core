@@ -117,7 +117,7 @@ function emit(event, payload) {
   const logEntry = { event, payload: { projectId: payload.projectId }, hooks: results.length, timestamp: new Date().toISOString() };
   fs.appendFileSync(
     path.join(logDir, 'events.jsonl'),
-    JSON.stringify(logEntry) + '\n'
+    JSON.stringify(logEntry) + '\n',
   );
 
   return results;

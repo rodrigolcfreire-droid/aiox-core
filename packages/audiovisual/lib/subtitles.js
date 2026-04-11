@@ -344,11 +344,11 @@ function addSubtitlesToCut(projectId, cutId, style = 'viral') {
   const assContent = useAnimated
     ? generateAnimatedASS(transcription, cut.start, cut.end, w, h, style)
     : generateASS(
-        (transcription.segments || [])
-          .filter(s => s.start >= cut.start && s.end <= cut.end)
-          .map(s => ({ ...s, start: s.start - cut.start, end: s.end - cut.start })),
-        style, w, h
-      );
+      (transcription.segments || [])
+        .filter(s => s.start >= cut.start && s.end <= cut.end)
+        .map(s => ({ ...s, start: s.start - cut.start, end: s.end - cut.start })),
+      style, w, h,
+    );
 
   const assPath = path.join(productionDir, `subs-${cutId}.ass`);
   fs.writeFileSync(assPath, assContent);

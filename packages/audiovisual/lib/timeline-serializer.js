@@ -31,7 +31,7 @@ const FORMAT_RESOLUTIONS = {
  */
 function buildMarkers(cut, approvalDecision, energyData) {
   const markers = [];
-  let frame = 0;
+  const frame = 0;
 
   // Category marker at start
   markers.push({
@@ -238,11 +238,11 @@ function serializeApproved(projectId) {
   const approvedIds = new Set(
     (data.approvals.decisions || [])
       .filter(d => d.decision === 'approved')
-      .map(d => d.cutId)
+      .map(d => d.cutId),
   );
 
   const approvedCuts = data.cutsData.suggestedCuts.filter(c =>
-    approvedIds.has(c.id) || c.status === 'approved'
+    approvedIds.has(c.id) || c.status === 'approved',
   );
 
   if (approvedCuts.length === 0) {

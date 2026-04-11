@@ -68,7 +68,7 @@ function whisperAPI(audioPath, apiKey) {
     parts.push(
       `--${boundary}\r\n` +
       `Content-Disposition: form-data; name="file"; filename="${path.basename(audioPath)}"\r\n` +
-      'Content-Type: audio/wav\r\n\r\n'
+      'Content-Type: audio/wav\r\n\r\n',
     );
     parts.push(fileData);
     parts.push('\r\n');
@@ -77,26 +77,26 @@ function whisperAPI(audioPath, apiKey) {
     parts.push(
       `--${boundary}\r\n` +
       'Content-Disposition: form-data; name="model"\r\n\r\n' +
-      'whisper-1\r\n'
+      'whisper-1\r\n',
     );
 
     // Response format
     parts.push(
       `--${boundary}\r\n` +
       'Content-Disposition: form-data; name="response_format"\r\n\r\n' +
-      'verbose_json\r\n'
+      'verbose_json\r\n',
     );
 
     // Timestamp granularities — segment + word level
     parts.push(
       `--${boundary}\r\n` +
       'Content-Disposition: form-data; name="timestamp_granularities[]"\r\n\r\n' +
-      'segment\r\n'
+      'segment\r\n',
     );
     parts.push(
       `--${boundary}\r\n` +
       'Content-Disposition: form-data; name="timestamp_granularities[]"\r\n\r\n' +
-      'word\r\n'
+      'word\r\n',
     );
 
     parts.push(`--${boundary}--\r\n`);
@@ -174,7 +174,7 @@ async function transcribeWithWhisper(projectId) {
     throw new Error(
       'OPENAI_API_KEY not found.\n' +
       'Add to .env: OPENAI_API_KEY=sk-...\n' +
-      'Or use manual import: node bin/av-transcribe.js import <project-id> <srt-file>'
+      'Or use manual import: node bin/av-transcribe.js import <project-id> <srt-file>',
     );
   }
 
@@ -185,7 +185,7 @@ async function transcribeWithWhisper(projectId) {
     console.log(`  Audio grande (${audioSizeMB.toFixed(1)} MB) — dividindo em partes...`);
     const chunkDuration = 600; // 10 min per chunk
     const totalDuration = parseFloat(
-      execSync(`ffprobe -v quiet -show_entries format=duration -of csv=p=0 "${audioPath}"`, { encoding: 'utf8' }).trim()
+      execSync(`ffprobe -v quiet -show_entries format=duration -of csv=p=0 "${audioPath}"`, { encoding: 'utf8' }).trim(),
     );
     const numChunks = Math.ceil(totalDuration / chunkDuration);
     console.log(`  ${numChunks} partes de ${chunkDuration / 60} min`);
@@ -196,7 +196,7 @@ async function transcribeWithWhisper(projectId) {
 
       execSync(
         `ffmpeg -y -ss ${start} -i "${audioPath}" -t ${chunkDuration} -acodec pcm_s16le -ar 16000 -ac 1 "${chunkPath}"`,
-        { stdio: 'pipe', timeout: 120000 }
+        { stdio: 'pipe', timeout: 120000 },
       );
 
       const chunkSize = fs.statSync(chunkPath).size / 1024 / 1024;
@@ -245,12 +245,12 @@ async function transcribeWithWhisper(projectId) {
   // Save outputs
   fs.writeFileSync(
     path.join(analysisDir, 'transcription.json'),
-    JSON.stringify(transcription, null, 2)
+    JSON.stringify(transcription, null, 2),
   );
 
   fs.writeFileSync(
     path.join(analysisDir, 'transcription.srt'),
-    generateSRT(segments)
+    generateSRT(segments),
   );
 
   console.log(`  Language: ${transcription.language}`);
@@ -293,12 +293,12 @@ function importSRT(projectId, srtPath) {
 
   fs.writeFileSync(
     path.join(analysisDir, 'transcription.json'),
-    JSON.stringify(transcription, null, 2)
+    JSON.stringify(transcription, null, 2),
   );
 
   fs.writeFileSync(
     path.join(analysisDir, 'transcription.srt'),
-    generateSRT(segments)
+    generateSRT(segments),
   );
 
   console.log(`  Imported: ${segments.length} segments`);

@@ -27,13 +27,13 @@ function main() {
   const config = creds.installed || creds.web;
   const redirectUri = `http://localhost:${PORT}`;
 
-  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+  const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' +
     `client_id=${config.client_id}&` +
     `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-    `response_type=code&` +
+    'response_type=code&' +
     `scope=${encodeURIComponent('https://www.googleapis.com/auth/drive')}&` +
-    `access_type=offline&` +
-    `prompt=consent`;
+    'access_type=offline&' +
+    'prompt=consent';
 
   // Start local server to capture callback
   const server = http.createServer((req, res) => {

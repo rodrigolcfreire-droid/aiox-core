@@ -86,7 +86,7 @@ function buildDaVinciClipItem(clip, fileId, fps, indent = 0) {
       tag('mediatype', {}, 'video', indent + 2),
       tag('trackindex', {}, '1', indent + 2),
       tag('clipindex', {}, String(clip.index + 1), indent + 2),
-    ], indent + 1)
+    ], indent + 1),
   );
 
   children.push(
@@ -95,7 +95,7 @@ function buildDaVinciClipItem(clip, fileId, fps, indent = 0) {
       tag('mediatype', {}, 'audio', indent + 2),
       tag('trackindex', {}, '1', indent + 2),
       tag('clipindex', {}, String(clip.index + 1), indent + 2),
-    ], indent + 1)
+    ], indent + 1),
   );
 
   // Markers
@@ -164,17 +164,17 @@ function generateDaVinciXml(timeline) {
 
   // Video clips
   const videoClipItems = timeline.videoTrack.clips.map(
-    clip => buildDaVinciClipItem(clip, fileId, fps, 5)
+    clip => buildDaVinciClipItem(clip, fileId, fps, 5),
   );
 
   // Audio clips
   const audioClipItems = timeline.audioTrack.clips.map(
-    clip => buildDaVinciAudioClipItem(clip, fileId, fps, 5)
+    clip => buildDaVinciAudioClipItem(clip, fileId, fps, 5),
   );
 
   // Sequence markers
   const sequenceMarkers = (timeline.markers || []).map(
-    m => buildMarker(m, fps, 4)
+    m => buildMarker(m, fps, 4),
   );
 
   // File reference
@@ -184,7 +184,7 @@ function generateDaVinciXml(timeline) {
     timeline.sourceVideoDuration,
     fps,
     res,
-    5
+    5,
   );
 
   const xml = [

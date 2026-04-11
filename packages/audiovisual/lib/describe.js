@@ -141,7 +141,7 @@ function generateDescription(projectId) {
   if (!fs.existsSync(transcriptionPath)) {
     throw new Error(
       `Transcription not found for project ${projectId}.\n` +
-      'Run transcription first: node bin/av-transcribe.js <project-id>'
+      'Run transcription first: node bin/av-transcribe.js <project-id>',
     );
   }
 
@@ -173,7 +173,7 @@ function generateDescription(projectId) {
 
   fs.writeFileSync(
     path.join(analysisDir, 'description.json'),
-    JSON.stringify(description, null, 2)
+    JSON.stringify(description, null, 2),
   );
 
   return description;

@@ -61,13 +61,13 @@ async function sendIntrusionAlert(ip, port, details = '') {
   alertCooldown.set(key, now);
 
   const time = new Date().toLocaleTimeString('pt-BR');
-  const msg = `🚨 <b>ALERTA DE SEGURANCA</b>\n\n` +
-    `<b>Tentativa de acesso detectada!</b>\n\n` +
+  const msg = '🚨 <b>ALERTA DE SEGURANCA</b>\n\n' +
+    '<b>Tentativa de acesso detectada!</b>\n\n' +
     `🔴 IP: <code>${ip}</code>\n` +
     `🔴 Porta: <code>${port}</code>\n` +
     `🕐 Hora: ${time}\n` +
     (details ? `📋 Detalhes: ${details}\n` : '') +
-    `\n⚡ Acao: Conexao bloqueada pelo firewall`;
+    '\n⚡ Acao: Conexao bloqueada pelo firewall';
 
   try {
     await sendTelegram(msg);
@@ -89,8 +89,8 @@ async function sendAccessAlert(ip, details = '') {
   alertCooldown.set(key, now);
 
   const time = new Date().toLocaleTimeString('pt-BR');
-  const msg = `🟢 <b>ACESSO AUTORIZADO</b>\n\n` +
-    `✅ Login bem-sucedido\n\n` +
+  const msg = '🟢 <b>ACESSO AUTORIZADO</b>\n\n' +
+    '✅ Login bem-sucedido\n\n' +
     `🟢 IP: <code>${ip}</code>\n` +
     `🕐 Hora: ${time}\n` +
     (details ? `📋 ${details}\n` : '');
@@ -114,10 +114,10 @@ async function sendRateLimitAlert(ip, count) {
   }
   alertCooldown.set(key, now);
 
-  const msg = `⚠️ <b>RATE LIMIT</b>\n\n` +
+  const msg = '⚠️ <b>RATE LIMIT</b>\n\n' +
     `IP <code>${ip}</code> excedeu o limite de requests.\n` +
     `Total: ${count} requests/min\n` +
-    `Limite: 30/min`;
+    'Limite: 30/min';
 
   try {
     await sendTelegram(msg);
@@ -138,12 +138,12 @@ async function sendDailyReport() {
 
   const date = new Date().toLocaleDateString('pt-BR');
 
-  let msg = `🛡️ <b>RELATORIO DIARIO DE SEGURANCA</b>\n`;
+  let msg = '🛡️ <b>RELATORIO DIARIO DE SEGURANCA</b>\n';
   msg += `📅 ${date}\n\n`;
 
   msg += `${statusEmoji} Status: <b>${statusText}</b>\n\n`;
 
-  msg += `📊 <b>Estatisticas (ultima hora):</b>\n`;
+  msg += '📊 <b>Estatisticas (ultima hora):</b>\n';
   msg += `• Acessos: ${status.stats.totalAccessLastHour}\n`;
   msg += `• IPs unicos: ${status.stats.uniqueIPs}\n`;
   msg += `• Rate limits: ${status.stats.rateLimitHits}\n`;
@@ -151,17 +151,17 @@ async function sendDailyReport() {
 
   msg += `🔥 <b>Firewall:</b> ${status.firewall.enabled ? '✅ Ativado' : '❌ DESATIVADO'}\n\n`;
 
-  msg += `🌐 <b>Rede:</b>\n`;
+  msg += '🌐 <b>Rede:</b>\n';
   msg += `• Saida: ${network.outbound} conexoes\n`;
   msg += `• Entrada: ${network.inbound} conexoes\n\n`;
 
-  msg += `⚙️ <b>Servicos:</b>\n`;
+  msg += '⚙️ <b>Servicos:</b>\n';
   for (const s of status.services) {
     msg += `• ${s.name}: ${s.status === 'active' ? '✅' : '❌'} ${s.version || ''}\n`;
   }
 
   if (status.alerts.length > 0) {
-    msg += `\n⚠️ <b>Alertas:</b>\n`;
+    msg += '\n⚠️ <b>Alertas:</b>\n';
     for (const a of status.alerts) {
       msg += `• ${a.level === 'critical' ? '🚨' : '⚠️'} ${a.message}\n`;
     }

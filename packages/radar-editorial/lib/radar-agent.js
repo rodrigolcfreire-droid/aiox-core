@@ -31,7 +31,7 @@ async function runRadar(options = {}) {
       throw new Error(
         'Nenhuma fonte configurada.\n' +
         'Coloque CSVs em: .aiox/radar-editorial/csv/\n' +
-        'Ou configure Notion: node bin/radar-editorial.js set-notion "secret_xxx"'
+        'Ou configure Notion: node bin/radar-editorial.js set-notion "secret_xxx"',
       );
     }
   }
@@ -94,7 +94,7 @@ function getAgentStatus() {
   const history = loadHistory(5);
 
   // Get experts from Notion config OR CSV files
-  let experts = config.experts.map(e => ({
+  const experts = config.experts.map(e => ({
     name: e.name,
     calendarName: e.calendarName,
     status: e.status,

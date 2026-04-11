@@ -100,7 +100,7 @@ function analyzeDuracao(cuts, learnings) {
     const durPref = learnings.patterns.find(p => p.type === 'duration_preference');
     if (durPref && durPref.preferredRange) {
       const outOfRange = cuts.filter(c =>
-        c.duration < durPref.preferredRange.min || c.duration > durPref.preferredRange.max
+        c.duration < durPref.preferredRange.min || c.duration > durPref.preferredRange.max,
       );
       if (outOfRange.length > 0) {
         suggestions.push({
@@ -228,7 +228,7 @@ function generateSuggestions(projectId) {
       low: allSuggestions.filter(s => s.priority === 'low').length,
     },
     byType: Object.fromEntries(
-      Object.values(SUGGESTION_TYPES).map(t => [t, allSuggestions.filter(s => s.type === t).length])
+      Object.values(SUGGESTION_TYPES).map(t => [t, allSuggestions.filter(s => s.type === t).length]),
     ),
     generatedAt: new Date().toISOString(),
   };

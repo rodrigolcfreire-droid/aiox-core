@@ -240,7 +240,7 @@ function detectEnergy(projectId) {
   };
   fs.writeFileSync(
     path.join(analysisDir, 'energy.json'),
-    JSON.stringify(energyData, null, 2)
+    JSON.stringify(energyData, null, 2),
   );
 
   console.log(`  Hook extracted: hook.mp4 (${HOOK_DURATION}s from ${peakWindow.start}s)`);

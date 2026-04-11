@@ -399,7 +399,7 @@ function suggestCutsForPlatform(blocks, platform, platformSpec, options = {}) {
       const climaxCandidates = blocks.filter(b =>
         b.start > content.end &&
         (b.type === 'cta' || b.type === 'content' || b.type === 'story') &&
-        b.energyLevel !== 'low'
+        b.energyLevel !== 'low',
       );
 
       for (const climax of climaxCandidates) {
@@ -427,7 +427,7 @@ function suggestCutsForPlatform(blocks, platform, platformSpec, options = {}) {
             sceneChangeRate: Math.max(
               hook.sceneChangeRate || 0,
               content.sceneChangeRate || 0,
-              climax.sceneChangeRate || 0
+              climax.sceneChangeRate || 0,
             ),
             segmentCount: totalSegments,
           };
@@ -540,7 +540,7 @@ function suggestTargetDurationCuts(blocks, options = {}) {
                 segmentCount: totalSegments,
               },
               category,
-              scoreOpts
+              scoreOpts,
             ),
             transcriptExcerpt: combinedText.slice(0, 150),
             format: '9:16',
@@ -567,7 +567,7 @@ function generateSmartCuts(projectId) {
   if (!fs.existsSync(segmentsPath)) {
     throw new Error(
       `Segments not found for project ${projectId}.\n` +
-      'Run segmentation first: node bin/av-segment.js <project-id>'
+      'Run segmentation first: node bin/av-segment.js <project-id>',
     );
   }
 
@@ -586,7 +586,7 @@ function generateSmartCuts(projectId) {
   console.log(`  ${sentenceBoundaries.length} sentence boundaries found for cut snapping`);
 
   // Generate cuts for all platforms
-  let allCuts = [];
+  const allCuts = [];
   for (const [platform, spec] of Object.entries(PLATFORM_SPECS)) {
     const platformCuts = suggestCutsForPlatform(blocks, platform, spec, cutOptions);
     allCuts.push(...platformCuts);
@@ -600,7 +600,7 @@ function generateSmartCuts(projectId) {
   const merged = [];
   for (const cut of allCuts) {
     const existing = merged.find(m =>
-      Math.abs(m.start - cut.start) < 0.5 && Math.abs(m.end - cut.end) < 0.5 && m.format === cut.format
+      Math.abs(m.start - cut.start) < 0.5 && Math.abs(m.end - cut.end) < 0.5 && m.format === cut.format,
     );
     if (existing) {
       for (const p of cut.platform) {
@@ -633,13 +633,13 @@ function generateSmartCuts(projectId) {
       Object.keys(PLATFORM_SPECS).map(p => [
         p,
         suggestedCuts.filter(c => c.platform.includes(p)).length,
-      ])
+      ]),
     ),
     categoryBreakdown: Object.fromEntries(
       CUT_CATEGORIES.map(c => [
         c,
         suggestedCuts.filter(cut => cut.category === c).length,
-      ])
+      ]),
     ),
     refinements: {
       sentenceBoundariesUsed: sentenceBoundaries.length,
@@ -654,7 +654,7 @@ function generateSmartCuts(projectId) {
   fs.mkdirSync(cutsDir, { recursive: true });
   fs.writeFileSync(
     path.join(cutsDir, 'suggested-cuts.json'),
-    JSON.stringify(result, null, 2)
+    JSON.stringify(result, null, 2),
   );
 
   console.log(`  ${suggestedCuts.length} cuts suggested (${result.refinements.narrativeArcCuts} narrative arcs)`);

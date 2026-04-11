@@ -82,7 +82,7 @@ Retorne um JSON com esta estrutura:
     const analysisDir = path.join(projectDir, 'analysis');
     fs.writeFileSync(
       path.join(analysisDir, 'llm-hooks.json'),
-      JSON.stringify({ ...result, analyzedAt: new Date().toISOString() }, null, 2)
+      JSON.stringify({ ...result, analyzedAt: new Date().toISOString() }, null, 2),
     );
 
     return result;
@@ -164,7 +164,7 @@ Retorne JSON:
     // Save LLM titles analysis
     fs.writeFileSync(
       path.join(projectDir, 'analysis', 'llm-titles.json'),
-      JSON.stringify({ ...result, generatedAt: new Date().toISOString() }, null, 2)
+      JSON.stringify({ ...result, generatedAt: new Date().toISOString() }, null, 2),
     );
 
     return result;

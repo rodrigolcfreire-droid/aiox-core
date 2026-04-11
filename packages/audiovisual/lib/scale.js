@@ -105,7 +105,7 @@ function generateVariations(projectId, options = {}) {
   const unique = [];
   for (const v of variations) {
     const isDup = unique.some(u =>
-      Math.abs(u.start - v.start) < 1 && Math.abs(u.end - v.end) < 1 && u.type === v.type
+      Math.abs(u.start - v.start) < 1 && Math.abs(u.end - v.end) < 1 && u.type === v.type,
     );
     if (!isDup) unique.push(v);
   }
@@ -131,7 +131,7 @@ function generateVariations(projectId, options = {}) {
   const cutsDir = path.join(getProjectDir(projectId), 'cuts');
   fs.writeFileSync(
     path.join(cutsDir, 'variations.json'),
-    JSON.stringify(result, null, 2)
+    JSON.stringify(result, null, 2),
   );
 
   return result;

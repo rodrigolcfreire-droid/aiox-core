@@ -122,7 +122,7 @@ function segmentVideo(projectId) {
   if (!fs.existsSync(transcriptionPath)) {
     throw new Error(
       `Transcription not found for project ${projectId}.\n` +
-      'Run transcription first: node bin/av-transcribe.js <project-id>'
+      'Run transcription first: node bin/av-transcribe.js <project-id>',
     );
   }
 
@@ -267,7 +267,7 @@ function segmentVideo(projectId) {
     totalBlocks: blocks.length,
     totalDuration: parseFloat(transcription.totalDuration.toFixed(2)),
     averageBlockDuration: parseFloat(
-      (blocks.reduce((sum, b) => sum + b.duration, 0) / blocks.length).toFixed(2)
+      (blocks.reduce((sum, b) => sum + b.duration, 0) / blocks.length).toFixed(2),
     ),
     createdAt: new Date().toISOString(),
   };
@@ -275,7 +275,7 @@ function segmentVideo(projectId) {
   // Save
   fs.writeFileSync(
     path.join(analysisDir, 'segments.json'),
-    JSON.stringify(result, null, 2)
+    JSON.stringify(result, null, 2),
   );
 
   return result;

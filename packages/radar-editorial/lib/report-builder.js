@@ -183,7 +183,7 @@ function formatReportText(report) {
   }
 
   lines.push('');
-  lines.push(`_Gerado automaticamente pelo Radar Editorial_`);
+  lines.push('_Gerado automaticamente pelo Radar Editorial_');
 
   return lines.join('\n');
 }

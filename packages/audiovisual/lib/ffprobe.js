@@ -25,7 +25,7 @@ function runFFprobe(videoPath) {
       'FFprobe not found. Install FFmpeg:\n' +
       '  macOS: brew install ffmpeg\n' +
       '  Ubuntu: sudo apt install ffmpeg\n' +
-      '  Windows: choco install ffmpeg'
+      '  Windows: choco install ffmpeg',
     );
   }
 

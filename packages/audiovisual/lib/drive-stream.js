@@ -21,7 +21,7 @@ function loadToken() {
   if (!fs.existsSync(TOKEN_PATH)) {
     throw new Error(
       'Google Drive nao autenticado.\n' +
-      'Execute: node bin/av-auth.js'
+      'Execute: node bin/av-auth.js',
     );
   }
   return JSON.parse(fs.readFileSync(TOKEN_PATH, 'utf8'));

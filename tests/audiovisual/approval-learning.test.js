@@ -120,7 +120,7 @@ describe('Learning Engine', () => {
     fs.mkdirSync(path.join(getProjectDir(emptyId), 'cuts'), { recursive: true });
     fs.writeFileSync(
       path.join(getProjectDir(emptyId), 'cuts', 'suggested-cuts.json'),
-      JSON.stringify({ suggestedCuts: [] })
+      JSON.stringify({ suggestedCuts: [] }),
     );
     const result = learnFromProject(emptyId);
     expect(result.patterns).toHaveLength(0);

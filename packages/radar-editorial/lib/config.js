@@ -71,7 +71,7 @@ function addExpert(name, notionDatabaseId, calendarName) {
 function removeExpert(nameOrId) {
   const config = loadConfig();
   config.experts = config.experts.filter(e =>
-    e.name !== nameOrId && e.notionDatabaseId !== nameOrId
+    e.name !== nameOrId && e.notionDatabaseId !== nameOrId,
   );
   saveConfig(config);
   return config;

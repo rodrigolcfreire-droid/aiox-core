@@ -57,7 +57,7 @@ function buildClipItem(clip, fileId, fps, indent = 0) {
   children.push(
     tag('labels', {}, [
       tag('label2', {}, clip.category || '', indent + 2),
-    ], indent + 1)
+    ], indent + 1),
   );
 
   // Comments with engagement and platform info
@@ -136,17 +136,17 @@ function generatePremiereXml(timeline) {
 
   // Build video track clip items
   const videoClipItems = timeline.videoTrack.clips.map(
-    (clip, i) => buildClipItem(clip, fileId, fps, 5)
+    (clip, i) => buildClipItem(clip, fileId, fps, 5),
   );
 
   // Build audio track clip items
   const audioClipItems = timeline.audioTrack.clips.map(
-    (clip, i) => buildAudioClipItem(clip, fileId, fps, 5)
+    (clip, i) => buildAudioClipItem(clip, fileId, fps, 5),
   );
 
   // Build sequence markers
   const sequenceMarkers = (timeline.markers || []).map(
-    m => buildMarker(m, fps, 4)
+    m => buildMarker(m, fps, 4),
   );
 
   // Build transitions
@@ -162,7 +162,7 @@ function generatePremiereXml(timeline) {
     timeline.sourceVideoDuration,
     fps,
     res,
-    5
+    5,
   );
 
   const xml = [

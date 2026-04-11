@@ -80,7 +80,7 @@ async function processCommand(text, chatId) {
         '/servidor — Status do servidor\n' +
         '/relatorio — Enviar relatorio completo\n' +
         '/tunnel — Status do Cloudflare Tunnel\n' +
-        '/help — Esta mensagem'
+        '/help — Esta mensagem',
       );
       break;
 
@@ -151,7 +151,7 @@ async function handleBlock() {
       '🔴 <b>ACESSO EXTERNO BLOQUEADO</b>\n\n' +
       'Cloudflare Tunnel desligado.\n' +
       'https://uxcentrodecomando.com esta OFFLINE.\n\n' +
-      'Use /liberar para reativar.'
+      'Use /liberar para reativar.',
     );
   } catch {
     await sendTelegram('⚠️ Tunnel ja estava parado ou erro ao parar.');
@@ -177,7 +177,7 @@ async function handleUnblock() {
     await sendTelegram(
       '🟢 <b>ACESSO EXTERNO LIBERADO</b>\n\n' +
       'Cloudflare Tunnel reativado.\n' +
-      'https://uxcentrodecomando.com esta ONLINE.'
+      'https://uxcentrodecomando.com esta ONLINE.',
     );
   } catch (err) {
     await sendTelegram(`❌ Erro ao liberar: ${err.message}`);
@@ -187,7 +187,7 @@ async function handleUnblock() {
 async function handleConnections() {
   const network = getNetworkConnections();
 
-  let msg = `🌐 <b>CONEXOES DE REDE</b>\n\n`;
+  let msg = '🌐 <b>CONEXOES DE REDE</b>\n\n';
   msg += `↑ Saida: ${network.outbound}\n`;
   msg += `↓ Entrada: ${network.inbound}\n\n`;
 
@@ -233,7 +233,7 @@ async function handleChangePassword(newPassword) {
       '✅ <b>SENHA ALTERADA</b>\n\n' +
       'Nova senha configurada.\n' +
       '⚠️ Reinicie o servidor para aplicar:\n' +
-      '<code>Sera aplicada no proximo restart</code>'
+      '<code>Sera aplicada no proximo restart</code>',
     );
   } catch (err) {
     await sendTelegram(`❌ Erro ao trocar senha: ${err.message}`);
@@ -243,7 +243,7 @@ async function handleChangePassword(newPassword) {
 async function handleServerStatus() {
   const os = require('os');
 
-  let msg = `⚙️ <b>STATUS DO SERVIDOR</b>\n\n`;
+  let msg = '⚙️ <b>STATUS DO SERVIDOR</b>\n\n';
   msg += `🖥️ Host: ${os.hostname()}\n`;
   msg += `💻 CPUs: ${os.cpus().length}\n`;
   msg += `💾 RAM: ${(os.freemem() / 1073741824).toFixed(1)}/${(os.totalmem() / 1073741824).toFixed(1)} GB livres\n`;
@@ -255,34 +255,34 @@ async function handleServerStatus() {
   // Check AV server
   try {
     execSync('curl -s http://localhost:3456/api/health', { stdio: 'pipe', timeout: 3000 });
-    msg += `\n🟢 AV Server: ATIVO (porta 3456)`;
+    msg += '\n🟢 AV Server: ATIVO (porta 3456)';
   } catch {
-    msg += `\n🔴 AV Server: INATIVO`;
+    msg += '\n🔴 AV Server: INATIVO';
   }
 
   // Check tunnel
   try {
     execSync('pgrep -f "cloudflared tunnel run"', { stdio: 'pipe' });
-    msg += `\n🟢 Tunnel: ATIVO`;
+    msg += '\n🟢 Tunnel: ATIVO';
   } catch {
-    msg += `\n🔴 Tunnel: INATIVO`;
+    msg += '\n🔴 Tunnel: INATIVO';
   }
 
   await sendTelegram(msg);
 }
 
 async function handleTunnelStatus() {
-  let msg = `🌐 <b>CLOUDFLARE TUNNEL</b>\n\n`;
+  let msg = '🌐 <b>CLOUDFLARE TUNNEL</b>\n\n';
 
   try {
     execSync('pgrep -f "cloudflared tunnel run"', { stdio: 'pipe' });
-    msg += `🟢 Status: <b>ATIVO</b>\n`;
-    msg += `🔗 https://uxcentrodecomando.com\n`;
-    msg += `🔗 https://av.uxcentrodecomando.com\n`;
-    msg += `🔗 https://api.uxcentrodecomando.com\n`;
+    msg += '🟢 Status: <b>ATIVO</b>\n';
+    msg += '🔗 https://uxcentrodecomando.com\n';
+    msg += '🔗 https://av.uxcentrodecomando.com\n';
+    msg += '🔗 https://api.uxcentrodecomando.com\n';
   } catch {
-    msg += `🔴 Status: <b>INATIVO</b>\n`;
-    msg += `Use /liberar para reativar.`;
+    msg += '🔴 Status: <b>INATIVO</b>\n';
+    msg += 'Use /liberar para reativar.';
   }
 
   await sendTelegram(msg);

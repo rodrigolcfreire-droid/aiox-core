@@ -88,7 +88,7 @@ function generatePackage(projectId) {
 
   fs.writeFileSync(
     path.join(outputDir, 'package.json'),
-    JSON.stringify(packageData, null, 2)
+    JSON.stringify(packageData, null, 2),
   );
 
   return packageData;
@@ -111,7 +111,7 @@ function generateOutputReport(projectId) {
   const outputDir = path.join(getProjectDir(projectId), 'output');
   fs.writeFileSync(
     path.join(outputDir, 'output-report.json'),
-    JSON.stringify(report, null, 2)
+    JSON.stringify(report, null, 2),
   );
 
   return report;

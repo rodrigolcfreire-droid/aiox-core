@@ -313,7 +313,7 @@ function assemblecut(projectId, cutId) {
     applyFadeTransitions(assembledPath, fadedPath);
     fs.unlinkSync(assembledPath);
     fs.renameSync(fadedPath, assembledPath);
-    console.log(`  Fade in/out applied`);
+    console.log('  Fade in/out applied');
   } catch (err) {
     console.log(`  Fade skipped: ${err.message}`);
     if (fs.existsSync(fadedPath)) fs.unlinkSync(fadedPath);
