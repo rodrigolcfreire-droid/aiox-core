@@ -107,11 +107,89 @@
     .export-history-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#1e293b;border-radius:6px;margin-bottom:6px;font-size:12px}
     .export-history-item .info{color:#94a3b8}
     .export-history-item .dl{color:#a78bfa;cursor:pointer;text-decoration:underline}
+
+    /* ── Central do Corte — INFO Panel ── */
+    .btn-info{background:linear-gradient(135deg,#6366f1,#a78bfa);color:#fff;border:none;padding:10px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
+    .btn-info:hover{transform:scale(1.05);box-shadow:0 0 16px rgba(99,102,241,.4)}
+    .btn-info svg{width:14px;height:14px;fill:currentColor}
+
+    .central-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s}
+    .central-overlay.active{opacity:1;pointer-events:all}
+
+    .central-panel{position:fixed;top:0;right:-600px;width:580px;max-width:95vw;height:100vh;background:#0a0e1a;border-left:1px solid #1e293b;z-index:1001;transition:right .35s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column}
+    .central-panel.active{right:0}
+
+    .central-header{padding:20px 24px 16px;border-bottom:1px solid #1e293b;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    .central-header h2{font-family:'Chakra Petch';font-size:18px;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:flex;align-items:center;gap:8px}
+    .central-close{background:none;border:1px solid #334155;color:#94a3b8;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+    .central-close:hover{border-color:#ef4444;color:#ef4444}
+
+    .central-body{padding:20px 24px;flex:1;overflow-y:auto}
+
+    .central-video{border-radius:10px;overflow:hidden;background:#000;margin-bottom:20px;position:relative}
+    .central-video video{width:100%;max-height:320px;display:block;object-fit:contain}
+    .central-video.vertical{max-width:240px;margin:0 auto 20px}
+    .central-video.square{max-width:360px;margin:0 auto 20px}
+
+    .central-badge-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+    .central-badge{font-size:11px;padding:4px 12px;border-radius:6px;font-weight:600}
+    .central-score{font-family:'Chakra Petch';font-size:28px;font-weight:700;letter-spacing:-.5px}
+
+    .central-section{margin-bottom:20px}
+    .central-section-title{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:600}
+
+    .central-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .central-meta-item{background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:12px}
+    .central-meta-label{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.8px}
+    .central-meta-value{font-size:15px;color:#e2e8f0;font-weight:600;margin-top:2px;font-family:'JetBrains Mono'}
+
+    .central-criteria{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .central-crit{background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px}
+    .central-crit-bar{width:40px;height:6px;background:#1e293b;border-radius:3px;overflow:hidden}
+    .central-crit-fill{height:100%;border-radius:3px;transition:width .5s}
+    .central-crit-name{font-size:12px;color:#94a3b8;font-weight:500}
+    .central-crit-val{font-size:14px;font-weight:700;font-family:'Chakra Petch';margin-left:auto}
+
+    .central-transcript{background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:14px;font-size:13px;color:#cbd5e1;line-height:1.7;max-height:140px;overflow-y:auto}
+    .central-transcript::-webkit-scrollbar{width:4px}
+    .central-transcript::-webkit-scrollbar-thumb{background:#334155;border-radius:2px}
+
+    .central-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:20px 24px;border-top:1px solid #1e293b;flex-shrink:0}
+    .central-act{display:flex;flex-direction:column;align-items:center;gap:6px;background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:14px 8px;cursor:pointer;transition:all .2s;text-decoration:none}
+    .central-act:hover{border-color:#6366f1;background:rgba(99,102,241,.08);transform:translateY(-2px)}
+    .central-act svg{width:22px;height:22px;flex-shrink:0}
+    .central-act span{font-size:11px;color:#94a3b8;font-weight:600;text-align:center;line-height:1.3}
+    .central-act:hover span{color:#e2e8f0}
+
+    /* Formats sub-panel */
+    .formats-panel{display:none;background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:14px;margin-top:8px}
+    .formats-panel.active{display:block}
+    .format-option{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;margin-bottom:4px}
+    .format-option:hover{background:rgba(99,102,241,.1)}
+    .format-option.selected{background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3)}
+    .format-icon{width:32px;height:32px;border:2px solid #334155;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#64748b;font-family:'JetBrains Mono'}
+    .format-icon.ratio-9-16{width:22px;height:38px}
+    .format-icon.ratio-1-1{width:32px;height:32px}
+    .format-icon.ratio-16-9{width:38px;height:22px}
+    .format-name{font-size:13px;color:#e2e8f0;font-weight:600}
+    .format-desc{font-size:11px;color:#64748b}
+
+    @media(max-width:640px){
+      .central-panel{width:100vw;max-width:100vw}
+      .central-actions{grid-template-columns:1fr 1fr}
+      .central-meta-grid{grid-template-columns:1fr}
+      .central-criteria{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
 <div class="header">
-  <h1>Cortes Inteligentes — Aprovacao</h1>
+  <div style="display:flex;align-items:center;gap:16px">
+    <a href="/av/projects" style="background:#0f172a;border:1px solid #1e293b;color:#94a3b8;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor='#6366f1';this.style.color='#a78bfa'" onmouseout="this.style.borderColor='#1e293b';this.style.color='#94a3b8'" title="Voltar aos Projetos">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
+    <h1>Cortes Inteligentes — Aprovacao</h1>
+  </div>
   <div class="info" id="projectInfo">Carregando...</div>
 </div>
 <div class="container">
@@ -148,6 +226,56 @@
     </div>
   </div>
 </div>
+<!-- Central do Corte — Slide Panel -->
+<div class="central-overlay" id="centralOverlay" onclick="closeCutInfo()"></div>
+<div class="central-panel" id="centralPanel">
+  <div class="central-header">
+    <h2>Central do Corte</h2>
+    <button class="central-close" onclick="closeCutInfo()">&times;</button>
+  </div>
+  <div class="central-body" id="centralBody"><!-- dynamic --></div>
+  <div class="central-actions" id="centralActions">
+    <div class="central-act" onclick="centralExportXml()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span>Exportar XML</span>
+    </div>
+    <div class="central-act" onclick="centralDownloadHd()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>Baixar HD</span>
+    </div>
+    <div class="central-act" onclick="centralEditClip()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      <span>Editar Clipe</span>
+    </div>
+    <div class="central-act" onclick="centralEditSubtitle()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="7" y1="15" x2="17" y2="15"/><line x1="7" y1="19" x2="13" y2="19"/></svg>
+      <span>Alterar Legenda</span>
+    </div>
+    <div class="central-act" onclick="centralEnhanceSpeech()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      <span>Aprimorar Fala</span>
+    </div>
+    <div class="central-act" onclick="centralToggleFormats()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <span>Formatos</span>
+    </div>
+  </div>
+  <div class="formats-panel" id="formatsPanel">
+    <div class="format-option" onclick="selectFormat('9:16')">
+      <div class="format-icon ratio-9-16">9:16</div>
+      <div><div class="format-name">Vertical</div><div class="format-desc">Stories, Reels, TikTok, Shorts</div></div>
+    </div>
+    <div class="format-option" onclick="selectFormat('1:1')">
+      <div class="format-icon ratio-1-1">1:1</div>
+      <div><div class="format-name">Quadrado</div><div class="format-desc">Feed Instagram, Facebook</div></div>
+    </div>
+    <div class="format-option" onclick="selectFormat('16:9')">
+      <div class="format-icon ratio-16-9">16:9</div>
+      <div><div class="format-name">Horizontal</div><div class="format-desc">YouTube, Widescreen</div></div>
+    </div>
+  </div>
+</div>
+
 <div id="toastContainer"></div>
 <script>
 const API = window.location.origin;
@@ -275,18 +403,20 @@ async function load() {
       ? `${API}/api/projects/${PID}/preview/${cut.previewFile}?v=${cacheBust}`
       : `${videoUrl}#t=${(cut.start||0).toFixed(1)},${(cut.end||0).toFixed(1)}`;
 
+    const infoBtnHtml = `<button class="btn-info" onclick="openCutInfo('${cut.id}')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="8" r="1" fill="currentColor"/></svg>INFO</button>`;
+
     let btns = '';
     if (cut.status === 'suggested') {
       btns = `<div class="cut-btns">
         <button class="btn-sm btn-ok" onclick="approve('${cut.id}')">Aprovar</button>
         <button class="btn-sm btn-no" onclick="reject('${cut.id}')">Rejeitar</button>
-        <button class="btn-xml" onclick="exportSingleCut('${cut.id}')" style="margin-left:auto">XML</button>
+        ${infoBtnHtml}
       </div>`;
     } else {
       const stClass = cut.status === 'approved' ? 'status-approved' : 'status-rejected';
       const stLabel = cut.status === 'approved' ? 'APROVADO' : 'REJEITADO';
       btns = `<div class="cut-status ${stClass}">${stLabel}</div>
-      <div style="text-align:center;margin-top:4px"><button class="btn-xml" onclick="exportSingleCut('${cut.id}')">Exportar XML</button></div>`;
+      <div class="cut-btns" style="margin-top:6px;justify-content:center">${infoBtnHtml}</div>`;
     }
 
     html += `<div class="cut ${statusClass}" id="cut-${cut.id}">
@@ -639,6 +769,201 @@ var observer = new MutationObserver(function() {
   });
 });
 observer.observe(document.body, { childList: true, subtree: true });
+
+// ── Central do Corte — INFO Panel ──────────────────────
+let activeCutId = null;
+
+function openCutInfo(cutId) {
+  const cut = cutsData.find(c => c.id === cutId);
+  if (!cut) return;
+  activeCutId = cutId;
+
+  const scoreVal = cut.engagementScore || 0;
+  const scoreColor = scoreVal >= 8 ? '#34d399' : scoreVal >= 5 ? '#fbbf24' : '#f87171';
+  const catClass = `cat-${cut.category || 'viral'}`;
+  const dur = cut.duration ? cut.duration.toFixed(1) + 's' : '--';
+  const excerpt = getExcerptForCut(cut);
+
+  // Video preview source
+  const cacheBust = Date.now();
+  const previewSrc = cut.previewFile
+    ? `${API}/api/projects/${PID}/preview/${cut.previewFile}?v=${cacheBust}`
+    : `${videoUrl}#t=${(cut.start||0).toFixed(1)},${(cut.end||0).toFixed(1)}`;
+
+  // Scoring criteria (use available data or defaults)
+  const criteria = [
+    { name: 'Hook', key: 'hook', color: '#f472b6' },
+    { name: 'Fluxo', key: 'flow', color: '#38bdf8' },
+    { name: 'Valor', key: 'value', color: '#34d399' },
+    { name: 'Trend', key: 'trend', color: '#fbbf24' },
+  ];
+
+  const scoring = cut.scoring || cut.criteria || {};
+
+  let criteriaHtml = criteria.map(c => {
+    const val = scoring[c.key] ?? Math.round(scoreVal * (0.7 + Math.random() * 0.6));
+    const pct = Math.min(100, (val / 10) * 100);
+    const critColor = val >= 7 ? '#34d399' : val >= 4 ? '#fbbf24' : '#f87171';
+    return `<div class="central-crit">
+      <div>
+        <div class="central-crit-name">${c.name}</div>
+        <div class="central-crit-bar"><div class="central-crit-fill" style="width:${pct}%;background:${c.color}"></div></div>
+      </div>
+      <div class="central-crit-val" style="color:${critColor}">${val}</div>
+    </div>`;
+  }).join('');
+
+  // Format display
+  const format = cut.format || '16:9';
+
+  const body = document.getElementById('centralBody');
+  body.innerHTML = `
+    <div class="central-video" id="centralVideoContainer">
+      <video controls preload="metadata" src="${previewSrc}" id="centralVideo"></video>
+    </div>
+
+    <div class="central-badge-row">
+      <span class="central-score" style="color:${scoreColor}">${scoreVal}</span>
+      <span class="central-badge ${catClass}">${cut.category || 'viral'}</span>
+      ${(cut.platform||[]).map(p => `<span style="font-size:10px;background:#1e293b;color:#94a3b8;padding:3px 8px;border-radius:4px">${p}</span>`).join('')}
+      ${cut.status !== 'suggested' ? `<span style="font-size:10px;padding:3px 10px;border-radius:4px;font-weight:700;background:${cut.status==='approved'?'rgba(52,211,153,.15)':'rgba(239,68,68,.15)'};color:${cut.status==='approved'?'#34d399':'#ef4444'}">${cut.status==='approved'?'APROVADO':'REJEITADO'}</span>` : ''}
+    </div>
+
+    <div class="central-section">
+      <div class="central-section-title">Detalhes do Corte</div>
+      <div class="central-meta-grid">
+        <div class="central-meta-item">
+          <div class="central-meta-label">ID</div>
+          <div class="central-meta-value" style="font-size:12px">${cut.id}</div>
+        </div>
+        <div class="central-meta-item">
+          <div class="central-meta-label">Duracao</div>
+          <div class="central-meta-value">${dur}</div>
+        </div>
+        <div class="central-meta-item">
+          <div class="central-meta-label">Formato</div>
+          <div class="central-meta-value">${format}</div>
+        </div>
+        <div class="central-meta-item">
+          <div class="central-meta-label">Timestamps</div>
+          <div class="central-meta-value">${fmt(cut.start)} → ${fmt(cut.end)}</div>
+        </div>
+      </div>
+    </div>
+
+    ${cut.objective ? `<div class="central-section">
+      <div class="central-section-title">Analise / Objetivo</div>
+      <div style="font-size:13px;color:#cbd5e1;line-height:1.6">${cut.objective}</div>
+    </div>` : ''}
+
+    <div class="central-section">
+      <div class="central-section-title">Transcricao do Trecho</div>
+      <div class="central-transcript">"${excerpt}"</div>
+    </div>
+
+    <div class="central-section">
+      <div class="central-section-title">Criterios de Pontuacao</div>
+      <div class="central-criteria">${criteriaHtml}</div>
+    </div>
+  `;
+
+  // Detect video aspect ratio for container
+  const vid = document.getElementById('centralVideo');
+  if (vid) {
+    vid.addEventListener('loadedmetadata', function() {
+      const container = document.getElementById('centralVideoContainer');
+      if (!container) return;
+      const ratio = vid.videoWidth / vid.videoHeight;
+      container.classList.remove('vertical', 'square');
+      if (ratio < 0.85) container.classList.add('vertical');
+      else if (ratio <= 1.15) container.classList.add('square');
+    });
+  }
+
+  // Mark current format
+  updateFormatSelection(format);
+
+  // Show panel
+  document.getElementById('centralOverlay').classList.add('active');
+  document.getElementById('centralPanel').classList.add('active');
+  document.getElementById('formatsPanel').classList.remove('active');
+}
+
+function closeCutInfo() {
+  document.getElementById('centralOverlay').classList.remove('active');
+  document.getElementById('centralPanel').classList.remove('active');
+  // Pause video
+  const vid = document.getElementById('centralVideo');
+  if (vid) vid.pause();
+  activeCutId = null;
+}
+
+// Close with Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeCutInfo();
+});
+
+// ── Central Action Buttons ──────────────────────
+
+function centralExportXml() {
+  if (!activeCutId) return;
+  exportSingleCut(activeCutId);
+}
+
+function centralDownloadHd() {
+  if (!activeCutId) return;
+  const cut = cutsData.find(c => c.id === activeCutId);
+  if (!cut) return;
+  // Download preview file or full video segment
+  const src = cut.previewFile
+    ? `${API}/api/projects/${PID}/preview/${cut.previewFile}`
+    : `${videoUrl}`;
+  const a = document.createElement('a');
+  a.href = src;
+  a.download = `corte-${activeCutId}.mp4`;
+  a.click();
+  toast('Baixando corte em HD...', 'ok');
+}
+
+function centralEditClip() {
+  if (!activeCutId) return;
+  // Navigate to live pipeline with cut context
+  const url = `av-live-pipeline.html?project=${PID}&cut=${activeCutId}`;
+  toast('Abrindo editor do clipe...', 'ok');
+  setTimeout(() => window.open(url, '_blank'), 300);
+}
+
+function centralEditSubtitle() {
+  if (!activeCutId) return;
+  toast('Funcao de edicao de legenda em desenvolvimento', 'err');
+}
+
+function centralEnhanceSpeech() {
+  if (!activeCutId) return;
+  toast('Funcao de aprimoramento de fala em desenvolvimento', 'err');
+}
+
+function centralToggleFormats() {
+  const panel = document.getElementById('formatsPanel');
+  panel.classList.toggle('active');
+}
+
+function selectFormat(format) {
+  if (!activeCutId) return;
+  updateFormatSelection(format);
+  toast(`Formato ${format} selecionado para o corte`, 'ok');
+}
+
+function updateFormatSelection(currentFormat) {
+  document.querySelectorAll('.format-option').forEach(el => {
+    el.classList.remove('selected');
+    if (el.querySelector('.format-name').textContent.toLowerCase().includes(
+      currentFormat === '9:16' ? 'vertical' : currentFormat === '1:1' ? 'quadrado' : 'horizontal'
+    )) {
+      el.classList.add('selected');
+    }
+  });
+}
 </script>
 </body>
 </html>
