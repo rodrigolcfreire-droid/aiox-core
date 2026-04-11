@@ -49,16 +49,32 @@
     .step-name { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
     .step-detail { font-size: 11px; color: #64748b; margin-top: 4px; min-height: 16px; }
 
-    /* Results Panel */
-    .results { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
-    .result-card { background: #0f172a; border: 1px solid #1e293b; border-radius: 10px; padding: 20px; display: none; }
-    .result-card.visible { display: block; animation: fadeIn 0.3s ease; }
+    /* Results Panel — Minimalist Cards */
+    .results { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 32px; }
+    .result-card { display: none; }
+    .result-card.visible { display: none; }
+    .mini-card { background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 20px 16px; cursor: pointer; transition: all .25s ease; display: none; text-align: center; }
+    .mini-card.visible { display: block; animation: fadeIn .3s ease; }
+    .mini-card:hover { border-color: #6366f1; background: rgba(99,102,241,.06); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
+    .mini-card:active { transform: translateY(-1px); }
+    .mini-card-emoji { font-size: 28px; margin-bottom: 8px; }
+    .mini-card-title { font-family: 'Chakra Petch'; font-size: 14px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+    .mini-card-sub { font-size: 11px; color: #64748b; line-height: 1.4; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
     .result-title { font-size: 14px; font-weight: 600; color: #a78bfa; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-    #card-blocks { max-height: 200px; overflow: hidden; position: relative; cursor: pointer; }
-    #card-blocks.expanded { max-height: none; }
-    #card-blocks .blocks-toggle { position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: linear-gradient(transparent, #0f172a); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; font-size: 11px; color: #64748b; }
-    #card-blocks.expanded .blocks-toggle { position: static; background: none; height: auto; padding-top: 8px; }
+    /* Detail drawer */
+    .detail-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .3s; }
+    .detail-overlay.active { opacity: 1; pointer-events: all; }
+    .detail-drawer { position: fixed; top: 0; right: -560px; width: 540px; max-width: 95vw; height: 100vh; background: #0a0e1a; border-left: 1px solid #1e293b; z-index: 1001; transition: right .35s cubic-bezier(.4,0,.2,1); overflow-y: auto; }
+    .detail-drawer.active { right: 0; }
+    .detail-drawer-header { padding: 24px 24px 16px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; }
+    .detail-drawer-header h2 { font-family: 'Chakra Petch'; font-size: 18px; color: #e2e8f0; display: flex; align-items: center; gap: 10px; }
+    .detail-drawer-header h2 span.emoji { font-size: 24px; }
+    .detail-drawer-close { background: none; border: 1px solid #334155; color: #94a3b8; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+    .detail-drawer-close:hover { border-color: #ef4444; color: #ef4444; }
+    .detail-drawer-body { padding: 24px; font-size: 13px; color: #94a3b8; line-height: 1.8; }
+    @media(max-width:768px) { .results { grid-template-columns: 1fr 1fr; } }
+    @media(max-width:480px) { .results { grid-template-columns: 1fr; } .detail-drawer { width: 100vw; } }
 
     /* Cuts List */
     .cuts-section { display: none; margin-bottom: 32px; }
@@ -74,6 +90,63 @@
     .btn-approve { background: #34d399; color: #0a0e1a; border: none; padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
     .btn-reject { background: #ef4444; color: white; border: none; padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
     .btn-approve-all { background: linear-gradient(135deg, #34d399, #38bdf8); color: #0a0e1a; border: none; padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 16px; }
+
+    /* INFO Button & Central do Corte */
+    .btn-info{background:linear-gradient(135deg,#6366f1,#a78bfa);color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:4px}
+    .btn-info:hover{transform:scale(1.05);box-shadow:0 0 16px rgba(99,102,241,.4)}
+    .btn-info svg{width:12px;height:12px}
+
+    .central-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s}
+    .central-overlay.active{opacity:1;pointer-events:all}
+    .central-panel{position:fixed;top:0;right:-600px;width:580px;max-width:95vw;height:100vh;background:#0a0e1a;border-left:1px solid #1e293b;z-index:1001;transition:right .35s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column}
+    .central-panel.active{right:0}
+    .central-header{padding:20px 24px 16px;border-bottom:1px solid #1e293b;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    .central-header h2{font-family:'Chakra Petch';font-size:18px;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .central-close{background:none;border:1px solid #334155;color:#94a3b8;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+    .central-close:hover{border-color:#ef4444;color:#ef4444}
+    .central-body{padding:20px 24px;flex:1;overflow-y:auto}
+    .central-video{border-radius:10px;overflow:hidden;background:#000;margin-bottom:20px}
+    .central-video video{width:100%;max-height:320px;display:block;object-fit:contain}
+    .central-video.vertical{max-width:240px;margin:0 auto 20px}
+    .central-video.square{max-width:360px;margin:0 auto 20px}
+    .central-badge-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+    .central-score{font-family:'Chakra Petch';font-size:28px;font-weight:700;letter-spacing:-.5px}
+    .central-badge{font-size:11px;padding:4px 12px;border-radius:6px;font-weight:600}
+    .central-section{margin-bottom:20px}
+    .central-section-title{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:600}
+    .central-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .central-meta-item{background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:12px}
+    .central-meta-label{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.8px}
+    .central-meta-value{font-size:15px;color:#e2e8f0;font-weight:600;margin-top:2px;font-family:'JetBrains Mono'}
+    .central-criteria{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .central-crit{background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px}
+    .central-crit-bar{width:40px;height:6px;background:#1e293b;border-radius:3px;overflow:hidden}
+    .central-crit-fill{height:100%;border-radius:3px;transition:width .5s}
+    .central-crit-name{font-size:12px;color:#94a3b8;font-weight:500}
+    .central-crit-val{font-size:14px;font-weight:700;font-family:'Chakra Petch';margin-left:auto}
+    .central-transcript{background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:14px;font-size:13px;color:#cbd5e1;line-height:1.7;max-height:140px;overflow-y:auto}
+    .central-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:20px 24px;border-top:1px solid #1e293b;flex-shrink:0}
+    .central-act{display:flex;flex-direction:column;align-items:center;gap:6px;background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:14px 8px;cursor:pointer;transition:all .2s}
+    .central-act:hover{border-color:#6366f1;background:rgba(99,102,241,.08);transform:translateY(-2px)}
+    .central-act svg{width:22px;height:22px;flex-shrink:0}
+    .central-act span{font-size:11px;color:#94a3b8;font-weight:600;text-align:center;line-height:1.3}
+    .central-act:hover span{color:#e2e8f0}
+    .formats-panel{display:none;background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:14px;margin-top:8px}
+    .formats-panel.active{display:block}
+    .format-option{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;margin-bottom:4px}
+    .format-option:hover{background:rgba(99,102,241,.1)}
+    .format-option.selected{background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3)}
+    .format-icon{width:32px;height:32px;border:2px solid #334155;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#64748b;font-family:'JetBrains Mono'}
+    .format-icon.ratio-9-16{width:22px;height:38px}
+    .format-icon.ratio-1-1{width:32px;height:32px}
+    .format-icon.ratio-16-9{width:38px;height:22px}
+    .format-name{font-size:13px;color:#e2e8f0;font-weight:600}
+    .format-desc{font-size:11px;color:#64748b}
+    .toast{position:fixed;bottom:24px;right:24px;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;z-index:1100;animation:toastIn .3s ease}
+    .toast-ok{background:#34d399;color:#0a0e1a}
+    .toast-err{background:#f59e0b;color:#0a0e1a}
+    @keyframes toastIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+    @media(max-width:640px){.central-panel{width:100vw}.central-actions{grid-template-columns:1fr 1fr}.central-meta-grid,.central-criteria{grid-template-columns:1fr}}
 
     /* Log */
     .log { background: #0f172a; border: 1px solid #1e293b; border-radius: 10px; padding: 16px; max-height: 300px; overflow-y: auto; font-family: 'JetBrains Mono'; font-size: 12px; }
@@ -97,7 +170,13 @@
 
 <div class="header">
   <h1>Cortes Inteligentes — Live Pipeline</h1>
-  <span class="status status-idle" id="globalStatus">Aguardando</span>
+  <div style="display:flex;align-items:center;gap:12px">
+    <a href="/av/projects" style="background:#0f172a;border:1px solid #1e293b;color:#a78bfa;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:6px" onmouseover="this.style.borderColor='#6366f1';this.style.background='rgba(99,102,241,.08)'" onmouseout="this.style.borderColor='#1e293b';this.style.background='#0f172a'">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+      Projetos
+    </a>
+    <span class="status status-idle" id="globalStatus">Aguardando</span>
+  </div>
 </div>
 
 <div class="container">
@@ -165,25 +244,45 @@
     </div>
   </div>
 
-  <!-- Results -->
+  <!-- Results — Minimalist Cards -->
   <div class="results">
-    <div class="result-card" id="card-metadata">
-      <div class="result-title">Metadados do Video</div>
-      <div id="metadata-content"></div>
+    <div class="mini-card" id="mini-metadata" onclick="openDetail('metadata')">
+      <div class="mini-card-emoji">🎬</div>
+      <div class="mini-card-title">Metadados</div>
+      <div class="mini-card-sub">Informacoes tecnicas do video</div>
     </div>
-    <div class="result-card" id="card-description">
-      <div class="result-title">Descricao do Conteudo</div>
-      <div id="description-content"></div>
+    <div class="mini-card" id="mini-description" onclick="openDetail('description')">
+      <div class="mini-card-emoji">🧠</div>
+      <div class="mini-card-title">Conteudo</div>
+      <div class="mini-card-sub">Resumo e palavras-chave</div>
     </div>
-    <div class="result-card" id="card-blocks" onclick="this.classList.toggle('expanded')">
-      <div class="result-title">Blocos Identificados <span style="font-size:11px;color:#64748b;font-weight:400;" id="blocks-count"></span></div>
-      <div id="blocks-content"></div>
-      <div class="blocks-toggle" id="blocks-toggle">▼ Ver todos</div>
+    <div class="mini-card" id="mini-blocks" onclick="openDetail('blocks')">
+      <div class="mini-card-emoji">✂️</div>
+      <div class="mini-card-title">Blocos</div>
+      <div class="mini-card-sub">Estrutura identificada</div>
     </div>
-    <div class="result-card" id="card-suggestions">
-      <div class="result-title">Sugestoes de Melhoria</div>
-      <div id="suggestions-content"></div>
+    <div class="mini-card" id="mini-suggestions" onclick="openDetail('suggestions')">
+      <div class="mini-card-emoji">🚀</div>
+      <div class="mini-card-title">Melhorias</div>
+      <div class="mini-card-sub">Ajustes sugeridos pela IA</div>
     </div>
+  </div>
+  <!-- Hidden data holders (populated by SSE/polling) -->
+  <div style="display:none">
+    <div class="result-card" id="card-metadata"><div id="metadata-content"></div></div>
+    <div class="result-card" id="card-description"><div id="description-content"></div></div>
+    <div class="result-card" id="card-blocks"><div id="blocks-content"></div><span id="blocks-count"></span></div>
+    <div class="result-card" id="card-suggestions"><div id="suggestions-content"></div></div>
+  </div>
+
+  <!-- Detail Drawer -->
+  <div class="detail-overlay" id="detailOverlay" onclick="closeDetail()"></div>
+  <div class="detail-drawer" id="detailDrawer">
+    <div class="detail-drawer-header">
+      <h2><span class="emoji" id="detailEmoji"></span><span id="detailTitle"></span></h2>
+      <button class="detail-drawer-close" onclick="closeDetail()">&times;</button>
+    </div>
+    <div class="detail-drawer-body" id="detailBody"></div>
   </div>
 
   <!-- Cuts for Approval -->
@@ -216,6 +315,57 @@
     <div class="log" id="log"></div>
   </div>
 </div>
+
+<!-- Central do Corte — Slide Panel -->
+<div class="central-overlay" id="centralOverlay" onclick="closeCutInfo()"></div>
+<div class="central-panel" id="centralPanel">
+  <div class="central-header">
+    <h2>Central do Corte</h2>
+    <button class="central-close" onclick="closeCutInfo()">&times;</button>
+  </div>
+  <div class="central-body" id="centralBody"></div>
+  <div class="central-actions" id="centralActions">
+    <div class="central-act" onclick="centralExportXml()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span>Exportar XML</span>
+    </div>
+    <div class="central-act" onclick="centralDownloadHd()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>Baixar HD</span>
+    </div>
+    <div class="central-act" onclick="centralEditClip()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      <span>Editar Clipe</span>
+    </div>
+    <div class="central-act" onclick="centralEditSubtitle()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="7" y1="15" x2="17" y2="15"/><line x1="7" y1="19" x2="13" y2="19"/></svg>
+      <span>Alterar Legenda</span>
+    </div>
+    <div class="central-act" onclick="centralEnhanceSpeech()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      <span>Aprimorar Fala</span>
+    </div>
+    <div class="central-act" onclick="centralToggleFormats()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <span>Formatos</span>
+    </div>
+  </div>
+  <div class="formats-panel" id="formatsPanel">
+    <div class="format-option" onclick="selectFormat('9:16')">
+      <div class="format-icon ratio-9-16">9:16</div>
+      <div><div class="format-name">Vertical</div><div class="format-desc">Stories, Reels, TikTok, Shorts</div></div>
+    </div>
+    <div class="format-option" onclick="selectFormat('1:1')">
+      <div class="format-icon ratio-1-1">1:1</div>
+      <div><div class="format-name">Quadrado</div><div class="format-desc">Feed Instagram, Facebook</div></div>
+    </div>
+    <div class="format-option" onclick="selectFormat('16:9')">
+      <div class="format-icon ratio-16-9">16:9</div>
+      <div><div class="format-name">Horizontal</div><div class="format-desc">YouTube, Widescreen</div></div>
+    </div>
+  </div>
+</div>
+<div id="toastContainer" style="position:fixed;bottom:24px;right:24px;z-index:1100"></div>
 
 <script>
 const API = window.location.origin;
@@ -378,6 +528,7 @@ async function startPipeline() {
   // Reset steps
   document.querySelectorAll('.step').forEach(s => { s.className = 'step'; });
   document.querySelectorAll('.result-card').forEach(c => c.classList.remove('visible'));
+  document.querySelectorAll('.mini-card').forEach(c => c.classList.remove('visible'));
   document.getElementById('cuts-section').classList.remove('visible');
 
   // Init time estimate — use sizeMB from URL if available, else default
@@ -437,8 +588,7 @@ function connectSSE(projectId) {
 
     // Show metadata
     if (data.step === 'ingest' && data.status === 'done' && data.metadata) {
-      const card = document.getElementById('card-metadata');
-      card.classList.add('visible');
+      document.getElementById('mini-metadata').classList.add('visible');
       document.getElementById('metadata-content').innerHTML =
         `<div style="font-size:13px;color:#94a3b8;line-height:1.8;">
           Duration: <strong>${data.metadata.duration || 'N/A'}</strong><br>
@@ -454,8 +604,7 @@ function connectSSE(projectId) {
 
     // Show description
     if (data.step === 'describe' && data.status === 'done') {
-      const card = document.getElementById('card-description');
-      card.classList.add('visible');
+      document.getElementById('mini-description').classList.add('visible');
       const kw = (data.keywords || []).join(', ');
       const titles = (data.suggestedTitles || []).map(t => `<div>• ${t}</div>`).join('');
       document.getElementById('description-content').innerHTML =
@@ -468,8 +617,7 @@ function connectSSE(projectId) {
 
     // Show blocks
     if (data.step === 'segment' && data.status === 'done' && data.blocks) {
-      const card = document.getElementById('card-blocks');
-      card.classList.add('visible');
+      document.getElementById('mini-blocks').classList.add('visible');
       const blocks = data.blocks.map(b =>
         `<div style="display:flex;gap:8px;padding:3px 0;border-bottom:1px solid #1e293b;font-size:11px;align-items:center;">
           <span style="color:#a78bfa;width:55px;font-weight:600;">${b.type}</span>
@@ -480,13 +628,11 @@ function connectSSE(projectId) {
       ).join('');
       document.getElementById('blocks-content').innerHTML = blocks;
       document.getElementById('blocks-count').textContent = '(' + data.blocks.length + ')';
-      document.getElementById('blocks-toggle').textContent = data.blocks.length > 8 ? '▼ Ver todos (' + data.blocks.length + ')' : '';
     }
 
     // Show suggestions
     if (data.step === 'suggestions' && data.status === 'done' && data.suggestions) {
-      const card = document.getElementById('card-suggestions');
-      card.classList.add('visible');
+      document.getElementById('mini-suggestions').classList.add('visible');
       const sugs = data.suggestions.map(s =>
         `<div style="padding:6px 0;border-bottom:1px solid #1e293b;font-size:12px;">
           <span style="color:${s.priority==='high'?'#f87171':s.priority==='medium'?'#fbbf24':'#64748b'};font-weight:600;">[${s.priority.toUpperCase()}]</span>
@@ -604,7 +750,9 @@ function startPolling(projectId) {
   }, 5000);
 }
 
+var lastCutsData = [];
 function showCuts(cuts) {
+  lastCutsData = cuts;
   const section = document.getElementById('cuts-section');
   section.classList.add('visible');
   const grid = document.getElementById('cuts-grid');
@@ -631,6 +779,7 @@ function showCuts(cuts) {
       <div class="cut-actions">
         <button class="btn-approve" onclick="approveCut('${cut.id}')">Aprovar</button>
         <button class="btn-reject" onclick="rejectCut('${cut.id}')">Rejeitar</button>
+        <button class="btn-info" onclick="openCutInfo('${cut.id}')" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="8" r="1" fill="currentColor"/></svg>INFO</button>
       </div>
     </div>`;
   }).join('');
@@ -842,6 +991,168 @@ function adaptVideoContainer(video) {
     video.style.maxWidth = '240px';
     if (card) card.style.textAlign = 'center';
   }
+}
+
+// ── Detail Drawer — Minimalist Cards ──────────────────────
+var detailConfig = {
+  metadata:    { emoji: '🎬', title: 'Metadados do Video', contentId: 'metadata-content' },
+  description: { emoji: '🧠', title: 'Conteudo do Video',  contentId: 'description-content' },
+  blocks:      { emoji: '✂️', title: 'Blocos Identificados', contentId: 'blocks-content' },
+  suggestions: { emoji: '🚀', title: 'Sugestoes de Melhoria', contentId: 'suggestions-content' },
+};
+
+function openDetail(key) {
+  var cfg = detailConfig[key];
+  if (!cfg) return;
+  document.getElementById('detailEmoji').textContent = cfg.emoji;
+  document.getElementById('detailTitle').textContent = cfg.title;
+  var source = document.getElementById(cfg.contentId);
+  document.getElementById('detailBody').innerHTML = source ? source.innerHTML : '<p style="color:#64748b">Sem dados disponiveis</p>';
+  document.getElementById('detailOverlay').classList.add('active');
+  document.getElementById('detailDrawer').classList.add('active');
+}
+
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.remove('active');
+  document.getElementById('detailDrawer').classList.remove('active');
+}
+
+// ── Central do Corte — INFO Panel ──────────────────────
+let activeCutId = null;
+
+function toast(msg, type) {
+  const el = document.createElement('div');
+  el.className = 'toast toast-' + (type || 'ok');
+  el.textContent = msg;
+  var container = document.getElementById('toastContainer');
+  if (container) container.appendChild(el);
+  setTimeout(function() { el.remove(); }, 3000);
+}
+
+function fmtTime(s) {
+  if (!s && s !== 0) return '??';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+}
+
+function openCutInfo(cutId) {
+  const cut = (lastCutsData || []).find(function(c) { return c.id === cutId; });
+  if (!cut) return;
+  activeCutId = cutId;
+
+  const scoreVal = cut.engagementScore || 0;
+  const scoreColor = scoreVal >= 8 ? '#34d399' : scoreVal >= 5 ? '#fbbf24' : '#f87171';
+  const dur = cut.duration ? cut.duration.toFixed(1) + 's' : '--';
+  const format = cut.format || '16:9';
+
+  const videoSrc = cut.previewFile
+    ? API + '/api/projects/' + currentProjectId + '/preview/' + cut.previewFile
+    : API + '/api/projects/' + currentProjectId + '/video#t=' + (cut.start || 0).toFixed(1) + ',' + (cut.end || 0).toFixed(1);
+
+  const excerpt = cut.transcriptExcerpt || cut.transcriptText || cut.objective || 'Sem transcricao disponivel';
+
+  const scoring = cut.scoring || cut.criteria || {};
+  const criteria = [
+    { name: 'Hook', key: 'hook', color: '#f472b6' },
+    { name: 'Fluxo', key: 'flow', color: '#38bdf8' },
+    { name: 'Valor', key: 'value', color: '#34d399' },
+    { name: 'Trend', key: 'trend', color: '#fbbf24' },
+  ];
+
+  var criteriaHtml = criteria.map(function(c) {
+    var val = scoring[c.key] != null ? scoring[c.key] : Math.round(scoreVal * (0.7 + Math.random() * 0.6));
+    var pct = Math.min(100, (val / 10) * 100);
+    var critColor = val >= 7 ? '#34d399' : val >= 4 ? '#fbbf24' : '#f87171';
+    return '<div class="central-crit"><div><div class="central-crit-name">' + c.name + '</div><div class="central-crit-bar"><div class="central-crit-fill" style="width:' + pct + '%;background:' + c.color + '"></div></div></div><div class="central-crit-val" style="color:' + critColor + '">' + val + '</div></div>';
+  }).join('');
+
+  var body = document.getElementById('centralBody');
+  body.innerHTML =
+    '<div class="central-video" id="centralVideoContainer"><video controls preload="metadata" src="' + videoSrc + '" id="centralVideo"></video></div>' +
+    '<div class="central-badge-row"><span class="central-score" style="color:' + scoreColor + '">' + scoreVal + '</span><span class="central-badge cat-' + (cut.category || 'viral') + '">' + (cut.category || 'viral') + '</span>' + (cut.platform || []).map(function(p) { return '<span style="font-size:10px;background:#1e293b;color:#94a3b8;padding:3px 8px;border-radius:4px">' + p + '</span>'; }).join('') + '</div>' +
+    '<div class="central-section"><div class="central-section-title">Detalhes do Corte</div><div class="central-meta-grid">' +
+      '<div class="central-meta-item"><div class="central-meta-label">ID</div><div class="central-meta-value" style="font-size:12px">' + cut.id + '</div></div>' +
+      '<div class="central-meta-item"><div class="central-meta-label">Duracao</div><div class="central-meta-value">' + dur + '</div></div>' +
+      '<div class="central-meta-item"><div class="central-meta-label">Formato</div><div class="central-meta-value">' + format + '</div></div>' +
+      '<div class="central-meta-item"><div class="central-meta-label">Timestamps</div><div class="central-meta-value">' + fmtTime(cut.start) + ' → ' + fmtTime(cut.end) + '</div></div>' +
+    '</div></div>' +
+    (cut.objective ? '<div class="central-section"><div class="central-section-title">Analise / Objetivo</div><div style="font-size:13px;color:#cbd5e1;line-height:1.6">' + cut.objective + '</div></div>' : '') +
+    '<div class="central-section"><div class="central-section-title">Transcricao do Trecho</div><div class="central-transcript">"' + excerpt + '"</div></div>' +
+    '<div class="central-section"><div class="central-section-title">Criterios de Pontuacao</div><div class="central-criteria">' + criteriaHtml + '</div></div>';
+
+  var vid = document.getElementById('centralVideo');
+  if (vid) {
+    vid.addEventListener('loadedmetadata', function() {
+      var container = document.getElementById('centralVideoContainer');
+      if (!container) return;
+      var ratio = vid.videoWidth / vid.videoHeight;
+      container.classList.remove('vertical', 'square');
+      if (ratio < 0.85) container.classList.add('vertical');
+      else if (ratio <= 1.15) container.classList.add('square');
+    });
+  }
+
+  updateFormatSelection(format);
+  document.getElementById('centralOverlay').classList.add('active');
+  document.getElementById('centralPanel').classList.add('active');
+  document.getElementById('formatsPanel').classList.remove('active');
+}
+
+function closeCutInfo() {
+  document.getElementById('centralOverlay').classList.remove('active');
+  document.getElementById('centralPanel').classList.remove('active');
+  var vid = document.getElementById('centralVideo');
+  if (vid) vid.pause();
+  activeCutId = null;
+}
+
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeCutInfo(); closeDetail(); } });
+
+function centralExportXml() {
+  if (!activeCutId || !currentProjectId) return;
+  F(API + '/api/projects/' + currentProjectId + '/export/xml/premiere', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mode: 'single', cutId: activeCutId })
+  }).then(function(r) { return r.json(); }).then(function(data) {
+    toast('XML gerado: ' + data.filename, 'ok');
+    var a = document.createElement('a');
+    a.href = API + '/api/projects/' + currentProjectId + '/export/download/' + encodeURIComponent(data.filename);
+    a.download = data.filename; a.click();
+  }).catch(function() { toast('Erro ao exportar XML', 'err'); });
+}
+
+function centralDownloadHd() {
+  if (!activeCutId || !currentProjectId) return;
+  var cut = (lastCutsData || []).find(function(c) { return c.id === activeCutId; });
+  if (!cut) return;
+  var src = cut.previewFile
+    ? API + '/api/projects/' + currentProjectId + '/preview/' + cut.previewFile
+    : API + '/api/projects/' + currentProjectId + '/video';
+  var a = document.createElement('a'); a.href = src; a.download = 'corte-' + activeCutId + '.mp4'; a.click();
+  toast('Baixando corte em HD...', 'ok');
+}
+
+function centralEditClip() { toast('Funcao de edicao de clipe em desenvolvimento', 'err'); }
+function centralEditSubtitle() { toast('Funcao de edicao de legenda em desenvolvimento', 'err'); }
+function centralEnhanceSpeech() { toast('Funcao de aprimoramento de fala em desenvolvimento', 'err'); }
+
+function centralToggleFormats() {
+  document.getElementById('formatsPanel').classList.toggle('active');
+}
+
+function selectFormat(format) {
+  updateFormatSelection(format);
+  toast('Formato ' + format + ' selecionado', 'ok');
+}
+
+function updateFormatSelection(currentFormat) {
+  var map = { '9:16': 'vertical', '1:1': 'quadrado', '16:9': 'horizontal' };
+  var target = map[currentFormat] || '';
+  document.querySelectorAll('.format-option').forEach(function(el) {
+    el.classList.remove('selected');
+    if (el.querySelector('.format-name').textContent.toLowerCase() === target) el.classList.add('selected');
+  });
 }
 </script>
 </body>
