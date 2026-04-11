@@ -80,18 +80,18 @@ describe('Subtitles - formatASSTime', () => {
 
 describe('Subtitles - SUBTITLE_STYLES', () => {
   test('has all styles', () => {
-    expect(SUBTITLE_STYLES).toHaveProperty('minimal');
-    expect(SUBTITLE_STYLES).toHaveProperty('bold');
-    expect(SUBTITLE_STYLES).toHaveProperty('karaoke');
-    expect(SUBTITLE_STYLES).toHaveProperty('subtitle');
+    expect(SUBTITLE_STYLES).toHaveProperty('viral');
+    expect(SUBTITLE_STYLES).toHaveProperty('clean');
+    expect(SUBTITLE_STYLES).toHaveProperty('impacto');
+    expect(SUBTITLE_STYLES).toHaveProperty('premium');
   });
 
   test('each style has required properties', () => {
     for (const style of Object.values(SUBTITLE_STYLES)) {
       expect(style).toHaveProperty('fontName');
-      expect(style).toHaveProperty('fontSize');
+      expect(style).toHaveProperty('sizeFactor');
       expect(style).toHaveProperty('primaryColor');
-      expect(style).toHaveProperty('alignment');
+      expect(style).toHaveProperty('marginVFactor');
     }
   });
 });
