@@ -19,7 +19,8 @@ const { logAccess, logRateLimitHit, getSecurityStatus } = require('./security-mo
 const { startSecurityAlerts, sendIntrusionAlert, sendAccessAlert, sendRateLimitAlert } = require('./security-alerts');
 const { startSecurityBot } = require('./security-bot');
 const { ingest } = require('./ingest');
-const { listProjects, loadProject, getProjectDir } = require('./project');
+const { listProjects, loadProject, getProjectDir, cleanupOldProjects } = require('./project');
+const { PROJECT_MAX_AGE_DAYS } = require('./constants');
 const { transcribeWithWhisper, importSRT } = require('./transcribe');
 const { segmentVideo } = require('./segment');
 const { generateSmartCuts } = require('./smart-cuts');
@@ -100,7 +101,7 @@ function sendJSON(res, data, status = 200) {
   res.writeHead(status, {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   });
   res.end(JSON.stringify(data));
@@ -166,7 +167,7 @@ async function handleRequest(req, res) {
   if (req.method === 'OPTIONS') {
     res.writeHead(204, {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     });
     return res.end();
@@ -232,6 +233,18 @@ async function handleRequest(req, res) {
     if (pathname.match(/^\/api\/projects\/[^/]+$/) && method === 'GET') {
       const id = pathname.split('/')[3];
       return sendJSON(res, { project: loadProject(id) });
+    }
+
+    // ── Rename / Update project ──────────────────────
+    if (pathname.match(/^\/api\/projects\/[^/]+$/) && method === 'PATCH') {
+      const id = pathname.split('/')[3];
+      const body = await parseBody(req);
+      const allowed = {};
+      if (body.name && typeof body.name === 'string') allowed.name = body.name.trim();
+      if (!Object.keys(allowed).length) return sendError(res, 'Nothing to update');
+      const { updateProject } = require('./project');
+      const updated = updateProject(id, allowed);
+      return sendJSON(res, { project: updated });
     }
 
     // ── Batch Processing (AV-12) ─────────────────────
@@ -584,12 +597,31 @@ async function handleRequest(req, res) {
       return sendJSON(res, state || { events: [] });
     }
 
+    // Serve projects library page
+    if (pathname === '/av/projects' || pathname === '/av/projects/') {
+      const projectsHtml = path.resolve(__dirname, '..', '..', '..', 'docs', 'examples', 'ux-command-center', 'av-projects.html');
+      if (!fs.existsSync(projectsHtml)) return sendError(res, 'Projects page not found', 404);
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Access-Control-Allow-Origin': '*' });
+      return fs.createReadStream(projectsHtml).pipe(res);
+    }
+
     // Serve live pipeline HTML page
     if (pathname === '/av' || pathname === '/av/') {
       const htmlPath = path.resolve(__dirname, '..', '..', '..', 'docs', 'examples', 'ux-command-center', 'av-live-pipeline.html');
       if (!fs.existsSync(htmlPath)) return sendError(res, 'Live pipeline page not found', 404);
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Access-Control-Allow-Origin': '*' });
       return fs.createReadStream(htmlPath).pipe(res);
+    }
+
+    // Serve workspace page for a specific project
+    if (pathname.match(/^\/av\/[^/]+\/workspace$/) && method === 'GET') {
+      const projectId = pathname.split('/')[2];
+      const wsHtml = path.resolve(__dirname, '..', '..', '..', 'docs', 'examples', 'ux-command-center', 'av-workspace.html');
+      if (!fs.existsSync(wsHtml)) return sendError(res, 'Workspace page not found', 404);
+      let html = fs.readFileSync(wsHtml, 'utf8');
+      html = html.replace('__PROJECT_ID__', projectId);
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Access-Control-Allow-Origin': '*' });
+      return res.end(html);
     }
 
     // Serve approval page for a specific project
@@ -748,7 +780,7 @@ async function handleRequest(req, res) {
       fs.mkdirSync(tmpDir, { recursive: true });
       const filename = (body.filename || `upload-${Date.now()}.mp4`).replace(/[^a-zA-Z0-9._-]/g, '_');
       fs.writeFileSync(path.join(tmpDir, 'meta.json'), JSON.stringify({
-        filename, totalSize: body.totalSize || 0, totalChunks: body.totalChunks || 0, received: 0
+        filename, totalSize: body.totalSize || 0, totalChunks: body.totalChunks || 0, received: 0,
       }));
       console.log(`[${new Date().toISOString()}] [UPLOAD] Chunked session created — uploadId: ${uploadId}, filename: ${filename}`);
       return sendJSON(res, { uploadId, filename }, 201);
@@ -889,6 +921,12 @@ function createServer(port = DEFAULT_PORT) {
     console.log(`  ${new Date().toLocaleString('pt-BR')}`);
     console.log('  ================================================================');
     console.log('');
+
+    // Auto-cleanup projects older than N days
+    const { removed, kept } = cleanupOldProjects();
+    if (removed.length > 0) {
+      console.log(`  Cleanup: removed ${removed.length} projects older than ${PROJECT_MAX_AGE_DAYS} days (${kept} kept)`);
+    }
 
     // Start security alerts (Telegram notifications)
     startSecurityAlerts();

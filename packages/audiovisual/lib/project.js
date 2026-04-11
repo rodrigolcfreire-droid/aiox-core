@@ -9,7 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { PROJECTS_DIR, PROJECT_SUBDIRS, PROJECT_STATUS } = require('./constants');
+const { PROJECTS_DIR, PROJECT_SUBDIRS, PROJECT_STATUS, PROJECT_MAX_AGE_DAYS } = require('./constants');
 
 function generateProjectId() {
   return crypto.randomUUID();
@@ -83,6 +83,42 @@ function listProjects() {
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 }
 
+/**
+ * Remove projects older than PROJECT_MAX_AGE_DAYS.
+ * Reads createdAt from project.json; falls back to directory mtime.
+ */
+function cleanupOldProjects() {
+  if (!fs.existsSync(PROJECTS_DIR)) return { removed: [], kept: 0 };
+
+  const cutoff = Date.now() - PROJECT_MAX_AGE_DAYS * 24 * 60 * 60 * 1000;
+  const dirs = fs.readdirSync(PROJECTS_DIR);
+  const removed = [];
+
+  for (const dir of dirs) {
+    const dirPath = path.join(PROJECTS_DIR, dir);
+    if (!fs.statSync(dirPath).isDirectory()) continue;
+
+    let projectDate;
+    const projectFile = path.join(dirPath, 'project.json');
+    if (fs.existsSync(projectFile)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(projectFile, 'utf8'));
+        projectDate = new Date(data.createdAt).getTime();
+      } catch { /* fall through to mtime */ }
+    }
+    if (!projectDate) {
+      projectDate = fs.statSync(dirPath).mtimeMs;
+    }
+
+    if (projectDate < cutoff) {
+      fs.rmSync(dirPath, { recursive: true, force: true });
+      removed.push(dir);
+    }
+  }
+
+  return { removed, kept: dirs.length - removed.length };
+}
+
 module.exports = {
   generateProjectId,
   getProjectDir,
@@ -91,4 +127,5 @@ module.exports = {
   updateProjectStatus,
   updateProject,
   listProjects,
+  cleanupOldProjects,
 };

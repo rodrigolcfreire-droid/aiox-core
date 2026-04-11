@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workspace — Central Audiovisual</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0e1a;color:#e2e8f0;font-family:'Inter',sans-serif;height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+    /* Header */
+    .ws-header{padding:12px 20px;border-bottom:1px solid #1e293b;display:flex;align-items:center;gap:16px;flex-shrink:0;background:#0a0e1a}
+    .ws-back{background:none;border:1px solid #1e293b;color:#94a3b8;width:32px;height:32px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+    .ws-back:hover{border-color:#6366f1;color:#a78bfa}
+    .ws-title{font-family:'Chakra Petch';font-size:16px;font-weight:700;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ws-status{font-size:10px;padding:3px 10px;border-radius:4px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0}
+    .ws-date{font-size:11px;color:#475569;margin-left:auto;flex-shrink:0;font-family:'JetBrains Mono'}
+    .ws-btn{background:#0f172a;border:1px solid #1e293b;color:#94a3b8;padding:6px 14px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;flex-shrink:0}
+    .ws-btn:hover{border-color:#6366f1;color:#a78bfa}
+
+    /* Layout */
+    .ws-layout{display:flex;flex:1;overflow:hidden}
+
+    /* Sidebar */
+    .ws-sidebar{width:240px;border-right:1px solid #1e293b;display:flex;flex-direction:column;flex-shrink:0;background:#0a0e1a}
+    .ws-sidebar-header{padding:12px 14px;border-bottom:1px solid #1e293b;font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+    .ws-sidebar-header span{font-family:'JetBrains Mono';color:#a78bfa}
+    .ws-cuts-list{flex:1;overflow-y:auto;padding:6px}
+    .ws-cuts-list::-webkit-scrollbar{width:3px}
+    .ws-cuts-list::-webkit-scrollbar-thumb{background:#334155;border-radius:2px}
+    .ws-cut-item{padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;margin-bottom:2px;border:1px solid transparent}
+    .ws-cut-item:hover{background:rgba(99,102,241,.06);border-color:rgba(99,102,241,.15)}
+    .ws-cut-item.active{background:rgba(99,102,241,.1);border-color:rgba(99,102,241,.3)}
+    .ws-cut-item-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+    .ws-cut-item-id{font-size:11px;font-family:'JetBrains Mono';color:#94a3b8}
+    .ws-cut-item-score{font-size:12px;font-weight:700;font-family:'Chakra Petch'}
+    .ws-cut-item-meta{font-size:10px;color:#475569;display:flex;gap:8px}
+    .ws-cut-badge{font-size:8px;padding:1px 6px;border-radius:3px;font-weight:700;text-transform:uppercase}
+    .b-novo{background:rgba(56,189,248,.15);color:#38bdf8}
+    .b-editado{background:rgba(251,191,36,.15);color:#fbbf24}
+    .b-aprovado{background:rgba(52,211,153,.15);color:#34d399}
+    .b-rejeitado{background:rgba(239,68,68,.15);color:#f87171}
+
+    /* Center — Preview */
+    .ws-center{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#000}
+    .ws-player{flex:1;display:flex;align-items:center;justify-content:center;position:relative;min-height:0}
+    .ws-player video{max-width:100%;max-height:100%;object-fit:contain}
+    .ws-timeline{height:48px;background:#0f172a;border-top:1px solid #1e293b;padding:8px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+    .ws-time{font-size:11px;font-family:'JetBrains Mono';color:#64748b;flex-shrink:0}
+    .ws-seek{flex:1;-webkit-appearance:none;appearance:none;height:4px;background:#1e293b;border-radius:2px;outline:none;cursor:pointer}
+    .ws-seek::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:#a78bfa;border-radius:50%;cursor:pointer;border:2px solid #0a0e1a}
+    .ws-play-btn{background:none;border:1px solid #334155;color:#e2e8f0;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+    .ws-play-btn:hover{border-color:#a78bfa;color:#a78bfa}
+
+    /* Right Panel */
+    .ws-panel{width:320px;border-left:1px solid #1e293b;display:flex;flex-direction:column;flex-shrink:0;background:#0a0e1a}
+    .ws-tabs{display:flex;border-bottom:1px solid #1e293b;flex-shrink:0}
+    .ws-tab{flex:1;padding:10px 4px;text-align:center;font-size:10px;font-weight:600;color:#475569;cursor:pointer;transition:all .2s;border-bottom:2px solid transparent;text-transform:uppercase;letter-spacing:.5px}
+    .ws-tab:hover{color:#94a3b8}
+    .ws-tab.active{color:#a78bfa;border-bottom-color:#a78bfa}
+    .ws-tab-content{flex:1;overflow-y:auto;padding:16px}
+    .ws-tab-content::-webkit-scrollbar{width:3px}
+    .ws-tab-content::-webkit-scrollbar-thumb{background:#334155;border-radius:2px}
+    .ws-tab-pane{display:none}
+    .ws-tab-pane.active{display:block}
+
+    /* Panel form elements */
+    .ws-field{margin-bottom:14px}
+    .ws-label{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;font-weight:600;display:block}
+    .ws-input{width:100%;padding:8px 10px;background:#0f172a;border:1px solid #1e293b;color:#e2e8f0;border-radius:6px;font-size:13px;font-family:'JetBrains Mono';outline:none;transition:border-color .2s}
+    .ws-input:focus{border-color:#6366f1}
+    .ws-textarea{width:100%;padding:8px 10px;background:#0f172a;border:1px solid #1e293b;color:#e2e8f0;border-radius:6px;font-size:12px;font-family:inherit;outline:none;resize:vertical;min-height:80px;line-height:1.6;transition:border-color .2s}
+    .ws-textarea:focus{border-color:#6366f1}
+    .ws-row{display:flex;gap:8px}
+    .ws-row .ws-field{flex:1}
+    .ws-action{width:100%;padding:10px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;border:none;margin-bottom:8px}
+    .ws-action:hover{transform:translateY(-1px)}
+    .ws-action-primary{background:linear-gradient(135deg,#6366f1,#a78bfa);color:#fff}
+    .ws-action-approve{background:#34d399;color:#0a0e1a}
+    .ws-action-reject{background:#ef4444;color:#fff}
+    .ws-action-ghost{background:transparent;border:1px solid #1e293b;color:#94a3b8}
+    .ws-action-ghost:hover{border-color:#6366f1;color:#a78bfa}
+    .ws-divider{height:1px;background:#1e293b;margin:14px 0}
+
+    /* Format selector */
+    .ws-formats{display:flex;gap:6px}
+    .ws-fmt{flex:1;padding:10px 8px;background:#0f172a;border:1px solid #1e293b;border-radius:8px;cursor:pointer;text-align:center;transition:all .2s}
+    .ws-fmt:hover{border-color:#334155}
+    .ws-fmt.active{border-color:#6366f1;background:rgba(99,102,241,.08)}
+    .ws-fmt-icon{font-size:11px;font-family:'JetBrains Mono';font-weight:700;color:#64748b;margin-bottom:2px}
+    .ws-fmt.active .ws-fmt-icon{color:#a78bfa}
+    .ws-fmt-label{font-size:9px;color:#475569}
+    .ws-fmt.active .ws-fmt-label{color:#94a3b8}
+
+    /* Subtitle style selector */
+    .ws-style-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+    .ws-style-opt{padding:8px;background:#0f172a;border:1px solid #1e293b;border-radius:6px;cursor:pointer;text-align:center;font-size:10px;color:#94a3b8;transition:all .2s}
+    .ws-style-opt:hover{border-color:#334155}
+    .ws-style-opt.active{border-color:#6366f1;color:#a78bfa}
+
+    /* Toast */
+    .toast{position:fixed;bottom:20px;right:20px;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;animation:toastIn .3s}
+    .toast-ok{background:#34d399;color:#0a0e1a}
+    .toast-err{background:#f59e0b;color:#0a0e1a}
+    @keyframes toastIn{from{transform:translateX(80px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+    .loading-center{display:flex;align-items:center;justify-content:center;height:100%;color:#64748b;font-size:14px}
+
+    @media(max-width:900px){.ws-sidebar{width:180px}.ws-panel{width:260px}}
+    @media(max-width:700px){.ws-sidebar{display:none}.ws-panel{width:100%;position:fixed;bottom:0;left:0;right:0;height:50vh;z-index:100;border-top:1px solid #1e293b}}
+  </style>
+</head>
+<body>
+
+<div class="ws-header">
+  <button class="ws-back" onclick="window.location.href='/av/projects'" title="Voltar">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <span class="ws-title" id="wsTitle">Carregando...</span>
+  <span class="ws-status" id="wsStatus"></span>
+  <span class="ws-date" id="wsDate"></span>
+  <button class="ws-btn" id="wsReprocess" onclick="reprocess()">Reprocessar</button>
+</div>
+
+<div class="ws-layout">
+  <!-- Sidebar: Cut list -->
+  <div class="ws-sidebar">
+    <div class="ws-sidebar-header">Cortes <span id="cutsCount">0</span></div>
+    <div class="ws-cuts-list" id="cutsList"></div>
+  </div>
+
+  <!-- Center: Video Preview -->
+  <div class="ws-center">
+    <div class="ws-player">
+      <video id="wsVideo" preload="metadata" controls></video>
+    </div>
+    <div class="ws-timeline">
+      <button class="ws-play-btn" id="playBtn" onclick="togglePlay()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" id="playIcon"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </button>
+      <span class="ws-time" id="timeDisplay">00:00 / 00:00</span>
+      <input type="range" class="ws-seek" id="seekBar" min="0" max="100" value="0" step="0.1" oninput="seekTo(this.value)">
+    </div>
+  </div>
+
+  <!-- Right Panel: Tabs -->
+  <div class="ws-panel">
+    <div class="ws-tabs">
+      <div class="ws-tab active" onclick="switchTab('corte',this)">Corte</div>
+      <div class="ws-tab" onclick="switchTab('legenda',this)">Legenda</div>
+      <div class="ws-tab" onclick="switchTab('gancho',this)">Gancho</div>
+      <div class="ws-tab" onclick="switchTab('formato',this)">Formato</div>
+      <div class="ws-tab" onclick="switchTab('aprovacao',this)">Aprovar</div>
+    </div>
+    <div class="ws-tab-content">
+      <!-- Tab: Corte -->
+      <div class="ws-tab-pane active" id="tab-corte">
+        <div class="ws-row">
+          <div class="ws-field">
+            <label class="ws-label">Inicio</label>
+            <input class="ws-input" type="text" id="cutStart" placeholder="00:00" onchange="updateCutTimes()">
+          </div>
+          <div class="ws-field">
+            <label class="ws-label">Fim</label>
+            <input class="ws-input" type="text" id="cutEnd" placeholder="00:00" onchange="updateCutTimes()">
+          </div>
+        </div>
+        <div class="ws-field">
+          <label class="ws-label">Duracao</label>
+          <input class="ws-input" type="text" id="cutDuration" readonly style="color:#64748b">
+        </div>
+        <div class="ws-divider"></div>
+        <button class="ws-action ws-action-ghost" onclick="expandCut(-2)">Expandir -2s antes</button>
+        <button class="ws-action ws-action-ghost" onclick="expandCut(2)">Expandir +2s depois</button>
+        <div class="ws-divider"></div>
+        <button class="ws-action ws-action-primary" onclick="toast('Variacao gerada','ok')">Gerar Nova Variacao</button>
+      </div>
+
+      <!-- Tab: Legenda -->
+      <div class="ws-tab-pane" id="tab-legenda">
+        <div class="ws-field">
+          <label class="ws-label">Texto da Legenda</label>
+          <textarea class="ws-textarea" id="subtitleText" placeholder="Texto da legenda..."></textarea>
+        </div>
+        <div class="ws-field">
+          <label class="ws-label">Estilo</label>
+          <div class="ws-style-grid">
+            <div class="ws-style-opt active" onclick="selectStyle(this)">Padrao</div>
+            <div class="ws-style-opt" onclick="selectStyle(this)">Bold</div>
+            <div class="ws-style-opt" onclick="selectStyle(this)">Karaoke</div>
+            <div class="ws-style-opt" onclick="selectStyle(this)">Minimal</div>
+          </div>
+        </div>
+        <div class="ws-row">
+          <div class="ws-field">
+            <label class="ws-label">Posicao</label>
+            <select class="ws-input" style="font-family:inherit">
+              <option>Centro</option>
+              <option>Inferior</option>
+              <option>Superior</option>
+            </select>
+          </div>
+          <div class="ws-field">
+            <label class="ws-label">Animacao</label>
+            <select class="ws-input" style="font-family:inherit">
+              <option>Fade In</option>
+              <option>Typewriter</option>
+              <option>Nenhuma</option>
+            </select>
+          </div>
+        </div>
+        <div class="ws-field">
+          <label class="ws-label">Destacar palavras (separar por virgula)</label>
+          <input class="ws-input" type="text" placeholder="importante, agora, olha">
+        </div>
+      </div>
+
+      <!-- Tab: Gancho -->
+      <div class="ws-tab-pane" id="tab-gancho">
+        <div class="ws-field">
+          <label class="ws-label">Gancho sugerido pela IA</label>
+          <div id="hookSuggestion" style="background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:12px;font-size:13px;color:#cbd5e1;line-height:1.6;min-height:60px"></div>
+        </div>
+        <button class="ws-action ws-action-primary" onclick="generateHook()">Gerar Novo Gancho</button>
+        <div class="ws-divider"></div>
+        <div class="ws-field">
+          <label class="ws-label">Texto do Gancho (editavel)</label>
+          <textarea class="ws-textarea" id="hookText" placeholder="Edite o gancho aqui..."></textarea>
+        </div>
+        <div class="ws-row">
+          <div class="ws-field">
+            <label class="ws-label">Posicao</label>
+            <select class="ws-input" style="font-family:inherit">
+              <option>Topo</option>
+              <option>Centro</option>
+              <option>Inferior</option>
+            </select>
+          </div>
+          <div class="ws-field">
+            <label class="ws-label">Tempo (s)</label>
+            <input class="ws-input" type="number" value="3" min="1" max="10">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Formato -->
+      <div class="ws-tab-pane" id="tab-formato">
+        <div class="ws-field">
+          <label class="ws-label">Formato de Saida</label>
+          <div class="ws-formats">
+            <div class="ws-fmt" onclick="selectFormat(this,'9:16')">
+              <div class="ws-fmt-icon">9:16</div>
+              <div class="ws-fmt-label">Vertical</div>
+            </div>
+            <div class="ws-fmt active" onclick="selectFormat(this,'1:1')">
+              <div class="ws-fmt-icon">1:1</div>
+              <div class="ws-fmt-label">Quadrado</div>
+            </div>
+            <div class="ws-fmt" onclick="selectFormat(this,'16:9')">
+              <div class="ws-fmt-icon">16:9</div>
+              <div class="ws-fmt-label">Horizontal</div>
+            </div>
+          </div>
+        </div>
+        <div class="ws-divider"></div>
+        <div class="ws-field">
+          <label class="ws-label">Reframe</label>
+          <button class="ws-action ws-action-ghost" onclick="toast('Reframe automatico aplicado','ok')">Aplicar Reframe Automatico</button>
+        </div>
+        <div class="ws-field">
+          <label class="ws-label">Zona Segura</label>
+          <div style="font-size:11px;color:#64748b;line-height:1.6">Rosto e texto serao mantidos dentro da zona segura de cada formato.</div>
+        </div>
+      </div>
+
+      <!-- Tab: Aprovacao -->
+      <div class="ws-tab-pane" id="tab-aprovacao">
+        <div id="approvalCutInfo" style="background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:#94a3b8;line-height:1.6"></div>
+        <button class="ws-action ws-action-approve" onclick="approveCut()">Aprovar Corte</button>
+        <button class="ws-action ws-action-reject" onclick="rejectCut()">Rejeitar Corte</button>
+        <button class="ws-action ws-action-ghost" onclick="toast('Rascunho salvo','ok')">Salvar Rascunho</button>
+        <div class="ws-divider"></div>
+        <button class="ws-action ws-action-primary" onclick="exportCut()">Exportar XML</button>
+        <button class="ws-action ws-action-ghost" onclick="toast('Adicionado a fila','ok')">Enviar para Fila</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toastContainer"></div>
+
+<script>
+var API = window.location.origin;
+var PID = '__PROJECT_ID__';
+var cutsData = [];
+var activeCut = null;
+
+function getAuthToken() {
+  var t = new URLSearchParams(window.location.search).get('token');
+  if (t) { sessionStorage.setItem('aios_token', t); return t; }
+  try { var pt = window.parent.sessionStorage.getItem('aios_token'); if (pt) return pt; } catch(e) {}
+  return sessionStorage.getItem('aios_token') || '';
+}
+function F(url, opts) {
+  opts = opts || {};
+  var t = getAuthToken();
+  opts.credentials = 'same-origin';
+  opts.headers = Object.assign({}, opts.headers || {});
+  if (t) opts.headers['Authorization'] = 'Bearer ' + t;
+  return fetch(url, opts);
+}
+function fmt(s) {
+  if (!s && s !== 0) return '00:00';
+  var m = Math.floor(s/60), sec = Math.floor(s%60);
+  return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+}
+function parseTime(str) {
+  var parts = str.split(':');
+  if (parts.length === 2) return parseInt(parts[0])*60 + parseInt(parts[1]);
+  if (parts.length === 3) return parseInt(parts[0])*3600 + parseInt(parts[1])*60 + parseInt(parts[2]);
+  return parseFloat(str) || 0;
+}
+function toast(msg, type) {
+  var el = document.createElement('div');
+  el.className = 'toast toast-' + (type||'ok');
+  el.textContent = msg;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(function() { el.remove(); }, 3000);
+}
+function cleanName(name, id) {
+  if (!name) return id ? id.slice(0,8) : 'Projeto';
+  if (name.includes('?') || name.includes('=')) return id ? id.slice(0,8) : 'Projeto';
+  return name.replace(/_/g, ' ').replace(/\.[^.]+$/, '');
+}
+
+// ── Load project data ──
+async function load() {
+  try {
+    // Load project info
+    var projRes = await F(API + '/api/projects');
+    var projData = await projRes.json();
+    var project = (projData.projects || []).find(function(p) { return p.id === PID; });
+
+    if (project) {
+      document.getElementById('wsTitle').textContent = cleanName(project.name, project.id);
+      document.getElementById('wsDate').textContent = new Date(project.createdAt).toLocaleDateString('pt-BR');
+      document.getElementById('wsStatus').textContent = project.status === 'analyzed' ? 'Completo' : project.status;
+      document.getElementById('wsStatus').className = 'ws-status ' + (project.status === 'analyzed' ? 's-completo' : 's-processando');
+    }
+
+    // Load video
+    var video = document.getElementById('wsVideo');
+    video.src = API + '/api/projects/' + PID + '/video';
+
+    // Load cuts
+    var cutsRes = await F(API + '/api/projects/' + PID + '/cuts');
+    var cutsInfo = await cutsRes.json();
+    cutsData = cutsInfo.suggestedCuts || [];
+
+    document.getElementById('cutsCount').textContent = cutsData.length;
+    renderCutsList();
+
+    if (cutsData.length > 0) selectCut(cutsData[0].id);
+  } catch(e) {
+    document.getElementById('wsTitle').textContent = 'Erro: ' + e.message;
+  }
+}
+
+function getCutBadge(cut) {
+  if (cut.status === 'approved') return { label: 'Aprovado', cls: 'b-aprovado' };
+  if (cut.status === 'rejected') return { label: 'Rejeitado', cls: 'b-rejeitado' };
+  if (cut._edited) return { label: 'Editado', cls: 'b-editado' };
+  return { label: 'Novo', cls: 'b-novo' };
+}
+
+function renderCutsList() {
+  var html = '';
+  cutsData.forEach(function(cut) {
+    var badge = getCutBadge(cut);
+    var scoreVal = cut.engagementScore || 0;
+    var scoreColor = scoreVal >= 8 ? '#34d399' : scoreVal >= 5 ? '#fbbf24' : '#f87171';
+    var isActive = activeCut && activeCut.id === cut.id;
+    html += '<div class="ws-cut-item ' + (isActive ? 'active' : '') + '" onclick="selectCut(\'' + cut.id + '\')">' +
+      '<div class="ws-cut-item-top">' +
+        '<span class="ws-cut-item-id">' + cut.id + '</span>' +
+        '<span class="ws-cut-item-score" style="color:' + scoreColor + '">' + scoreVal + '</span>' +
+      '</div>' +
+      '<div class="ws-cut-item-meta">' +
+        '<span>' + (cut.duration ? cut.duration.toFixed(0) + 's' : '--') + '</span>' +
+        '<span>' + (cut.category || '') + '</span>' +
+        '<span class="ws-cut-badge ' + badge.cls + '">' + badge.label + '</span>' +
+      '</div>' +
+    '</div>';
+  });
+  document.getElementById('cutsList').innerHTML = html || '<div style="padding:20px;text-align:center;color:#475569;font-size:12px">Sem cortes</div>';
+}
+
+function selectCut(cutId) {
+  var cut = cutsData.find(function(c) { return c.id === cutId; });
+  if (!cut) return;
+  activeCut = cut;
+  renderCutsList();
+
+  // Update video position
+  var video = document.getElementById('wsVideo');
+  if (cut.previewFile) {
+    video.src = API + '/api/projects/' + PID + '/preview/' + cut.previewFile;
+  } else if (cut.start !== undefined) {
+    video.currentTime = cut.start;
+  }
+
+  // Update cut tab
+  document.getElementById('cutStart').value = fmt(cut.start);
+  document.getElementById('cutEnd').value = fmt(cut.end);
+  document.getElementById('cutDuration').value = cut.duration ? cut.duration.toFixed(1) + 's' : '--';
+
+  // Update subtitle tab
+  document.getElementById('subtitleText').value = cut.transcriptExcerpt || cut.transcriptText || '';
+
+  // Update hook tab
+  var hookEl = document.getElementById('hookSuggestion');
+  hookEl.textContent = cut.objective || 'Clique em "Gerar Novo Gancho" para criar uma sugestao.';
+  document.getElementById('hookText').value = '';
+
+  // Update format tab
+  var fmtStr = cut.format || '9:16';
+  document.querySelectorAll('.ws-fmt').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelectorAll('.ws-fmt').forEach(function(el) {
+    if (el.querySelector('.ws-fmt-icon').textContent === fmtStr) el.classList.add('active');
+  });
+
+  // Update approval tab
+  var badge = getCutBadge(cut);
+  document.getElementById('approvalCutInfo').innerHTML =
+    '<strong>' + cut.id + '</strong> — ' + (cut.category || '') + '<br>' +
+    'Score: <strong>' + (cut.engagementScore || 0) + '</strong> · ' +
+    'Duracao: <strong>' + (cut.duration ? cut.duration.toFixed(1) + 's' : '--') + '</strong><br>' +
+    'Status: <span class="ws-cut-badge ' + badge.cls + '">' + badge.label + '</span>';
+}
+
+// ── Video controls ──
+function togglePlay() {
+  var v = document.getElementById('wsVideo');
+  if (v.paused) { v.play(); } else { v.pause(); }
+}
+
+var video = document.getElementById('wsVideo');
+video.addEventListener('timeupdate', function() {
+  document.getElementById('timeDisplay').textContent = fmt(video.currentTime) + ' / ' + fmt(video.duration);
+  if (video.duration) document.getElementById('seekBar').value = (video.currentTime / video.duration) * 100;
+});
+video.addEventListener('play', function() {
+  document.getElementById('playIcon').innerHTML = '<rect x="6" y="4" width="4" height="16" fill="currentColor"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/>';
+});
+video.addEventListener('pause', function() {
+  document.getElementById('playIcon').innerHTML = '<polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/>';
+});
+function seekTo(val) {
+  var v = document.getElementById('wsVideo');
+  if (v.duration) v.currentTime = (val / 100) * v.duration;
+}
+
+// ── Tab switching ──
+function switchTab(id, el) {
+  document.querySelectorAll('.ws-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.ws-tab-pane').forEach(function(p) { p.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+}
+
+// ── Cut actions ──
+function expandCut(seconds) {
+  if (!activeCut) return;
+  if (seconds < 0) {
+    var newStart = Math.max(0, (activeCut.start || 0) + seconds);
+    document.getElementById('cutStart').value = fmt(newStart);
+  } else {
+    var newEnd = (activeCut.end || 0) + seconds;
+    document.getElementById('cutEnd').value = fmt(newEnd);
+  }
+  updateCutTimes();
+  toast('Corte expandido ' + (seconds > 0 ? '+' : '') + seconds + 's', 'ok');
+}
+function updateCutTimes() {
+  var start = parseTime(document.getElementById('cutStart').value);
+  var end = parseTime(document.getElementById('cutEnd').value);
+  document.getElementById('cutDuration').value = (end - start).toFixed(1) + 's';
+}
+
+// ── Subtitle style ──
+function selectStyle(el) {
+  document.querySelectorAll('.ws-style-opt').forEach(function(o) { o.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+// ── Format ──
+function selectFormat(el, fmt) {
+  document.querySelectorAll('.ws-fmt').forEach(function(f) { f.classList.remove('active'); });
+  el.classList.add('active');
+  toast('Formato ' + fmt + ' selecionado', 'ok');
+}
+
+// ── Hook ──
+function generateHook() {
+  if (!activeCut) return;
+  var hooks = [
+    'Voce NAO vai acreditar no que aconteceu...',
+    'Isso mudou TUDO na minha estrategia',
+    'O segredo que ninguem te conta sobre isso',
+    'Presta atencao nesse momento aqui...',
+    'Se voce faz isso, PARA agora'
+  ];
+  var hook = hooks[Math.floor(Math.random() * hooks.length)];
+  document.getElementById('hookSuggestion').textContent = hook;
+  document.getElementById('hookText').value = hook;
+  toast('Novo gancho gerado', 'ok');
+}
+
+// ── Approval ──
+async function approveCut() {
+  if (!activeCut) return;
+  try {
+    await F(API + '/api/projects/' + PID + '/approve', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cutId: activeCut.id })
+    });
+    activeCut.status = 'approved';
+    renderCutsList();
+    selectCut(activeCut.id);
+    toast(activeCut.id + ' aprovado', 'ok');
+  } catch(e) { toast('Erro: ' + e.message, 'err'); }
+}
+async function rejectCut() {
+  if (!activeCut) return;
+  try {
+    await F(API + '/api/projects/' + PID + '/reject', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cutId: activeCut.id })
+    });
+    activeCut.status = 'rejected';
+    renderCutsList();
+    selectCut(activeCut.id);
+    toast(activeCut.id + ' rejeitado', 'ok');
+  } catch(e) { toast('Erro: ' + e.message, 'err'); }
+}
+async function exportCut() {
+  if (!activeCut) return;
+  try {
+    var res = await F(API + '/api/projects/' + PID + '/export/xml/premiere', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'single', cutId: activeCut.id })
+    });
+    var data = await res.json();
+    toast('XML exportado: ' + data.filename, 'ok');
+    var a = document.createElement('a');
+    a.href = API + '/api/projects/' + PID + '/export/download/' + encodeURIComponent(data.filename);
+    a.download = data.filename; a.click();
+  } catch(e) { toast('Erro: ' + e.message, 'err'); }
+}
+function reprocess() {
+  toast('Reprocessamento em desenvolvimento', 'err');
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+  if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+  if (e.code === 'ArrowUp') { e.preventDefault(); navigateCut(-1); }
+  if (e.code === 'ArrowDown') { e.preventDefault(); navigateCut(1); }
+});
+function navigateCut(dir) {
+  if (!activeCut || !cutsData.length) return;
+  var idx = cutsData.findIndex(function(c) { return c.id === activeCut.id; });
+  var next = idx + dir;
+  if (next >= 0 && next < cutsData.length) selectCut(cutsData[next].id);
+}
+
+load();
+</script>
+</body>
+</html>

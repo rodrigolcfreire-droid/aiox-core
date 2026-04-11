@@ -5565,7 +5565,13 @@
         </div>
       </div>
 
-      <!-- Action buttons removed — pipeline is accessed via /av -->
+      <!-- Quick Access -->
+      <div style="display:flex;gap:12px;justify-content:center;">
+        <a href="/av/projects" target="_blank" style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.25);color:#a78bfa;padding:14px 36px;border-radius:10px;font-family:'Chakra Petch';font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .25s;display:inline-flex;align-items:center;gap:10px;letter-spacing:1px" onmouseover="this.style.borderColor='#6366f1';this.style.background='rgba(99,102,241,.15)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(99,102,241,.25)';this.style.background='rgba(99,102,241,.08)';this.style.transform='none'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+          MEUS PROJETOS
+        </a>
+      </div>
     </section>
 
     <!-- Motor Escala de Criativos (detail view) -->
@@ -5692,6 +5698,7 @@
       <!-- Action -->
       <div style="display:flex;gap:16px;">
         <button class="av-sector-btn" style="font-size:14px;padding:12px 32px;letter-spacing:2px;border-color:rgba(52,211,153,0.4);color:#34d399;" onclick="showView('av-pipeline'); event.preventDefault();">EXECUTAR PRODUCAO</button>
+        <a href="/av/projects" target="_blank" class="av-sector-btn" style="font-size:14px;padding:12px 32px;letter-spacing:2px;text-decoration:none;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);color:#a78bfa;">PROJETOS</a>
       </div>
     </section>
 
@@ -5703,7 +5710,8 @@
         <span class="av-bread-sep">›</span>
         <span class="av-bread-current">Pipeline</span>
       </div>
-      <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+      <div style="display:flex;justify-content:flex-end;gap:12px;margin-bottom:16px;">
+        <a href="/av/projects" target="_blank" class="av-sector-btn" style="font-size:14px;padding:12px 32px;letter-spacing:2px;text-decoration:none;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);color:#a78bfa;">PROJETOS</a>
         <button class="av-sector-btn" style="font-size:14px;padding:12px 32px;letter-spacing:2px;" onclick="showView('av-aprovacao'); event.preventDefault();">RODAR LINK → APROVACAO</button>
       </div>
       <iframe id="av-pipeline-frame" style="width:100%;min-height:85vh;border:none;border-radius:12px;background:#0a0e1a;" src="about:blank"></iframe>
@@ -5887,7 +5895,8 @@
       if (viewId === 'av-aprovacao') {
         const frame = document.getElementById('av-aprovacao-frame');
         if (frame && frame.src === 'about:blank') {
-          frame.src = 'av-approve.html?v=' + Date.now();
+          // Load approval page via server route that injects project ID
+          loadApprovalFrame(frame);
         }
       }
     }
@@ -6918,6 +6927,39 @@
 
     // AV API base — use localhost:3456 when served from there, fallback for file://
     const AV_API = (window.location.protocol === 'file:') ? 'http://localhost:3456' : window.location.origin;
+
+    // Load approval iframe with a project that has cuts available
+    async function loadApprovalFrame(frame) {
+      try {
+        const res = await fetch(AV_API + '/api/projects');
+        const data = await res.json();
+        const projects = (data.projects || []).filter(p => p.status === 'analyzed');
+        // Find first project that has cuts
+        let pid = null;
+        for (const p of projects) {
+          try {
+            const cutsRes = await fetch(AV_API + '/api/projects/' + p.id + '/cuts');
+            const cutsData = await cutsRes.json();
+            if ((cutsData.suggestedCuts || []).length > 0) {
+              pid = p.id;
+              break;
+            }
+          } catch (e) { /* skip */ }
+        }
+        if (pid) {
+          const token = sessionStorage.getItem('aios_token') || '';
+          frame.src = AV_API + '/av/' + pid + '/approve' + (token ? '?token=' + token : '');
+        } else if (projects.length > 0) {
+          // Fallback to most recent even without cuts
+          const token = sessionStorage.getItem('aios_token') || '';
+          frame.src = AV_API + '/av/' + projects[0].id + '/approve' + (token ? '?token=' + token : '');
+        } else {
+          frame.src = 'av-approve.html?v=' + Date.now();
+        }
+      } catch (e) {
+        frame.src = 'av-approve.html?v=' + Date.now();
+      }
+    }
 
     // Auth token helper — sends Bearer token on all requests (Cloudflare-safe)
     // Fetch token from server on page load (cookie auth gets us the token)

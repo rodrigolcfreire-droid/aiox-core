@@ -48,6 +48,8 @@ const VIDEO_FORMATS = ['9:16', '16:9', '1:1', '4:5'];
 
 const PROJECT_SUBDIRS = ['source', 'analysis', 'cuts', 'production', 'output'];
 
+const PROJECT_MAX_AGE_DAYS = 20;
+
 module.exports = {
   AIOX_DIR,
   AV_DIR,
@@ -58,4 +60,5 @@ module.exports = {
   CUT_CATEGORIES,
   VIDEO_FORMATS,
   PROJECT_SUBDIRS,
+  PROJECT_MAX_AGE_DAYS,
 };

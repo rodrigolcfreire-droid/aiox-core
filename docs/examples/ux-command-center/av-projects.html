@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projetos — Central Audiovisual</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0e1a;color:#e2e8f0;font-family:'Inter',sans-serif;min-height:100vh}
+
+    .header{padding:20px 40px;border-bottom:1px solid #1e293b;display:flex;align-items:center;justify-content:space-between}
+    .header h1{font-family:'Chakra Petch';font-size:20px;color:#e2e8f0;font-weight:700}
+    .header-right{display:flex;align-items:center;gap:12px}
+    .header-count{font-size:12px;color:#475569;font-family:'JetBrains Mono'}
+    .btn-new{background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:#a78bfa;padding:8px 18px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+    .btn-new:hover{background:rgba(99,102,241,.18);border-color:rgba(99,102,241,.4)}
+
+    .filters{padding:12px 40px;display:flex;gap:6px;align-items:center}
+    .f{background:none;border:none;color:#475569;padding:6px 12px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;transition:color .2s}
+    .f:hover{color:#94a3b8}
+    .f.on{color:#a78bfa;background:rgba(99,102,241,.08)}
+    .fsearch{background:transparent;border:1px solid #1e293b;color:#e2e8f0;padding:7px 12px;border-radius:6px;font-size:12px;font-family:inherit;margin-left:auto;width:200px;transition:border-color .2s}
+    .fsearch::placeholder{color:#334155}
+    .fsearch:focus{outline:none;border-color:#6366f1}
+
+    .container{max-width:1400px;margin:0 auto;padding:28px 40px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+
+    /* Card — ultra minimal */
+    .c{position:relative;border-radius:10px;overflow:hidden;cursor:pointer;background:#0f172a;border:1px solid rgba(255,255,255,.04);transition:all .35s ease}
+    .c:hover{border-color:rgba(255,255,255,.08)}
+    .c.glow-green{box-shadow:0 0 20px rgba(52,211,153,.12),0 0 40px rgba(52,211,153,.06)}
+    .c.glow-green:hover{box-shadow:0 0 24px rgba(52,211,153,.2),0 0 50px rgba(52,211,153,.1)}
+    .c.glow-yellow{box-shadow:0 0 20px rgba(251,191,36,.12),0 0 40px rgba(251,191,36,.06)}
+    .c.glow-yellow:hover{box-shadow:0 0 24px rgba(251,191,36,.2),0 0 50px rgba(251,191,36,.1)}
+    .c.glow-blue{box-shadow:0 0 20px rgba(56,189,248,.12),0 0 40px rgba(56,189,248,.06)}
+    .c.glow-blue:hover{box-shadow:0 0 24px rgba(56,189,248,.2),0 0 50px rgba(56,189,248,.1)}
+    .c.glow-red{box-shadow:0 0 20px rgba(239,68,68,.12),0 0 40px rgba(239,68,68,.06)}
+    .c.glow-red:hover{box-shadow:0 0 24px rgba(239,68,68,.2),0 0 50px rgba(239,68,68,.1)}
+    .c.glow-purple{box-shadow:0 0 20px rgba(167,139,250,.12),0 0 40px rgba(167,139,250,.06)}
+    .c.glow-purple:hover{box-shadow:0 0 24px rgba(167,139,250,.2),0 0 50px rgba(167,139,250,.1)}
+    .c-thumb{position:relative;aspect-ratio:9/16;background:#000;overflow:hidden}
+    .c-thumb video{width:100%;height:100%;object-fit:cover;opacity:.8;transition:opacity .3s}
+    .c:hover .c-thumb video{opacity:1}
+
+    /* Status dot — top left */
+    .c-dot{position:absolute;top:10px;left:10px;width:8px;height:8px;border-radius:50%;z-index:2}
+    .dot-green{background:#34d399;box-shadow:0 0 6px rgba(52,211,153,.5)}
+    .dot-yellow{background:#fbbf24;box-shadow:0 0 6px rgba(251,191,36,.5)}
+    .dot-blue{background:#38bdf8;box-shadow:0 0 6px rgba(56,189,248,.5)}
+    .dot-red{background:#ef4444;box-shadow:0 0 6px rgba(239,68,68,.5)}
+    .dot-purple{background:#a78bfa;box-shadow:0 0 6px rgba(167,139,250,.5)}
+
+    /* Hover overlay */
+    .c-overlay{position:absolute;inset:0;background:rgba(10,14,26,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .35s;z-index:3;backdrop-filter:blur(2px)}
+    .c:hover .c-overlay{opacity:1}
+    .c-overlay-btn{font-size:12px;font-weight:600;color:rgba(255,255,255,.9);background:rgba(99,102,241,.12);border:1px solid rgba(255,255,255,.08);padding:7px 16px;border-radius:5px;letter-spacing:.3px;box-shadow:0 0 12px rgba(99,102,241,.08);transform:translateY(4px);opacity:0;transition:all .3s ease}
+    .c:hover .c-overlay-btn{transform:translateY(0);opacity:1}
+    .c-overlay-btn:hover{background:rgba(99,102,241,.2);border-color:rgba(255,255,255,.12);box-shadow:0 0 18px rgba(99,102,241,.15)}
+    .c-overlay-hint{font-size:10px;color:rgba(148,163,184,.7);margin-top:6px;text-align:center;line-height:1.3;transform:translateY(4px);opacity:0;transition:all .3s ease .05s}
+    .c:hover .c-overlay-hint{transform:translateY(0);opacity:1}
+
+    /* Body */
+    .c-body{padding:10px 12px}
+    .c-name{font-size:13px;font-weight:600;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:text;border-radius:3px;padding:1px 3px;margin:-1px -3px;transition:background .2s}
+    .c-name:hover{background:rgba(99,102,241,.08)}
+    .c-name.editing{background:rgba(99,102,241,.12);outline:1px solid rgba(99,102,241,.35);overflow:visible;white-space:normal}
+    .c-sub{font-size:10px;color:#475569;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    .empty{text-align:center;padding:80px 40px;color:#475569}
+    .empty h3{font-family:'Chakra Petch';font-size:18px;color:#64748b;margin-bottom:6px}
+    .empty p{font-size:13px}
+    .loading{text-align:center;padding:60px;color:#475569;font-size:13px}
+
+    @media(max-width:768px){.header,.filters,.container{padding-left:16px;padding-right:16px}.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}}
+    @media(max-width:480px){.grid{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+<div class="header">
+  <h1>Projetos</h1>
+  <div class="header-right">
+    <span class="header-count" id="projectCount"></span>
+    <a class="btn-new" href="/av">+ Novo</a>
+  </div>
+</div>
+<div class="filters">
+  <button class="f on" onclick="setSort('recent',this)">Recentes</button>
+  <button class="f" onclick="setSort('oldest',this)">Antigos</button>
+  <button class="f" onclick="setSort('cuts',this)">Mais Cortes</button>
+  <input class="fsearch" type="text" placeholder="Buscar..." oninput="filterProjects(this.value)">
+</div>
+<div class="container">
+  <div id="content"><div class="loading">Carregando...</div></div>
+</div>
+
+<script>
+var API = window.location.origin;
+var allProjects = [];
+var currentSort = 'recent';
+var searchQuery = '';
+
+function getAuthToken() {
+  var t = new URLSearchParams(window.location.search).get('token');
+  if (t) { sessionStorage.setItem('aios_token', t); return t; }
+  try { var pt = window.parent.sessionStorage.getItem('aios_token'); if (pt) return pt; } catch(e) {}
+  return sessionStorage.getItem('aios_token') || '';
+}
+function F(url, opts) {
+  opts = opts || {};
+  var t = getAuthToken();
+  opts.credentials = 'same-origin';
+  opts.headers = Object.assign({}, opts.headers || {});
+  if (t) opts.headers['Authorization'] = 'Bearer ' + t;
+  return fetch(url, opts);
+}
+
+function cleanName(n, id) {
+  if (!n) return id ? id.slice(0,8) : 'Projeto';
+  if (n.includes('?') || n.includes('=')) return id ? id.slice(0,8) : 'Projeto';
+  return n.replace(/_/g, ' ').replace(/\.[^.]+$/, '');
+}
+function relDate(iso) {
+  if (!iso) return '';
+  var diff = Date.now() - new Date(iso).getTime();
+  if (diff < 60000) return 'agora';
+  if (diff < 3600000) return Math.floor(diff/60000) + 'min';
+  if (diff < 86400000) return Math.floor(diff/3600000) + 'h atras';
+  if (diff < 604800000) return Math.floor(diff/86400000) + 'd atras';
+  return new Date(iso).toLocaleDateString('pt-BR', { day:'2-digit', month:'short' });
+}
+
+function getStatus(p) {
+  if (p.status === 'ingesting' || p.status === 'analyzing') return { dot: 'dot-blue', glow: 'glow-blue', hint: 'processando...', action: 'aguardar' };
+  if (p.status === 'error') return { dot: 'dot-red', glow: 'glow-red', hint: 'erro no processamento', action: 'ver' };
+  if (p._allApproved) return { dot: 'dot-green', glow: 'glow-green', hint: 'cortes aprovados', action: 'abrir' };
+  if (p._allRejected) return { dot: 'dot-red', glow: 'glow-red', hint: 'cortes rejeitados', action: 'revisar' };
+  if (p._pendingCount > 0) return { dot: 'dot-yellow', glow: 'glow-yellow', hint: p._pendingCount + ' corte' + (p._pendingCount > 1 ? 's' : '') + ' pendente' + (p._pendingCount > 1 ? 's' : ''), action: 'editar' };
+  if (p._cutsCount > 0) return { dot: 'dot-purple', glow: 'glow-purple', hint: p._cutsCount + ' cortes', action: 'editar' };
+  return { dot: 'dot-green', glow: 'glow-green', hint: 'pronto', action: 'abrir' };
+}
+
+function getSub(p) {
+  var st = getStatus(p);
+  if (p._pendingCount > 0) return p._pendingCount + ' corte' + (p._pendingCount > 1 ? 's' : '') + ' esperando voce';
+  if (p._cutsCount > 0) return p._cutsCount + ' cortes · ' + relDate(p.updatedAt || p.createdAt);
+  return relDate(p.createdAt);
+}
+
+async function load() {
+  try {
+    var res = await F(API + '/api/projects');
+    var data = await res.json();
+    allProjects = (data.projects || []).map(function(p) {
+      p._cutsCount = 0; p._maxScore = 0; p._pendingCount = 0;
+      p._allApproved = false; p._allRejected = false;
+      return p;
+    });
+    var analyzed = allProjects.filter(function(p) { return p.status === 'analyzed'; });
+    await Promise.all(analyzed.slice(0, 30).map(async function(p) {
+      try {
+        var r = await F(API + '/api/projects/' + p.id + '/cuts');
+        var d = await r.json();
+        var cuts = d.suggestedCuts || [];
+        p._cutsCount = cuts.length;
+        if (cuts.length > 0) {
+          p._maxScore = Math.max.apply(null, cuts.map(function(c) { return c.engagementScore || 0; }));
+          var approved = cuts.filter(function(c) { return c.status === 'approved'; });
+          var rejected = cuts.filter(function(c) { return c.status === 'rejected'; });
+          var pending = cuts.filter(function(c) { return c.status === 'suggested'; });
+          p._pendingCount = pending.length;
+          p._allApproved = approved.length === cuts.length;
+          p._allRejected = rejected.length === cuts.length;
+        }
+      } catch(e) {}
+    }));
+    document.getElementById('projectCount').textContent = allProjects.length;
+    render();
+  } catch(e) {
+    document.getElementById('content').innerHTML = '<div class="empty"><h3>Erro</h3><p>' + e.message + '</p></div>';
+  }
+}
+
+function render() {
+  var projects = allProjects.slice();
+  if (searchQuery) {
+    var q = searchQuery.toLowerCase();
+    projects = projects.filter(function(p) { return cleanName(p.name,p.id).toLowerCase().includes(q); });
+  }
+  if (currentSort === 'recent') projects.sort(function(a,b) { return new Date(b.createdAt)-new Date(a.createdAt); });
+  else if (currentSort === 'oldest') projects.sort(function(a,b) { return new Date(a.createdAt)-new Date(b.createdAt); });
+  else if (currentSort === 'cuts') projects.sort(function(a,b) { return (b._cutsCount||0)-(a._cutsCount||0); });
+
+  if (!projects.length) {
+    document.getElementById('content').innerHTML = '<div class="empty"><h3>Nenhum projeto</h3><p>Envie um video para comecar.</p></div>';
+    return;
+  }
+
+  var html = '<div class="grid">';
+  projects.forEach(function(p) {
+    var st = getStatus(p);
+    var name = cleanName(p.name, p.id);
+    var sub = getSub(p);
+    var videoSrc = API + '/api/projects/' + p.id + '/video';
+
+    html += '<div class="c ' + st.glow + '" onclick="openProject(\'' + p.id + '\')">' +
+      '<div class="c-thumb">' +
+        '<video preload="metadata" src="' + videoSrc + '#t=2" muted></video>' +
+        '<div class="c-dot ' + st.dot + '"></div>' +
+        '<div class="c-overlay">' +
+          '<div class="c-overlay-btn">' + st.action + '</div>' +
+          '<div class="c-overlay-hint">' + st.hint + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="c-body">' +
+        '<div class="c-name" data-id="' + p.id + '" onclick="startRename(event,this)">' + name + '</div>' +
+        (sub ? '<div class="c-sub">' + sub + '</div>' : '') +
+      '</div>' +
+    '</div>';
+  });
+  html += '</div>';
+  document.getElementById('content').innerHTML = html;
+}
+
+function openProject(id) {
+  var token = getAuthToken();
+  window.location.href = '/av/' + id + '/workspace' + (token ? '?token=' + token : '');
+}
+function setSort(s, btn) {
+  currentSort = s;
+  document.querySelectorAll('.f').forEach(function(b) { b.classList.remove('on'); });
+  btn.classList.add('on');
+  render();
+}
+function filterProjects(q) { searchQuery = q; render(); }
+
+function startRename(e, el) {
+  e.stopPropagation();
+  if (el.classList.contains('editing')) return;
+  el.classList.add('editing');
+  var oldName = el.textContent;
+  el.setAttribute('contenteditable', 'true');
+  el.focus();
+  // select all text
+  var range = document.createRange();
+  range.selectNodeContents(el);
+  var sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+
+  function finish() {
+    el.removeAttribute('contenteditable');
+    el.classList.remove('editing');
+    var newName = el.textContent.trim();
+    if (!newName || newName === oldName) { el.textContent = oldName; return; }
+    saveRename(el.dataset.id, newName, el, oldName);
+  }
+  el.onblur = finish;
+  el.onkeydown = function(ev) {
+    if (ev.key === 'Enter') { ev.preventDefault(); el.blur(); }
+    if (ev.key === 'Escape') { el.textContent = oldName; el.blur(); }
+  };
+}
+
+async function saveRename(id, name, el, oldName) {
+  try {
+    var res = await F(API + '/api/projects/' + id, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name })
+    });
+    if (!res.ok) throw new Error('Falha ao renomear');
+    // update local data
+    var p = allProjects.find(function(p) { return p.id === id; });
+    if (p) p.name = name;
+  } catch(e) {
+    el.textContent = oldName;
+  }
+}
+
+load();
+</script>
+</body>
+</html>
