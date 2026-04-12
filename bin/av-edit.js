@@ -11,6 +11,9 @@
  *   transcript-edit Correct a transcript word
  *   list            List all edits
  *   show            Show full edit JSON
+ *   apply-preset    Apply a subtitle preset to an edit
+ *   presets         List available subtitle presets
+ *   export          Export an edit to final .mp4
  *
  * CLI First: This script is the source of truth for edit operations.
  */
@@ -58,6 +61,11 @@ function showHelp() {
   console.log('                                          Correct transcript word');
   console.log('    list                                  List all edits');
   console.log('    show <editId>                         Show full edit JSON');
+  console.log('    apply-preset --edit <editId> --preset <presetId>');
+  console.log('                                          Apply subtitle preset');
+  console.log('    presets [--expert <name>]              List available presets');
+  console.log('    export --edit <editId> [--quality high|low]');
+  console.log('                                          Export edit to .mp4');
   console.log('');
   console.log('  Examples:');
   console.log('    node bin/av-edit.js create --source ./video.mp4');
@@ -66,6 +74,10 @@ function showHelp() {
   console.log('    node bin/av-edit.js transcript-edit --edit abc-123 --index 2 --text "corrected"');
   console.log('    node bin/av-edit.js list');
   console.log('    node bin/av-edit.js show abc-123');
+  console.log('    node bin/av-edit.js apply-preset --edit abc-123 --preset hormozi');
+  console.log('    node bin/av-edit.js presets');
+  console.log('    node bin/av-edit.js presets --expert iristhaize');
+  console.log('    node bin/av-edit.js export --edit abc-123 --quality high');
   console.log('');
 }
 
@@ -235,6 +247,88 @@ function cmdList() {
   console.log('');
 }
 
+function cmdApplyPreset(parsed) {
+  const editId = parsed.edit;
+  const presetId = parsed.preset;
+
+  if (!editId || !presetId) {
+    console.error('  Error: --edit and --preset are both required');
+    console.error('  Usage: node bin/av-edit.js apply-preset --edit <editId> --preset <presetId>');
+    process.exit(1);
+  }
+
+  // Validate preset exists
+  const { getPreset } = require(path.resolve(__dirname, '..', 'packages', 'audiovisual', 'lib', 'subtitle-presets'));
+  getPreset(presetId); // throws if not found
+
+  const updated = updateEdit(editId, { presetId });
+
+  console.log(`  Preset applied to edit: ${editId}`);
+  console.log(`  Preset: ${presetId}`);
+  console.log(`  Status: ${updated.status}`);
+  return updated;
+}
+
+function cmdPresets(parsed) {
+  const {
+    listPresets,
+    listPresetsByExpert,
+  } = require(path.resolve(__dirname, '..', 'packages', 'audiovisual', 'lib', 'subtitle-presets'));
+
+  const expert = parsed.expert;
+  const presets = expert ? listPresetsByExpert(expert) : listPresets();
+
+  if (presets.length === 0) {
+    console.log(expert ? `  No presets found for expert: ${expert}` : '  No presets available.');
+    return;
+  }
+
+  console.log('');
+  console.log('  -- Subtitle Presets ----------------------------------------');
+  console.log(`  ${'ID'.padEnd(18)} ${'Name'.padEnd(18)} Expert`);
+  console.log(`  ${''.padEnd(18, '-')} ${''.padEnd(18, '-')} ${''.padEnd(14, '-')}`);
+  for (const p of presets) {
+    console.log(`  ${p.id.padEnd(18)} ${p.name.padEnd(18)} ${p.expert}`);
+  }
+  console.log(`  Total: ${presets.length}`);
+  console.log('');
+}
+
+async function cmdExport(parsed) {
+  const editId = parsed.edit;
+  const quality = parsed.quality || 'high';
+
+  if (!editId) {
+    console.error('  Error: --edit is required');
+    console.error('  Usage: node bin/av-edit.js export --edit <editId> [--quality high|low]');
+    process.exit(1);
+  }
+
+  if (quality !== 'high' && quality !== 'low') {
+    console.error(`  Error: Invalid quality "${quality}". Must be "high" or "low".`);
+    process.exit(1);
+  }
+
+  const { exportEdit } = require(path.resolve(__dirname, '..', 'packages', 'audiovisual', 'lib', 'edit-export'));
+
+  console.log(`  Exporting edit: ${editId} (quality: ${quality})`);
+
+  const onProgress = (stage, percent) => {
+    const bar = '='.repeat(Math.floor(percent / 5)).padEnd(20, ' ');
+    process.stdout.write(`\r  [${bar}] ${percent}% ${stage}`);
+  };
+
+  const result = exportEdit(editId, { quality, onProgress });
+
+  console.log('');
+  console.log(`  Export complete: ${result.outputPath}`);
+  console.log(`  Quality: ${result.quality || quality}`);
+  if (result.duration) console.log(`  Duration: ${result.duration.toFixed(1)}s`);
+  if (result.hasSubtitles) console.log(`  Subtitles: burned with preset ${result.presetId}`);
+  console.log('  Status: exported');
+  return result;
+}
+
 function cmdShow(editId) {
   if (!editId) {
     console.error('  Error: editId is required');
@@ -273,6 +367,15 @@ async function main() {
         break;
       case 'show':
         cmdShow(parsed._[0] || parsed.edit);
+        break;
+      case 'apply-preset':
+        cmdApplyPreset(parsed);
+        break;
+      case 'presets':
+        cmdPresets(parsed);
+        break;
+      case 'export':
+        await cmdExport(parsed);
         break;
       default:
         console.error(`  Unknown command: ${command}`);
