@@ -40,6 +40,9 @@ const { detectEnergy, loadEnergyData } = require('./energy-detector');
 const { exportPremiereXml } = require('./export-premiere-xml');
 const { exportDaVinciXml } = require('./export-davinci-xml');
 const { buildExportPackage, getExportHistory } = require('./export-package');
+const editStore = require('./edit-store');
+const subtitlePresets = require('./subtitle-presets');
+const { exportEdit, EXPORTS_DIR: EDIT_EXPORTS_DIR } = require('./edit-export');
 
 const DEFAULT_PORT = 3456;
 
@@ -842,6 +845,258 @@ async function handleRequest(req, res) {
       return;
     }
 
+    // ── Editor Growth: Edit CRUD + Export (EG-3) ────
+    if (pathname === '/api/edit/presets' && method === 'GET') {
+      return sendJSON(res, { presets: subtitlePresets.listPresets() });
+    }
+
+    if (pathname.match(/^\/api\/edit\/presets\/[^/]+$/) && method === 'GET') {
+      const expert = pathname.split('/')[4];
+      return sendJSON(res, { presets: subtitlePresets.listPresetsByExpert(expert) });
+    }
+
+    if (pathname === '/api/edit/list' && method === 'GET') {
+      return sendJSON(res, { edits: editStore.listEdits() });
+    }
+
+    if (pathname === '/api/edit/create' && method === 'POST') {
+      const contentType = req.headers['content-type'] || '';
+
+      // Multipart upload for standalone mode
+      if (contentType.includes('multipart/form-data')) {
+        const boundary = contentType.split('boundary=')[1];
+        if (!boundary) return sendError(res, 'Missing multipart boundary', 400);
+
+        const chunks = [];
+        await new Promise((resolve, reject) => {
+          req.on('data', chunk => chunks.push(chunk));
+          req.on('end', resolve);
+          req.on('error', reject);
+        });
+        const buffer = Buffer.concat(chunks);
+        const bodyStr = buffer.toString('binary');
+        const parts = bodyStr.split('--' + boundary);
+
+        let fileBuffer = null;
+        let originalFilename = 'upload.mp4';
+
+        for (const part of parts) {
+          const headerEnd = part.indexOf('\r\n\r\n');
+          if (headerEnd === -1) continue;
+          const headers = part.substring(0, headerEnd);
+          const content = part.substring(headerEnd + 4);
+
+          if (headers.includes('name="video"')) {
+            const fnMatch = headers.match(/filename="([^"]+)"/);
+            if (fnMatch) originalFilename = fnMatch[1];
+            // Remove trailing \r\n-- from content
+            const cleaned = content.replace(/\r\n--$/, '').replace(/\r\n$/, '');
+            fileBuffer = Buffer.from(cleaned, 'binary');
+          }
+        }
+
+        if (!fileBuffer) return sendError(res, 'Missing "video" field in multipart body', 400);
+
+        const { AV_DIR } = require('./constants');
+        const uploadsDir = path.join(AV_DIR, 'uploads');
+        fs.mkdirSync(uploadsDir, { recursive: true });
+        const safeName = originalFilename.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const uploadPath = path.join(uploadsDir, `${Date.now()}-${safeName}`);
+        fs.writeFileSync(uploadPath, fileBuffer);
+
+        const edit = editStore.createEdit(uploadPath, 'standalone');
+
+        // Auto-transcribe in background
+        (async () => {
+          try {
+            const { transcribeWithWhisper } = require('./transcribe');
+            const transcription = await transcribeWithWhisper(uploadPath);
+            const transcript = (transcription.segments || []).map(seg => ({
+              t: seg.start,
+              text: seg.text,
+            }));
+            editStore.updateEdit(edit.editId, { transcript });
+          } catch (err) {
+            console.log(`[EDIT] Auto-transcribe failed for ${edit.editId}: ${err.message}`);
+          }
+        })();
+
+        return sendJSON(res, { editId: edit.editId, status: 'transcribing', mode: 'standalone' }, 201);
+      }
+
+      // JSON body mode
+      const body = await parseBody(req);
+      if (!body.source) return sendError(res, 'source is required', 400);
+
+      const source = body.source;
+      const isVideoPath = path.isAbsolute(source) || /\.(mp4|mov|avi|mkv|webm|m4v)$/i.test(source);
+      const isStandalone = isVideoPath && !body.projectId;
+
+      if (isStandalone) {
+        const resolvedPath = path.isAbsolute(source) ? source : path.resolve(source);
+        if (!fs.existsSync(resolvedPath)) return sendError(res, `Video file not found: ${source}`, 404);
+
+        const edit = editStore.createEdit(resolvedPath, 'standalone');
+
+        // Auto-transcribe in background
+        (async () => {
+          try {
+            const { transcribeWithWhisper } = require('./transcribe');
+            const transcription = await transcribeWithWhisper(resolvedPath);
+            const transcript = (transcription.segments || []).map(seg => ({
+              t: seg.start,
+              text: seg.text,
+            }));
+            editStore.updateEdit(edit.editId, { transcript });
+          } catch (err) {
+            console.log(`[EDIT] Auto-transcribe failed for ${edit.editId}: ${err.message}`);
+          }
+        })();
+
+        return sendJSON(res, { editId: edit.editId, status: 'transcribing', mode: 'standalone' }, 201);
+      }
+
+      // Cut-based mode
+      try {
+        const { projectId: resolvedProjectId } = editStore.resolveCutId(source);
+        const pid = body.projectId || resolvedProjectId;
+        const edit = editStore.createEdit(source, pid);
+        return sendJSON(res, { editId: edit.editId, status: 'draft', mode: 'cut' }, 201);
+      } catch (err) {
+        return sendError(res, err.message, 400);
+      }
+    }
+
+    // GET /api/edit/:editId
+    if (pathname.match(/^\/api\/edit\/[^/]+$/) && !pathname.includes('/presets') && method === 'GET') {
+      const editId = pathname.split('/')[3];
+      try {
+        const edit = editStore.getEdit(editId);
+        return sendJSON(res, { edit });
+      } catch (err) {
+        return sendError(res, err.message, 404);
+      }
+    }
+
+    // PUT /api/edit/:editId/trim
+    if (pathname.match(/^\/api\/edit\/[^/]+\/trim$/) && method === 'PUT') {
+      const editId = pathname.split('/')[3];
+      const body = await parseBody(req);
+      if (body.in === undefined || body.out === undefined) {
+        return sendError(res, 'in and out are required', 400);
+      }
+      try {
+        const edit = editStore.updateEdit(editId, { trim: { in: body.in, out: body.out } });
+        return sendJSON(res, { edit });
+      } catch (err) {
+        return sendError(res, err.message, err.message.includes('not found') ? 404 : 400);
+      }
+    }
+
+    // PUT /api/edit/:editId/transcript
+    if (pathname.match(/^\/api\/edit\/[^/]+\/transcript$/) && method === 'PUT') {
+      const editId = pathname.split('/')[3];
+      const body = await parseBody(req);
+      if (body.index === undefined || body.text === undefined) {
+        return sendError(res, 'index and text are required', 400);
+      }
+      try {
+        const edit = editStore.getEdit(editId);
+        const transcript = [...(edit.transcript || [])];
+        if (body.index < 0 || body.index >= transcript.length) {
+          return sendError(res, `index ${body.index} out of range (0-${transcript.length - 1})`, 400);
+        }
+        transcript[body.index] = { ...transcript[body.index], text: body.text, edited: true };
+        const updated = editStore.updateEdit(editId, { transcript });
+        return sendJSON(res, { edit: updated });
+      } catch (err) {
+        return sendError(res, err.message, err.message.includes('not found') ? 404 : 400);
+      }
+    }
+
+    // PUT /api/edit/:editId/preset
+    if (pathname.match(/^\/api\/edit\/[^/]+\/preset$/) && method === 'PUT') {
+      const editId = pathname.split('/')[3];
+      const body = await parseBody(req);
+      if (!body.presetId) return sendError(res, 'presetId is required', 400);
+      try {
+        subtitlePresets.getPreset(body.presetId); // validate preset exists
+      } catch (err) {
+        return sendError(res, err.message, 400);
+      }
+      try {
+        const edit = editStore.updateEdit(editId, { presetId: body.presetId });
+        return sendJSON(res, { edit });
+      } catch (err) {
+        return sendError(res, err.message, 404);
+      }
+    }
+
+    // POST /api/edit/:editId/export — SSE progress stream
+    if (pathname.match(/^\/api\/edit\/[^/]+\/export$/) && method === 'POST') {
+      const editId = pathname.split('/')[3];
+
+      // Validate edit exists first
+      try {
+        editStore.getEdit(editId);
+      } catch (err) {
+        return sendError(res, err.message, 404);
+      }
+
+      const bodyRaw = await parseBody(req);
+      const quality = bodyRaw.quality || 'high';
+
+      res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'Access-Control-Allow-Origin': '*',
+      });
+
+      try {
+        const result = exportEdit(editId, {
+          quality,
+          onProgress: (stage, progress) => {
+            const evt = { stage, progress, message: `${stage}: ${progress}%` };
+            res.write(`data: ${JSON.stringify(evt)}\n\n`);
+          },
+        });
+
+        const doneEvt = { stage: 'done', progress: 100, outputPath: result.outputPath };
+        res.write(`data: ${JSON.stringify(doneEvt)}\n\n`);
+      } catch (err) {
+        const errEvt = { stage: 'error', progress: 0, message: err.message };
+        res.write(`data: ${JSON.stringify(errEvt)}\n\n`);
+      }
+      return res.end();
+    }
+
+    // GET /api/edit/:editId/export/download
+    if (pathname.match(/^\/api\/edit\/[^/]+\/export\/download$/) && method === 'GET') {
+      const editId = pathname.split('/')[3];
+      const exportPath = path.join(EDIT_EXPORTS_DIR, `${editId}.mp4`);
+      if (!fs.existsSync(exportPath)) return sendError(res, 'Export not found. Run POST /api/edit/:editId/export first.', 404);
+      const stat = fs.statSync(exportPath);
+      res.writeHead(200, {
+        'Content-Type': 'video/mp4',
+        'Content-Length': stat.size,
+        'Content-Disposition': `attachment; filename="edit-${editId}.mp4"`,
+        'Access-Control-Allow-Origin': '*',
+      });
+      return fs.createReadStream(exportPath).pipe(res);
+    }
+
+    // DELETE /api/edit/:editId
+    if (pathname.match(/^\/api\/edit\/[^/]+$/) && !pathname.includes('/presets') && method === 'DELETE') {
+      const editId = pathname.split('/')[3];
+      try {
+        editStore.deleteEdit(editId);
+        return sendJSON(res, { deleted: true, editId });
+      } catch (err) {
+        return sendError(res, err.message, 404);
+      }
+    }
+
     // ── Security Status ─────────────────────────────
     if (pathname === '/api/security' && method === 'GET') {
       return sendJSON(res, getSecurityStatus());
@@ -970,6 +1225,18 @@ function createServer(port = DEFAULT_PORT) {
     console.log('    GET  /api/brands/:slug');
     console.log('    PUT  /api/brands/:slug                  { updates }');
     console.log('    DELETE /api/brands/:slug');
+    console.log('    --- Editor Growth (EG-3) ---');
+    console.log('    POST /api/edit/create                   { source, projectId? }');
+    console.log('    GET  /api/edit/list');
+    console.log('    GET  /api/edit/:editId');
+    console.log('    PUT  /api/edit/:editId/trim             { in, out }');
+    console.log('    PUT  /api/edit/:editId/transcript       { index, text }');
+    console.log('    PUT  /api/edit/:editId/preset           { presetId }');
+    console.log('    POST /api/edit/:editId/export           { quality? } → SSE');
+    console.log('    GET  /api/edit/:editId/export/download');
+    console.log('    DELETE /api/edit/:editId');
+    console.log('    GET  /api/edit/presets');
+    console.log('    GET  /api/edit/presets/:expert');
     console.log('');
   });
   return server;
