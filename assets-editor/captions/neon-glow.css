@@ -1,0 +1,8 @@
+/* neon-glow — Cyberpunk/gaming neon caption with glow
+ * License: MIT (original)
+ */
+.caption-neon{font-family:'Orbitron','Rajdhani',sans-serif;font-weight:900;text-transform:uppercase;color:#fff;letter-spacing:3px;text-shadow:0 0 4px #fff,0 0 10px #00E5FF,0 0 18px #00E5FF,0 0 28px #0088ff}
+.caption-neon.pink{text-shadow:0 0 4px #fff,0 0 10px #FF1493,0 0 18px #FF1493,0 0 28px #d10067}
+.caption-neon.green{text-shadow:0 0 4px #fff,0 0 10px #00FF9F,0 0 18px #00FF9F,0 0 28px #00B06E}
+@keyframes neonFlicker{0%,100%{opacity:1}50%{opacity:.85}}
+.caption-neon.anim-loop{animation:neonFlicker 1.8s ease-in-out infinite}

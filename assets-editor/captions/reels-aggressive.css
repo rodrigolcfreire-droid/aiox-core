@@ -1,0 +1,8 @@
+/* reels-aggressive — Instagram Reels bold caption with colored highlight
+ * License: MIT (original)
+ */
+.caption-reels{font-family:'Bebas Neue','Oswald',sans-serif;font-weight:700;text-transform:uppercase;color:#fff;-webkit-text-stroke:3px #000;letter-spacing:2px;line-height:1.1}
+.caption-reels .accent{color:#E91E63;-webkit-text-stroke:3px #000}
+.caption-reels .accent-alt{color:#00E5FF;-webkit-text-stroke:3px #000}
+@keyframes reelsPop{0%{transform:scale(0) translateY(10px);opacity:0}60%{transform:scale(1.1) translateY(0)}100%{transform:scale(1);opacity:1}}
+.caption-reels.anim-in{animation:reelsPop .28s cubic-bezier(.34,1.56,.64,1) forwards}

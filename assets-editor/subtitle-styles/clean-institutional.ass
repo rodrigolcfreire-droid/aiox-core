@@ -1,0 +1,10 @@
+[Script Info]
+Title: AIOX clean-institutional style template
+ScriptType: v4.00+
+; License: MIT (original, AIOX project)
+PlayResX: {W}
+PlayResY: {H}
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Inter,{FONT_SIZE},&H00FFFFFF,&H000000FF,&H80000000,&H90000000,0,0,0,0,100,100,0,0,1,2,1,2,40,40,{MARGIN_V},1

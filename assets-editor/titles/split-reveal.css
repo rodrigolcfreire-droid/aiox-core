@@ -1,0 +1,9 @@
+/* split-reveal — Two halves slide in from opposite sides and meet
+ * License: MIT (original)
+ */
+.title-split{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:'Kanit',sans-serif;font-weight:900;font-size:10vw;color:#fff;text-transform:uppercase;overflow:hidden}
+.title-split .part-left,.title-split .part-right{display:inline-block;opacity:0}
+.title-split .part-left{transform:translateX(-100px);animation:splitL .5s cubic-bezier(.22,.61,.36,1) forwards}
+.title-split .part-right{transform:translateX(100px);animation:splitR .5s cubic-bezier(.22,.61,.36,1) forwards}
+@keyframes splitL{to{transform:translateX(0);opacity:1}}
+@keyframes splitR{to{transform:translateX(0);opacity:1}}

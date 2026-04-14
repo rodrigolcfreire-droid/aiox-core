@@ -1,0 +1,12 @@
+[Script Info]
+Title: AIOX viral-bold style template
+ScriptType: v4.00+
+; License: MIT (original, AIOX project)
+; Placeholders: {W}={videoWidth} {H}={videoHeight} {FONT_SIZE}={videoWidth/13}
+PlayResX: {W}
+PlayResY: {H}
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial Black,{FONT_SIZE},&H00FFFFFF,&H000000FF,&H00000000,&H80000000,1,0,0,0,100,100,2,0,1,4,2,2,20,20,{MARGIN_V},1
+Style: Highlight,Arial Black,{FONT_SIZE_HL},&H0000FFFF,&H000000FF,&H00000000,&H80000000,1,0,0,0,100,100,2,0,1,5,2,2,20,20,{MARGIN_V},1

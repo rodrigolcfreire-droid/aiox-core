@@ -1,0 +1,358 @@
+{
+  "version": "2.0.0",
+  "generatedAt": "2026-04-13",
+  "source": "offline-authored + external-research",
+  "license_note": "Arquivos em captions/, subtitle-styles/, kinetic-text/, lower-thirds/, titles/ são MIT (autorados AIOX). Arquivos em external/ têm licença própria verificada (ver external/*/LICENSE).",
+  "assets": [
+    {
+      "name": "opus-word-by-word",
+      "type": "caption",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["opus-style", "word-by-word", "bold", "modern", "shorts"],
+      "path": "captions/opus-word-by-word.css",
+      "notes": "Highlight amarelo por palavra ativa, fonte Kanit/Montserrat"
+    },
+    {
+      "name": "hormozi-pop",
+      "type": "caption",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["hormozi-style", "word-by-word", "bold", "shorts", "reels"],
+      "path": "captions/hormozi-pop.css",
+      "notes": "Anton uppercase com outline grosso e pop agressivo"
+    },
+    {
+      "name": "beasty-shout",
+      "type": "caption",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["bold", "dynamic", "shorts"],
+      "path": "captions/beasty-shout.css",
+      "notes": "MrBeast-style com rotação sutil na entrada"
+    },
+    {
+      "name": "tiktok-native",
+      "type": "caption",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["tiktok", "minimal", "clean"],
+      "path": "captions/tiktok-native.css",
+      "notes": "Pill branco com cantos arredondados, estilo legenda padrão TikTok"
+    },
+    {
+      "name": "reels-aggressive",
+      "type": "caption",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["reels", "bold", "dynamic"],
+      "path": "captions/reels-aggressive.css",
+      "notes": "Bebas Neue com accent colorido por palavra-chave"
+    },
+    {
+      "name": "clean-institutional",
+      "type": "caption",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["clean", "minimal", "modern"],
+      "path": "captions/clean-institutional.css",
+      "notes": "Inter com opção de backdrop blur"
+    },
+    {
+      "name": "karaoke-fill",
+      "type": "caption",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["karaoke", "dynamic"],
+      "path": "captions/karaoke-fill.css",
+      "notes": "Preenchimento progressivo estilo karaoke (gradient clip)"
+    },
+    {
+      "name": "neon-glow",
+      "type": "caption",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["gaming", "cinematic", "dynamic"],
+      "path": "captions/neon-glow.css",
+      "notes": "Neon com glow em 3 variações (blue, pink, green)"
+    },
+    {
+      "name": "cinematic-bar",
+      "type": "caption",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["cinematic", "clean"],
+      "path": "captions/cinematic-bar.css",
+      "notes": "Playfair Display italic com letterbox opcional"
+    },
+    {
+      "name": "highlighted-keywords",
+      "type": "caption",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["word-by-word", "bold", "modern"],
+      "path": "captions/highlighted-keywords.css",
+      "notes": "Destaca keywords (numbers/actions/money) com cores distintas"
+    },
+    {
+      "name": "viral-bold",
+      "type": "subtitle-style",
+      "format": "ass",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["shorts", "reels", "bold", "viral"],
+      "path": "subtitle-styles/viral-bold.ass",
+      "notes": "Template ASS com placeholders — substitua {W}/{H}/{FONT_SIZE}"
+    },
+    {
+      "name": "clean-institutional",
+      "type": "subtitle-style",
+      "format": "ass",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["clean", "minimal"],
+      "path": "subtitle-styles/clean-institutional.ass",
+      "notes": "ASS template clean com background sutil"
+    },
+    {
+      "name": "neon-gaming",
+      "type": "subtitle-style",
+      "format": "ass",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["gaming", "cinematic"],
+      "path": "subtitle-styles/neon-gaming.ass",
+      "notes": "ASS com Orbitron e shadow amarelo (fake neon)"
+    },
+    {
+      "name": "cinematic-serif",
+      "type": "subtitle-style",
+      "format": "ass",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["cinematic", "clean"],
+      "path": "subtitle-styles/cinematic-serif.ass",
+      "notes": "Playfair italic no ASS"
+    },
+    {
+      "name": "word-bounce",
+      "type": "kinetic-text",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["dynamic", "shorts"],
+      "path": "kinetic-text/word-bounce.css",
+      "notes": "Bounce por palavra com stagger via CSS custom property --i"
+    },
+    {
+      "name": "typewriter",
+      "type": "kinetic-text",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["minimal", "clean"],
+      "path": "kinetic-text/typewriter.css",
+      "notes": "Mono typewriter com cursor piscando"
+    },
+    {
+      "name": "stagger-slide",
+      "type": "kinetic-text",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["modern", "dynamic"],
+      "path": "kinetic-text/stagger-slide.css",
+      "notes": "Slide-up palavra a palavra com stagger"
+    },
+    {
+      "name": "glitch",
+      "type": "kinetic-text",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["gaming", "cinematic"],
+      "path": "kinetic-text/glitch.css",
+      "notes": "RGB split glitch com data-text attribute"
+    },
+    {
+      "name": "bar-minimal",
+      "type": "lower-third",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["minimal", "clean", "modern"],
+      "path": "lower-thirds/bar-minimal.css",
+      "notes": "Lower third com accent bar lateral"
+    },
+    {
+      "name": "gradient-pill",
+      "type": "lower-third",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["modern", "dynamic"],
+      "path": "lower-thirds/gradient-pill.css",
+      "notes": "Pill com gradient indigo→pink"
+    },
+    {
+      "name": "news-ticker",
+      "type": "lower-third",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["bold"],
+      "path": "lower-thirds/news-ticker.css",
+      "notes": "TV news com tag vermelha"
+    },
+    {
+      "name": "big-impact",
+      "type": "title",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["bold", "dynamic", "shorts"],
+      "path": "titles/big-impact.css",
+      "notes": "Título fullscreen com scale-up"
+    },
+    {
+      "name": "split-reveal",
+      "type": "title",
+      "format": "css",
+      "origin": "aiox-offline-authored",
+      "license": "MIT",
+      "tags": ["modern", "dynamic"],
+      "path": "titles/split-reveal.css",
+      "notes": "Duas metades deslizando pra meio"
+    },
+    {
+      "name": "pycaps-classic",
+      "type": "caption",
+      "format": "css",
+      "origin": "github.com/francozanardi/pycaps",
+      "license": "MIT",
+      "tags": ["clean", "modern", "word-by-word"],
+      "path": "external/pycaps/classic.css",
+      "notes": "Classic pycaps template — uses .word / .word-being-narrated / .word-already-narrated selectors"
+    },
+    {
+      "name": "pycaps-default",
+      "type": "caption",
+      "format": "css",
+      "origin": "github.com/francozanardi/pycaps",
+      "license": "MIT",
+      "tags": ["clean", "modern"],
+      "path": "external/pycaps/default.css",
+      "notes": "Default pycaps template"
+    },
+    {
+      "name": "pycaps-explosive",
+      "type": "caption",
+      "format": "css",
+      "origin": "github.com/francozanardi/pycaps",
+      "license": "MIT",
+      "tags": ["bold", "dynamic", "gaming", "shorts"],
+      "path": "external/pycaps/explosive.css",
+      "notes": "Yellow text with orange/red glow shadows — fire effect"
+    },
+    {
+      "name": "pycaps-fast",
+      "type": "caption",
+      "format": "css",
+      "origin": "github.com/francozanardi/pycaps",
+      "license": "MIT",
+      "tags": ["dynamic", "shorts"],
+      "path": "external/pycaps/fast.css",
+      "notes": "Fast-paced narration style"
+    },
+    {
+      "name": "pycaps-hype",
+      "type": "caption",
+      "format": "css",
+      "origin": "github.com/francozanardi/pycaps",
+      "license": "MIT",
+      "tags": ["bold", "dynamic", "tiktok", "reels"],
+      "path": "external/pycaps/hype.css",
+      "notes": "Komika Axis com outline preto grosso, highlight amarelo — estilo Hormozi/viral"
+    },
+    {
+      "name": "pycaps-line-focus",
+      "type": "caption",
+      "format": "css",
+      "origin": "github.com/francozanardi/pycaps",
+      "license": "MIT",
+      "tags": ["clean", "modern"],
+      "path": "external/pycaps/line-focus.css",
+      "notes": "Focus on current line"
+    },
+    {
+      "name": "pycaps-minimalist",
+      "type": "caption",
+      "format": "css",
+      "origin": "github.com/francozanardi/pycaps",
+      "license": "MIT",
+      "tags": ["minimal", "clean"],
+      "path": "external/pycaps/minimalist.css",
+      "notes": "Minimalist style"
+    },
+    {
+      "name": "pycaps-neo-minimal",
+      "type": "caption",
+      "format": "css",
+      "origin": "github.com/francozanardi/pycaps",
+      "license": "MIT",
+      "tags": ["minimal", "modern", "clean"],
+      "path": "external/pycaps/neo-minimal.css",
+      "notes": "Modern minimal takes"
+    },
+    {
+      "name": "pycaps-retro-gaming",
+      "type": "caption",
+      "format": "css",
+      "origin": "github.com/francozanardi/pycaps",
+      "license": "MIT",
+      "tags": ["gaming", "cinematic", "dynamic"],
+      "path": "external/pycaps/retro-gaming.css",
+      "notes": "Retro arcade gaming look"
+    },
+    {
+      "name": "pycaps-vibrant",
+      "type": "caption",
+      "format": "css",
+      "origin": "github.com/francozanardi/pycaps",
+      "license": "MIT",
+      "tags": ["dynamic", "modern", "bold"],
+      "path": "external/pycaps/vibrant.css",
+      "notes": "Colorful vibrant captions"
+    },
+    {
+      "name": "pycaps-word-focus",
+      "type": "caption",
+      "format": "css",
+      "origin": "github.com/francozanardi/pycaps",
+      "license": "MIT",
+      "tags": ["word-by-word", "bold", "shorts"],
+      "path": "external/pycaps/word-focus.css",
+      "notes": "Word-by-word com background laranja no highlight — muito bom pro Opus-style"
+    },
+    {
+      "name": "pupcaps-default",
+      "type": "caption",
+      "format": "css",
+      "origin": "github.com/hosuaby/PupCaps",
+      "license": "Apache-2.0",
+      "tags": ["karaoke", "word-by-word", "bold"],
+      "path": "external/pupcaps/captions.css",
+      "notes": "PupCaps default CSS — Ubuntu font, outline preto 4-way, highlight roxo #670abd"
+    }
+  ]
+}

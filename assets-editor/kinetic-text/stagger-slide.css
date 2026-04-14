@@ -1,0 +1,5 @@
+/* stagger-slide — Word-by-word staggered slide-up
+ * License: MIT (original)
+ */
+.kt-stagger .kt-word{display:inline-block;opacity:0;transform:translateY(30px);animation:staggerSlide .35s ease-out forwards;animation-delay:calc(var(--i,0) * .06s);margin:0 .2em}
+@keyframes staggerSlide{to{opacity:1;transform:translateY(0)}}

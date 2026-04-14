@@ -1,0 +1,10 @@
+[Script Info]
+Title: AIOX cinematic-serif style template
+ScriptType: v4.00+
+; License: MIT (original, AIOX project)
+PlayResX: {W}
+PlayResY: {H}
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Playfair Display,{FONT_SIZE},&H00D2E6F0,&H000000FF,&H40000000,&HA0000000,0,1,0,0,100,100,1,0,1,2,1,2,60,60,{MARGIN_V},1

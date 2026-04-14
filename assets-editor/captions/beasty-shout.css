@@ -1,0 +1,8 @@
+/* beasty-shout — MrBeast-style bold impact caption
+ * License: MIT (original)
+ */
+.caption-beasty{font-family:'Archivo Black','Anton',sans-serif;font-weight:900;text-transform:uppercase;color:#fff;-webkit-text-stroke:3px #000;text-shadow:0 6px 0 #000,6px 0 0 #000,-6px 0 0 #000,0 -6px 0 #000;line-height:1.05;letter-spacing:.5px}
+.caption-beasty .hot{color:#FF3B30}
+.caption-beasty .cold{color:#34C6F4}
+@keyframes beastyShout{0%{transform:scale(.5) rotate(-3deg);opacity:0}70%{transform:scale(1.15) rotate(1deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+.caption-beasty.anim-in{animation:beastyShout .3s cubic-bezier(.68,-.55,.27,1.55) forwards}

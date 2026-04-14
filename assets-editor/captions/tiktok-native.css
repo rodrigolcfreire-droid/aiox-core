@@ -1,0 +1,7 @@
+/* tiktok-native — TikTok native caption style (white pill with rounded corners)
+ * License: MIT (original)
+ */
+.caption-tiktok{font-family:'Proxima Nova','Inter',-apple-system,sans-serif;font-weight:700;color:#000;background:#fff;padding:6px 14px;border-radius:8px;line-height:1.25;letter-spacing:.2px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.caption-tiktok.inverted{color:#fff;background:rgba(0,0,0,.85)}
+@keyframes tiktokIn{0%{transform:translateY(20px);opacity:0}100%{transform:translateY(0);opacity:1}}
+.caption-tiktok.anim-in{animation:tiktokIn .2s ease-out forwards}

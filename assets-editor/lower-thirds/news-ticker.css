@@ -1,0 +1,6 @@
+/* news-ticker — TV news lower third with ticker-style accent
+ * License: MIT (original)
+ */
+.lt-news{position:absolute;left:0;right:0;bottom:8%;display:flex;align-items:stretch;font-family:'Bebas Neue','Oswald',sans-serif;color:#fff}
+.lt-news .lt-tag{background:#D32F2F;padding:8px 16px;font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.lt-news .lt-body{background:rgba(0,0,0,.85);padding:8px 18px;flex:1;font-size:18px;font-weight:400;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center}

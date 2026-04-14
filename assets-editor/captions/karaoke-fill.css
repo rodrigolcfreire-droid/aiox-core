@@ -1,0 +1,7 @@
+/* karaoke-fill — Karaoke-style progressive fill (blue fill moves left→right across text)
+ * License: MIT (original)
+ * Usage: wrap each word in <span class="kr-word"> with style="--dur:1.2s" per-word duration
+ */
+.caption-karaoke{font-family:'Montserrat',sans-serif;font-weight:800;color:#fff;-webkit-text-stroke:2px #000;text-shadow:2px 2px 0 #000;line-height:1.15}
+.caption-karaoke .kr-word{background:linear-gradient(to right,#00BFFF 50%,#fff 50%);background-size:200% 100%;background-position:100% 0;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:2px #000;animation:karaokeFill var(--dur,.8s) linear forwards}
+@keyframes karaokeFill{to{background-position:0 0}}

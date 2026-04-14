@@ -1,0 +1,6 @@
+/* gradient-pill — Modern pill-shaped gradient lower third
+ * License: MIT (original)
+ */
+.lt-pill{position:absolute;left:50%;bottom:10%;transform:translateX(-50%);background:linear-gradient(135deg,#6366F1,#EC4899);color:#fff;padding:10px 24px;border-radius:999px;font-family:'Inter',sans-serif;font-weight:600;box-shadow:0 8px 24px rgba(99,102,241,.3)}
+@keyframes ltPillIn{0%{transform:translateX(-50%) scale(.6);opacity:0}100%{transform:translateX(-50%) scale(1);opacity:1}}
+.lt-pill.anim-in{animation:ltPillIn .35s cubic-bezier(.68,-.55,.27,1.55) forwards}

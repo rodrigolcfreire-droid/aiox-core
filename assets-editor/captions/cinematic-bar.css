@@ -1,0 +1,7 @@
+/* cinematic-bar — Cinema-style letterbox bar with serif italic caption
+ * License: MIT (original)
+ */
+.caption-cinematic{font-family:'Playfair Display','Georgia',serif;font-style:italic;font-weight:400;color:#f0e6d2;line-height:1.4;letter-spacing:.5px;text-shadow:0 2px 4px rgba(0,0,0,.8)}
+.caption-cinematic.with-bar{background:linear-gradient(to bottom,transparent,rgba(0,0,0,.85) 40%);padding:18px 40px 12px;width:100%;text-align:center}
+@keyframes cinematicIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.caption-cinematic.anim-in{animation:cinematicIn .5s ease-out forwards}

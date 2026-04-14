@@ -1,0 +1,7 @@
+/* word-bounce — Each word bounces in with stagger
+ * License: MIT (original)
+ * Usage: wrap each word in <span class="kt-word" style="--i:N"> where N is word index
+ */
+.kt-scene{display:inline-block;line-height:1.1}
+.kt-word{display:inline-block;opacity:0;transform:translateY(40px) scale(.7);animation:kinBounce .5s cubic-bezier(.34,1.56,.64,1) forwards;animation-delay:calc(var(--i,0) * .08s);margin:0 .25em}
+@keyframes kinBounce{0%{opacity:0;transform:translateY(40px) scale(.7)}60%{transform:translateY(-6px) scale(1.1)}100%{opacity:1;transform:translateY(0) scale(1)}}

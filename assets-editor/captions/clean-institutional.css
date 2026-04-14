@@ -1,0 +1,7 @@
+/* clean-institutional — Subtle professional caption for corporate/educational content
+ * License: MIT (original)
+ */
+.caption-clean{font-family:'Inter','Helvetica Neue',sans-serif;font-weight:500;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6);line-height:1.35;letter-spacing:.1px}
+.caption-clean.with-bg{background:rgba(0,0,0,.55);padding:6px 12px;border-radius:4px;backdrop-filter:blur(4px)}
+@keyframes cleanFade{from{opacity:0}to{opacity:1}}
+.caption-clean.anim-in{animation:cleanFade .25s ease-out forwards}

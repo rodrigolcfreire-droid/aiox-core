@@ -1,0 +1,6 @@
+/* big-impact — Huge centered intro title with scale-up entrance
+ * License: MIT (original)
+ */
+.title-impact{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:'Anton','Impact',sans-serif;font-weight:900;font-size:18vw;color:#fff;-webkit-text-stroke:6px #000;text-transform:uppercase;letter-spacing:-2px;line-height:.9;text-align:center}
+@keyframes titleImpact{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}70%{transform:translate(-50%,-50%) scale(1.08)}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.title-impact.anim-in{animation:titleImpact .5s cubic-bezier(.68,-.55,.27,1.55) forwards}
