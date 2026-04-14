@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1400">
+  <title>Escala de Criativos — Mix</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0A0E1A;--bg-surface:#111827;--bg-panel:#0F172A;
+      --border:#1F2937;--text-primary:#F3F4F6;--text-secondary:#9CA3AF;
+      --text-dim:#6B7280;--accent-blue:#38BDF8;--accent-green:#34D399;
+      --accent-amber:#FBBF24;--accent-red:#F87171;--accent-purple:#A78BFA;
+    }
+    body{background:var(--bg);color:var(--text-primary);font-family:'Inter',sans-serif;min-height:100vh}
+    .header{background:var(--bg-panel);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:16px}
+    .header h1{font-size:16px;font-weight:700;letter-spacing:.3px}
+    .back-btn{background:none;border:1px solid var(--border);color:var(--text-secondary);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:11px;text-decoration:none;font-family:'JetBrains Mono',monospace}
+    .back-btn:hover{color:var(--accent-blue);border-color:var(--accent-blue)}
+    .container{max-width:1400px;margin:0 auto;padding:24px 28px}
+    .mix-selector{display:flex;gap:8px;margin-bottom:24px;align-items:center}
+    .select-mix{background:var(--bg-surface);border:1px solid var(--border);color:var(--text-primary);padding:8px 12px;border-radius:6px;font-size:13px;font-family:inherit;min-width:280px}
+    .btn{background:var(--bg-surface);border:1px solid var(--border);color:var(--text-primary);padding:8px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;transition:all .15s}
+    .btn:hover{border-color:var(--accent-blue);color:var(--accent-blue)}
+    .btn-primary{background:var(--accent-blue);color:#000;border-color:var(--accent-blue)}
+    .btn-primary:hover{background:#7DD3FC;color:#000}
+    .btn-green{background:var(--accent-green);color:#000;border-color:var(--accent-green)}
+    .btn-green:hover{background:#6EE7B7}
+    .btn-danger{color:var(--accent-red);border-color:rgba(248,113,113,.3)}
+    .btn-danger:hover{background:rgba(248,113,113,.1)}
+    .pools-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
+    .pool{background:var(--bg-panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;min-height:400px}
+    .pool-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .pool-title{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+    .pool.hooks .pool-title{color:#F472B6}
+    .pool.devs .pool-title{color:var(--accent-amber)}
+    .pool.ctas .pool-title{color:var(--accent-green)}
+    .pool-count{background:var(--bg-surface);color:var(--text-dim);font-size:10px;padding:2px 8px;border-radius:10px;font-family:'JetBrains Mono'}
+    .dropzone{border:2px dashed var(--border);margin:14px;border-radius:8px;padding:24px 12px;text-align:center;cursor:pointer;transition:all .15s;color:var(--text-dim);font-size:12px}
+    .dropzone:hover,.dropzone.dragover{border-color:var(--accent-blue);color:var(--accent-blue);background:rgba(56,189,248,.05)}
+    .dropzone-icon{font-size:28px;margin-bottom:6px;display:block}
+    .asset-list{flex:1;overflow-y:auto;padding:0 14px 14px}
+    .asset-item{background:var(--bg-surface);border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px;font-size:11px}
+    .asset-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .asset-size{color:var(--text-dim);font-family:'JetBrains Mono';font-size:10px}
+    .asset-del{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:14px;padding:2px 6px}
+    .asset-del:hover{color:var(--accent-red)}
+    .action-bar{background:var(--bg-panel);border:1px solid var(--border);border-radius:10px;padding:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .action-info{display:flex;align-items:center;gap:16px;font-size:12px}
+    .combo-count{font-size:24px;font-weight:700;color:var(--accent-blue);font-family:'JetBrains Mono'}
+    .gen-opts{display:flex;gap:8px;align-items:center}
+    .gen-input{background:var(--bg-surface);border:1px solid var(--border);color:var(--text-primary);padding:6px 10px;border-radius:5px;font-size:11px;width:80px;font-family:'JetBrains Mono'}
+    .gen-label{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px}
+    .renders{margin-top:20px;background:var(--bg-panel);border:1px solid var(--border);border-radius:10px;padding:16px;display:none}
+    .renders.visible{display:block}
+    .render-item{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:4px;font-size:11px;font-family:'JetBrains Mono';border-bottom:1px solid var(--border)}
+    .render-item:last-child{border-bottom:none}
+    .render-status{padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase}
+    .render-status.pending{background:rgba(156,163,175,.15);color:var(--text-dim)}
+    .render-status.rendering{background:rgba(56,189,248,.15);color:var(--accent-blue)}
+    .render-status.done{background:rgba(52,211,153,.15);color:var(--accent-green)}
+    .render-status.failed{background:rgba(248,113,113,.15);color:var(--accent-red)}
+    .progress-global{background:var(--bg-surface);border-radius:4px;height:6px;overflow:hidden;margin:12px 0}
+    .progress-fill{background:var(--accent-green);height:100%;width:0;transition:width .3s}
+    .stars{display:inline-flex;gap:2px;margin-left:8px}
+    .star{cursor:pointer;font-size:14px;color:var(--border);transition:color .1s;user-select:none}
+    .star.filled{color:var(--accent-amber)}
+    .star:hover,.star:hover ~ .star{color:transparent}
+    .star:hover{color:var(--accent-amber)}
+    .ranking-panel{margin-top:20px;background:var(--bg-panel);border:1px solid var(--border);border-radius:10px;padding:16px;display:none}
+    .ranking-panel.visible{display:block}
+    .ranking-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+    .ranking-col{background:var(--bg-surface);border-radius:6px;padding:12px}
+    .ranking-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;color:var(--text-secondary)}
+    .ranking-row{display:flex;justify-content:space-between;padding:6px 0;font-size:11px;border-bottom:1px solid var(--border)}
+    .ranking-row:last-child{border-bottom:none}
+    .ranking-row .rank-score{color:var(--accent-amber);font-weight:700;font-family:'JetBrains Mono'}
+    .ranking-row .rank-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px}
+    .rank-medal{margin-right:6px}
+    .ai-btn{background:linear-gradient(135deg,#8B5CF6,#EC4899);color:#fff;border:none;padding:4px 10px;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono'}
+    .ai-btn:hover{opacity:.9}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:2000}
+    .modal-overlay.visible{display:flex}
+    .modal{background:var(--bg-panel);border:1px solid var(--border);border-radius:12px;padding:24px;width:540px;max-width:90vw;max-height:80vh;overflow-y:auto}
+    .modal h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text-primary);letter-spacing:.3px}
+    .modal-close{float:right;background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:18px}
+    .modal-input{width:100%;background:var(--bg-surface);border:1px solid var(--border);color:var(--text-primary);padding:10px 12px;border-radius:6px;font-size:13px;margin-bottom:10px;font-family:inherit}
+    .modal-input:focus{outline:none;border-color:var(--accent-blue)}
+    .ai-suggestion{background:var(--bg-surface);border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;font-size:13px}
+    .ai-suggestion .copy-btn{background:none;border:1px solid var(--border);color:var(--text-dim);padding:4px 10px;border-radius:4px;font-size:10px;cursor:pointer;font-family:'JetBrains Mono'}
+    .ai-suggestion .copy-btn:hover{color:var(--accent-blue);border-color:var(--accent-blue)}
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--bg-surface);border:1px solid var(--border);color:var(--text-primary);padding:12px 16px;border-radius:8px;font-size:12px;max-width:300px;box-shadow:0 8px 24px rgba(0,0,0,.4);display:none;z-index:1000}
+    .toast.visible{display:block}
+    .toast.success{border-color:var(--accent-green)}
+    .toast.error{border-color:var(--accent-red)}
+    input[type=file]{display:none}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="/" class="back-btn">&larr; Voltar</a>
+    <h1>ESCALA DE CRIATIVOS — MIX (Hook × Dev × CTA)</h1>
+  </div>
+
+  <div class="container">
+    <div class="mix-selector">
+      <select class="select-mix" id="mixSelect" onchange="selectMix(this.value)">
+        <option value="">Selecione ou crie um mix...</option>
+      </select>
+      <button class="btn" onclick="newMix()">+ Novo Mix</button>
+      <button class="btn btn-danger" id="deleteMixBtn" onclick="deleteCurrentMix()" style="display:none">Deletar Mix</button>
+    </div>
+
+    <div class="pools-grid">
+      <div class="pool hooks">
+        <div class="pool-header">
+          <span class="pool-title">Hooks (Início)</span>
+          <span class="pool-count" id="hooksCount">0</span>
+          <button class="ai-btn" onclick="openAiModal('hook')">&#10024; IA</button>
+        </div>
+        <label class="dropzone" data-kind="hook" id="dropzoneHook">
+          <span class="dropzone-icon">&#8617;</span>
+          Arraste ou clique<br>para adicionar hooks
+          <input type="file" accept="video/*" multiple onchange="handleFileSelect(event,'hook')">
+        </label>
+        <div class="asset-list" id="assetsHooks"></div>
+      </div>
+
+      <div class="pool devs">
+        <div class="pool-header">
+          <span class="pool-title">Desenvolvimento (Meio)</span>
+          <span class="pool-count" id="devsCount">0</span>
+          <button class="ai-btn" onclick="openAiModal('dev')">&#10024; IA</button>
+        </div>
+        <label class="dropzone" data-kind="dev" id="dropzoneDev">
+          <span class="dropzone-icon">&#9775;</span>
+          Arraste ou clique<br>para adicionar desenvolvimentos
+          <input type="file" accept="video/*" multiple onchange="handleFileSelect(event,'dev')">
+        </label>
+        <div class="asset-list" id="assetsDevs"></div>
+      </div>
+
+      <div class="pool ctas">
+        <div class="pool-header">
+          <span class="pool-title">CTA (Final)</span>
+          <span class="pool-count" id="ctasCount">0</span>
+          <button class="ai-btn" onclick="openAiModal('cta')">&#10024; IA</button>
+        </div>
+        <label class="dropzone" data-kind="cta" id="dropzoneCta">
+          <span class="dropzone-icon">&#10142;</span>
+          Arraste ou clique<br>para adicionar CTAs
+          <input type="file" accept="video/*" multiple onchange="handleFileSelect(event,'cta')">
+        </label>
+        <div class="asset-list" id="assetsCtas"></div>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <div class="action-info">
+        <div>
+          <div class="gen-label">Combinacoes</div>
+          <div class="combo-count" id="comboCount">0</div>
+        </div>
+        <div class="gen-opts">
+          <div>
+            <div class="gen-label">Limite</div>
+            <input type="number" class="gen-input" id="genLimit" placeholder="todas" min="1">
+          </div>
+          <div>
+            <div class="gen-label">Largura</div>
+            <input type="number" class="gen-input" id="genWidth" value="1080">
+          </div>
+          <div>
+            <div class="gen-label">Altura</div>
+            <input type="number" class="gen-input" id="genHeight" value="1920">
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-green" id="genBtn" onclick="generate()" disabled>GERAR VARIACOES</button>
+    </div>
+
+    <div class="ranking-panel" id="rankingPanel">
+      <div style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Ranking dos melhores criativos</div>
+      <div class="ranking-grid">
+        <div class="ranking-col"><div class="ranking-title">Top Hooks</div><div id="rankHooks"></div></div>
+        <div class="ranking-col"><div class="ranking-title">Top Devs</div><div id="rankDevs"></div></div>
+        <div class="ranking-col"><div class="ranking-title">Top CTAs</div><div id="rankCtas"></div></div>
+      </div>
+    </div>
+
+    <div class="renders" id="rendersPanel">
+      <div style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Renders</div>
+      <div class="progress-global"><div class="progress-fill" id="progressFill"></div></div>
+      <div id="rendersList"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="aiModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeAiModal()">&times;</button>
+      <h3 id="aiModalTitle">Sugestoes de Hook via IA</h3>
+      <div id="aiModalBody">
+        <input type="text" class="modal-input" id="aiTheme" placeholder="Tema/contexto (ex: suplemento emagrecimento)">
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <input type="number" class="modal-input" id="aiCount" value="5" min="1" max="10" style="width:80px;margin-bottom:0">
+          <button class="btn btn-primary" style="flex:1" onclick="runAiSuggest()">Gerar sugestoes</button>
+          <button class="btn" onclick="runAiFromTop()" title="Usar top rated como base">Do Top &#9733;</button>
+        </div>
+        <div id="aiResults"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API = '';
+    let currentMix = null;
+
+    function showToast(msg, type = 'info') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast visible ' + type;
+      setTimeout(() => t.className = 'toast', 3000);
+    }
+
+    async function loadMixes() {
+      const res = await fetch(API + '/api/escala-mix');
+      const { mixes } = await res.json();
+      const select = document.getElementById('mixSelect');
+      select.innerHTML = '<option value="">Selecione ou crie um mix...</option>' +
+        mixes.map(m => `<option value="${m.mixId}">${m.name} (h${m.hooks.length}/d${m.devs.length}/c${m.ctas.length})</option>`).join('');
+      if (currentMix) select.value = currentMix.mixId;
+    }
+
+    async function newMix() {
+      const name = prompt('Nome do novo mix:');
+      if (!name) return;
+      const res = await fetch(API + '/api/escala-mix', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name }),
+      });
+      const { mix } = await res.json();
+      await loadMixes();
+      selectMix(mix.mixId);
+      showToast('Mix criado: ' + mix.name, 'success');
+    }
+
+    async function deleteCurrentMix() {
+      if (!currentMix) return;
+      if (!confirm(`Deletar mix "${currentMix.name}" e todos os assets?`)) return;
+      await fetch(API + '/api/escala-mix/' + currentMix.mixId, { method: 'DELETE' });
+      currentMix = null;
+      document.getElementById('deleteMixBtn').style.display = 'none';
+      await loadMixes();
+      renderPools();
+      showToast('Mix deletado', 'success');
+    }
+
+    async function selectMix(mixId) {
+      if (!mixId) {
+        currentMix = null;
+        renderPools();
+        document.getElementById('deleteMixBtn').style.display = 'none';
+        document.getElementById('rankingPanel').classList.remove('visible');
+        document.getElementById('rendersPanel').classList.remove('visible');
+        return;
+      }
+      const res = await fetch(API + '/api/escala-mix/' + mixId);
+      const { mix } = await res.json();
+      currentMix = mix;
+      document.getElementById('mixSelect').value = mixId;
+      document.getElementById('deleteMixBtn').style.display = 'inline-block';
+      renderPools();
+      // restore renders list if exist
+      const renders = (mix.renders || []).filter(r => r.status === 'done' || r.status === 'failed');
+      if (renders.length > 0) {
+        document.getElementById('rendersPanel').classList.add('visible');
+        document.getElementById('rendersList').innerHTML = renders.map(renderItemHTML).join('');
+        document.getElementById('progressFill').style.width = '100%';
+      } else {
+        document.getElementById('rendersPanel').classList.remove('visible');
+      }
+      loadRanking();
+    }
+
+    function renderPools() {
+      const empty = { hooks: [], devs: [], ctas: [] };
+      const pool = currentMix || empty;
+      ['hooks', 'devs', 'ctas'].forEach(kind => {
+        const list = document.getElementById('assets' + kind.charAt(0).toUpperCase() + kind.slice(1));
+        list.innerHTML = (pool[kind] || []).map(a =>
+          `<div class="asset-item">
+            <span class="asset-name" title="${a.name}">${a.name}</span>
+            <span class="asset-size">${a.sizeMB}MB</span>
+            <button class="asset-del" onclick="removeAsset('${a.id}')" title="Remover">&times;</button>
+          </div>`
+        ).join('');
+        document.getElementById(kind + 'Count').textContent = (pool[kind] || []).length;
+      });
+      const h = (pool.hooks || []).length, d = (pool.devs || []).length, c = (pool.ctas || []).length;
+      document.getElementById('comboCount').textContent = h * d * c;
+      document.getElementById('genBtn').disabled = !(h > 0 && d > 0 && c > 0);
+    }
+
+    async function uploadFile(file, kind) {
+      if (!currentMix) { showToast('Selecione ou crie um mix primeiro', 'error'); return; }
+      const fd = new FormData();
+      fd.append('video', file);
+      fd.append('kind', kind);
+      fd.append('name', file.name.replace(/\.[^.]+$/, ''));
+      try {
+        const res = await fetch(API + '/api/escala-mix/' + currentMix.mixId + '/assets', { method: 'POST', body: fd });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        await selectMix(currentMix.mixId);
+      } catch (err) {
+        showToast('Erro upload: ' + err.message, 'error');
+      }
+    }
+
+    async function handleFileSelect(e, kind) {
+      const files = Array.from(e.target.files);
+      for (const f of files) await uploadFile(f, kind);
+      e.target.value = '';
+    }
+
+    async function removeAsset(assetId) {
+      if (!currentMix) return;
+      await fetch(API + '/api/escala-mix/' + currentMix.mixId + '/assets/' + assetId, { method: 'DELETE' });
+      await selectMix(currentMix.mixId);
+    }
+
+    async function generate() {
+      if (!currentMix) return;
+      const limit = document.getElementById('genLimit').value;
+      const width = parseInt(document.getElementById('genWidth').value, 10) || 1080;
+      const height = parseInt(document.getElementById('genHeight').value, 10) || 1920;
+      const body = { width, height };
+      if (limit) body.limit = parseInt(limit, 10);
+
+      document.getElementById('rendersPanel').classList.add('visible');
+      document.getElementById('rendersList').innerHTML = '';
+      document.getElementById('progressFill').style.width = '0%';
+      document.getElementById('genBtn').disabled = true;
+
+      const response = await fetch(API + '/api/escala-mix/' + currentMix.mixId + '/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buf = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value, { stream: true });
+        const events = buf.split('\n\n');
+        buf = events.pop();
+        for (const evt of events) {
+          const lines = evt.split('\n');
+          const type = (lines.find(l => l.startsWith('event:')) || '').slice(6).trim();
+          const data = JSON.parse((lines.find(l => l.startsWith('data:')) || 'data: {}').slice(5).trim());
+          handleSSE(type, data);
+        }
+      }
+      document.getElementById('genBtn').disabled = false;
+      await selectMix(currentMix.mixId);
+    }
+
+    function starsHTML(renderId, current) {
+      const cur = Number(current) || 0;
+      return '<span class="stars" data-render="' + renderId + '">' +
+        [1,2,3,4,5].map(n => `<span class="star ${n <= cur ? 'filled' : ''}" onclick="rateRender('${renderId}',${n})" title="${n} estrelas">&#9733;</span>`).join('') +
+      '</span>';
+    }
+
+    async function rateRender(renderId, stars) {
+      if (!currentMix) return;
+      try {
+        const res = await fetch(API + '/api/escala-mix/' + currentMix.mixId + '/renders/' + renderId + '/rating', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rating: stars }),
+        });
+        const data = await res.json();
+        // Update star fill in place
+        const el = document.querySelector('[data-render="' + renderId + '"]');
+        if (el) el.outerHTML = starsHTML(renderId, data.render.rating);
+        renderRanking(data.ranking);
+        showToast('Rating salvo: ' + stars + '★', 'success');
+      } catch (err) {
+        showToast('Erro rating: ' + err.message, 'error');
+      }
+    }
+
+    function renderRanking(ranking) {
+      if (!ranking) return;
+      const any = ['hooks','devs','ctas'].some(k => ranking[k].length > 0);
+      document.getElementById('rankingPanel').classList.toggle('visible', any);
+      const medals = ['&#127942;','&#129352;','&#129353;'];
+      ['hooks','devs','ctas'].forEach((kind, i) => {
+        const id = 'rank' + kind.charAt(0).toUpperCase() + kind.slice(1);
+        const el = document.getElementById(id);
+        if (ranking[kind].length === 0) { el.innerHTML = '<div style="color:var(--text-dim);font-size:11px">Sem ratings ainda</div>'; return; }
+        el.innerHTML = ranking[kind].slice(0, 5).map((a, idx) =>
+          `<div class="ranking-row"><span class="rank-name">${idx < 3 ? '<span class="rank-medal">' + medals[idx] + '</span>' : ''}${a.name}</span><span class="rank-score">${a.rating.toFixed(1)}&#9733; (${a.ratings})</span></div>`
+        ).join('');
+      });
+    }
+
+    async function loadRanking() {
+      if (!currentMix) return;
+      try {
+        const res = await fetch(API + '/api/escala-mix/' + currentMix.mixId + '/ranking');
+        const { ranking } = await res.json();
+        renderRanking(ranking);
+      } catch { /* ignore */ }
+    }
+
+    function renderItemHTML(r) {
+      const dl = r.output ? `<a class="btn" style="padding:3px 8px;font-size:10px;margin-left:8px" href="/api/escala-mix/${currentMix.mixId}/renders/${r.id}/download">baixar</a>` : '';
+      const stars = r.status === 'done' ? starsHTML(r.id, r.rating) : '';
+      const statusEl = `<span class="render-status ${r.status}">${r.status}</span>`;
+      return `<div class="render-item" id="render-${r.id}"><span style="flex:1">${r.name}</span>${statusEl}${stars}${dl}</div>`;
+    }
+
+    function handleSSE(type, data) {
+      if (type === 'progress') {
+        const list = document.getElementById('rendersList');
+        const existing = document.getElementById('render-' + data.render.id);
+        const r = { ...data.render, status: data.phase === 'start' ? 'rendering' : data.phase, output: data.output };
+        const html = renderItemHTML(r);
+        if (existing) existing.outerHTML = html;
+        else list.insertAdjacentHTML('beforeend', html);
+        const pct = ((data.index + (data.phase === 'done' || data.phase === 'failed' ? 1 : 0.5)) / data.total) * 100;
+        document.getElementById('progressFill').style.width = pct + '%';
+      } else if (type === 'done') {
+        document.getElementById('progressFill').style.width = '100%';
+        const ok = (data.results || []).filter(r => r.status === 'done').length;
+        const total = (data.results || []).length;
+        showToast(`Concluido: ${ok}/${total} renders OK`, 'success');
+        loadRanking();
+      } else if (type === 'error') {
+        showToast('Erro: ' + data.message, 'error');
+      }
+    }
+
+    let aiModalKind = 'hook';
+
+    function openAiModal(kind) {
+      aiModalKind = kind;
+      const labelMap = { hook: 'Hook', dev: 'Desenvolvimento', cta: 'CTA' };
+      document.getElementById('aiModalTitle').textContent = 'Sugestoes de ' + labelMap[kind] + ' via IA';
+      document.getElementById('aiResults').innerHTML = '';
+      document.getElementById('aiTheme').value = '';
+      if (kind === 'dev') {
+        document.getElementById('aiModalBody').innerHTML = '<div style="color:var(--text-dim);font-size:12px;padding:20px;text-align:center">IA disponivel apenas pra Hook e CTA (textos curtos). Desenvolvimento precisa ser gravado.</div>';
+      } else {
+        document.getElementById('aiModalBody').innerHTML = `
+          <input type="text" class="modal-input" id="aiTheme" placeholder="Tema/contexto (ex: suplemento emagrecimento)">
+          <div style="display:flex;gap:8px;margin-bottom:12px">
+            <input type="number" class="modal-input" id="aiCount" value="5" min="1" max="10" style="width:80px;margin-bottom:0">
+            <button class="btn btn-primary" style="flex:1" onclick="runAiSuggest()">Gerar sugestoes</button>
+            <button class="btn" onclick="runAiFromTop()" title="Usar top rated como base">Do Top &#9733;</button>
+          </div>
+          <div id="aiResults"></div>`;
+      }
+      document.getElementById('aiModal').classList.add('visible');
+    }
+
+    function closeAiModal() {
+      document.getElementById('aiModal').classList.remove('visible');
+    }
+
+    async function runAiSuggest() {
+      if (!currentMix) { showToast('Selecione um mix primeiro', 'error'); return; }
+      const theme = document.getElementById('aiTheme').value.trim();
+      if (!theme) { showToast('Informe o tema', 'error'); return; }
+      const count = parseInt(document.getElementById('aiCount').value, 10) || 5;
+      const resultsEl = document.getElementById('aiResults');
+      resultsEl.innerHTML = '<div style="color:var(--text-dim);font-size:12px;padding:12px">Gerando...</div>';
+      try {
+        const res = await fetch(API + '/api/escala-mix/' + currentMix.mixId + '/ai-suggest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: aiModalKind, theme, count }),
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const { items } = await res.json();
+        if (!items || items.length === 0) { resultsEl.innerHTML = '<div style="color:var(--text-dim)">Sem resultados</div>'; return; }
+        resultsEl.innerHTML = items.map(s =>
+          `<div class="ai-suggestion"><span style="flex:1">${s.replace(/</g, '&lt;')}</span><button class="copy-btn" onclick="copyToClipboard(this,\`${s.replace(/`/g, '\\`').replace(/'/g, "\\'")}\`)">Copiar</button></div>`
+        ).join('');
+      } catch (err) {
+        resultsEl.innerHTML = '<div style="color:var(--accent-red)">Erro: ' + err.message + '</div>';
+      }
+    }
+
+    async function runAiFromTop() {
+      if (!currentMix) return;
+      const count = parseInt(document.getElementById('aiCount').value, 10) || 5;
+      const resultsEl = document.getElementById('aiResults');
+      resultsEl.innerHTML = '<div style="color:var(--text-dim);font-size:12px;padding:12px">Gerando variacoes do top rated...</div>';
+      try {
+        const res = await fetch(API + '/api/escala-mix/' + currentMix.mixId + '/ai-suggest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: aiModalKind, fromTop: true, count }),
+        });
+        if (!res.ok) { const t = await res.text(); throw new Error(t); }
+        const { items } = await res.json();
+        resultsEl.innerHTML = items.map(s =>
+          `<div class="ai-suggestion"><span style="flex:1">${s.replace(/</g, '&lt;')}</span><button class="copy-btn" onclick="copyToClipboard(this,\`${s.replace(/`/g, '\\`').replace(/'/g, "\\'")}\`)">Copiar</button></div>`
+        ).join('');
+      } catch (err) {
+        resultsEl.innerHTML = '<div style="color:var(--accent-red)">Erro: ' + err.message + '</div>';
+      }
+    }
+
+    function copyToClipboard(btn, text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = 'Copiado!';
+        btn.style.color = 'var(--accent-green)';
+        setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1500);
+      });
+    }
+
+    // Drag & drop
+    ['hook', 'dev', 'cta'].forEach(kind => {
+      const dz = document.getElementById('dropzone' + kind.charAt(0).toUpperCase() + kind.slice(1));
+      dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+      dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+      dz.addEventListener('drop', async e => {
+        e.preventDefault();
+        dz.classList.remove('dragover');
+        for (const f of e.dataTransfer.files) if (f.type.startsWith('video/')) await uploadFile(f, kind);
+      });
+    });
+
+    loadMixes();
+  </script>
+</body>
+</html>
