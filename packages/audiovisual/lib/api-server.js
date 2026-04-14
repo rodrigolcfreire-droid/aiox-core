@@ -909,13 +909,15 @@ async function handleRequest(req, res) {
         // Auto-transcribe in background
         (async () => {
           try {
-            const { transcribeWithWhisper } = require('./transcribe');
-            const transcription = await transcribeWithWhisper(uploadPath);
+            const { transcribeFile } = require('./transcribe');
+            const transcription = await transcribeFile(uploadPath);
             const transcript = (transcription.segments || []).map(seg => ({
               t: seg.start,
               text: seg.text,
+              edited: false,
             }));
             editStore.updateEdit(edit.editId, { transcript });
+            console.log(`[EDIT] Transcription complete for ${edit.editId}: ${transcript.length} segments`);
           } catch (err) {
             console.log(`[EDIT] Auto-transcribe failed for ${edit.editId}: ${err.message}`);
           }
@@ -941,13 +943,15 @@ async function handleRequest(req, res) {
         // Auto-transcribe in background
         (async () => {
           try {
-            const { transcribeWithWhisper } = require('./transcribe');
-            const transcription = await transcribeWithWhisper(resolvedPath);
+            const { transcribeFile } = require('./transcribe');
+            const transcription = await transcribeFile(resolvedPath);
             const transcript = (transcription.segments || []).map(seg => ({
               t: seg.start,
               text: seg.text,
+              edited: false,
             }));
             editStore.updateEdit(edit.editId, { transcript });
+            console.log(`[EDIT] Transcription complete for ${edit.editId}: ${transcript.length} segments`);
           } catch (err) {
             console.log(`[EDIT] Auto-transcribe failed for ${edit.editId}: ${err.message}`);
           }

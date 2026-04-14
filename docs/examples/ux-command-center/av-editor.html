@@ -2,169 +2,265 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=1200">
+  <meta name="viewport" content="width=1400">
   <title>Editor Growth — Centro de Comando</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
     *{margin:0;padding:0;box-sizing:border-box}
-    body{background:#0a0e1a;color:#e2e8f0;font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+    :root{
+      --bg-deep:#06090f;--bg-main:#0a0e1a;--bg-panel:#0d1220;--bg-surface:#111827;
+      --border:#1a2035;--border-hover:#2a3550;
+      --accent-green:#34d399;--accent-blue:#38bdf8;--accent-cyan:#22d3ee;
+      --text-primary:#e2e8f0;--text-secondary:#94a3b8;--text-dim:#475569;
+      --danger:#ef4444;--warning:#fbbf24;
+      --gradient:linear-gradient(135deg,var(--accent-green),var(--accent-blue));
+    }
+    body{background:var(--bg-deep);color:var(--text-primary);font-family:'Inter',sans-serif;min-height:100vh;overflow:hidden}
 
     /* ── Header ── */
-    .header{padding:16px 40px;border-bottom:1px solid #1e293b;display:flex;align-items:center;justify-content:space-between;background:rgba(10,14,26,0.95);position:sticky;top:0;z-index:50;backdrop-filter:blur(8px)}
-    .header-left{display:flex;align-items:center;gap:16px}
-    .back-btn{background:none;border:1px solid #334155;color:#94a3b8;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .2s;text-decoration:none}
-    .back-btn:hover{border-color:#38bdf8;color:#38bdf8}
-    .header h1{font-family:'Chakra Petch';font-size:22px;font-weight:700;background:linear-gradient(135deg,#34d399,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-    .breadcrumb{font-size:12px;color:#64748b;margin-top:2px}
-    .breadcrumb a{color:#64748b;text-decoration:none}
-    .breadcrumb a:hover{color:#e2e8f0}
-    .breadcrumb .sep{margin:0 6px}
+    .header{height:52px;padding:0 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(10,14,26,0.97);position:relative;z-index:50;backdrop-filter:blur(12px)}
+    .header-left{display:flex;align-items:center;gap:12px}
+    .back-btn{background:none;border:1px solid var(--border);color:var(--text-secondary);width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;text-decoration:none}
+    .back-btn:hover{border-color:var(--accent-blue);color:var(--accent-blue)}
+    .header h1{font-family:'Chakra Petch';font-size:16px;font-weight:700;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:0.5px}
+    .header-center{display:flex;align-items:center;gap:8px}
+    .mode-toggle{display:flex;background:var(--bg-surface);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+    .mode-btn{padding:6px 16px;font-size:11px;font-weight:600;color:var(--text-dim);cursor:pointer;transition:all .2s;border:none;background:none;letter-spacing:0.3px}
+    .mode-btn:hover{color:var(--text-secondary)}
+    .mode-btn.active{background:var(--gradient);color:var(--bg-deep)}
+    .header-right{display:flex;align-items:center;gap:12px}
+    .header-status{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono'}
 
     /* ── Toast ── */
-    .toast-container{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px}
-    .toast{padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;animation:slideInToast .3s ease;opacity:1;transition:opacity .3s}
-    .toast-success{background:#34d399;color:#0a0e1a}
-    .toast-error{background:#ef4444;color:#fff}
-    .toast-info{background:#38bdf8;color:#0a0e1a}
-    @keyframes slideInToast{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+    .toast-container{position:fixed;bottom:80px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px}
+    .toast{padding:10px 18px;border-radius:6px;font-size:12px;font-weight:600;animation:slideInToast .3s ease;opacity:1;transition:opacity .3s;backdrop-filter:blur(8px)}
+    .toast-success{background:rgba(52,211,153,0.9);color:var(--bg-deep)}
+    .toast-error{background:rgba(239,68,68,0.9);color:#fff}
+    .toast-info{background:rgba(56,189,248,0.9);color:var(--bg-deep)}
+    @keyframes slideInToast{from{transform:translateX(80px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+    /* ── Buttons ── */
+    .btn{border:none;padding:8px 20px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:0.3px}
+    .btn:hover{transform:scale(1.02)}
+    .btn:active{transform:scale(0.98)}
+    .btn-primary{background:var(--gradient);color:var(--bg-deep)}
+    .btn-secondary{background:var(--bg-surface);color:var(--text-secondary);border:1px solid var(--border)}
+    .btn-secondary:hover{color:var(--text-primary);border-color:var(--border-hover)}
+    .btn-green{background:var(--accent-green);color:var(--bg-deep)}
+    .btn-danger{background:var(--danger);color:#fff}
+    .btn-ghost{background:none;border:none;color:var(--text-secondary);padding:6px 10px}
+    .btn-ghost:hover{color:var(--text-primary)}
+    .btn-icon{background:none;border:1px solid var(--border);color:var(--text-secondary);width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;font-size:14px}
+    .btn-icon:hover{border-color:var(--accent-blue);color:var(--accent-blue)}
+    .btn-icon.active{background:rgba(56,189,248,0.12);border-color:var(--accent-blue);color:var(--accent-blue)}
 
     /* ── Empty State ── */
-    .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 70px);padding:40px}
+    .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 52px);padding:40px}
     .empty-state.hidden{display:none}
-    .dropzone{width:100%;max-width:600px;border:2px dashed #334155;border-radius:16px;padding:60px 40px;text-align:center;cursor:pointer;transition:all .3s}
-    .dropzone:hover,.dropzone.dragover{border-color:#38bdf8;background:rgba(56,189,248,0.05)}
-    .dropzone-icon{font-size:48px;margin-bottom:16px;opacity:0.6}
-    .dropzone-title{font-family:'Chakra Petch';font-size:20px;font-weight:700;margin-bottom:8px}
-    .dropzone-sub{font-size:13px;color:#64748b;margin-bottom:24px}
+    .dropzone{width:100%;max-width:520px;border:2px dashed var(--border);border-radius:16px;padding:48px 32px;text-align:center;cursor:pointer;transition:all .3s}
+    .dropzone:hover,.dropzone.dragover{border-color:var(--accent-blue);background:rgba(56,189,248,0.03)}
+    .dropzone-icon{font-size:40px;margin-bottom:12px;opacity:0.5}
+    .dropzone-title{font-family:'Chakra Petch';font-size:18px;font-weight:700;margin-bottom:6px}
+    .dropzone-sub{font-size:12px;color:var(--text-dim);margin-bottom:20px}
     .dropzone input[type=file]{display:none}
-    .btn{border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
-    .btn:hover{transform:scale(1.03)}
-    .btn-primary{background:linear-gradient(135deg,#34d399,#38bdf8);color:#0a0e1a}
-    .btn-secondary{background:#1e293b;color:#94a3b8;border:1px solid #334155}
-    .btn-secondary:hover{color:#e2e8f0}
-    .btn-green{background:#34d399;color:#0a0e1a}
-    .btn-danger{background:#ef4444;color:#fff}
-    .empty-divider{display:flex;align-items:center;gap:16px;margin:24px 0;width:100%;max-width:600px}
-    .empty-divider hr{flex:1;border:none;border-top:1px solid #1e293b}
-    .empty-divider span{font-size:12px;color:#475569;text-transform:uppercase;letter-spacing:1px}
-
-    /* ── Edits List ── */
-    .edits-list{width:100%;max-width:600px}
-    .edits-list-title{font-size:14px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
-    .edit-item{background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:16px;cursor:pointer;transition:all .2s;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
-    .edit-item:hover{border-color:#38bdf8;background:rgba(56,189,248,0.04)}
-    .edit-item-info{flex:1}
-    .edit-item-name{font-size:14px;font-weight:600}
-    .edit-item-meta{font-size:11px;color:#64748b;margin-top:4px;font-family:'JetBrains Mono'}
-    .edit-item-arrow{color:#475569;font-size:18px}
+    .empty-divider{display:flex;align-items:center;gap:16px;margin:20px 0;width:100%;max-width:520px}
+    .empty-divider hr{flex:1;border:none;border-top:1px solid var(--border)}
+    .empty-divider span{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
+    .edits-list{width:100%;max-width:520px}
+    .edits-list-title{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+    .edit-item{background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;padding:14px;cursor:pointer;transition:all .2s;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+    .edit-item:hover{border-color:var(--accent-blue);background:rgba(56,189,248,0.03)}
+    .edit-item-name{font-size:13px;font-weight:600}
+    .edit-item-meta{font-size:10px;color:var(--text-dim);margin-top:3px;font-family:'JetBrains Mono'}
+    .edit-item-arrow{color:var(--text-dim);font-size:16px}
 
     /* ── Transcribing State ── */
-    .transcribing-state{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 70px);padding:40px}
+    .transcribing-state{display:none;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 52px);padding:40px}
     .transcribing-state.visible{display:flex}
-    .transcribing-spinner{width:48px;height:48px;border:3px solid #1e293b;border-top-color:#38bdf8;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px}
+    .transcribing-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent-blue);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:16px}
     @keyframes spin{to{transform:rotate(360deg)}}
-    .transcribing-label{font-family:'Chakra Petch';font-size:18px;margin-bottom:12px}
-    .progress-bar{width:300px;height:6px;background:#1e293b;border-radius:3px;overflow:hidden}
-    .progress-bar-fill{height:100%;background:linear-gradient(90deg,#38bdf8,#34d399);border-radius:3px;width:0%;transition:width .3s}
+    .transcribing-label{font-family:'Chakra Petch';font-size:16px;margin-bottom:10px}
+    .progress-bar{width:280px;height:4px;background:var(--bg-surface);border-radius:2px;overflow:hidden}
+    .progress-bar-fill{height:100%;background:var(--gradient);border-radius:2px;width:0%;transition:width .3s}
 
-    /* ── Editor Layout ── */
-    .editor{display:none;height:calc(100vh - 70px)}
-    .editor.visible{display:grid;grid-template-columns:1fr 380px;grid-template-rows:1fr auto}
+    /* ── Editor Layout (4-zone NLE) ── */
+    .editor{display:none;height:calc(100vh - 52px)}
+    .editor.visible{display:grid;grid-template-columns:280px 1fr 300px;grid-template-rows:1fr auto auto;overflow:hidden}
 
-    /* ── Player Panel ── */
-    .player-panel{position:relative;background:#000;display:flex;flex-direction:column;overflow:hidden}
-    .video-wrapper{flex:1;position:relative;display:flex;align-items:center;justify-content:center;min-height:0}
-    .video-wrapper video{max-width:100%;max-height:100%;display:block;object-fit:contain}
+    /* ── Left Panel: Transcript ── */
+    .panel-left{grid-row:1/2;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--bg-main);overflow:hidden}
+    .panel-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    .panel-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim)}
+    .panel-body{flex:1;overflow-y:auto;padding:8px}
+    .panel-body::-webkit-scrollbar{width:4px}
+    .panel-body::-webkit-scrollbar-track{background:transparent}
+    .panel-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+    .panel-body::-webkit-scrollbar-thumb:hover{background:var(--border-hover)}
 
-    /* ── Subtitle Overlay ── */
-    .subtitle-overlay{position:absolute;left:0;right:0;pointer-events:none;display:flex;justify-content:center;padding:0 20px;z-index:5}
-    .subtitle-overlay.pos-top{top:40px;align-items:flex-start}
+    /* Transcript segments */
+    .transcript-segment{padding:8px 10px;border-radius:6px;cursor:pointer;transition:all .15s;margin-bottom:2px;position:relative;border-left:2px solid transparent}
+    .transcript-segment:hover{background:rgba(56,189,248,0.04)}
+    .transcript-segment.active{background:rgba(56,189,248,0.08);border-left-color:var(--accent-blue)}
+    .transcript-time{font-family:'JetBrains Mono';font-size:9px;color:var(--text-dim);margin-bottom:3px;display:flex;align-items:center;gap:6px}
+    .transcript-text{font-size:12px;color:var(--text-secondary);line-height:1.5;outline:none}
+    .transcript-text[contenteditable=true]{border:1px solid var(--border);border-radius:4px;padding:4px 6px;background:rgba(17,24,39,0.5)}
+    .transcript-text[contenteditable=true]:focus{border-color:var(--accent-blue)}
+    .edited-badge{display:none;font-size:8px;background:rgba(251,191,36,0.12);color:var(--warning);padding:1px 5px;border-radius:3px}
+    .edited-badge.visible{display:inline}
+    .transcript-edit-btn{position:absolute;top:8px;right:6px;background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:12px;opacity:0;transition:opacity .2s}
+    .transcript-segment:hover .transcript-edit-btn{opacity:1}
+
+    /* ── Center Panel: Canvas ── */
+    .panel-center{grid-row:1/2;display:flex;flex-direction:column;background:var(--bg-deep);position:relative;overflow:hidden}
+    .canvas-area{flex:1;display:flex;align-items:center;justify-content:center;position:relative;min-height:0;padding:12px}
+    .canvas-frame{position:relative;background:#000;border-radius:8px;overflow:hidden;box-shadow:0 0 40px rgba(0,0,0,0.5);transition:all .3s}
+    .canvas-frame video{width:100%;height:100%;display:block;object-fit:contain}
+
+    /* Format presets */
+    .canvas-frame.format-16-9{aspect-ratio:16/9;max-width:100%;max-height:100%}
+    .canvas-frame.format-9-16{aspect-ratio:9/16;max-height:100%;max-width:calc((100vh - 250px) * 9/16)}
+    .canvas-frame.format-1-1{aspect-ratio:1/1;max-height:100%;max-width:calc(100vh - 250px)}
+    .canvas-frame.format-4-5{aspect-ratio:4/5;max-height:100%;max-width:calc((100vh - 250px) * 4/5)}
+
+    /* Format selector bar */
+    .format-bar{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;gap:4px;background:rgba(10,14,26,0.85);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:6px;padding:3px;z-index:10}
+    .format-btn{padding:4px 10px;font-size:10px;font-weight:600;color:var(--text-dim);cursor:pointer;border:none;background:none;border-radius:4px;transition:all .15s;font-family:'JetBrains Mono'}
+    .format-btn:hover{color:var(--text-secondary)}
+    .format-btn.active{background:rgba(56,189,248,0.15);color:var(--accent-blue)}
+
+    /* Subtitle Overlay */
+    .subtitle-overlay{position:absolute;left:0;right:0;pointer-events:none;display:flex;justify-content:center;padding:0 16px;z-index:5}
+    .subtitle-overlay.pos-top{top:32px;align-items:flex-start}
     .subtitle-overlay.pos-center{top:50%;transform:translateY(-50%);align-items:center}
-    .subtitle-overlay.pos-bottom,.subtitle-overlay.pos-center-bottom{bottom:60px;align-items:flex-end}
+    .subtitle-overlay.pos-bottom,.subtitle-overlay.pos-center-bottom{bottom:48px;align-items:flex-end}
     .subtitle-text{text-align:center;max-width:90%;line-height:1.3;white-space:pre-wrap;word-break:break-word}
     .subtitle-text.hidden{display:none}
-
-    /* ── Subtitle Animations ── */
     @keyframes subtitlePop{0%{transform:scale(0);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
     @keyframes subtitleFade{from{opacity:0}to{opacity:1}}
     .anim-pop{animation:subtitlePop .25s ease-out forwards}
     .anim-fade{animation:subtitleFade .3s ease-out forwards}
 
-    /* ── Video Controls ── */
-    .video-controls{display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(15,23,42,0.95);border-top:1px solid #1e293b}
-    .ctrl-btn{background:none;border:none;color:#e2e8f0;cursor:pointer;font-size:18px;padding:4px 8px;border-radius:4px;transition:background .2s}
-    .ctrl-btn:hover{background:rgba(255,255,255,0.1)}
-    .time-display{font-family:'JetBrains Mono';font-size:12px;color:#94a3b8;white-space:nowrap}
-    .speed-select{background:#1e293b;border:1px solid #334155;color:#e2e8f0;border-radius:4px;padding:4px 8px;font-size:12px;cursor:pointer}
+    /* Video Controls (below canvas) */
+    .video-controls{display:flex;align-items:center;gap:10px;padding:8px 16px;background:rgba(10,14,26,0.9);flex-shrink:0}
+    .ctrl-btn{background:none;border:none;color:var(--text-primary);cursor:pointer;font-size:16px;padding:4px 6px;border-radius:4px;transition:all .15s}
+    .ctrl-btn:hover{background:rgba(255,255,255,0.06)}
+    .time-display{font-family:'JetBrains Mono';font-size:11px;color:var(--text-dim);white-space:nowrap}
+    .volume-slider{-webkit-appearance:none;width:60px;height:3px;background:var(--border);border-radius:2px;outline:none;cursor:pointer}
+    .volume-slider::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;background:var(--text-secondary);border-radius:50%;cursor:pointer}
+    .speed-select{background:var(--bg-surface);border:1px solid var(--border);color:var(--text-secondary);border-radius:4px;padding:3px 6px;font-size:10px;cursor:pointer;font-family:'JetBrains Mono'}
 
-    /* ── Timeline ── */
-    .timeline{padding:8px 16px 12px;background:rgba(15,23,42,0.95);border-top:1px solid #1e293b}
-    .timeline-bar{position:relative;height:28px;background:#1e293b;border-radius:4px;cursor:pointer;user-select:none}
-    .timeline-progress{position:absolute;top:0;left:0;height:100%;background:rgba(56,189,248,0.25);border-radius:4px;pointer-events:none}
-    .timeline-playhead{position:absolute;top:-2px;width:3px;height:32px;background:#38bdf8;border-radius:2px;pointer-events:none;z-index:3;transition:left 0.05s linear}
-    .trim-handle{position:absolute;top:0;width:8px;height:100%;cursor:ew-resize;z-index:4;border-radius:2px}
-    .trim-handle-in{background:rgba(52,211,153,0.8);left:0}
-    .trim-handle-out{background:rgba(239,68,68,0.8);right:0}
-    .trim-region{position:absolute;top:0;height:100%;background:rgba(56,189,248,0.1);border-left:2px solid #34d399;border-right:2px solid #ef4444;pointer-events:none;z-index:2}
-    .timeline-info{display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:#64748b;font-family:'JetBrains Mono'}
+    /* ── Right Panel: Tools ── */
+    .panel-right{grid-row:1/2;border-left:1px solid var(--border);display:flex;flex-direction:column;background:var(--bg-main);overflow:hidden}
+    .tools-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto}
+    .tools-tabs::-webkit-scrollbar{height:0}
+    .tool-tab{padding:10px 12px;text-align:center;font-size:10px;font-weight:600;color:var(--text-dim);cursor:pointer;transition:all .15s;border-bottom:2px solid transparent;white-space:nowrap;letter-spacing:0.3px;text-transform:uppercase}
+    .tool-tab:hover{color:var(--text-secondary)}
+    .tool-tab.active{color:var(--accent-blue);border-bottom-color:var(--accent-blue)}
+    .tools-body{flex:1;overflow-y:auto;padding:12px}
+    .tools-body::-webkit-scrollbar{width:4px}
+    .tools-body::-webkit-scrollbar-track{background:transparent}
+    .tools-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+    .tool-content{display:none}
+    .tool-content.active{display:block}
 
-    /* ── Sidebar ── */
-    .sidebar{display:flex;flex-direction:column;border-left:1px solid #1e293b;background:#0a0e1a;overflow:hidden}
-    .sidebar-tabs{display:flex;border-bottom:1px solid #1e293b;flex-shrink:0}
-    .sidebar-tab{flex:1;padding:14px;text-align:center;font-size:13px;font-weight:600;color:#64748b;cursor:pointer;transition:all .2s;border-bottom:2px solid transparent}
-    .sidebar-tab:hover{color:#e2e8f0}
-    .sidebar-tab.active{color:#38bdf8;border-bottom-color:#38bdf8}
-    .sidebar-content{flex:1;overflow-y:auto;padding:16px}
-    .tab-content{display:none}
-    .tab-content.active{display:block}
-
-    /* ── Transcript List ── */
-    .transcript-segment{padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;margin-bottom:4px;position:relative}
-    .transcript-segment:hover{background:rgba(56,189,248,0.06)}
-    .transcript-segment.active{background:rgba(56,189,248,0.1);border-left:3px solid #38bdf8}
-    .transcript-time{font-family:'JetBrains Mono';font-size:10px;color:#475569;margin-bottom:4px}
-    .transcript-text{font-size:13px;color:#cbd5e1;line-height:1.5;outline:none}
-    .transcript-text[contenteditable=true]{border:1px solid #334155;border-radius:4px;padding:4px 6px;background:rgba(30,41,59,0.5)}
-    .transcript-text[contenteditable=true]:focus{border-color:#38bdf8}
-    .edited-badge{display:none;font-size:9px;background:rgba(251,191,36,0.15);color:#fbbf24;padding:2px 6px;border-radius:4px;margin-left:8px}
-    .edited-badge.visible{display:inline}
-    .transcript-edit-btn{position:absolute;top:10px;right:8px;background:none;border:none;color:#475569;cursor:pointer;font-size:14px;opacity:0;transition:opacity .2s}
-    .transcript-segment:hover .transcript-edit-btn{opacity:1}
-
-    /* ── Presets Gallery ── */
-    .presets-filter{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
-    .presets-filter-btn{background:#1e293b;border:1px solid #334155;color:#94a3b8;padding:6px 14px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s}
-    .presets-filter-btn:hover{color:#e2e8f0}
-    .presets-filter-btn.active{background:rgba(56,189,248,0.15);border-color:#38bdf8;color:#38bdf8}
-    .preset-card{background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;margin-bottom:8px}
-    .preset-card:hover{border-color:#38bdf8;background:rgba(56,189,248,0.04)}
-    .preset-card.active{border-color:#34d399;box-shadow:0 0 12px rgba(52,211,153,0.15)}
-    .preset-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-    .preset-card-name{font-size:13px;font-weight:600}
-    .preset-card-expert{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600}
-    .expert-iristhaize{background:rgba(244,114,182,0.12);color:#f472b6}
-    .expert-caio-roleta{background:rgba(251,191,36,0.12);color:#fbbf24}
-    .expert-shared{background:rgba(148,163,184,0.12);color:#94a3b8}
-    .preset-preview{border-radius:6px;padding:12px;text-align:center;min-height:48px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    /* Presets Gallery */
+    .presets-filter{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+    .presets-filter-btn{background:var(--bg-surface);border:1px solid var(--border);color:var(--text-dim);padding:4px 10px;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;transition:all .15s}
+    .presets-filter-btn:hover{color:var(--text-secondary)}
+    .presets-filter-btn.active{background:rgba(56,189,248,0.12);border-color:var(--accent-blue);color:var(--accent-blue)}
+    .preset-card{background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;padding:10px;cursor:pointer;transition:all .15s;margin-bottom:6px}
+    .preset-card:hover{border-color:var(--accent-blue);background:rgba(56,189,248,0.03)}
+    .preset-card.active{border-color:var(--accent-green);box-shadow:0 0 12px rgba(52,211,153,0.1)}
+    .preset-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+    .preset-card-name{font-size:11px;font-weight:600}
+    .preset-card-expert{font-size:9px;padding:2px 6px;border-radius:3px;font-weight:600}
+    .expert-iristhaize{background:rgba(244,114,182,0.1);color:#f472b6}
+    .expert-caio-roleta{background:rgba(251,191,36,0.1);color:var(--warning)}
+    .expert-shared{background:rgba(148,163,184,0.1);color:var(--text-secondary)}
+    .preset-preview{border-radius:6px;padding:10px;text-align:center;min-height:40px;display:flex;align-items:center;justify-content:center;overflow:hidden}
     .preset-preview-text{line-height:1.2}
 
-    /* ── Action Bar ── */
-    .action-bar{grid-column:1 / -1;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:rgba(15,23,42,0.95);border-top:1px solid #1e293b}
-    .action-bar-left{display:flex;gap:12px;align-items:center}
-    .action-bar-right{display:flex;gap:12px;align-items:center}
-    .export-progress{display:none;align-items:center;gap:12px}
-    .export-progress.visible{display:flex}
-    .export-progress-bar{width:200px;height:6px;background:#1e293b;border-radius:3px;overflow:hidden}
-    .export-progress-fill{height:100%;background:linear-gradient(90deg,#34d399,#38bdf8);border-radius:3px;width:0%;transition:width .3s}
-    .export-progress-label{font-size:12px;color:#94a3b8;font-family:'JetBrains Mono'}
+    /* Tool placeholder sections */
+    .tool-section{margin-bottom:16px}
+    .tool-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:8px}
+    .tool-placeholder{background:var(--bg-panel);border:1px dashed var(--border);border-radius:8px;padding:24px 16px;text-align:center;color:var(--text-dim);font-size:11px}
+    .tool-placeholder-icon{font-size:24px;margin-bottom:6px;opacity:0.4}
 
-    /* ── Skeleton loading ── */
-    .skeleton{background:linear-gradient(90deg,#1e293b 25%,#334155 50%,#1e293b 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px}
+    /* ── Timeline (bottom) ── */
+    .timeline-panel{grid-column:1/-1;background:var(--bg-panel);border-top:1px solid var(--border);display:flex;flex-direction:column;min-height:120px;max-height:180px}
+    .timeline-toolbar{display:flex;align-items:center;justify-content:space-between;padding:6px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+    .timeline-toolbar-left{display:flex;align-items:center;gap:8px}
+    .timeline-toolbar-right{display:flex;align-items:center;gap:8px}
+    .timeline-zoom{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text-dim)}
+    .timeline-zoom input{width:60px;-webkit-appearance:none;height:3px;background:var(--border);border-radius:2px;outline:none;cursor:pointer}
+    .timeline-zoom input::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;background:var(--accent-blue);border-radius:50%;cursor:pointer}
+
+    .timeline-tracks{flex:1;position:relative;overflow-x:auto;overflow-y:hidden;padding:8px 16px}
+    .timeline-tracks::-webkit-scrollbar{height:6px}
+    .timeline-tracks::-webkit-scrollbar-track{background:transparent}
+    .timeline-tracks::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+    /* Track rows */
+    .track{position:relative;height:28px;margin-bottom:4px;display:flex;align-items:center}
+    .track-label{width:60px;font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;flex-shrink:0}
+    .track-content{flex:1;position:relative;height:100%;background:var(--bg-surface);border-radius:4px;overflow:hidden}
+
+    /* Video track */
+    .track-video .track-content{background:linear-gradient(90deg,rgba(56,189,248,0.08),rgba(52,211,153,0.08))}
+    .track-clip{position:absolute;top:2px;bottom:2px;background:rgba(56,189,248,0.2);border:1px solid rgba(56,189,248,0.3);border-radius:3px;display:flex;align-items:center;padding:0 6px;font-size:9px;color:var(--text-secondary);overflow:hidden;white-space:nowrap}
+
+    /* Audio waveform track */
+    .track-audio .track-content{background:var(--bg-surface)}
+    .waveform-canvas{width:100%;height:100%;display:block}
+
+    /* Subtitle track */
+    .track-subtitle .track-content{background:rgba(52,211,153,0.04)}
+    .subtitle-block{position:absolute;top:2px;bottom:2px;background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.25);border-radius:3px;font-size:8px;color:var(--accent-green);overflow:hidden;padding:0 4px;display:flex;align-items:center;white-space:nowrap;cursor:pointer}
+    .subtitle-block:hover{background:rgba(52,211,153,0.25)}
+
+    /* Timeline ruler */
+    .timeline-ruler{position:relative;height:18px;margin-bottom:4px;display:flex;align-items:flex-end}
+    .timeline-ruler-track{flex:1;margin-left:60px;position:relative;height:100%}
+    .ruler-mark{position:absolute;bottom:0;font-size:8px;color:var(--text-dim);font-family:'JetBrains Mono'}
+    .ruler-mark::after{content:'';position:absolute;bottom:12px;left:0;width:1px;height:4px;background:var(--border)}
+
+    /* Playhead on timeline */
+    .timeline-playhead-line{position:absolute;top:0;bottom:0;width:1px;background:var(--accent-blue);z-index:10;pointer-events:none;margin-left:60px}
+    .timeline-playhead-head{position:absolute;top:-2px;left:-4px;width:9px;height:9px;background:var(--accent-blue);clip-path:polygon(0 0,100% 0,50% 100%)}
+
+    /* Trim region on timeline */
+    .timeline-trim-region{position:absolute;top:0;bottom:0;background:rgba(56,189,248,0.06);border-left:2px solid var(--accent-green);border-right:2px solid var(--danger);z-index:5;pointer-events:none;margin-left:60px}
+    .trim-handle{position:absolute;top:0;bottom:0;width:8px;cursor:ew-resize;z-index:12}
+    .trim-handle-in{left:-4px;background:linear-gradient(180deg,var(--accent-green),transparent)}
+    .trim-handle-out{right:-4px;background:linear-gradient(180deg,var(--danger),transparent)}
+
+    /* ── Action Bar ── */
+    .action-bar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:8px 20px;background:rgba(10,14,26,0.97);border-top:1px solid var(--border)}
+    .action-bar-left{display:flex;gap:10px;align-items:center}
+    .action-bar-right{display:flex;gap:10px;align-items:center}
+    .export-progress{display:none;align-items:center;gap:10px}
+    .export-progress.visible{display:flex}
+    .export-progress-bar{width:160px;height:4px;background:var(--bg-surface);border-radius:2px;overflow:hidden}
+    .export-progress-fill{height:100%;background:var(--gradient);border-radius:2px;width:0%;transition:width .3s}
+    .export-progress-label{font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono'}
+    .edit-id-label{font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono'}
+
+    /* ── Skeleton ── */
+    .skeleton{background:linear-gradient(90deg,var(--bg-surface) 25%,var(--border) 50%,var(--bg-surface) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px}
     @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
+    /* ── Scrollbar global ── */
+    ::-webkit-scrollbar{width:4px;height:4px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
     /* ── Responsive ── */
+    @media(max-width:1200px){
+      .editor.visible{grid-template-columns:240px 1fr 260px}
+    }
     @media(max-width:1024px){
-      .editor.visible{grid-template-columns:1fr 320px}
+      .editor.visible{grid-template-columns:1fr 260px;grid-template-rows:1fr auto auto}
+      .panel-left{display:none}
     }
   </style>
 </head>
@@ -173,24 +269,23 @@
   <div class="header">
     <div class="header-left">
       <a href="index.html" class="back-btn" title="Voltar">&larr;</a>
-      <div>
-        <h1>EDITOR GROWTH</h1>
-        <div class="breadcrumb">
-          <a href="index.html">Centro de Comando</a>
-          <span class="sep">&rsaquo;</span>
-          <a href="index.html" onclick="event.preventDefault(); history.back();">Audiovisual</a>
-          <span class="sep">&rsaquo;</span>
-          <span style="color:#e2e8f0">Editor Growth</span>
-        </div>
+      <h1>EDITOR GROWTH</h1>
+    </div>
+    <div class="header-center">
+      <div class="mode-toggle">
+        <button class="mode-btn active" data-mode="auto" onclick="switchMode('auto')">AI AUTO</button>
+        <button class="mode-btn" data-mode="manual" onclick="switchMode('manual')">MANUAL</button>
       </div>
     </div>
-    <div id="headerStatus" style="font-size:12px;color:#64748b;font-family:'JetBrains Mono'"></div>
+    <div class="header-right">
+      <span class="header-status" id="headerStatus"></span>
+    </div>
   </div>
 
-  <!-- Toast Container -->
+  <!-- Toast -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- ═══ Empty State ═══ -->
+  <!-- Empty State -->
   <div class="empty-state" id="emptyState">
     <div class="dropzone" id="dropzone">
       <div class="dropzone-icon">&#127909;</div>
@@ -199,79 +294,182 @@
       <input type="file" id="fileInput" accept="video/*">
       <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">SELECIONAR ARQUIVO</button>
     </div>
-
     <div class="empty-divider"><hr><span>ou</span><hr></div>
-
     <button class="btn btn-secondary" onclick="loadEditsList()" id="openExistingBtn">ABRIR EDIT EXISTENTE</button>
-
-    <div class="edits-list" id="editsList" style="display:none;margin-top:24px">
+    <div class="edits-list" id="editsList" style="display:none;margin-top:20px">
       <div class="edits-list-title">Edits Existentes</div>
       <div id="editsListContent"></div>
     </div>
   </div>
 
-  <!-- ═══ Transcribing State ═══ -->
+  <!-- Transcribing State -->
   <div class="transcribing-state" id="transcribingState">
     <div class="transcribing-spinner"></div>
     <div class="transcribing-label">Transcrevendo...</div>
     <div class="progress-bar"><div class="progress-bar-fill" id="transcribeProgress"></div></div>
-    <div style="font-size:12px;color:#64748b;margin-top:12px" id="transcribeStatus">Aguardando processamento</div>
+    <div style="font-size:11px;color:var(--text-dim);margin-top:10px" id="transcribeStatus">Aguardando processamento</div>
   </div>
 
-  <!-- ═══ Editor ═══ -->
+  <!-- ═══ Editor (4-zone NLE) ═══ -->
   <div class="editor" id="editorView">
-    <!-- Player Panel -->
-    <div class="player-panel">
-      <div class="video-wrapper" id="videoWrapper">
-        <video id="videoPlayer" preload="metadata"></video>
-        <!-- Subtitle Overlay -->
-        <div class="subtitle-overlay pos-center-bottom" id="subtitleOverlay">
-          <div class="subtitle-text hidden" id="subtitleText"></div>
+
+    <!-- LEFT: Transcript Panel -->
+    <div class="panel-left">
+      <div class="panel-header">
+        <span class="panel-title">Transcricao</span>
+        <button class="btn-ghost" onclick="scrollTranscriptToActive()" title="Ir para posicao atual" style="font-size:12px">&#9673;</button>
+      </div>
+      <div class="panel-body" id="transcriptPanel">
+        <div id="transcriptList"></div>
+      </div>
+    </div>
+
+    <!-- CENTER: Canvas -->
+    <div class="panel-center">
+      <!-- Format selector -->
+      <div class="format-bar">
+        <button class="format-btn active" data-format="16-9" onclick="setFormat('16-9',this)">16:9</button>
+        <button class="format-btn" data-format="9-16" onclick="setFormat('9-16',this)">9:16</button>
+        <button class="format-btn" data-format="1-1" onclick="setFormat('1-1',this)">1:1</button>
+        <button class="format-btn" data-format="4-5" onclick="setFormat('4-5',this)">4:5</button>
+      </div>
+
+      <div class="canvas-area">
+        <div class="canvas-frame format-16-9" id="canvasFrame">
+          <video id="videoPlayer" preload="metadata"></video>
+          <!-- Subtitle Overlay -->
+          <div class="subtitle-overlay pos-center-bottom" id="subtitleOverlay">
+            <div class="subtitle-text hidden" id="subtitleText"></div>
+          </div>
         </div>
       </div>
+
       <!-- Video Controls -->
       <div class="video-controls">
         <button class="ctrl-btn" id="playBtn" title="Play/Pause">&#9654;</button>
+        <button class="ctrl-btn" id="skipBackBtn" title="-5s">&#9194;</button>
+        <button class="ctrl-btn" id="skipFwdBtn" title="+5s">&#9193;</button>
         <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
         <div style="flex:1"></div>
+        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.05" value="1" title="Volume">
         <select class="speed-select" id="speedSelect">
           <option value="0.5">0.5x</option>
+          <option value="0.75">0.75x</option>
           <option value="1" selected>1x</option>
+          <option value="1.25">1.25x</option>
           <option value="1.5">1.5x</option>
           <option value="2">2x</option>
         </select>
+        <button class="btn-icon" id="fullscreenBtn" title="Tela cheia">&#9974;</button>
       </div>
-      <!-- Timeline -->
-      <div class="timeline">
-        <div class="timeline-bar" id="timelineBar">
-          <div class="trim-region" id="trimRegion"></div>
-          <div class="timeline-progress" id="timelineProgress"></div>
-          <div class="timeline-playhead" id="timelinePlayhead"></div>
-          <div class="trim-handle trim-handle-in" id="trimIn" title="Trim In"></div>
-          <div class="trim-handle trim-handle-out" id="trimOut" title="Trim Out"></div>
+    </div>
+
+    <!-- RIGHT: Tools Panel -->
+    <div class="panel-right">
+      <div class="tools-tabs">
+        <div class="tool-tab active" data-tool="legendas" onclick="switchTool('legendas')">Legendas</div>
+        <div class="tool-tab" data-tool="texto" onclick="switchTool('texto')">Texto</div>
+        <div class="tool-tab" data-tool="broll" onclick="switchTool('broll')">B-Roll</div>
+        <div class="tool-tab" data-tool="transicoes" onclick="switchTool('transicoes')">Efeitos</div>
+        <div class="tool-tab" data-tool="branding" onclick="switchTool('branding')">Brand</div>
+      </div>
+      <div class="tools-body">
+        <!-- Legendas (Presets) -->
+        <div class="tool-content active" id="toolLegendasContent">
+          <div class="presets-filter" id="presetsFilter"></div>
+          <div id="presetsList"></div>
         </div>
-        <div class="timeline-info">
-          <span>IN: <span id="trimInLabel">0:00.0</span></span>
-          <span>OUT: <span id="trimOutLabel">--</span></span>
+        <!-- Texto -->
+        <div class="tool-content" id="toolTextoContent">
+          <div class="tool-section">
+            <div class="tool-section-title">Adicionar Texto</div>
+            <div class="tool-placeholder">
+              <div class="tool-placeholder-icon">T</div>
+              Textos customizados, titulos e call-to-actions sobre o video
+            </div>
+          </div>
+        </div>
+        <!-- B-Roll -->
+        <div class="tool-content" id="toolBrollContent">
+          <div class="tool-section">
+            <div class="tool-section-title">B-Roll Library</div>
+            <div class="tool-placeholder">
+              <div class="tool-placeholder-icon">&#127902;</div>
+              Insira clips complementares em cima do video principal
+            </div>
+          </div>
+        </div>
+        <!-- Transicoes -->
+        <div class="tool-content" id="toolTransicoesContent">
+          <div class="tool-section">
+            <div class="tool-section-title">Transicoes &amp; Efeitos</div>
+            <div class="tool-placeholder">
+              <div class="tool-placeholder-icon">&#10024;</div>
+              Zoom, fade, corte seco e transicoes entre segmentos
+            </div>
+          </div>
+        </div>
+        <!-- Branding -->
+        <div class="tool-content" id="toolBrandingContent">
+          <div class="tool-section">
+            <div class="tool-section-title">Marca &amp; Identidade</div>
+            <div class="tool-placeholder">
+              <div class="tool-placeholder-icon">&#127912;</div>
+              Logo, cores, watermark e elementos da marca
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <div class="sidebar-tabs">
-        <div class="sidebar-tab active" data-tab="legendas" onclick="switchTab('legendas')">Legendas</div>
-        <div class="sidebar-tab" data-tab="presets" onclick="switchTab('presets')">Presets</div>
-      </div>
-      <div class="sidebar-content">
-        <!-- Tab: Legendas -->
-        <div class="tab-content active" id="tabLegendasContent">
-          <div id="transcriptList"></div>
+    <!-- BOTTOM: Timeline -->
+    <div class="timeline-panel" id="timelinePanel">
+      <div class="timeline-toolbar">
+        <div class="timeline-toolbar-left">
+          <span style="font-size:10px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px">Timeline</span>
+          <span style="font-size:9px;color:var(--text-dim);font-family:'JetBrains Mono'" id="trimInfoLabel">IN: 0:00.0 &mdash; OUT: --</span>
         </div>
-        <!-- Tab: Presets -->
-        <div class="tab-content" id="tabPresetsContent">
-          <div class="presets-filter" id="presetsFilter"></div>
-          <div id="presetsList"></div>
+        <div class="timeline-toolbar-right">
+          <div class="timeline-zoom">
+            <span>-</span>
+            <input type="range" id="zoomSlider" min="0.5" max="4" step="0.1" value="1">
+            <span>+</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-tracks" id="timelineTracks">
+        <!-- Ruler -->
+        <div class="timeline-ruler">
+          <div class="track-label"></div>
+          <div class="timeline-ruler-track" id="timelineRuler"></div>
+        </div>
+        <!-- Video Track -->
+        <div class="track track-video">
+          <div class="track-label">Video</div>
+          <div class="track-content" id="videoTrack">
+            <div class="track-clip" id="videoClip" style="left:0;width:100%">Video</div>
+          </div>
+        </div>
+        <!-- Audio Track -->
+        <div class="track track-audio">
+          <div class="track-label">Audio</div>
+          <div class="track-content" id="audioTrack">
+            <canvas class="waveform-canvas" id="waveformCanvas"></canvas>
+          </div>
+        </div>
+        <!-- Subtitle Track -->
+        <div class="track track-subtitle">
+          <div class="track-label">Legendas</div>
+          <div class="track-content" id="subtitleTrack"></div>
+        </div>
+        <!-- Playhead line -->
+        <div class="timeline-playhead-line" id="tlPlayhead" style="left:60px">
+          <div class="timeline-playhead-head"></div>
+        </div>
+        <!-- Trim region -->
+        <div class="timeline-trim-region" id="tlTrimRegion" style="display:none">
+          <div class="trim-handle trim-handle-in" id="tlTrimIn"></div>
+          <div class="trim-handle trim-handle-out" id="tlTrimOut"></div>
         </div>
       </div>
     </div>
@@ -279,8 +477,8 @@
     <!-- Action Bar -->
     <div class="action-bar">
       <div class="action-bar-left">
-        <button class="btn btn-secondary" onclick="resetToEmpty()">Novo Edit</button>
-        <span style="font-size:12px;color:#475569;font-family:'JetBrains Mono'" id="editIdLabel"></span>
+        <button class="btn btn-secondary" onclick="resetToEmpty()" style="font-size:11px">Novo Edit</button>
+        <span class="edit-id-label" id="editIdLabel"></span>
       </div>
       <div class="action-bar-right">
         <div class="export-progress" id="exportProgress">
@@ -294,12 +492,15 @@
 
   <script>
     /* ═══════════════════════════════════════════════════════════
-       Editor Growth — Vanilla JS Controller
-       Story: EG-4
+       Editor Growth v2 — NLE-style 4-zone editor
+       Story: EG-4 (evolution)
        ═══════════════════════════════════════════════════════════ */
 
     // ── Configuration ──
-    const API_BASE = window.location.origin;
+    // API server runs on port 3456 bound to 127.0.0.1
+    const API_BASE = window.location.port === '3456'
+      ? window.location.origin
+      : 'http://127.0.0.1:3456';
     const AUTH_HEADER = () => ({
       'Authorization': 'Bearer ' + (sessionStorage.getItem('aios_token') || '')
     });
@@ -310,6 +511,9 @@
     let activePreset = null;
     let editedSegments = new Set();
     let rafId = null;
+    let currentMode = 'auto'; // 'auto' | 'manual'
+    let currentFormat = '16-9';
+    let timelineZoom = 1;
 
     // ── Helpers ──
     function formatTime(sec) {
@@ -328,21 +532,27 @@
 
     function showToast(msg, type) {
       type = type || 'info';
-      var container = document.getElementById('toastContainer');
-      var t = document.createElement('div');
+      const container = document.getElementById('toastContainer');
+      const t = document.createElement('div');
       t.className = 'toast toast-' + type;
       t.textContent = msg;
       container.appendChild(t);
-      setTimeout(function() { t.style.opacity = '0'; setTimeout(function() { t.remove(); }, 300); }, 3000);
+      setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
     }
 
     async function apiFetch(path, options) {
       options = options || {};
       options.headers = Object.assign({}, AUTH_HEADER(), options.headers || {});
       try {
-        var res = await fetch(API_BASE + path, options);
+        const res = await fetch(API_BASE + path, options);
         if (!res.ok) {
-          var errBody = '';
+          let errBody = '';
           try { errBody = await res.text(); } catch(e) {}
           throw new Error('HTTP ' + res.status + (errBody ? ': ' + errBody : ''));
         }
@@ -351,6 +561,23 @@
         showToast(err.message, 'error');
         throw err;
       }
+    }
+
+    // ── Mode Toggle ──
+    function switchMode(mode) {
+      currentMode = mode;
+      document.querySelectorAll('.mode-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.mode === mode);
+      });
+    }
+
+    // ── Format Selector ──
+    function setFormat(format, btn) {
+      currentFormat = format;
+      document.querySelectorAll('.format-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const frame = document.getElementById('canvasFrame');
+      frame.className = 'canvas-frame format-' + format;
     }
 
     // ── View Switching ──
@@ -372,7 +599,7 @@
       activePreset = null;
       editedSegments.clear();
       if (rafId) cancelAnimationFrame(rafId);
-      var video = document.getElementById('videoPlayer');
+      const video = document.getElementById('videoPlayer');
       video.pause();
       video.removeAttribute('src');
       video.load();
@@ -383,44 +610,34 @@
 
     // ── Drag & Drop + File Upload ──
     (function initDropzone() {
-      var dz = document.getElementById('dropzone');
-      var fi = document.getElementById('fileInput');
-
-      dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.classList.add('dragover'); });
-      dz.addEventListener('dragleave', function() { dz.classList.remove('dragover'); });
-      dz.addEventListener('drop', function(e) {
+      const dz = document.getElementById('dropzone');
+      const fi = document.getElementById('fileInput');
+      dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+      dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+      dz.addEventListener('drop', e => {
         e.preventDefault();
         dz.classList.remove('dragover');
-        var files = e.dataTransfer.files;
+        const files = e.dataTransfer.files;
         if (files.length > 0 && files[0].type.startsWith('video/')) {
           uploadVideo(files[0]);
         } else {
           showToast('Por favor, selecione um arquivo de video.', 'error');
         }
       });
-
-      fi.addEventListener('change', function() {
-        if (fi.files.length > 0) uploadVideo(fi.files[0]);
-      });
+      fi.addEventListener('change', () => { if (fi.files.length > 0) uploadVideo(fi.files[0]); });
     })();
 
     async function uploadVideo(file) {
       showView('transcribing');
       document.getElementById('transcribeStatus').textContent = 'Enviando ' + file.name + '...';
       document.getElementById('transcribeProgress').style.width = '10%';
-
-      var formData = new FormData();
-      formData.append('source', file);
+      const formData = new FormData();
+      formData.append('video', file);
       formData.append('projectId', 'standalone');
-
       try {
-        var res = await fetch(API_BASE + '/api/edit/create', {
-          method: 'POST',
-          headers: AUTH_HEADER(),
-          body: formData
-        });
+        const res = await fetch(API_BASE + '/api/edit/create', { method: 'POST', body: formData });
         if (!res.ok) throw new Error('Upload falhou: HTTP ' + res.status);
-        var edit = await res.json();
+        const edit = await res.json();
         document.getElementById('transcribeProgress').style.width = '40%';
         document.getElementById('transcribeStatus').textContent = 'Processando transcricao...';
         pollForTranscript(edit.editId);
@@ -431,26 +648,25 @@
     }
 
     async function pollForTranscript(editId) {
-      var attempts = 0;
-      var maxAttempts = 120;
-      var interval = setInterval(async function() {
+      let attempts = 0;
+      const maxAttempts = 120;
+      const interval = setInterval(async () => {
         attempts++;
-        var pct = Math.min(40 + (attempts / maxAttempts) * 55, 95);
+        const pct = Math.min(40 + (attempts / maxAttempts) * 55, 95);
         document.getElementById('transcribeProgress').style.width = pct + '%';
-
         try {
-          var res = await apiFetch('/api/edit/' + editId);
-          var edit = await res.json();
+          const res = await apiFetch('/api/edit/' + editId);
+          const data = await res.json();
+          const edit = data.edit || data;
           if (edit.transcript && edit.transcript.length > 0) {
             clearInterval(interval);
             document.getElementById('transcribeProgress').style.width = '100%';
             document.getElementById('transcribeStatus').textContent = 'Transcricao concluida!';
-            setTimeout(function() { openEdit(edit); }, 500);
+            setTimeout(() => openEdit(edit), 500);
             return;
           }
           if (attempts >= maxAttempts) {
             clearInterval(interval);
-            // Open anyway with empty transcript
             openEdit(edit);
           }
         } catch (err) {
@@ -463,35 +679,33 @@
 
     // ── Load Edits List ──
     async function loadEditsList() {
-      var listEl = document.getElementById('editsList');
-      var content = document.getElementById('editsListContent');
+      const listEl = document.getElementById('editsList');
+      const content = document.getElementById('editsListContent');
       listEl.style.display = 'block';
-      content.innerHTML = '<div class="skeleton" style="height:60px;margin-bottom:8px"></div><div class="skeleton" style="height:60px;margin-bottom:8px"></div>';
-
+      content.innerHTML = '<div class="skeleton" style="height:50px;margin-bottom:6px"></div><div class="skeleton" style="height:50px"></div>';
       try {
-        var res = await apiFetch('/api/edit/list');
-        var edits = await res.json();
+        const res = await apiFetch('/api/edit/list');
+        const data = await res.json();
+        const edits = data.edits || data;
         if (!edits || edits.length === 0) {
-          content.innerHTML = '<div style="text-align:center;color:#475569;padding:24px;">Nenhum edit encontrado.</div>';
+          content.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:20px;font-size:12px">Nenhum edit encontrado.</div>';
           return;
         }
         content.innerHTML = '';
-        edits.forEach(function(edit) {
-          var item = document.createElement('div');
+        edits.forEach(edit => {
+          const item = document.createElement('div');
           item.className = 'edit-item';
-          item.onclick = function() { loadExistingEdit(edit.editId); };
-          var source = edit.sourceVideo || 'Video';
-          if (source.length > 40) source = '...' + source.slice(-37);
+          item.onclick = () => loadExistingEdit(edit.editId);
+          let source = edit.sourceVideo || 'Video';
+          if (source.length > 35) source = '...' + source.slice(-32);
           item.innerHTML =
-            '<div class="edit-item-info">' +
-              '<div class="edit-item-name">' + (edit.presetId || source) + '</div>' +
-              '<div class="edit-item-meta">' + edit.editId.slice(0, 8) + ' &middot; ' + edit.status + ' &middot; ' + new Date(edit.createdAt).toLocaleDateString('pt-BR') + '</div>' +
-            '</div>' +
+            '<div><div class="edit-item-name">' + (edit.presetId || source) + '</div>' +
+            '<div class="edit-item-meta">' + edit.editId.slice(0, 8) + ' &middot; ' + edit.status + ' &middot; ' + new Date(edit.createdAt).toLocaleDateString('pt-BR') + '</div></div>' +
             '<div class="edit-item-arrow">&rarr;</div>';
           content.appendChild(item);
         });
       } catch (err) {
-        content.innerHTML = '<div style="text-align:center;color:#ef4444;padding:24px;">Erro ao carregar edits.</div>';
+        content.innerHTML = '<div style="text-align:center;color:var(--danger);padding:20px;font-size:12px">Erro ao carregar edits.</div>';
       }
     }
 
@@ -499,12 +713,12 @@
       showView('transcribing');
       document.getElementById('transcribeStatus').textContent = 'Carregando edit...';
       document.getElementById('transcribeProgress').style.width = '50%';
-
       try {
-        var res = await apiFetch('/api/edit/' + editId);
-        var edit = await res.json();
+        const res = await apiFetch('/api/edit/' + editId);
+        const data = await res.json();
+        const edit = data.edit || data;
         document.getElementById('transcribeProgress').style.width = '100%';
-        setTimeout(function() { openEdit(edit); }, 300);
+        setTimeout(() => openEdit(edit), 300);
       } catch (err) {
         showToast('Erro ao carregar edit', 'error');
         showView('empty');
@@ -517,137 +731,166 @@
       editedSegments.clear();
       showView('editor');
 
-      // Set video source
-      var video = document.getElementById('videoPlayer');
-      var source = edit.sourceVideo;
-      // For standalone uploads, the source is an absolute path — use API proxy if needed
-      // If it starts with http, use directly; otherwise try relative or API
+      const video = document.getElementById('videoPlayer');
+      const source = edit.sourceVideo;
       if (source && (source.startsWith('http://') || source.startsWith('https://'))) {
         video.src = source;
       } else {
-        // Attempt to use a URL-friendly version (server should serve the file)
         video.src = API_BASE + '/api/edit/' + edit.editId + '/source';
       }
-
       video.load();
+
       document.getElementById('editIdLabel').textContent = 'ID: ' + edit.editId.slice(0, 8);
       document.getElementById('headerStatus').textContent = edit.status.toUpperCase();
 
-      // Load presets
       loadPresets();
-
-      // If edit has a preset, apply it
       if (edit.presetId) {
-        // Wait for presets to load, then apply
-        setTimeout(function() { selectPreset(edit.presetId); }, 500);
+        setTimeout(() => selectPreset(edit.presetId), 500);
       }
 
-      // Render transcript
       renderTranscript(edit.transcript || []);
-
-      // Setup trim
       setupTrim(edit.trim || { in: 0, out: null });
-
-      // Start subtitle sync loop
       startSubtitleSync();
-
-      // Setup export button state
       updateExportButton();
+      renderTimelineTracks();
     }
 
     // ── Video Player ──
     (function initPlayer() {
-      var video = document.getElementById('videoPlayer');
-      var playBtn = document.getElementById('playBtn');
-      var speedSelect = document.getElementById('speedSelect');
+      const video = document.getElementById('videoPlayer');
+      const playBtn = document.getElementById('playBtn');
+      const speedSelect = document.getElementById('speedSelect');
+      const volumeSlider = document.getElementById('volumeSlider');
+      const skipBackBtn = document.getElementById('skipBackBtn');
+      const skipFwdBtn = document.getElementById('skipFwdBtn');
+      const fullscreenBtn = document.getElementById('fullscreenBtn');
 
-      playBtn.addEventListener('click', function() {
-        if (video.paused) { video.play(); } else { video.pause(); }
-      });
+      playBtn.addEventListener('click', () => { video.paused ? video.play() : video.pause(); });
+      video.addEventListener('play', () => { playBtn.innerHTML = '&#9646;&#9646;'; });
+      video.addEventListener('pause', () => { playBtn.innerHTML = '&#9654;'; });
 
-      video.addEventListener('play', function() { playBtn.innerHTML = '&#9646;&#9646;'; });
-      video.addEventListener('pause', function() { playBtn.innerHTML = '&#9654;'; });
-
-      video.addEventListener('timeupdate', function() {
+      video.addEventListener('timeupdate', () => {
         document.getElementById('timeDisplay').textContent =
           formatTime(video.currentTime) + ' / ' + formatTime(video.duration);
-        updateTimeline();
+        updateTimelinePlayhead();
       });
 
-      video.addEventListener('loadedmetadata', function() {
-        document.getElementById('timeDisplay').textContent =
-          '0:00 / ' + formatTime(video.duration);
+      video.addEventListener('loadedmetadata', () => {
+        document.getElementById('timeDisplay').textContent = '0:00 / ' + formatTime(video.duration);
         if (currentEdit && (currentEdit.trim.out === null || currentEdit.trim.out === 0)) {
           currentEdit.trim.out = video.duration;
           updateTrimDisplay();
         }
+        renderTimelineTracks();
+        renderTimelineRuler();
+        drawFakeWaveform();
       });
 
-      speedSelect.addEventListener('change', function() {
-        video.playbackRate = parseFloat(speedSelect.value);
+      speedSelect.addEventListener('change', () => { video.playbackRate = parseFloat(speedSelect.value); });
+      volumeSlider.addEventListener('input', () => { video.volume = parseFloat(volumeSlider.value); });
+      skipBackBtn.addEventListener('click', () => { video.currentTime = Math.max(0, video.currentTime - 5); });
+      skipFwdBtn.addEventListener('click', () => { video.currentTime = Math.min(video.duration || 0, video.currentTime + 5); });
+      fullscreenBtn.addEventListener('click', () => {
+        const frame = document.getElementById('canvasFrame');
+        if (frame.requestFullscreen) frame.requestFullscreen();
+        else if (frame.webkitRequestFullscreen) frame.webkitRequestFullscreen();
       });
     })();
 
-    // ── Timeline ──
-    (function initTimeline() {
-      var bar = document.getElementById('timelineBar');
-      var video = document.getElementById('videoPlayer');
-
-      bar.addEventListener('click', function(e) {
-        if (e.target.classList.contains('trim-handle')) return;
-        var rect = bar.getBoundingClientRect();
-        var pct = (e.clientX - rect.left) / rect.width;
-        var time = pct * (video.duration || 0);
-        video.currentTime = time;
+    // ── Timeline Click to Seek ──
+    (function initTimelineClick() {
+      const tracks = document.getElementById('timelineTracks');
+      tracks.addEventListener('click', e => {
+        const video = document.getElementById('videoPlayer');
+        if (!video.duration) return;
+        // Calculate position relative to track content area
+        const trackContent = e.target.closest('.track-content') || e.target.closest('.timeline-ruler-track');
+        if (!trackContent) return;
+        const rect = trackContent.getBoundingClientRect();
+        const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        video.currentTime = pct * video.duration;
       });
-
-      // Trim handle dragging
-      initTrimDrag('trimIn', 'in');
-      initTrimDrag('trimOut', 'out');
     })();
 
-    function initTrimDrag(handleId, type) {
-      var handle = document.getElementById(handleId);
-      var bar = document.getElementById('timelineBar');
-      var video = document.getElementById('videoPlayer');
-      var dragging = false;
-
-      handle.addEventListener('mousedown', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        dragging = true;
-      });
-
-      document.addEventListener('mousemove', function(e) {
-        if (!dragging || !currentEdit) return;
-        var rect = bar.getBoundingClientRect();
-        var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-        var time = pct * (video.duration || 0);
-
-        if (type === 'in') {
-          currentEdit.trim.in = Math.min(time, (currentEdit.trim.out || video.duration) - 0.5);
-        } else {
-          currentEdit.trim.out = Math.max(time, currentEdit.trim.in + 0.5);
-        }
-        updateTrimDisplay();
-      });
-
-      document.addEventListener('mouseup', function() {
-        if (dragging && currentEdit) {
-          dragging = false;
-          saveTrim();
-        }
-      });
-    }
-
-    function updateTimeline() {
-      var video = document.getElementById('videoPlayer');
+    // ── Timeline Playhead ──
+    function updateTimelinePlayhead() {
+      const video = document.getElementById('videoPlayer');
       if (!video.duration) return;
-      var pct = (video.currentTime / video.duration) * 100;
-      document.getElementById('timelineProgress').style.width = pct + '%';
-      document.getElementById('timelinePlayhead').style.left = 'calc(' + pct + '% - 1.5px)';
+      const pct = video.currentTime / video.duration;
+      const tracks = document.getElementById('timelineTracks');
+      const trackWidth = tracks.querySelector('.track-content')?.offsetWidth || 1;
+      const left = 60 + pct * trackWidth;
+      document.getElementById('tlPlayhead').style.left = left + 'px';
     }
 
+    // ── Timeline Tracks Rendering ──
+    function renderTimelineTracks() {
+      if (!currentEdit) return;
+      const video = document.getElementById('videoPlayer');
+      const dur = video.duration || 1;
+
+      // Subtitle blocks on timeline
+      const subTrack = document.getElementById('subtitleTrack');
+      subTrack.innerHTML = '';
+      if (currentEdit.transcript) {
+        currentEdit.transcript.forEach((seg, idx) => {
+          const start = seg.start || seg.startTime || 0;
+          const end = seg.end || seg.endTime || start + 2;
+          const left = (start / dur) * 100;
+          const width = ((end - start) / dur) * 100;
+          const block = document.createElement('div');
+          block.className = 'subtitle-block';
+          block.style.left = left + '%';
+          block.style.width = Math.max(width, 0.5) + '%';
+          block.textContent = (seg.text || seg.word || '').slice(0, 20);
+          block.title = seg.text || seg.word || '';
+          block.onclick = e => {
+            e.stopPropagation();
+            video.currentTime = start;
+          };
+          subTrack.appendChild(block);
+        });
+      }
+    }
+
+    // ── Timeline Ruler ──
+    function renderTimelineRuler() {
+      const video = document.getElementById('videoPlayer');
+      const dur = video.duration || 0;
+      if (!dur) return;
+      const ruler = document.getElementById('timelineRuler');
+      ruler.innerHTML = '';
+      const step = dur <= 30 ? 5 : dur <= 120 ? 10 : dur <= 600 ? 30 : 60;
+      for (let t = 0; t <= dur; t += step) {
+        const mark = document.createElement('div');
+        mark.className = 'ruler-mark';
+        mark.style.left = ((t / dur) * 100) + '%';
+        mark.textContent = formatTime(t);
+        ruler.appendChild(mark);
+      }
+    }
+
+    // ── Fake Waveform (visual approximation) ──
+    function drawFakeWaveform() {
+      const canvas = document.getElementById('waveformCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.offsetWidth * 2;
+      canvas.height = canvas.offsetHeight * 2;
+      ctx.scale(2, 2);
+      const w = canvas.offsetWidth;
+      const h = canvas.offsetHeight;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = 'rgba(56,189,248,0.3)';
+      const bars = Math.floor(w / 3);
+      for (let i = 0; i < bars; i++) {
+        const amp = Math.random() * 0.7 + 0.1;
+        const barH = amp * h * 0.8;
+        const x = i * 3;
+        ctx.fillRect(x, (h - barH) / 2, 2, barH);
+      }
+    }
+
+    // ── Trim Management ──
     function setupTrim(trim) {
       if (!currentEdit) return;
       currentEdit.trim = trim;
@@ -655,22 +898,61 @@
     }
 
     function updateTrimDisplay() {
-      var video = document.getElementById('videoPlayer');
-      var dur = video.duration || 1;
-      var trimIn = currentEdit ? currentEdit.trim.in : 0;
-      var trimOut = currentEdit ? (currentEdit.trim.out || dur) : dur;
+      const video = document.getElementById('videoPlayer');
+      const dur = video.duration || 1;
+      const trimIn = currentEdit ? currentEdit.trim.in : 0;
+      const trimOut = currentEdit ? (currentEdit.trim.out || dur) : dur;
 
-      var pctIn = (trimIn / dur) * 100;
-      var pctOut = (trimOut / dur) * 100;
+      // Update trim info label
+      document.getElementById('trimInfoLabel').innerHTML =
+        'IN: ' + formatTimePrecise(trimIn) + ' &mdash; OUT: ' + formatTimePrecise(trimOut);
 
-      document.getElementById('trimIn').style.left = pctIn + '%';
-      document.getElementById('trimOut').style.left = pctOut + '%';
-      document.getElementById('trimRegion').style.left = pctIn + '%';
-      document.getElementById('trimRegion').style.width = (pctOut - pctIn) + '%';
-
-      document.getElementById('trimInLabel').textContent = formatTimePrecise(trimIn);
-      document.getElementById('trimOutLabel').textContent = formatTimePrecise(trimOut);
+      // Update timeline trim region
+      const trackContent = document.querySelector('.track-content');
+      if (trackContent) {
+        const trackWidth = trackContent.offsetWidth;
+        const region = document.getElementById('tlTrimRegion');
+        const pctIn = (trimIn / dur) * trackWidth;
+        const pctOut = (trimOut / dur) * trackWidth;
+        region.style.display = 'block';
+        region.style.left = (60 + pctIn) + 'px';
+        region.style.width = (pctOut - pctIn) + 'px';
+      }
     }
+
+    // Trim handle dragging on timeline
+    (function initTimelineTrimDrag() {
+      let dragging = null; // 'in' | 'out' | null
+      const tlTrimIn = document.getElementById('tlTrimIn');
+      const tlTrimOut = document.getElementById('tlTrimOut');
+
+      tlTrimIn.addEventListener('mousedown', e => { e.preventDefault(); e.stopPropagation(); dragging = 'in'; });
+      tlTrimOut.addEventListener('mousedown', e => { e.preventDefault(); e.stopPropagation(); dragging = 'out'; });
+
+      document.addEventListener('mousemove', e => {
+        if (!dragging || !currentEdit) return;
+        const video = document.getElementById('videoPlayer');
+        const trackContent = document.querySelector('.track-content');
+        if (!trackContent || !video.duration) return;
+        const rect = trackContent.getBoundingClientRect();
+        const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        const time = pct * video.duration;
+
+        if (dragging === 'in') {
+          currentEdit.trim.in = Math.min(time, (currentEdit.trim.out || video.duration) - 0.5);
+        } else {
+          currentEdit.trim.out = Math.max(time, currentEdit.trim.in + 0.5);
+        }
+        updateTrimDisplay();
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (dragging && currentEdit) {
+          dragging = null;
+          saveTrim();
+        }
+      });
+    })();
 
     async function saveTrim() {
       if (!currentEdit) return;
@@ -685,31 +967,30 @@
 
     // ── Transcript Rendering ──
     function renderTranscript(transcript) {
-      var list = document.getElementById('transcriptList');
+      const list = document.getElementById('transcriptList');
       if (!transcript || transcript.length === 0) {
-        list.innerHTML = '<div style="text-align:center;color:#475569;padding:40px;font-size:13px;">Sem transcricao disponivel.</div>';
+        list.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:32px;font-size:12px">Sem transcricao disponivel.</div>';
         return;
       }
       list.innerHTML = '';
-      transcript.forEach(function(seg, idx) {
-        var el = document.createElement('div');
+      transcript.forEach((seg, idx) => {
+        const el = document.createElement('div');
         el.className = 'transcript-segment';
         el.dataset.index = idx;
-
-        var startTime = seg.start || seg.startTime || 0;
-        var endTime = seg.end || seg.endTime || 0;
-        var text = seg.text || seg.word || '';
+        const startTime = seg.start || seg.startTime || 0;
+        const endTime = seg.end || seg.endTime || 0;
+        const text = seg.text || seg.word || '';
 
         el.innerHTML =
           '<div class="transcript-time">' + formatTimePrecise(startTime) + ' - ' + formatTimePrecise(endTime) +
             '<span class="edited-badge" id="editBadge' + idx + '">editado</span>' +
           '</div>' +
           '<div class="transcript-text" id="segText' + idx + '">' + escapeHtml(text) + '</div>' +
-          '<button class="transcript-edit-btn" onclick="startEditSegment(event, ' + idx + ')" title="Editar">&#9998;</button>';
+          '<button class="transcript-edit-btn" onclick="startEditSegment(event,' + idx + ')" title="Editar">&#9998;</button>';
 
-        el.addEventListener('click', function(e) {
+        el.addEventListener('click', e => {
           if (e.target.classList.contains('transcript-edit-btn') || e.target.getAttribute('contenteditable') === 'true') return;
-          var video = document.getElementById('videoPlayer');
+          const video = document.getElementById('videoPlayer');
           video.currentTime = startTime;
           video.play();
         });
@@ -718,22 +999,19 @@
       });
     }
 
-    function escapeHtml(str) {
-      var div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
+    function scrollTranscriptToActive() {
+      const active = document.querySelector('.transcript-segment.active');
+      if (active) active.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
 
     function startEditSegment(e, idx) {
       e.stopPropagation();
-      var textEl = document.getElementById('segText' + idx);
+      const textEl = document.getElementById('segText' + idx);
       textEl.setAttribute('contenteditable', 'true');
       textEl.focus();
-
-      // Select all text
-      var range = document.createRange();
+      const range = document.createRange();
       range.selectNodeContents(textEl);
-      var sel = window.getSelection();
+      const sel = window.getSelection();
       sel.removeAllRanges();
       sel.addRange(range);
 
@@ -743,28 +1021,27 @@
         saveSegmentEdit(idx, textEl.textContent);
       }, { once: true });
 
-      textEl.addEventListener('keydown', function handler(ev) {
-        if (ev.key === 'Enter') {
-          ev.preventDefault();
-          textEl.blur();
-        }
+      textEl.addEventListener('keydown', ev => {
+        if (ev.key === 'Enter') { ev.preventDefault(); textEl.blur(); }
       });
     }
 
     async function saveSegmentEdit(idx, newText) {
       if (!currentEdit || !currentEdit.transcript) return;
-      var seg = currentEdit.transcript[idx];
+      const seg = currentEdit.transcript[idx];
       if (!seg) return;
-      var oldText = seg.text || seg.word || '';
+      const oldText = seg.text || seg.word || '';
       if (newText === oldText) return;
 
-      // Update local state
       if (seg.text !== undefined) seg.text = newText;
       else seg.word = newText;
 
       editedSegments.add(idx);
-      var badge = document.getElementById('editBadge' + idx);
+      const badge = document.getElementById('editBadge' + idx);
       if (badge) badge.classList.add('visible');
+
+      // Update timeline subtitle block
+      renderTimelineTracks();
 
       try {
         await apiFetch('/api/edit/' + currentEdit.editId + '/transcript', {
@@ -776,12 +1053,11 @@
       } catch (err) { /* toast shown by apiFetch */ }
     }
 
-    // ── Subtitle Sync via requestAnimationFrame ──
+    // ── Subtitle Sync ──
     function startSubtitleSync() {
       if (rafId) cancelAnimationFrame(rafId);
-      var video = document.getElementById('videoPlayer');
-      var overlay = document.getElementById('subtitleOverlay');
-      var textEl = document.getElementById('subtitleText');
+      const video = document.getElementById('videoPlayer');
+      const textEl = document.getElementById('subtitleText');
 
       function syncLoop() {
         rafId = requestAnimationFrame(syncLoop);
@@ -794,14 +1070,14 @@
           return;
         }
 
-        var ct = video.currentTime;
-        var activeSeg = null;
-        var activeIdx = -1;
+        const ct = video.currentTime;
+        let activeSeg = null;
+        let activeIdx = -1;
 
-        for (var i = 0; i < currentEdit.transcript.length; i++) {
-          var seg = currentEdit.transcript[i];
-          var start = seg.start || seg.startTime || 0;
-          var end = seg.end || seg.endTime || start + 2;
+        for (let i = 0; i < currentEdit.transcript.length; i++) {
+          const seg = currentEdit.transcript[i];
+          const start = seg.start || seg.startTime || 0;
+          const end = seg.end || seg.endTime || start + 2;
           if (ct >= start && ct < end) {
             activeSeg = seg;
             activeIdx = i;
@@ -809,7 +1085,6 @@
           }
         }
 
-        // Highlight active transcript segment
         highlightTranscriptSegment(activeIdx);
 
         if (!activeSeg) {
@@ -817,21 +1092,20 @@
           return;
         }
 
-        var text = activeSeg.text || activeSeg.word || '';
-        var preset = activePreset;
+        const text = activeSeg.text || activeSeg.word || '';
+        const preset = activePreset;
 
-        // Check for word-by-word highlight
         if (preset.highlight && preset.highlight.mode === 'word-by-word') {
-          var segStart = activeSeg.start || activeSeg.startTime || 0;
-          var segEnd = activeSeg.end || activeSeg.endTime || segStart + 2;
-          var segDuration = segEnd - segStart;
-          var elapsed = ct - segStart;
-          var words = text.split(/\s+/);
-          var wordDuration = segDuration / Math.max(words.length, 1);
-          var currentWordIdx = Math.min(Math.floor(elapsed / wordDuration), words.length - 1);
+          const segStart = activeSeg.start || activeSeg.startTime || 0;
+          const segEnd = activeSeg.end || activeSeg.endTime || segStart + 2;
+          const segDuration = segEnd - segStart;
+          const elapsed = ct - segStart;
+          const words = text.split(/\s+/);
+          const wordDuration = segDuration / Math.max(words.length, 1);
+          const currentWordIdx = Math.min(Math.floor(elapsed / wordDuration), words.length - 1);
 
-          var html = '';
-          for (var w = 0; w < words.length; w++) {
+          let html = '';
+          for (let w = 0; w < words.length; w++) {
             if (w === currentWordIdx) {
               html += '<span style="background:' + (preset.highlight.color || '#FFD700') + ';color:#000;padding:2px 4px;border-radius:3px;">' + escapeHtml(words[w]) + '</span> ';
             } else {
@@ -849,86 +1123,74 @@
       syncLoop();
     }
 
-    var lastHighlightedIdx = -1;
+    let lastHighlightedIdx = -1;
     function highlightTranscriptSegment(idx) {
       if (idx === lastHighlightedIdx) return;
       if (lastHighlightedIdx >= 0) {
-        var prev = document.querySelector('.transcript-segment[data-index="' + lastHighlightedIdx + '"]');
+        const prev = document.querySelector('.transcript-segment[data-index="' + lastHighlightedIdx + '"]');
         if (prev) prev.classList.remove('active');
       }
       if (idx >= 0) {
-        var curr = document.querySelector('.transcript-segment[data-index="' + idx + '"]');
+        const curr = document.querySelector('.transcript-segment[data-index="' + idx + '"]');
         if (curr) {
           curr.classList.add('active');
-          // Scroll into view
           curr.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         }
       }
       lastHighlightedIdx = idx;
     }
 
-    // ── Preset Rendering ──
+    // ── Presets ──
     async function loadPresets() {
       try {
-        var res = await apiFetch('/api/edit/presets');
-        presets = await res.json();
+        const res = await apiFetch('/api/edit/presets');
+        const data = await res.json();
+        presets = data.presets || data;
         renderPresets(presets);
       } catch (err) {
-        document.getElementById('presetsList').innerHTML = '<div style="color:#ef4444;padding:16px;">Erro ao carregar presets.</div>';
+        document.getElementById('presetsList').innerHTML = '<div style="color:var(--danger);padding:12px;font-size:12px">Erro ao carregar presets.</div>';
       }
     }
 
     function renderPresets(presetList) {
-      // Build expert filter
-      var experts = [];
-      var expertSet = {};
-      presetList.forEach(function(p) {
-        if (!expertSet[p.expert]) {
-          expertSet[p.expert] = true;
-          experts.push(p.expert);
-        }
+      const experts = [];
+      const expertSet = {};
+      presetList.forEach(p => {
+        if (!expertSet[p.expert]) { expertSet[p.expert] = true; experts.push(p.expert); }
       });
 
-      var filterEl = document.getElementById('presetsFilter');
-      filterEl.innerHTML = '<button class="presets-filter-btn active" data-expert="all" onclick="filterPresets(\'all\', this)">Todos</button>';
-      var expertLabels = { 'iristhaize': 'Iris', 'caio-roleta': 'Caio', 'shared': 'Compartilhados' };
-      experts.forEach(function(exp) {
-        filterEl.innerHTML += '<button class="presets-filter-btn" data-expert="' + exp + '" onclick="filterPresets(\'' + exp + '\', this)">' + (expertLabels[exp] || exp) + '</button>';
+      const filterEl = document.getElementById('presetsFilter');
+      filterEl.innerHTML = '<button class="presets-filter-btn active" data-expert="all" onclick="filterPresets(\'all\',this)">Todos</button>';
+      const expertLabels = { 'iristhaize': 'Iris', 'caio-roleta': 'Caio', 'shared': 'Compartilhados' };
+      experts.forEach(exp => {
+        filterEl.innerHTML += '<button class="presets-filter-btn" data-expert="' + exp + '" onclick="filterPresets(\'' + exp + '\',this)">' + (expertLabels[exp] || exp) + '</button>';
       });
-
       renderPresetCards(presetList);
     }
 
     function filterPresets(expert, btnEl) {
-      document.querySelectorAll('.presets-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.presets-filter-btn').forEach(b => b.classList.remove('active'));
       btnEl.classList.add('active');
-
-      if (expert === 'all') {
-        renderPresetCards(presets);
-      } else {
-        renderPresetCards(presets.filter(function(p) { return p.expert === expert; }));
-      }
+      renderPresetCards(expert === 'all' ? presets : presets.filter(p => p.expert === expert));
     }
 
     function renderPresetCards(list) {
-      var container = document.getElementById('presetsList');
+      const container = document.getElementById('presetsList');
       container.innerHTML = '';
-      list.forEach(function(p) {
-        var s = p.style;
-        var expertClass = 'expert-' + (p.expert || 'shared');
-        var expertLabels = { 'iristhaize': 'Iris', 'caio-roleta': 'Caio', 'shared': 'Compartilhado' };
-        var isActive = activePreset && activePreset.id === p.id;
+      list.forEach(p => {
+        const s = p.style;
+        const expertClass = 'expert-' + (p.expert || 'shared');
+        const expertLabels = { 'iristhaize': 'Iris', 'caio-roleta': 'Caio', 'shared': 'Compartilhado' };
+        const isActive = activePreset && activePreset.id === p.id;
 
-        var card = document.createElement('div');
+        const card = document.createElement('div');
         card.className = 'preset-card' + (isActive ? ' active' : '');
-        card.onclick = function() { selectPreset(p.id); };
+        card.onclick = () => selectPreset(p.id);
 
-        // Build preview style
-        var previewStyle = 'background:' + (s.background || '#1e293b') + ';';
-        var textStyle = 'font-family:' + s.font + ';font-size:' + Math.min(s.size, 24) + 'px;color:' + s.color + ';';
+        let previewStyle = 'background:' + (s.background || 'var(--bg-surface)') + ';';
+        let textStyle = 'font-family:' + s.font + ';font-size:' + Math.min(s.size, 20) + 'px;color:' + s.color + ';';
         if (s.strokeColor && s.strokeWidth) {
           textStyle += '-webkit-text-stroke:' + Math.min(s.strokeWidth, 2) + 'px ' + s.strokeColor + ';';
-          textStyle += 'text-shadow:0 0 ' + s.strokeWidth + 'px ' + s.strokeColor + ';';
         }
 
         card.innerHTML =
@@ -939,37 +1201,27 @@
           '<div class="preset-preview" style="' + previewStyle + '">' +
             '<span class="preset-preview-text" style="' + textStyle + '">Exemplo</span>' +
           '</div>';
-
         container.appendChild(card);
       });
     }
 
     async function selectPreset(presetId) {
-      var preset = presets.find(function(p) { return p.id === presetId; });
+      const preset = presets.find(p => p.id === presetId);
       if (!preset) return;
-
       activePreset = preset;
 
-      // Update cards
-      document.querySelectorAll('.preset-card').forEach(function(c) { c.classList.remove('active'); });
-      // Find and highlight matching card
-      renderPresetCards(
-        document.querySelector('.presets-filter-btn.active').dataset.expert === 'all'
-          ? presets
-          : presets.filter(function(p) { return p.expert === document.querySelector('.presets-filter-btn.active').dataset.expert; })
-      );
-
-      // Apply overlay style
+      const activeFilter = document.querySelector('.presets-filter-btn.active');
+      const expert = activeFilter ? activeFilter.dataset.expert : 'all';
+      renderPresetCards(expert === 'all' ? presets : presets.filter(p => p.expert === expert));
       applyPresetToOverlay(preset);
 
-      // Save to API
       if (currentEdit) {
         currentEdit.presetId = presetId;
         try {
           await apiFetch('/api/edit/' + currentEdit.editId + '/preset', {
             method: 'PUT',
             headers: Object.assign({ 'Content-Type': 'application/json' }, AUTH_HEADER()),
-            body: JSON.stringify({ presetId: presetId })
+            body: JSON.stringify({ presetId })
           });
           showToast('Preset aplicado: ' + preset.name, 'success');
         } catch (err) { /* toast from apiFetch */ }
@@ -978,38 +1230,29 @@
 
     function applyPresetToOverlay(preset) {
       if (!preset) return;
-      var s = preset.style;
-      var overlay = document.getElementById('subtitleOverlay');
-      var textEl = document.getElementById('subtitleText');
+      const s = preset.style;
+      const overlay = document.getElementById('subtitleOverlay');
+      const textEl = document.getElementById('subtitleText');
 
-      // Position
       overlay.className = 'subtitle-overlay';
-      var posMap = { 'top': 'pos-top', 'center-top': 'pos-top', 'center': 'pos-center', 'center-bottom': 'pos-center-bottom', 'bottom': 'pos-bottom' };
+      const posMap = { 'top': 'pos-top', 'center-top': 'pos-top', 'center': 'pos-center', 'center-bottom': 'pos-center-bottom', 'bottom': 'pos-bottom' };
       overlay.classList.add(posMap[s.position] || 'pos-bottom');
 
-      // Text style
       textEl.style.fontFamily = s.font;
       textEl.style.fontSize = s.size + 'px';
       textEl.style.color = s.color;
       textEl.style.opacity = s.opacity;
 
-      // Stroke
       if (s.strokeColor && s.strokeWidth) {
         textEl.style.webkitTextStroke = s.strokeWidth + 'px ' + s.strokeColor;
-        // Multiple text-shadow for robust outline
-        var sw = s.strokeWidth;
-        var sc = s.strokeColor;
-        textEl.style.textShadow =
-          sw + 'px ' + sw + 'px 0 ' + sc + ',' +
-          (-sw) + 'px ' + sw + 'px 0 ' + sc + ',' +
-          sw + 'px ' + (-sw) + 'px 0 ' + sc + ',' +
-          (-sw) + 'px ' + (-sw) + 'px 0 ' + sc;
+        const sw = s.strokeWidth;
+        const sc = s.strokeColor;
+        textEl.style.textShadow = sw+'px '+sw+'px 0 '+sc+','+(-sw)+'px '+sw+'px 0 '+sc+','+sw+'px '+(-sw)+'px 0 '+sc+','+(-sw)+'px '+(-sw)+'px 0 '+sc;
       } else {
         textEl.style.webkitTextStroke = '';
         textEl.style.textShadow = '';
       }
 
-      // Background
       if (s.background) {
         textEl.style.backgroundColor = s.background;
         textEl.style.padding = '6px 14px';
@@ -1020,7 +1263,6 @@
         textEl.style.borderRadius = '';
       }
 
-      // Animation class
       textEl.classList.remove('anim-pop', 'anim-fade');
       if (preset.animation) {
         if (preset.animation.type === 'pop') textEl.classList.add('anim-pop');
@@ -1028,96 +1270,81 @@
       }
     }
 
-    // ── Sidebar Tab Switching ──
-    function switchTab(tabId) {
-      document.querySelectorAll('.sidebar-tab').forEach(function(t) {
-        t.classList.toggle('active', t.dataset.tab === tabId);
-      });
-      document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
-      document.getElementById('tab' + tabId.charAt(0).toUpperCase() + tabId.slice(1) + 'Content').classList.add('active');
+    // ── Tool Tab Switching ──
+    function switchTool(toolId) {
+      document.querySelectorAll('.tool-tab').forEach(t => t.classList.toggle('active', t.dataset.tool === toolId));
+      document.querySelectorAll('.tool-content').forEach(c => c.classList.remove('active'));
+      document.getElementById('tool' + toolId.charAt(0).toUpperCase() + toolId.slice(1) + 'Content').classList.add('active');
     }
 
     // ── Export ──
     function updateExportButton() {
-      var btn = document.getElementById('exportBtn');
+      const btn = document.getElementById('exportBtn');
       if (currentEdit && currentEdit.status === 'exported') {
         btn.textContent = 'BAIXAR .MP4';
         btn.className = 'btn btn-primary';
-        btn.onclick = function() { downloadExport(); };
+        btn.onclick = () => downloadExport();
       } else {
         btn.textContent = 'EXPORTAR';
         btn.className = 'btn btn-green';
-        btn.onclick = function() { startExport(); };
+        btn.onclick = () => startExport();
       }
     }
 
     async function startExport() {
       if (!currentEdit) return;
-      var btn = document.getElementById('exportBtn');
+      const btn = document.getElementById('exportBtn');
       btn.disabled = true;
       btn.textContent = 'Renderizando...';
 
-      var progressEl = document.getElementById('exportProgress');
-      var fillEl = document.getElementById('exportProgressFill');
-      var labelEl = document.getElementById('exportProgressLabel');
+      const progressEl = document.getElementById('exportProgress');
+      const fillEl = document.getElementById('exportProgressFill');
+      const labelEl = document.getElementById('exportProgressLabel');
       progressEl.classList.add('visible');
       fillEl.style.width = '0%';
       labelEl.textContent = '0%';
 
       try {
-        var response = await fetch(API_BASE + '/api/edit/' + currentEdit.editId + '/export', {
+        const response = await fetch(API_BASE + '/api/edit/' + currentEdit.editId + '/export', {
           method: 'POST',
           headers: Object.assign({ 'Content-Type': 'application/json' }, AUTH_HEADER()),
           body: JSON.stringify({ quality: 'high' })
         });
 
-        // Check if SSE
-        var contentType = response.headers.get('content-type') || '';
+        const contentType = response.headers.get('content-type') || '';
         if (contentType.includes('text/event-stream')) {
-          var reader = response.body.getReader();
-          var decoder = new TextDecoder();
-          var buffer = '';
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
 
           while (true) {
-            var chunk = await reader.read();
+            const chunk = await reader.read();
             if (chunk.done) break;
             buffer += decoder.decode(chunk.value, { stream: true });
-
-            var lines = buffer.split('\n');
+            const lines = buffer.split('\n');
             buffer = lines.pop() || '';
 
-            for (var i = 0; i < lines.length; i++) {
-              var line = lines[i].trim();
-              if (line.startsWith('data:')) {
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (trimmed.startsWith('data:')) {
                 try {
-                  var data = JSON.parse(line.slice(5));
+                  const data = JSON.parse(trimmed.slice(5));
                   if (data.progress !== undefined) {
-                    var pct = Math.round(data.progress);
+                    const pct = Math.round(data.progress);
                     fillEl.style.width = pct + '%';
                     labelEl.textContent = pct + '%';
                   }
-                  if (data.stage) {
-                    labelEl.textContent = data.stage;
-                  }
-                  if (data.status === 'complete' || data.done) {
-                    exportComplete();
-                    return;
-                  }
-                  if (data.error) {
-                    throw new Error(data.error);
-                  }
-                } catch (parseErr) {
-                  // Non-JSON SSE line, skip
-                }
+                  if (data.stage) labelEl.textContent = data.stage;
+                  if (data.status === 'complete' || data.done) { exportComplete(); return; }
+                  if (data.error) throw new Error(data.error);
+                } catch (parseErr) { /* Non-JSON SSE line */ }
               }
             }
           }
-          // If stream ended without explicit complete
           exportComplete();
         } else {
-          // Non-SSE response
           if (!response.ok) throw new Error('Export falhou: HTTP ' + response.status);
-          var result = await response.json();
+          await response.json();
           fillEl.style.width = '100%';
           labelEl.textContent = '100%';
           exportComplete();
@@ -1131,24 +1358,16 @@
     }
 
     function exportComplete() {
-      var fillEl = document.getElementById('exportProgressFill');
-      var labelEl = document.getElementById('exportProgressLabel');
-      fillEl.style.width = '100%';
-      labelEl.textContent = 'Concluido!';
-
+      document.getElementById('exportProgressFill').style.width = '100%';
+      document.getElementById('exportProgressLabel').textContent = 'Concluido!';
       showToast('Export concluido com sucesso!', 'success');
-
       if (currentEdit) currentEdit.status = 'exported';
-
-      var btn = document.getElementById('exportBtn');
+      const btn = document.getElementById('exportBtn');
       btn.disabled = false;
       btn.textContent = 'BAIXAR .MP4';
       btn.className = 'btn btn-primary';
-      btn.onclick = function() { downloadExport(); };
-
-      setTimeout(function() {
-        document.getElementById('exportProgress').classList.remove('visible');
-      }, 2000);
+      btn.onclick = () => downloadExport();
+      setTimeout(() => document.getElementById('exportProgress').classList.remove('visible'), 2000);
     }
 
     function downloadExport() {
@@ -1156,14 +1375,34 @@
       window.open(API_BASE + '/api/edit/' + currentEdit.editId + '/export/download', '_blank');
     }
 
+    // ── Zoom slider ──
+    document.getElementById('zoomSlider').addEventListener('input', e => {
+      timelineZoom = parseFloat(e.target.value);
+      // Scale track contents
+      document.querySelectorAll('.track-content, .timeline-ruler-track').forEach(el => {
+        el.style.minWidth = (timelineZoom * 100) + '%';
+      });
+    });
+
+    // ── Keyboard Shortcuts ──
+    document.addEventListener('keydown', e => {
+      if (e.target.getAttribute('contenteditable') === 'true') return;
+      const video = document.getElementById('videoPlayer');
+      if (!video || !currentEdit) return;
+
+      if (e.code === 'Space') { e.preventDefault(); video.paused ? video.play() : video.pause(); }
+      if (e.code === 'ArrowLeft') { e.preventDefault(); video.currentTime = Math.max(0, video.currentTime - 5); }
+      if (e.code === 'ArrowRight') { e.preventDefault(); video.currentTime = Math.min(video.duration, video.currentTime + 5); }
+      if (e.code === 'KeyJ') video.currentTime = Math.max(0, video.currentTime - 10);
+      if (e.code === 'KeyL') video.currentTime = Math.min(video.duration, video.currentTime + 10);
+      if (e.code === 'KeyK') video.paused ? video.play() : video.pause();
+    });
+
     // ── Init ──
-    // Check URL params for direct edit loading
     (function init() {
-      var params = new URLSearchParams(window.location.search);
-      var editId = params.get('editId') || params.get('edit');
-      if (editId) {
-        loadExistingEdit(editId);
-      }
+      const params = new URLSearchParams(window.location.search);
+      const editId = params.get('editId') || params.get('edit');
+      if (editId) loadExistingEdit(editId);
     })();
   </script>
 </body>

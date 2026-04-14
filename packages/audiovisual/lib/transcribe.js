@@ -308,9 +308,97 @@ function importSRT(projectId, srtPath) {
   return transcription;
 }
 
+/**
+ * transcribeFile — Transcribe any video file directly (no project required).
+ * Used by Editor Growth standalone mode.
+ * @param {string} videoPath - Absolute path to the video file
+ * @returns {object} transcription { segments, language, totalWords, totalDuration, source }
+ */
+async function transcribeFile(videoPath) {
+  if (!fs.existsSync(videoPath)) {
+    throw new Error(`Video file not found: ${videoPath}`);
+  }
+
+  const tmpDir = path.join(path.dirname(videoPath), '.transcribe-tmp-' + Date.now());
+  fs.mkdirSync(tmpDir, { recursive: true });
+  const audioPath = path.join(tmpDir, 'audio.wav');
+
+  try {
+    console.log('  [transcribeFile] Extracting audio...');
+    extractAudio(videoPath, audioPath);
+
+    const env = loadEnv();
+    const apiKey = env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error('OPENAI_API_KEY not found. Add to .env: OPENAI_API_KEY=sk-...');
+    }
+
+    const audioStats = fs.statSync(audioPath);
+    const audioSizeMB = audioStats.size / 1024 / 1024;
+    console.log(`  [transcribeFile] Audio size: ${audioSizeMB.toFixed(1)} MB`);
+
+    let allSegments = [];
+
+    if (audioSizeMB > 25) {
+      const chunkDuration = 600;
+      const totalDuration = parseFloat(
+        execSync(`ffprobe -v quiet -show_entries format=duration -of csv=p=0 "${audioPath}"`, { encoding: 'utf8' }).trim(),
+      );
+      const numChunks = Math.ceil(totalDuration / chunkDuration);
+
+      for (let i = 0; i < numChunks; i++) {
+        const start = i * chunkDuration;
+        const chunkPath = path.join(tmpDir, `chunk_${i}.wav`);
+        execSync(
+          `ffmpeg -y -ss ${start} -i "${audioPath}" -t ${chunkDuration} -acodec pcm_s16le -ar 16000 -ac 1 "${chunkPath}"`,
+          { stdio: 'pipe', timeout: 120000 },
+        );
+        try {
+          const result = await whisperAPI(chunkPath, apiKey);
+          const chunkSegments = (result.segments || []).map(seg => ({
+            start: seg.start + start,
+            end: seg.end + start,
+            text: seg.text.trim(),
+            confidence: seg.avg_logprob ? Math.exp(seg.avg_logprob) : 0.9,
+          }));
+          allSegments.push(...chunkSegments);
+        } catch (err) {
+          console.log(`  [transcribeFile] Chunk ${i + 1} failed: ${err.message}`);
+        }
+        if (fs.existsSync(chunkPath)) fs.unlinkSync(chunkPath);
+      }
+    } else {
+      console.log('  [transcribeFile] Calling Whisper API...');
+      const result = await whisperAPI(audioPath, apiKey);
+      allSegments = (result.segments || []).map(seg => ({
+        start: seg.start,
+        end: seg.end,
+        text: seg.text.trim(),
+        confidence: seg.avg_logprob ? Math.exp(seg.avg_logprob) : 0.9,
+      }));
+    }
+
+    return {
+      segments: allSegments,
+      language: 'pt',
+      totalWords: allSegments.reduce((sum, s) => sum + s.text.split(/\s+/).length, 0),
+      totalDuration: allSegments.length > 0 ? allSegments[allSegments.length - 1].end : 0,
+      source: 'whisper-api',
+      createdAt: new Date().toISOString(),
+    };
+  } finally {
+    // Cleanup tmp dir
+    if (fs.existsSync(tmpDir)) {
+      fs.readdirSync(tmpDir).forEach(f => fs.unlinkSync(path.join(tmpDir, f)));
+      fs.rmdirSync(tmpDir);
+    }
+  }
+}
+
 module.exports = {
   extractAudio,
   transcribeWithWhisper,
+  transcribeFile,
   importSRT,
   whisperAPI,
   loadEnv,
