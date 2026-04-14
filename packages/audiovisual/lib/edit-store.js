@@ -20,7 +20,7 @@ const VALID_STATUSES = ['draft', 'exported'];
 
 const SCHEMA_FIELDS = [
   'editId', 'projectId', 'sourceVideo', 'trim', 'transcript',
-  'subtitles', 'presetId', 'status', 'createdAt', 'updatedAt',
+  'subtitles', 'presetId', 'styleOverrides', 'status', 'createdAt', 'updatedAt',
 ];
 
 /**
@@ -81,6 +81,7 @@ function createEdit(sourceVideo, projectId, options = {}) {
     transcript: options.transcript || [],
     subtitles: options.subtitles || [],
     presetId: null,
+    styleOverrides: {},
     status: 'draft',
     createdAt: now,
     updatedAt: now,

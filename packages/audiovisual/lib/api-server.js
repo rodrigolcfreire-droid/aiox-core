@@ -600,6 +600,14 @@ async function handleRequest(req, res) {
       return sendJSON(res, state || { events: [] });
     }
 
+    // Serve Escala Mix UI page
+    if (pathname === '/escala-mix' || pathname === '/escala-mix/') {
+      const mixHtml = path.resolve(__dirname, '..', '..', '..', 'docs', 'examples', 'ux-command-center', 'av-escala-mix.html');
+      if (!fs.existsSync(mixHtml)) return sendError(res, 'Escala Mix page not found', 404);
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Access-Control-Allow-Origin': '*' });
+      return fs.createReadStream(mixHtml).pipe(res);
+    }
+
     // Serve projects library page
     if (pathname === '/av/projects' || pathname === '/av/projects/') {
       const projectsHtml = path.resolve(__dirname, '..', '..', '..', 'docs', 'examples', 'ux-command-center', 'av-projects.html');
@@ -982,6 +990,49 @@ async function handleRequest(req, res) {
       }
     }
 
+    // GET /api/edit/:editId/source — stream source video with Range support
+    if (pathname.match(/^\/api\/edit\/[^/]+\/source$/) && method === 'GET') {
+      const editId = pathname.split('/')[3];
+      try {
+        const edit = editStore.getEdit(editId);
+        const sourcePath = edit.sourceVideo;
+        if (!sourcePath || !fs.existsSync(sourcePath)) {
+          return sendError(res, 'Source video not found on disk', 404);
+        }
+        const stat = fs.statSync(sourcePath);
+        const fileSize = stat.size;
+        const range = req.headers.range;
+        const ext = path.extname(sourcePath).toLowerCase();
+        const mime = ext === '.webm' ? 'video/webm' : ext === '.mov' ? 'video/quicktime' : 'video/mp4';
+
+        if (range) {
+          const parts = range.replace(/bytes=/, '').split('-');
+          const start = parseInt(parts[0], 10);
+          const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+          const chunkSize = end - start + 1;
+          res.writeHead(206, {
+            'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+            'Accept-Ranges': 'bytes',
+            'Content-Length': chunkSize,
+            'Content-Type': mime,
+            'Access-Control-Allow-Origin': '*',
+          });
+          fs.createReadStream(sourcePath, { start, end }).pipe(res);
+        } else {
+          res.writeHead(200, {
+            'Content-Length': fileSize,
+            'Content-Type': mime,
+            'Accept-Ranges': 'bytes',
+            'Access-Control-Allow-Origin': '*',
+          });
+          fs.createReadStream(sourcePath).pipe(res);
+        }
+        return;
+      } catch (err) {
+        return sendError(res, err.message, 404);
+      }
+    }
+
     // PUT /api/edit/:editId/trim
     if (pathname.match(/^\/api\/edit\/[^/]+\/trim$/) && method === 'PUT') {
       const editId = pathname.split('/')[3];
@@ -1033,6 +1084,21 @@ async function handleRequest(req, res) {
         return sendJSON(res, { edit });
       } catch (err) {
         return sendError(res, err.message, 404);
+      }
+    }
+
+    // PUT /api/edit/:editId/style-overrides
+    if (pathname.match(/^\/api\/edit\/[^/]+\/style-overrides$/) && method === 'PUT') {
+      const editId = pathname.split('/')[3];
+      const body = await parseBody(req);
+      if (!body || typeof body !== 'object' || Array.isArray(body)) {
+        return sendError(res, 'Body must be an object of style overrides', 400);
+      }
+      try {
+        const edit = editStore.updateEdit(editId, { styleOverrides: body });
+        return sendJSON(res, { edit });
+      } catch (err) {
+        return sendError(res, err.message, err.message.includes('not found') ? 404 : 400);
       }
     }
 
@@ -1099,6 +1165,185 @@ async function handleRequest(req, res) {
       } catch (err) {
         return sendError(res, err.message, 404);
       }
+    }
+
+    // ── Escala Mix (Hook × Dev × CTA) ──────────────────
+    if (pathname === '/api/escala-mix' && method === 'GET') {
+      const mixStore = require('./escala-mix-store');
+      return sendJSON(res, { mixes: mixStore.listMixes() });
+    }
+    if (pathname === '/api/escala-mix' && method === 'POST') {
+      const mixStore = require('./escala-mix-store');
+      const body = await parseBody(req);
+      return sendJSON(res, { mix: mixStore.createMix(body.name || null) }, 201);
+    }
+    if (pathname.match(/^\/api\/escala-mix\/[^/]+$/) && method === 'GET') {
+      const mixStore = require('./escala-mix-store');
+      const mixId = pathname.split('/')[3];
+      try { return sendJSON(res, { mix: mixStore.readPool(mixId) }); }
+      catch (err) { return sendError(res, err.message, 404); }
+    }
+    if (pathname.match(/^\/api\/escala-mix\/[^/]+$/) && method === 'DELETE') {
+      const mixStore = require('./escala-mix-store');
+      const mixId = pathname.split('/')[3];
+      try { return sendJSON(res, mixStore.deleteMix(mixId)); }
+      catch (err) { return sendError(res, err.message, 404); }
+    }
+    if (pathname.match(/^\/api\/escala-mix\/[^/]+\/assets$/) && method === 'POST') {
+      const mixStore = require('./escala-mix-store');
+      const mixId = pathname.split('/')[3];
+      const ct = req.headers['content-type'] || '';
+      if (!ct.includes('multipart/form-data')) return sendError(res, 'Expected multipart upload', 400);
+      const boundary = ct.split('boundary=')[1];
+      if (!boundary) return sendError(res, 'Missing multipart boundary', 400);
+      const chunks = [];
+      await new Promise((resolve, reject) => {
+        req.on('data', c => chunks.push(c));
+        req.on('end', resolve);
+        req.on('error', reject);
+      });
+      const buffer = Buffer.concat(chunks);
+      const bodyStr = buffer.toString('binary');
+      const parts = bodyStr.split('--' + boundary);
+      let fileBuffer = null;
+      let originalFilename = 'upload.mp4';
+      let kind = null;
+      let customName = null;
+      for (const part of parts) {
+        const headerEnd = part.indexOf('\r\n\r\n');
+        if (headerEnd === -1) continue;
+        const headers = part.substring(0, headerEnd);
+        const content = part.substring(headerEnd + 4);
+        const cleaned = content.replace(/\r\n--$/, '').replace(/\r\n$/, '');
+        if (headers.includes('name="video"')) {
+          const fn = headers.match(/filename="([^"]+)"/);
+          if (fn) originalFilename = fn[1];
+          fileBuffer = Buffer.from(cleaned, 'binary');
+        } else if (headers.includes('name="kind"')) {
+          kind = cleaned;
+        } else if (headers.includes('name="name"')) {
+          customName = cleaned;
+        }
+      }
+      if (!fileBuffer || !kind) return sendError(res, 'Missing video or kind field', 400);
+      const kindMap = { hook: 'hooks', dev: 'devs', cta: 'ctas', hooks: 'hooks', devs: 'devs', ctas: 'ctas' };
+      const normalizedKind = kindMap[kind.toLowerCase()];
+      if (!normalizedKind) return sendError(res, `Invalid kind "${kind}"`, 400);
+      const os = require('os');
+      const tmpPath = path.join(os.tmpdir(), `escala-mix-${Date.now()}-${originalFilename.replace(/[^a-zA-Z0-9._-]/g, '_')}`);
+      fs.writeFileSync(tmpPath, fileBuffer);
+      try {
+        const asset = mixStore.addAsset(mixId, normalizedKind, tmpPath, customName || path.parse(originalFilename).name);
+        fs.unlinkSync(tmpPath);
+        return sendJSON(res, { asset, kind: normalizedKind }, 201);
+      } catch (err) {
+        try { fs.unlinkSync(tmpPath); } catch { /* ignore */ }
+        return sendError(res, err.message, 400);
+      }
+    }
+    if (pathname.match(/^\/api\/escala-mix\/[^/]+\/assets\/[^/]+$/) && method === 'DELETE') {
+      const mixStore = require('./escala-mix-store');
+      const parts = pathname.split('/');
+      const mixId = parts[3];
+      const assetId = parts[5];
+      const prefix = assetId.slice(0, 2);
+      const kind = prefix === 'h_' ? 'hooks' : prefix === 'd_' ? 'devs' : prefix === 'c_' ? 'ctas' : null;
+      if (!kind) return sendError(res, 'Cannot infer kind from assetId', 400);
+      try { return sendJSON(res, mixStore.removeAsset(mixId, kind, assetId)); }
+      catch (err) { return sendError(res, err.message, 404); }
+    }
+    if (pathname.match(/^\/api\/escala-mix\/[^/]+\/plan$/) && method === 'GET') {
+      const mixStore = require('./escala-mix-store');
+      const mixId = pathname.split('/')[3];
+      const limit = parsed.query.limit ? parseInt(parsed.query.limit, 10) : null;
+      try { return sendJSON(res, { renders: mixStore.planRenders(mixId, limit) }); }
+      catch (err) { return sendError(res, err.message, 400); }
+    }
+    if (pathname.match(/^\/api\/escala-mix\/[^/]+\/generate$/) && method === 'POST') {
+      const mixId = pathname.split('/')[3];
+      const body = await parseBody(req);
+      res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      });
+      const { renderAll } = require('./escala-mix-render');
+      const opts = {
+        width: body.width || 1080,
+        height: body.height || 1920,
+        preset: body.preset || 'medium',
+      };
+      const send = (evt, data) => res.write(`event: ${evt}\ndata: ${JSON.stringify(data)}\n\n`);
+      renderAll(mixId, {
+        limit: body.limit || null,
+        opts,
+        onProgress: e => send('progress', e),
+      }).then(results => {
+        send('done', { results });
+        res.end();
+      }).catch(err => {
+        send('error', { message: err.message });
+        res.end();
+      });
+      return;
+    }
+    if (pathname.match(/^\/api\/escala-mix\/[^/]+\/renders\/[^/]+\/rating$/) && method === 'PUT') {
+      const mixStore = require('./escala-mix-store');
+      const parts = pathname.split('/');
+      const mixId = parts[3];
+      const renderId = parts[5];
+      const body = await parseBody(req);
+      try {
+        const r = mixStore.setRenderRating(mixId, renderId, Number(body.rating));
+        return sendJSON(res, { render: r, ranking: mixStore.getRanking(mixId) });
+      } catch (err) {
+        return sendError(res, err.message, 400);
+      }
+    }
+    if (pathname.match(/^\/api\/escala-mix\/[^/]+\/ai-suggest$/) && method === 'POST') {
+      const { generateSuggestions, suggestFromTop } = require('./ai-hook-generator');
+      const mixId = pathname.split('/')[3];
+      const body = await parseBody(req);
+      try {
+        const type = body.type === 'cta' ? 'cta' : 'hook';
+        const count = Math.min(Math.max(parseInt(body.count, 10) || 5, 1), 10);
+        let items;
+        if (body.fromTop) {
+          items = await suggestFromTop({ mixId, kind: type, count });
+        } else {
+          if (!body.theme) return sendError(res, 'theme is required (or set fromTop:true)', 400);
+          items = await generateSuggestions({ type, theme: body.theme, count });
+        }
+        return sendJSON(res, { items, type, count: items.length });
+      } catch (err) {
+        return sendError(res, err.message, 500);
+      }
+    }
+
+    if (pathname.match(/^\/api\/escala-mix\/[^/]+\/ranking$/) && method === 'GET') {
+      const mixStore = require('./escala-mix-store');
+      const mixId = pathname.split('/')[3];
+      try { return sendJSON(res, { ranking: mixStore.getRanking(mixId) }); }
+      catch (err) { return sendError(res, err.message, 404); }
+    }
+
+    if (pathname.match(/^\/api\/escala-mix\/[^/]+\/renders\/[^/]+\/download$/) && method === 'GET') {
+      const mixStore = require('./escala-mix-store');
+      const parts = pathname.split('/');
+      const mixId = parts[3];
+      const renderId = parts[5];
+      try {
+        const pool = mixStore.readPool(mixId);
+        const r = pool.renders.find(x => x.id === renderId);
+        if (!r || !r.output || !fs.existsSync(r.output)) return sendError(res, 'Render output not found', 404);
+        res.writeHead(200, {
+          'Content-Type': 'video/mp4',
+          'Content-Disposition': `attachment; filename="${path.basename(r.output)}"`,
+          'Content-Length': fs.statSync(r.output).size,
+        });
+        fs.createReadStream(r.output).pipe(res);
+        return;
+      } catch (err) { return sendError(res, err.message, 404); }
     }
 
     // ── Security Status ─────────────────────────────

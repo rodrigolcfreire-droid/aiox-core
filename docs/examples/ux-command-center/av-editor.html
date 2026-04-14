@@ -6,6 +6,7 @@
   <title>Editor Growth — Centro de Comando</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Bebas+Neue&family=Kanit:wght@400;700;900&family=Montserrat:wght@400;700;900&family=Orbitron:wght@700;900&family=Oswald:wght@400;700&family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@400;700;900&display=swap');
     *{margin:0;padding:0;box-sizing:border-box}
     :root{
       --bg-deep:#06090f;--bg-main:#0a0e1a;--bg-panel:#0d1220;--bg-surface:#111827;
@@ -133,12 +134,90 @@
     .subtitle-overlay.pos-top{top:32px;align-items:flex-start}
     .subtitle-overlay.pos-center{top:50%;transform:translateY(-50%);align-items:center}
     .subtitle-overlay.pos-bottom,.subtitle-overlay.pos-center-bottom{bottom:48px;align-items:flex-end}
+    .subtitle-overlay.free{top:0;left:0;right:auto;bottom:auto;padding:0;justify-content:flex-start;width:auto}
+    .subtitle-overlay.free .subtitle-text{transform:translate(-50%,-50%);max-width:none;white-space:nowrap}
+    .subtitle-overlay.edit-mode{pointer-events:auto;cursor:move}
+    .subtitle-overlay.edit-mode .subtitle-text{outline:2px dashed #38BDF8;outline-offset:6px;box-shadow:0 0 0 1px rgba(56,189,248,.3)}
+    .subtitle-overlay.edit-mode.dragging .subtitle-text{outline-color:#34D399}
+    .subtitle-overlay.edit-mode .subtitle-text[contenteditable=true]{outline-color:#FBBF24;cursor:text;background:rgba(251,191,36,.08)}
+    .subtitle-overlay.edit-mode .subtitle-text[contenteditable=true]:focus{outline-style:solid}
+    .edit-handle{position:absolute;width:10px;height:10px;background:#38BDF8;border:2px solid #fff;border-radius:2px;z-index:6;pointer-events:none}
+    .edit-handle.tl{top:-8px;left:-8px}
+    .edit-handle.tr{top:-8px;right:-8px}
+    .edit-handle.bl{bottom:-8px;left:-8px}
+    .edit-handle.br{bottom:-8px;right:-8px}
+    .snap-guide{position:absolute;background:rgba(52,211,153,.7);pointer-events:none;z-index:7;opacity:0;transition:opacity .08s}
+    .snap-guide.visible{opacity:1}
+    .snap-guide.h{left:0;right:0;height:1px}
+    .snap-guide.v{top:0;bottom:0;width:1px}
+    .subtitle-edit-toggle{position:absolute;top:52px;left:12px;background:rgba(10,14,26,.85);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:10px;font-weight:600;color:var(--text-dim);cursor:pointer;z-index:10;font-family:'JetBrains Mono'}
+    .subtitle-edit-toggle.active{background:rgba(56,189,248,.15);border-color:var(--accent-blue);color:var(--accent-blue)}
+    .subtitle-edit-toggle:hover{color:var(--text-secondary)}
     .subtitle-text{text-align:center;max-width:90%;line-height:1.3;white-space:pre-wrap;word-break:break-word}
     .subtitle-text.hidden{display:none}
-    @keyframes subtitlePop{0%{transform:scale(0);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
-    @keyframes subtitleFade{from{opacity:0}to{opacity:1}}
-    .anim-pop{animation:subtitlePop .25s ease-out forwards}
-    .anim-fade{animation:subtitleFade .3s ease-out forwards}
+    @keyframes subPop{0%{transform:scale(0);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+    @keyframes subFade{from{opacity:0}to{opacity:1}}
+    @keyframes subSlideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+    @keyframes subSlideDown{from{transform:translateY(-40px);opacity:0}to{transform:translateY(0);opacity:1}}
+    @keyframes subSlideLeft{from{transform:translateX(-60px);opacity:0}to{transform:translateX(0);opacity:1}}
+    @keyframes subSlideRight{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+    @keyframes subBounce{0%{transform:scale(0.3);opacity:0}50%{transform:scale(1.15)}70%{transform:scale(0.95)}100%{transform:scale(1);opacity:1}}
+    @keyframes subTikTok{0%{transform:scale(0.4) rotate(-5deg);opacity:0}60%{transform:scale(1.2) rotate(2deg)}80%{transform:scale(0.95) rotate(-1deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+    @keyframes subShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+    @keyframes subWave{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+    @keyframes subPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+    .anim-in-fade{animation:subFade var(--anim-dur,.3s) ease-out forwards}
+    .anim-in-pop{animation:subPop var(--anim-dur,.3s) ease-out forwards}
+    .anim-in-slide-up{animation:subSlideUp var(--anim-dur,.3s) ease-out forwards}
+    .anim-in-slide-down{animation:subSlideDown var(--anim-dur,.3s) ease-out forwards}
+    .anim-in-slide-left{animation:subSlideLeft var(--anim-dur,.3s) ease-out forwards}
+    .anim-in-slide-right{animation:subSlideRight var(--anim-dur,.3s) ease-out forwards}
+    .anim-in-bounce{animation:subBounce var(--anim-dur,.4s) cubic-bezier(.68,-.55,.27,1.55) forwards}
+    .anim-in-typewriter{animation:subFade var(--anim-dur,.15s) ease-out forwards}
+    .anim-in-tiktok{animation:subTikTok var(--anim-dur,.4s) cubic-bezier(.68,-.55,.27,1.55) forwards}
+    @keyframes subZoom{from{transform:scale(1.8);opacity:0}to{transform:scale(1);opacity:1}}
+    @keyframes subRotate{from{transform:rotate(-180deg) scale(.3);opacity:0}to{transform:rotate(0) scale(1);opacity:1}}
+    @keyframes subFlip{from{transform:rotateY(90deg);opacity:0}to{transform:rotateY(0);opacity:1}}
+    @keyframes subGlitch{0%,100%{transform:translate(0)}20%{transform:translate(-2px,1px)}40%{transform:translate(2px,-1px)}60%{transform:translate(-1px,-2px)}80%{transform:translate(1px,2px)}}
+    .anim-in-zoom{animation:subZoom var(--anim-dur,.4s) ease-out forwards}
+    .anim-in-rotate{animation:subRotate var(--anim-dur,.5s) cubic-bezier(.68,-.55,.27,1.55) forwards}
+    .anim-in-flip{animation:subFlip var(--anim-dur,.4s) ease-out forwards}
+    .anim-in-glitch{animation:subGlitch var(--anim-dur,.3s) steps(5) forwards,subFade var(--anim-dur,.3s) ease-out forwards}
+    .anim-in-shake{animation:subShake var(--anim-dur,.4s) steps(5),subFade var(--anim-dur,.4s) ease-out forwards}
+    .anim-in-wave{animation:subWave var(--anim-dur,.4s) ease-out,subFade var(--anim-dur,.4s) ease-out forwards}
+    .anim-in-pulse{animation:subPulse var(--anim-dur,.3s) ease-out,subFade var(--anim-dur,.3s) ease-out forwards}
+    .anim-out-fade{animation:subFade var(--anim-dur,.3s) ease-in reverse forwards}
+    .anim-out-pop{animation:subPop var(--anim-dur,.3s) ease-in reverse forwards}
+    .anim-out-slide-up{animation:subSlideDown var(--anim-dur,.3s) ease-in reverse forwards}
+    .anim-out-slide-down{animation:subSlideUp var(--anim-dur,.3s) ease-in reverse forwards}
+    .anim-out-slide-left{animation:subSlideRight var(--anim-dur,.3s) ease-in reverse forwards}
+    .anim-out-slide-right{animation:subSlideLeft var(--anim-dur,.3s) ease-in reverse forwards}
+    .anim-out-bounce{animation:subBounce var(--anim-dur,.3s) ease-in reverse forwards}
+    .anim-out-zoom{animation:subZoom var(--anim-dur,.3s) ease-in reverse forwards}
+    .anim-out-rotate{animation:subRotate var(--anim-dur,.3s) ease-in reverse forwards}
+    .anim-out-flip{animation:subFlip var(--anim-dur,.3s) ease-in reverse forwards}
+    .anim-out-tiktok{animation:subTikTok var(--anim-dur,.3s) ease-in reverse forwards}
+    .anim-out-typewriter{animation:subFade var(--anim-dur,.2s) ease-in reverse forwards}
+    .anim-out-glitch{animation:subGlitch var(--anim-dur,.3s) steps(5),subFade var(--anim-dur,.3s) ease-in reverse forwards}
+    .anim-out-shake{animation:subShake var(--anim-dur,.3s) steps(5),subFade var(--anim-dur,.3s) ease-in reverse forwards}
+    .anim-out-wave{animation:subWave var(--anim-dur,.3s) ease-in reverse forwards}
+    .anim-out-pulse{animation:subPulse var(--anim-dur,.3s) ease-in reverse forwards}
+    .anim-move-fade{animation:subFade 1.2s ease-in-out infinite alternate}
+    .anim-move-pop{animation:subPulse 0.8s ease-in-out infinite}
+    .anim-move-slide-up{animation:subWave 1.2s ease-in-out infinite}
+    .anim-move-slide-down{animation:subWave 1.2s ease-in-out infinite reverse}
+    .anim-move-slide-left{animation:subShake 0.4s ease-in-out infinite}
+    .anim-move-slide-right{animation:subShake 0.4s ease-in-out infinite reverse}
+    .anim-move-bounce{animation:subBounce 0.8s ease-in-out infinite alternate}
+    .anim-move-typewriter{animation:subFade 1s ease-in-out infinite alternate}
+    .anim-move-tiktok{animation:subPulse 0.6s ease-in-out infinite}
+    .anim-move-zoom{animation:subPulse 1s ease-in-out infinite}
+    .anim-move-rotate{animation:subRotate 2s linear infinite}
+    .anim-move-flip{animation:subFlip 1.5s ease-in-out infinite alternate}
+    .anim-move-glitch{animation:subGlitch 0.3s steps(5) infinite}
+    .anim-move-shake{animation:subShake 0.3s ease-in-out infinite}
+    .anim-move-wave{animation:subWave 1.2s ease-in-out infinite}
+    .anim-move-pulse{animation:subPulse 0.8s ease-in-out infinite}
 
     /* Video Controls (below canvas) */
     .video-controls{display:flex;align-items:center;gap:10px;padding:8px 16px;background:rgba(10,14,26,0.9);flex-shrink:0}
@@ -168,6 +247,30 @@
     .presets-filter-btn{background:var(--bg-surface);border:1px solid var(--border);color:var(--text-dim);padding:4px 10px;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;transition:all .15s}
     .presets-filter-btn:hover{color:var(--text-secondary)}
     .presets-filter-btn.active{background:rgba(56,189,248,0.12);border-color:var(--accent-blue);color:var(--accent-blue)}
+    .font-config{margin-top:16px;border-top:1px solid var(--border);padding-top:14px}
+    .font-config-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;padding:4px 0;margin-bottom:10px}
+    .font-config-header h4{font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.3px;margin:0}
+    .font-config-header .chevron{font-size:12px;color:var(--text-dim);transition:transform .15s}
+    .font-config.collapsed .chevron{transform:rotate(-90deg)}
+    .font-config.collapsed .font-config-body{display:none}
+    .fc-row{display:flex;gap:6px;margin-bottom:10px;align-items:center}
+    .fc-field{flex:1;position:relative}
+    .fc-label{display:block;font-size:10px;color:var(--text-dim);margin-bottom:4px;font-weight:500}
+    .fc-input,.fc-select{width:100%;background:var(--bg-surface);border:1px solid var(--border);color:var(--text-primary);border-radius:5px;padding:7px 9px;font-size:11px;font-family:'JetBrains Mono',monospace;box-sizing:border-box}
+    .fc-input:focus,.fc-select:focus{outline:none;border-color:var(--accent-blue)}
+    .fc-suffix{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:9px;color:var(--text-dim);pointer-events:none}
+    .fc-input.has-suffix{padding-right:24px}
+    .fc-color{width:28px;height:28px;border:1px solid var(--border);border-radius:5px;cursor:pointer;background:none;padding:0;flex-shrink:0}
+    .fc-color::-webkit-color-swatch{border:none;border-radius:4px}
+    .fc-color::-webkit-color-swatch-wrapper{padding:0;border-radius:4px}
+    .fc-toggle-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .fc-toggle-label{font-size:11px;color:var(--text-secondary)}
+    .fc-toggle{position:relative;width:36px;height:20px;background:var(--bg-surface);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s}
+    .fc-toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;background:var(--text-dim);border-radius:50%;transition:all .15s}
+    .fc-toggle.active{background:rgba(56,189,248,0.2);border-color:var(--accent-blue)}
+    .fc-toggle.active::after{left:18px;background:var(--accent-blue)}
+    .fc-reset{background:none;border:1px solid var(--border);color:var(--text-dim);font-size:10px;padding:6px 10px;border-radius:5px;cursor:pointer;width:100%;margin-top:4px;font-weight:600;letter-spacing:0.3px}
+    .fc-reset:hover{color:var(--accent-blue);border-color:var(--accent-blue)}
     .preset-card{background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;padding:10px;cursor:pointer;transition:all .15s;margin-bottom:6px}
     .preset-card:hover{border-color:var(--accent-blue);background:rgba(56,189,248,0.03)}
     .preset-card.active{border-color:var(--accent-green);box-shadow:0 0 12px rgba(52,211,153,0.1)}
@@ -341,6 +444,9 @@
           <div class="subtitle-overlay pos-center-bottom" id="subtitleOverlay">
             <div class="subtitle-text hidden" id="subtitleText"></div>
           </div>
+          <button class="subtitle-edit-toggle" id="subtitleEditToggle" onclick="toggleSubtitleEditMode()" title="Ativar modo de posicionamento livre">&#9678; POSICIONAR</button>
+          <div class="snap-guide h" id="snapH" style="top:50%"></div>
+          <div class="snap-guide v" id="snapV" style="left:50%"></div>
         </div>
       </div>
 
@@ -368,10 +474,8 @@
     <div class="panel-right">
       <div class="tools-tabs">
         <div class="tool-tab active" data-tool="legendas" onclick="switchTool('legendas')">Legendas</div>
-        <div class="tool-tab" data-tool="texto" onclick="switchTool('texto')">Texto</div>
-        <div class="tool-tab" data-tool="broll" onclick="switchTool('broll')">B-Roll</div>
-        <div class="tool-tab" data-tool="transicoes" onclick="switchTool('transicoes')">Efeitos</div>
-        <div class="tool-tab" data-tool="branding" onclick="switchTool('branding')">Brand</div>
+        <div class="tool-tab" data-tool="fonte" onclick="switchTool('fonte')">Fonte</div>
+        <div class="tool-tab" data-tool="animacao" onclick="switchTool('animacao')">Animacao</div>
       </div>
       <div class="tools-body">
         <!-- Legendas (Presets) -->
@@ -379,44 +483,161 @@
           <div class="presets-filter" id="presetsFilter"></div>
           <div id="presetsList"></div>
         </div>
-        <!-- Texto -->
-        <div class="tool-content" id="toolTextoContent">
-          <div class="tool-section">
-            <div class="tool-section-title">Adicionar Texto</div>
-            <div class="tool-placeholder">
-              <div class="tool-placeholder-icon">T</div>
-              Textos customizados, titulos e call-to-actions sobre o video
+        <!-- Configuracoes de Fonte -->
+        <div class="tool-content" id="toolFonteContent">
+          <div class="font-config-body" style="padding:4px 0">
+            <div class="fc-row">
+              <div class="fc-field">
+                <label class="fc-label">Legendas por fala</label>
+                <select class="fc-select" id="fcWordsPerCaption" onchange="setFontOverride('wordsPerCaption',this.value)">
+                  <option value="0">Uma por fala</option>
+                  <option value="1">1 palavra por vez</option>
+                  <option value="2">2 palavras por vez</option>
+                  <option value="3">3 palavras por vez</option>
+                  <option value="4">4 palavras por vez</option>
+                </select>
+              </div>
             </div>
+            <div class="fc-row">
+              <div class="fc-field">
+                <label class="fc-label">Fonte</label>
+                <select class="fc-select" id="fcFont" onchange="setFontOverride('font',this.value)">
+                  <option value="">(usar preset)</option>
+                  <optgroup label="Sans bold (impacto)">
+                    <option value="Anton">Anton</option>
+                    <option value="Archivo Black">Archivo Black</option>
+                    <option value="Arial Black">Arial Black</option>
+                    <option value="Bebas Neue">Bebas Neue</option>
+                    <option value="Impact">Impact</option>
+                    <option value="Oswald">Oswald</option>
+                  </optgroup>
+                  <optgroup label="Sans moderno">
+                    <option value="Inter">Inter</option>
+                    <option value="Kanit">Kanit</option>
+                    <option value="Montserrat">Montserrat</option>
+                    <option value="Poppins">Poppins</option>
+                  </optgroup>
+                  <optgroup label="Estilizadas">
+                    <option value="Orbitron">Orbitron (gaming)</option>
+                    <option value="Playfair Display">Playfair Display (serif)</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+            <div class="fc-row">
+              <div class="fc-field">
+                <label class="fc-label">Posicao</label>
+                <select class="fc-select" id="fcPosition" onchange="setFontOverride('position',this.value)">
+                  <option value="">(usar preset)</option>
+                  <option value="top">Topo</option>
+                  <option value="center-top">Centro-Topo</option>
+                  <option value="center">Centro</option>
+                  <option value="center-bottom">Centro-Baixo</option>
+                  <option value="bottom">Base</option>
+                </select>
+              </div>
+            </div>
+            <div class="fc-row">
+              <div class="fc-field" style="flex:0 0 auto">
+                <label class="fc-label">Cor</label>
+                <input type="color" class="fc-color" id="fcColor" value="#FFFFFF" oninput="setFontOverride('color',this.value)">
+              </div>
+              <div class="fc-field">
+                <label class="fc-label">Tamanho</label>
+                <input type="number" class="fc-input has-suffix" id="fcSize" min="10" max="200" step="1" oninput="setFontOverride('size',parseInt(this.value,10))">
+                <span class="fc-suffix">px</span>
+              </div>
+              <div class="fc-field">
+                <label class="fc-label">Peso</label>
+                <select class="fc-select" id="fcWeight" onchange="setFontOverride('weight',this.value)">
+                  <option value="">(preset)</option>
+                  <option value="400">Regular</option>
+                  <option value="600">Semi Bold</option>
+                  <option value="700">Negrito</option>
+                  <option value="900">Black</option>
+                </select>
+              </div>
+            </div>
+            <div class="fc-toggle-row">
+              <span class="fc-toggle-label">Maiusculas</span>
+              <div class="fc-toggle" id="fcUppercase" onclick="toggleFontOverride('uppercase',this)"></div>
+            </div>
+            <div class="fc-row">
+              <div class="fc-field" style="flex:2">
+                <label class="fc-label">Contorno da fonte</label>
+                <input type="number" class="fc-input has-suffix" id="fcStrokeWidth" min="0" max="30" step="1" oninput="setFontOverride('strokeWidth',parseInt(this.value,10)||0)">
+                <span class="fc-suffix">px</span>
+              </div>
+              <div class="fc-field" style="flex:0 0 auto">
+                <label class="fc-label">Cor</label>
+                <input type="color" class="fc-color" id="fcStrokeColor" value="#000000" oninput="setFontOverride('strokeColor',this.value)">
+              </div>
+            </div>
+            <div class="fc-toggle-row">
+              <span class="fc-toggle-label">Sombras da fonte</span>
+              <div class="fc-toggle" id="fcShadow" onclick="toggleFontOverride('shadow',this)"></div>
+            </div>
+            <div class="fc-row">
+              <div class="fc-field" style="flex:0 0 auto">
+                <input type="color" class="fc-color" id="fcShadowColor" value="#000000" oninput="setFontOverride('shadowColor',this.value)">
+              </div>
+              <div class="fc-field">
+                <label class="fc-label">X</label>
+                <input type="number" class="fc-input" id="fcShadowX" step="1" value="3" oninput="setFontOverride('shadowX',parseInt(this.value,10)||0)">
+              </div>
+              <div class="fc-field">
+                <label class="fc-label">Y</label>
+                <input type="number" class="fc-input" id="fcShadowY" step="1" value="3" oninput="setFontOverride('shadowY',parseInt(this.value,10)||0)">
+              </div>
+              <div class="fc-field">
+                <label class="fc-label">Blur</label>
+                <input type="number" class="fc-input" id="fcShadowBlur" min="0" step="1" value="10" oninput="setFontOverride('shadowBlur',parseInt(this.value,10)||0)">
+              </div>
+            </div>
+            <div class="fc-toggle-row">
+              <span class="fc-toggle-label">Fundo da legenda</span>
+              <div class="fc-toggle" id="fcBgEnabled" onclick="toggleFontOverride('bgEnabled',this)"></div>
+            </div>
+            <div class="fc-row">
+              <div class="fc-field" style="flex:0 0 auto">
+                <label class="fc-label">Cor</label>
+                <input type="color" class="fc-color" id="fcBgColor" value="#000000" oninput="setFontOverride('bgColor',this.value)">
+              </div>
+              <div class="fc-field">
+                <label class="fc-label">Opacidade</label>
+                <input type="number" class="fc-input" id="fcBgOpacity" min="0" max="100" step="5" value="60" oninput="setFontOverride('bgOpacity',parseInt(this.value,10)||0)">
+              </div>
+              <div class="fc-field">
+                <label class="fc-label">Borda</label>
+                <input type="number" class="fc-input has-suffix" id="fcBgRadius" min="0" max="40" step="1" value="6" oninput="setFontOverride('bgRadius',parseInt(this.value,10)||0)">
+                <span class="fc-suffix">px</span>
+              </div>
+            </div>
+            <button class="fc-reset" onclick="resetFontOverrides()">Resetar para o preset</button>
           </div>
         </div>
-        <!-- B-Roll -->
-        <div class="tool-content" id="toolBrollContent">
-          <div class="tool-section">
-            <div class="tool-section-title">B-Roll Library</div>
-            <div class="tool-placeholder">
-              <div class="tool-placeholder-icon">&#127902;</div>
-              Insira clips complementares em cima do video principal
+        <!-- Animacao -->
+        <div class="tool-content" id="toolAnimacaoContent">
+          <div class="font-config-body" style="padding:4px 0">
+            <div class="fc-row">
+              <div class="fc-field">
+                <label class="fc-label">Entrada</label>
+                <select class="fc-select" id="fcAnimIn" onchange="setFontOverride('animIn',this.value)"></select>
+              </div>
             </div>
-          </div>
-        </div>
-        <!-- Transicoes -->
-        <div class="tool-content" id="toolTransicoesContent">
-          <div class="tool-section">
-            <div class="tool-section-title">Transicoes &amp; Efeitos</div>
-            <div class="tool-placeholder">
-              <div class="tool-placeholder-icon">&#10024;</div>
-              Zoom, fade, corte seco e transicoes entre segmentos
+            <div class="fc-row">
+              <div class="fc-field">
+                <label class="fc-label">Saida</label>
+                <select class="fc-select" id="fcAnimOut" onchange="setFontOverride('animOut',this.value)"></select>
+              </div>
             </div>
-          </div>
-        </div>
-        <!-- Branding -->
-        <div class="tool-content" id="toolBrandingContent">
-          <div class="tool-section">
-            <div class="tool-section-title">Marca &amp; Identidade</div>
-            <div class="tool-placeholder">
-              <div class="tool-placeholder-icon">&#127912;</div>
-              Logo, cores, watermark e elementos da marca
+            <div class="fc-row">
+              <div class="fc-field">
+                <label class="fc-label">Duracao (s)</label>
+                <input type="number" class="fc-input" id="fcAnimDuration" min="0.1" max="2" step="0.05" value="0.3" oninput="setFontOverride('animDuration',parseFloat(this.value)||0.3)">
+              </div>
             </div>
+            <button class="fc-reset" onclick="resetAnimOverrides()">Resetar animacoes</button>
           </div>
         </div>
       </div>
@@ -509,6 +730,22 @@
     let currentEdit = null;
     let presets = [];
     let activePreset = null;
+    let fontOverrides = {};
+    const DEFAULT_PRESET = {
+      id: '__default__',
+      name: 'Default',
+      style: {
+        font: 'Arial Black',
+        size: 56,
+        color: '#FFFFFF',
+        strokeColor: '#000000',
+        strokeWidth: 4,
+        weight: '900',
+        position: 'center-bottom',
+        uppercase: false,
+      },
+      highlight: { mode: 'none' },
+    };
     let editedSegments = new Set();
     let rafId = null;
     let currentMode = 'auto'; // 'auto' | 'manual'
@@ -745,7 +982,12 @@
 
       loadPresets();
       if (edit.presetId) {
-        setTimeout(() => selectPreset(edit.presetId), 500);
+        setTimeout(() => {
+          selectPreset(edit.presetId);
+          fontOverrides = Object.assign({}, edit.styleOverrides || {});
+          syncFontConfigUI();
+          applyPresetToOverlay(activePreset || DEFAULT_PRESET);
+        }, 500);
       }
 
       renderTranscript(edit.transcript || []);
@@ -833,9 +1075,12 @@
       const subTrack = document.getElementById('subtitleTrack');
       subTrack.innerHTML = '';
       if (currentEdit.transcript) {
-        currentEdit.transcript.forEach((seg, idx) => {
-          const start = seg.start || seg.startTime || 0;
-          const end = seg.end || seg.endTime || start + 2;
+        const segs = currentEdit.transcript;
+        segs.forEach((seg, idx) => {
+          const start = seg.start ?? seg.startTime ?? seg.t ?? 0;
+          const nextSeg = segs[idx + 1];
+          const fallbackEnd = nextSeg ? (nextSeg.start ?? nextSeg.startTime ?? nextSeg.t ?? start + 3) : start + 3;
+          const end = seg.end ?? seg.endTime ?? fallbackEnd;
           const left = (start / dur) * 100;
           const width = ((end - start) / dur) * 100;
           const block = document.createElement('div');
@@ -1061,25 +1306,26 @@
 
       function syncLoop() {
         rafId = requestAnimationFrame(syncLoop);
+        if (subtitleInlineEditing) return; // nao sobrescrever durante edicao inline
         if (!currentEdit || !currentEdit.transcript || currentEdit.transcript.length === 0) {
           textEl.classList.add('hidden');
           return;
         }
-        if (!activePreset) {
-          textEl.classList.add('hidden');
-          return;
-        }
+        const preset = activePreset || DEFAULT_PRESET;
 
         const ct = video.currentTime;
         let activeSeg = null;
         let activeIdx = -1;
 
-        for (let i = 0; i < currentEdit.transcript.length; i++) {
-          const seg = currentEdit.transcript[i];
-          const start = seg.start || seg.startTime || 0;
-          const end = seg.end || seg.endTime || start + 2;
+        const segs = currentEdit.transcript;
+        for (let i = 0; i < segs.length; i++) {
+          const seg = segs[i];
+          const start = seg.start ?? seg.startTime ?? seg.t ?? 0;
+          const nextSeg = segs[i + 1];
+          const fallbackEnd = nextSeg ? (nextSeg.start ?? nextSeg.startTime ?? nextSeg.t ?? start + 3) : start + 3;
+          const end = seg.end ?? seg.endTime ?? fallbackEnd;
           if (ct >= start && ct < end) {
-            activeSeg = seg;
+            activeSeg = { ...seg, start, end };
             activeIdx = i;
             break;
           }
@@ -1093,26 +1339,23 @@
         }
 
         const text = activeSeg.text || activeSeg.word || '';
-        const preset = activePreset;
 
-        if (preset.highlight && preset.highlight.mode === 'word-by-word') {
-          const segStart = activeSeg.start || activeSeg.startTime || 0;
-          const segEnd = activeSeg.end || activeSeg.endTime || segStart + 2;
-          const segDuration = segEnd - segStart;
+        const wpcRaw = fontOverrides.wordsPerCaption;
+        const wpc = wpcRaw === undefined || wpcRaw === '' ? 0 : parseInt(wpcRaw, 10);
+        const useChunks = wpc > 0;
+
+        if (useChunks) {
+          const chunkSize = useChunks ? wpc : 1;
+          const segStart = activeSeg.start;
+          const segEnd = activeSeg.end;
+          const segDuration = Math.max(segEnd - segStart, 0.01);
           const elapsed = ct - segStart;
-          const words = text.split(/\s+/);
-          const wordDuration = segDuration / Math.max(words.length, 1);
-          const currentWordIdx = Math.min(Math.floor(elapsed / wordDuration), words.length - 1);
-
-          let html = '';
-          for (let w = 0; w < words.length; w++) {
-            if (w === currentWordIdx) {
-              html += '<span style="background:' + (preset.highlight.color || '#FFD700') + ';color:#000;padding:2px 4px;border-radius:3px;">' + escapeHtml(words[w]) + '</span> ';
-            } else {
-              html += escapeHtml(words[w]) + ' ';
-            }
-          }
-          textEl.innerHTML = html.trim();
+          const words = text.split(/\s+/).filter(Boolean);
+          const numChunks = Math.max(Math.ceil(words.length / chunkSize), 1);
+          const chunkDuration = segDuration / numChunks;
+          const currentChunkIdx = Math.min(Math.max(Math.floor(elapsed / chunkDuration), 0), numChunks - 1);
+          const startIdx = currentChunkIdx * chunkSize;
+          textEl.textContent = words.slice(startIdx, startIdx + chunkSize).join(' ');
         } else {
           textEl.textContent = text;
         }
@@ -1209,6 +1452,8 @@
       const preset = presets.find(p => p.id === presetId);
       if (!preset) return;
       activePreset = preset;
+      // NAO resetar overrides: config de fonte/animacao/wordsPerCaption se aplica a TODOS os presets
+      syncFontConfigUI();
 
       const activeFilter = document.querySelector('.presets-filter-btn.active');
       const expert = activeFilter ? activeFilter.dataset.expert : 'all';
@@ -1228,46 +1473,331 @@
       }
     }
 
+    function hexWithAlpha(hex, alpha) {
+      if (!hex) return null;
+      const clean = hex.replace('#', '').padEnd(6, '0').slice(0, 6);
+      const r = parseInt(clean.slice(0, 2), 16);
+      const g = parseInt(clean.slice(2, 4), 16);
+      const b = parseInt(clean.slice(4, 6), 16);
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + Math.max(0, Math.min(1, alpha)) + ')';
+    }
+
+    let subtitleEditMode = false;
+    let subtitleDragState = null;
+    let subtitleInlineEditing = false;
+    let inlineEditSegIdx = -1;
+
+    function startInlineSubtitleEdit() {
+      if (!currentEdit || !currentEdit.transcript || currentEdit.transcript.length === 0) return;
+      const video = document.getElementById('videoPlayer');
+      const ct = video.currentTime;
+      // Find the active segment
+      const segs = currentEdit.transcript;
+      let idx = -1;
+      for (let i = 0; i < segs.length; i++) {
+        const start = segs[i].start ?? segs[i].t ?? 0;
+        const nextStart = i + 1 < segs.length ? (segs[i + 1].start ?? segs[i + 1].t ?? start + 3) : start + 3;
+        if (ct >= start && ct < nextStart) { idx = i; break; }
+      }
+      if (idx < 0) idx = 0;
+      inlineEditSegIdx = idx;
+      subtitleInlineEditing = true;
+      video.pause();
+
+      const textEl = document.getElementById('subtitleText');
+      textEl.setAttribute('contenteditable', 'true');
+      textEl.textContent = segs[idx].text || segs[idx].word || '';
+      textEl.focus();
+      const range = document.createRange();
+      range.selectNodeContents(textEl);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+
+      const finish = async () => {
+        if (!subtitleInlineEditing) return;
+        subtitleInlineEditing = false;
+        const newText = textEl.textContent;
+        textEl.removeAttribute('contenteditable');
+        await saveSegmentEdit(inlineEditSegIdx, newText);
+        inlineEditSegIdx = -1;
+      };
+      textEl.addEventListener('blur', finish, { once: true });
+      textEl.addEventListener('keydown', ev => {
+        if (ev.key === 'Enter') { ev.preventDefault(); textEl.blur(); }
+        if (ev.key === 'Escape') { ev.preventDefault(); subtitleInlineEditing = false; textEl.removeAttribute('contenteditable'); }
+      });
+    }
+
+    function toggleSubtitleEditMode() {
+      subtitleEditMode = !subtitleEditMode;
+      const overlay = document.getElementById('subtitleOverlay');
+      const btn = document.getElementById('subtitleEditToggle');
+      overlay.classList.toggle('edit-mode', subtitleEditMode);
+      btn.classList.toggle('active', subtitleEditMode);
+      if (subtitleEditMode && activePreset) applyPresetToOverlay(activePreset || DEFAULT_PRESET);
+    }
+
+    (function initSubtitleDrag() {
+      const overlay = document.getElementById('subtitleOverlay');
+      const canvasFrame = document.getElementById('canvasFrame');
+      const snapH = document.getElementById('snapH');
+      const snapV = document.getElementById('snapV');
+
+      overlay.addEventListener('mousedown', e => {
+        if (!subtitleEditMode) return;
+        const textEl = document.getElementById('subtitleText');
+        // Do not start drag if user is editing text inline
+        if (textEl.getAttribute('contenteditable') === 'true') return;
+        e.preventDefault();
+        const frameRect = canvasFrame.getBoundingClientRect();
+        const textRect = textEl.getBoundingClientRect();
+        const startCenterX = textRect.left + textRect.width / 2;
+        const startCenterY = textRect.top + textRect.height / 2;
+        subtitleDragState = {
+          offsetX: e.clientX - startCenterX,
+          offsetY: e.clientY - startCenterY,
+          frameRect,
+          moved: false,
+        };
+        overlay.classList.add('dragging');
+      });
+
+      overlay.addEventListener('dblclick', e => {
+        if (!subtitleEditMode) return;
+        e.preventDefault();
+        startInlineSubtitleEdit();
+      });
+
+      document.addEventListener('mousemove', e => {
+        if (!subtitleDragState) return;
+        const { frameRect, offsetX, offsetY } = subtitleDragState;
+        let cx = e.clientX - offsetX - frameRect.left;
+        let cy = e.clientY - offsetY - frameRect.top;
+        cx = Math.max(0, Math.min(frameRect.width, cx));
+        cy = Math.max(0, Math.min(frameRect.height, cy));
+
+        const snapThreshold = 12;
+        const snapPointsX = [frameRect.width * 0.5];
+        const snapPointsY = [frameRect.height * 0.25, frameRect.height * 0.5, frameRect.height * 0.75, frameRect.height * 0.1, frameRect.height * 0.9];
+
+        let snappedX = false, snappedY = false;
+        for (const sp of snapPointsX) {
+          if (Math.abs(cx - sp) < snapThreshold) { cx = sp; snappedX = true; break; }
+        }
+        for (const sp of snapPointsY) {
+          if (Math.abs(cy - sp) < snapThreshold) { cy = sp; snappedY = true; break; }
+        }
+        snapV.classList.toggle('visible', snappedX);
+        snapH.classList.toggle('visible', snappedY);
+        if (snappedY) snapH.style.top = ((cy / frameRect.height) * 100) + '%';
+
+        const posX = (cx / frameRect.width) * 100;
+        const posY = (cy / frameRect.height) * 100;
+        fontOverrides.posX = posX;
+        fontOverrides.posY = posY;
+        applyPresetToOverlay(activePreset || DEFAULT_PRESET);
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (!subtitleDragState) return;
+        subtitleDragState = null;
+        document.getElementById('subtitleOverlay').classList.remove('dragging');
+        snapH.classList.remove('visible');
+        snapV.classList.remove('visible');
+        persistOverridesDebounced();
+      });
+    })();
+
     function applyPresetToOverlay(preset) {
       if (!preset) return;
-      const s = preset.style;
+      const s = Object.assign({}, preset.style, fontOverrides);
       const overlay = document.getElementById('subtitleOverlay');
       const textEl = document.getElementById('subtitleText');
+      const canvasFrame = document.getElementById('canvasFrame');
 
       overlay.className = 'subtitle-overlay';
-      const posMap = { 'top': 'pos-top', 'center-top': 'pos-top', 'center': 'pos-center', 'center-bottom': 'pos-center-bottom', 'bottom': 'pos-bottom' };
-      overlay.classList.add(posMap[s.position] || 'pos-bottom');
+      if (subtitleEditMode) overlay.classList.add('edit-mode');
+      if (s.posX != null && s.posY != null) {
+        overlay.classList.add('free');
+        overlay.style.left = s.posX + '%';
+        overlay.style.top = s.posY + '%';
+      } else {
+        overlay.style.left = '';
+        overlay.style.top = '';
+        const posMap = { 'top': 'pos-top', 'center-top': 'pos-top', 'center': 'pos-center', 'center-bottom': 'pos-center-bottom', 'bottom': 'pos-bottom' };
+        overlay.classList.add(posMap[s.position] || 'pos-bottom');
+      }
+
+      const canvasHeight = canvasFrame ? canvasFrame.getBoundingClientRect().height : 1080;
+      const format = canvasFrame ? (canvasFrame.className.match(/format-([\w-]+)/) || [])[1] : '16-9';
+      const exportHeight = (format === '9-16' || format === '4-5') ? 1920 : 1080;
+      const scale = canvasHeight / exportHeight;
 
       textEl.style.fontFamily = s.font;
-      textEl.style.fontSize = s.size + 'px';
+      textEl.style.fontSize = (s.size * scale) + 'px';
+      textEl.style.fontWeight = s.weight || '';
+      textEl.style.fontStyle = s.italic ? 'italic' : 'normal';
+      textEl.style.textTransform = s.uppercase ? 'uppercase' : 'none';
       textEl.style.color = s.color;
       textEl.style.opacity = s.opacity;
 
+      const shadows = [];
       if (s.strokeColor && s.strokeWidth) {
-        textEl.style.webkitTextStroke = s.strokeWidth + 'px ' + s.strokeColor;
-        const sw = s.strokeWidth;
+        const sw = Math.max(s.strokeWidth * scale, 0.5);
         const sc = s.strokeColor;
-        textEl.style.textShadow = sw+'px '+sw+'px 0 '+sc+','+(-sw)+'px '+sw+'px 0 '+sc+','+sw+'px '+(-sw)+'px 0 '+sc+','+(-sw)+'px '+(-sw)+'px 0 '+sc;
+        textEl.style.webkitTextStroke = sw + 'px ' + sc;
+        shadows.push(sw+'px '+sw+'px 0 '+sc, (-sw)+'px '+sw+'px 0 '+sc, sw+'px '+(-sw)+'px 0 '+sc, (-sw)+'px '+(-sw)+'px 0 '+sc);
       } else {
         textEl.style.webkitTextStroke = '';
-        textEl.style.textShadow = '';
       }
+      if (s.shadow && s.shadowColor) {
+        const sx = (s.shadowX || 0) * scale;
+        const sy = (s.shadowY || 0) * scale;
+        const sb = (s.shadowBlur || 0) * scale;
+        shadows.push(sx+'px '+sy+'px '+sb+'px '+s.shadowColor);
+      }
+      textEl.style.textShadow = shadows.join(',');
 
-      if (s.background) {
-        textEl.style.backgroundColor = s.background;
-        textEl.style.padding = '6px 14px';
-        textEl.style.borderRadius = '4px';
+      const bgOverride = s.bgEnabled ? hexWithAlpha(s.bgColor || '#000000', (s.bgOpacity != null ? s.bgOpacity : 60) / 100) : null;
+      const bgValue = bgOverride || s.background;
+      if (bgValue) {
+        textEl.style.backgroundColor = bgValue;
+        textEl.style.padding = Math.max(6 * scale, 2) + 'px ' + Math.max(14 * scale, 4) + 'px';
+        textEl.style.borderRadius = Math.max((s.bgRadius != null ? s.bgRadius : 4) * scale, 2) + 'px';
       } else {
         textEl.style.backgroundColor = '';
         textEl.style.padding = '';
         textEl.style.borderRadius = '';
       }
 
-      textEl.classList.remove('anim-pop', 'anim-fade');
-      if (preset.animation) {
-        if (preset.animation.type === 'pop') textEl.classList.add('anim-pop');
-        else if (preset.animation.type === 'fade') textEl.classList.add('anim-fade');
+      applyAnimationClasses(textEl, s);
+    }
+
+    function applyAnimationClasses(el, s) {
+      const classes = Array.from(el.classList).filter(c => c.startsWith('anim-'));
+      classes.forEach(c => el.classList.remove(c));
+      const dur = (s.animDuration || 0.3) + 's';
+      el.style.setProperty('--anim-dur', dur);
+      if (s.animIn) el.classList.add('anim-in-' + s.animIn);
+      // animOut is applied on segment end by sync loop, not here
+      el.dataset.animOut = s.animOut || '';
+    }
+
+    const ANIM_OPTIONS = [
+      { value: '', label: 'Nenhuma' },
+      { value: 'fade', label: 'Fade' },
+      { value: 'pop', label: 'Pop (scale)' },
+      { value: 'slide-up', label: 'Slide de baixo' },
+      { value: 'slide-down', label: 'Slide de cima' },
+      { value: 'slide-left', label: 'Slide da esquerda' },
+      { value: 'slide-right', label: 'Slide da direita' },
+      { value: 'bounce', label: 'Bounce' },
+      { value: 'typewriter', label: 'Typewriter' },
+      { value: 'tiktok', label: 'TikTok (pop + bounce)' },
+      { value: 'shake', label: 'Tremor' },
+      { value: 'wave', label: 'Onda' },
+      { value: 'pulse', label: 'Pulsar' },
+      { value: 'zoom', label: 'Zoom' },
+      { value: 'rotate', label: 'Rotate' },
+      { value: 'flip', label: 'Flip' },
+      { value: 'glitch', label: 'Glitch' },
+    ];
+
+    function populateAnimSelects() {
+      ['fcAnimIn', 'fcAnimOut'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = ANIM_OPTIONS.map(o => '<option value="' + o.value + '">' + o.label + '</option>').join('');
+      });
+    }
+    populateAnimSelects();
+
+    function resetAnimOverrides() {
+      ['animIn', 'animOut', 'animMove', 'animDuration'].forEach(k => delete fontOverrides[k]);
+      // animMove kept in the key list for backward-compat cleanup of old edits
+      syncFontConfigUI();
+      applyPresetToOverlay(activePreset || DEFAULT_PRESET);
+      persistOverridesDebounced();
+    }
+
+    let persistOverridesTimer = null;
+    function persistOverridesDebounced() {
+      if (!currentEdit) return;
+      clearTimeout(persistOverridesTimer);
+      persistOverridesTimer = setTimeout(async () => {
+        try {
+          await apiFetch('/api/edit/' + currentEdit.editId + '/style-overrides', {
+            method: 'PUT',
+            headers: Object.assign({ 'Content-Type': 'application/json' }, AUTH_HEADER()),
+            body: JSON.stringify(fontOverrides),
+          });
+          currentEdit.styleOverrides = Object.assign({}, fontOverrides);
+        } catch { /* toast from apiFetch */ }
+      }, 400);
+    }
+
+    function setFontOverride(key, value) {
+      if (value === '' || value === null || (typeof value === 'number' && Number.isNaN(value))) {
+        delete fontOverrides[key];
+      } else {
+        fontOverrides[key] = value;
       }
+      applyPresetToOverlay(activePreset || DEFAULT_PRESET);
+      persistOverridesDebounced();
+    }
+
+    function toggleFontOverride(key, el) {
+      const on = !el.classList.contains('active');
+      el.classList.toggle('active', on);
+      fontOverrides[key] = on;
+      applyPresetToOverlay(activePreset || DEFAULT_PRESET);
+      persistOverridesDebounced();
+    }
+
+    function resetFontOverrides() {
+      fontOverrides = {};
+      syncFontConfigUI();
+      applyPresetToOverlay(activePreset || DEFAULT_PRESET);
+      persistOverridesDebounced();
+    }
+
+    function resetSubtitlePosition() {
+      delete fontOverrides.posX;
+      delete fontOverrides.posY;
+      applyPresetToOverlay(activePreset || DEFAULT_PRESET);
+      persistOverridesDebounced();
+    }
+
+    function toggleFontConfig() {
+      document.getElementById('fontConfig').classList.toggle('collapsed');
+    }
+
+    function syncFontConfigUI() {
+      const base = activePreset ? activePreset.style : {};
+      const merged = Object.assign({}, base, fontOverrides);
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v == null ? '' : v; };
+      set('fcWordsPerCaption', fontOverrides.wordsPerCaption != null ? String(fontOverrides.wordsPerCaption) : '0');
+      set('fcFont', merged.font || '');
+      set('fcColor', merged.color || '#FFFFFF');
+      set('fcSize', merged.size || '');
+      set('fcWeight', merged.weight || '');
+      set('fcStrokeColor', merged.strokeColor || '#000000');
+      set('fcStrokeWidth', merged.strokeWidth || 0);
+      set('fcShadowColor', merged.shadowColor || '#000000');
+      set('fcShadowX', merged.shadowX != null ? merged.shadowX : 3);
+      set('fcShadowY', merged.shadowY != null ? merged.shadowY : 3);
+      set('fcShadowBlur', merged.shadowBlur != null ? merged.shadowBlur : 10);
+      set('fcPosition', fontOverrides.position || '');
+      set('fcBgColor', fontOverrides.bgColor || '#000000');
+      set('fcBgOpacity', fontOverrides.bgOpacity != null ? fontOverrides.bgOpacity : 60);
+      set('fcBgRadius', fontOverrides.bgRadius != null ? fontOverrides.bgRadius : 6);
+      document.getElementById('fcUppercase').classList.toggle('active', !!merged.uppercase);
+      document.getElementById('fcShadow').classList.toggle('active', !!merged.shadow);
+      document.getElementById('fcBgEnabled').classList.toggle('active', !!fontOverrides.bgEnabled);
+      set('fcAnimIn', fontOverrides.animIn || '');
+      set('fcAnimOut', fontOverrides.animOut || '');
+      set('fcAnimDuration', fontOverrides.animDuration != null ? fontOverrides.animDuration : 0.3);
     }
 
     // ── Tool Tab Switching ──
