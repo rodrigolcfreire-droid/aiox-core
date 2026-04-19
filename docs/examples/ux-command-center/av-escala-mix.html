@@ -109,6 +109,20 @@
     .asset-upload-pct{color:var(--accent-blue);font-family:'JetBrains Mono'}
     .modal-actions{display:flex;gap:8px;margin-top:12px}
     .modal-actions .btn{flex:1}
+    .projects-bar{margin-bottom:20px}
+    .projects-bar-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .projects-bar-title{font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1.5px}
+    .projects-bar-hint{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono'}
+    .projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;max-height:200px;overflow-y:auto;padding:4px 2px}
+    .project-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:4px}
+    .project-card:hover{border-color:var(--accent-blue);transform:translateY(-1px)}
+    .project-card.active{border-color:var(--accent-green);background:rgba(52,211,153,.08)}
+    .project-card-name{font-size:12px;font-weight:700;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .project-card-meta{font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono';display:flex;gap:8px;flex-wrap:wrap}
+    .project-card-badge{font-size:9px;padding:1px 6px;border-radius:3px;background:rgba(52,211,153,.12);color:var(--accent-green);font-weight:700}
+    .project-card-empty{color:var(--text-dim);padding:12px;text-align:center;grid-column:1/-1;font-size:12px;font-style:italic}
+    .project-card-new{border:1px dashed var(--border);background:transparent;color:var(--text-dim);align-items:center;justify-content:center;text-align:center;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+    .project-card-new:hover{color:var(--accent-blue);border-color:var(--accent-blue);background:rgba(56,189,248,.05)}
   </style>
 </head>
 <body>
@@ -119,6 +133,14 @@
   </div>
 
   <div class="container">
+    <div class="projects-bar" id="projectsBar">
+      <div class="projects-bar-head">
+        <span class="projects-bar-title">Meus Projetos</span>
+        <span class="projects-bar-hint" id="projectsCount">0 projetos</span>
+      </div>
+      <div class="projects-grid" id="projectsGrid"></div>
+    </div>
+
     <div class="mix-selector">
       <select class="select-mix" id="mixSelect" onchange="selectMix(this.value)">
         <option value="">Selecione ou crie um mix...</option>
@@ -275,6 +297,49 @@
       select.innerHTML = '<option value="">Selecione ou crie um mix...</option>' +
         mixes.map(m => `<option value="${m.mixId}">${m.name} (h${m.hooks.length}/d${m.devs.length}/c${m.ctas.length})</option>`).join('');
       if (currentMix) select.value = currentMix.mixId;
+      renderProjectsGrid(mixes);
+    }
+
+    function formatProjectDate(iso) {
+      if (!iso) return '';
+      try {
+        const d = new Date(iso);
+        const pad = n => String(n).padStart(2, '0');
+        return `${pad(d.getDate())}/${pad(d.getMonth() + 1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      } catch { return ''; }
+    }
+
+    function renderProjectsGrid(mixes) {
+      const grid = document.getElementById('projectsGrid');
+      const count = document.getElementById('projectsCount');
+      if (!grid) return;
+      count.textContent = mixes.length + ' projeto' + (mixes.length === 1 ? '' : 's');
+      if (mixes.length === 0) {
+        grid.innerHTML = '<div class="project-card-empty">Nenhum projeto ainda — arraste um video abaixo para comecar</div>';
+        return;
+      }
+      const cards = mixes.map(m => {
+        const isActive = currentMix && currentMix.mixId === m.mixId;
+        const done = (m.renders || []).filter(r => r.status === 'done').length;
+        const doneBadge = done > 0 ? `<span class="project-card-badge">${done} pronto${done === 1 ? '' : 's'}</span>` : '';
+        const h = (m.hooks || []).length, d = (m.devs || []).length, c = (m.ctas || []).length;
+        return `<div class="project-card ${isActive ? 'active' : ''}" onclick="selectProjectCard('${m.mixId}')">
+          <div class="project-card-name" title="${m.name}">${m.name}</div>
+          <div class="project-card-meta">
+            <span>${formatProjectDate(m.createdAt)}</span>
+            <span>&middot;</span>
+            <span>${h}h / ${d}d / ${c}c</span>
+            ${doneBadge}
+          </div>
+        </div>`;
+      }).join('');
+      const newCard = `<div class="project-card project-card-new" onclick="newMix()">+ Novo projeto</div>`;
+      grid.innerHTML = cards + newCard;
+    }
+
+    async function selectProjectCard(mixId) {
+      await selectMix(mixId);
+      await loadMixes();
     }
 
     function newMix() {
