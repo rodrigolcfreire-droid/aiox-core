@@ -363,10 +363,41 @@
       document.getElementById('genBtn').disabled = !(h > 0 && d > 0 && c > 0);
     }
 
-    function uploadFile(file, kind) {
-      return new Promise(resolve => {
-        if (!currentMix) { showToast('Selecione ou crie um mix primeiro', 'error'); return resolve(); }
+    const MAX_UPLOAD_MB = 200;
 
+    async function ensureMix() {
+      if (currentMix) return currentMix;
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const name = 'Rascunho ' + pad(now.getDate()) + '/' + pad(now.getMonth() + 1) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+      try {
+        const res = await fetch(API + '/api/escala-mix', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name }),
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const { mix } = await res.json();
+        await loadMixes();
+        await selectMix(mix.mixId);
+        showToast('Mix criado: ' + mix.name, 'success');
+        return currentMix;
+      } catch (err) {
+        showToast('Erro criando mix: ' + err.message, 'error');
+        return null;
+      }
+    }
+
+    async function uploadFile(file, kind) {
+      const sizeMB = file.size / 1048576;
+      if (sizeMB > MAX_UPLOAD_MB) {
+        showToast(`${file.name}: ${sizeMB.toFixed(1)}MB excede o limite de ${MAX_UPLOAD_MB}MB`, 'error');
+        return;
+      }
+      const mix = await ensureMix();
+      if (!mix) return;
+
+      return new Promise(resolve => {
         const listEl = document.getElementById('assets' + (kind === 'hook' ? 'Hooks' : kind === 'dev' ? 'Devs' : 'Ctas'));
         const uploadId = 'up_' + Math.random().toString(36).slice(2, 8);
         const card = document.createElement('div');
