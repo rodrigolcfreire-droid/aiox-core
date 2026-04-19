@@ -219,7 +219,9 @@ async function handleRequest(req, res) {
   if (!isSSE && !isStatic && !isPolling && !isUploadChunk && !checkRateLimit(req, res)) {
     logRateLimitHit(req);
     const ip = req.socket.remoteAddress || '127.0.0.1';
-    sendRateLimitAlert(ip, RATE_LIMIT).catch(() => {});
+    const isLocal = ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+    const limit = isLocal ? RATE_LIMIT_LOCAL : RATE_LIMIT_EXTERNAL;
+    sendRateLimitAlert(ip, limit).catch(() => {});
     return;
   }
 
