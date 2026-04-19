@@ -1388,6 +1388,53 @@ async function handleRequest(req, res) {
       catch (err) { return sendError(res, err.message, 404); }
     }
 
+    if (pathname.match(/^\/api\/escala-mix\/[^/]+\/renders\/[^/]+\/stream$/) && method === 'GET') {
+      const mixStore = require('./escala-mix-store');
+      const parts = pathname.split('/');
+      const mixId = parts[3];
+      const renderId = parts[5];
+      try {
+        const pool = mixStore.readPool(mixId);
+        const r = pool.renders.find(x => x.id === renderId);
+        if (!r || !r.output || !fs.existsSync(r.output)) return sendError(res, 'Render output not found', 404);
+        const stat = fs.statSync(r.output);
+        const range = req.headers.range;
+        if (range) {
+          const [s, e] = range.replace('bytes=', '').split('-');
+          const start = parseInt(s, 10) || 0;
+          const end = e ? parseInt(e, 10) : stat.size - 1;
+          res.writeHead(206, {
+            'Content-Range': `bytes ${start}-${end}/${stat.size}`,
+            'Accept-Ranges': 'bytes',
+            'Content-Length': end - start + 1,
+            'Content-Type': 'video/mp4',
+          });
+          fs.createReadStream(r.output, { start, end }).pipe(res);
+        } else {
+          res.writeHead(200, {
+            'Content-Length': stat.size,
+            'Content-Type': 'video/mp4',
+            'Accept-Ranges': 'bytes',
+          });
+          fs.createReadStream(r.output).pipe(res);
+        }
+        return;
+      } catch (err) { return sendError(res, err.message, 404); }
+    }
+    if (pathname.match(/^\/api\/escala-mix\/[^/]+\/export\/premiere-xml$/) && method === 'GET') {
+      const { buildXmlForMix } = require('./escala-mix-premiere');
+      const mixId = pathname.split('/')[3];
+      try {
+        const renderIds = parsed.query.ids ? String(parsed.query.ids).split(',').map(s => s.trim()).filter(Boolean) : null;
+        const { xml, filename, count } = await buildXmlForMix(mixId, { renderIds });
+        res.writeHead(200, {
+          'Content-Type': 'application/xml; charset=utf-8',
+          'Content-Disposition': `attachment; filename="${filename}"`,
+          'X-Render-Count': String(count),
+        });
+        return res.end(xml);
+      } catch (err) { return sendError(res, err.message, 400); }
+    }
     if (pathname.match(/^\/api\/escala-mix\/[^/]+\/renders\/[^/]+\/download$/) && method === 'GET') {
       const mixStore = require('./escala-mix-store');
       const parts = pathname.split('/');

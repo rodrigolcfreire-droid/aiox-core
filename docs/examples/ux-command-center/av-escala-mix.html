@@ -205,9 +205,24 @@
     </div>
 
     <div class="renders" id="rendersPanel">
-      <div style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Renders</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px">Renders</div>
+        <button class="btn" id="exportPremiereBtn" onclick="exportPremiereXml()" title="Baixar XML FCP compativel com Adobe Premiere Pro" style="font-size:11px">&#127916; Exportar pra Premiere (XML)</button>
+      </div>
       <div class="progress-global"><div class="progress-fill" id="progressFill"></div></div>
       <div id="rendersList"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="previewModal">
+    <div class="modal" style="width:560px;max-width:95vw">
+      <button class="modal-close" onclick="closePreviewModal()">&times;</button>
+      <h3 id="previewModalTitle" style="margin-right:24px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></h3>
+      <video id="previewVideo" controls preload="metadata" style="width:100%;max-height:60vh;background:#000;border-radius:8px;margin-top:8px"></video>
+      <div class="modal-actions">
+        <a id="previewDownloadBtn" class="btn" href="#" download>Baixar MP4</a>
+        <button class="btn" onclick="closePreviewModal()">Fechar</button>
+      </div>
     </div>
   </div>
 
@@ -576,10 +591,38 @@
     }
 
     function renderItemHTML(r) {
-      const dl = r.output ? `<a class="btn" style="padding:3px 8px;font-size:10px;margin-left:8px" href="/api/escala-mix/${currentMix.mixId}/renders/${r.id}/download">baixar</a>` : '';
+      const isDone = r.status === 'done' && r.output;
+      const play = isDone ? `<button class="btn" style="padding:3px 8px;font-size:10px;margin-left:6px" onclick="openPreviewModal('${r.id}', ${JSON.stringify(r.name).replace(/"/g, '&quot;')})">&#9654; Play</button>` : '';
+      const dl = isDone ? `<a class="btn" style="padding:3px 8px;font-size:10px;margin-left:6px" href="/api/escala-mix/${currentMix.mixId}/renders/${r.id}/download">Baixar</a>` : '';
       const stars = r.status === 'done' ? starsHTML(r.id, r.rating) : '';
       const statusEl = `<span class="render-status ${r.status}">${r.status}</span>`;
-      return `<div class="render-item" id="render-${r.id}"><span style="flex:1">${r.name}</span>${statusEl}${stars}${dl}</div>`;
+      return `<div class="render-item" id="render-${r.id}"><span style="flex:1">${r.name}</span>${statusEl}${stars}${play}${dl}</div>`;
+    }
+
+    function openPreviewModal(renderId, name) {
+      if (!currentMix) return;
+      const video = document.getElementById('previewVideo');
+      const src = `/api/escala-mix/${currentMix.mixId}/renders/${renderId}/stream`;
+      video.src = src;
+      document.getElementById('previewModalTitle').textContent = name;
+      document.getElementById('previewDownloadBtn').href = `/api/escala-mix/${currentMix.mixId}/renders/${renderId}/download`;
+      document.getElementById('previewModal').classList.add('visible');
+    }
+
+    function closePreviewModal() {
+      const video = document.getElementById('previewVideo');
+      try { video.pause(); } catch { /* ignore */ }
+      video.removeAttribute('src');
+      video.load();
+      document.getElementById('previewModal').classList.remove('visible');
+    }
+
+    function exportPremiereXml() {
+      if (!currentMix) { showToast('Selecione um mix com renders', 'error'); return; }
+      const hasDone = (currentMix.renders || []).some(r => r.status === 'done');
+      if (!hasDone) { showToast('Nenhum render concluido ainda', 'error'); return; }
+      window.location.href = `/api/escala-mix/${currentMix.mixId}/export/premiere-xml`;
+      showToast('Gerando XML...', 'success');
     }
 
     function handleSSE(type, data) {
