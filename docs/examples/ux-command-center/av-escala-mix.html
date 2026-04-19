@@ -95,9 +95,12 @@
     .toast.success{border-color:var(--accent-green)}
     .toast.error{border-color:var(--accent-red)}
     input[type=file]{display:none}
+    body.embed .header{display:none}
+    body.embed .container{padding-top:8px}
   </style>
 </head>
 <body>
+  <script>if(new URLSearchParams(location.search).get('embed')==='1'){document.body.classList.add('embed');}</script>
   <div class="header">
     <a href="/" class="back-btn">&larr; Voltar</a>
     <h1>ESCALA DE CRIATIVOS — MIX (Hook × Dev × CTA)</h1>

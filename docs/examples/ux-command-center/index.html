@@ -5689,25 +5689,22 @@
         </div>
       </div>
 
-      <!-- Upload Zone -->
-      <div style="background:rgba(15,23,42,0.8);border:2px dashed rgba(52,211,153,0.3);border-radius:16px;padding:40px;margin-bottom:32px;text-align:center;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='#34d399';this.style.background='rgba(52,211,153,0.05)'" onmouseout="this.style.borderColor='rgba(52,211,153,0.3)';this.style.background='rgba(15,23,42,0.8)'" ondragover="event.preventDefault();this.style.borderColor='#34d399';this.style.background='rgba(52,211,153,0.1)'" ondragleave="this.style.borderColor='rgba(52,211,153,0.3)';this.style.background='rgba(15,23,42,0.8)'">
-        <div style="font-size:36px;margin-bottom:12px;">📤</div>
-        <div style="font-family:'Chakra Petch';font-size:18px;font-weight:700;color:#34d399;margin-bottom:8px;">Enviar Cortes Aprovados</div>
-        <p style="font-size:13px;color:#64748b;margin-bottom:16px;">Arraste cortes aprovados ou cole o ID do projeto para iniciar a producao</p>
-        <div style="display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;">
-          <input type="text" id="av-escala-input" placeholder="ID do projeto ou caminho dos cortes..." style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:12px 16px;color:#e2e8f0;font-size:14px;font-family:'JetBrains Mono';width:380px;outline:none;" onfocus="this.style.borderColor='#34d399'" onblur="this.style.borderColor='#334155'" />
-          <button class="av-sector-btn" style="font-size:13px;padding:10px 24px;letter-spacing:1px;border-color:rgba(52,211,153,0.4);color:#34d399;" onclick="showView('av-pipeline'); event.preventDefault();">PRODUZIR</button>
+      <!-- Escala Mix — Modulo Principal (Hook x Dev x CTA) -->
+      <div style="background:linear-gradient(135deg,rgba(15,23,42,0.95),rgba(30,20,50,0.9));border:1px solid rgba(244,114,182,0.25);border-radius:16px;padding:48px 40px;margin-bottom:32px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#f472b6,#fbbf24,#34d399);"></div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px;">
+          <span style="background:linear-gradient(135deg,rgba(244,114,182,0.2),rgba(244,114,182,0.1));border:1px solid rgba(244,114,182,0.4);color:#f472b6;padding:5px 14px;border-radius:4px;font-size:11px;font-weight:700;font-family:'JetBrains Mono';letter-spacing:1px;">ESCALA MIX</span>
+          <span style="background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.4);color:#34d399;padding:3px 10px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:1px;">NOVO</span>
         </div>
-        <div style="margin-top:16px;display:flex;align-items:center;justify-content:center;gap:16px;">
-          <div style="height:1px;width:80px;background:#334155;"></div>
-          <span style="font-size:12px;color:#475569;">ou</span>
-          <div style="height:1px;width:80px;background:#334155;"></div>
+        <div style="font-family:'Chakra Petch';font-size:32px;font-weight:700;margin-bottom:8px;">
+          <span style="color:#f472b6;">Hook</span>
+          <span style="color:#475569;margin:0 4px;">+</span>
+          <span style="color:#fbbf24;">Desenvolvimento</span>
+          <span style="color:#475569;margin:0 4px;">+</span>
+          <span style="color:#34d399;">CTA</span>
         </div>
-        <div style="margin-top:16px;text-align:center;">
-          <input type="file" id="av-escala-file" accept="video/*" style="display:none;" onchange="avFileSelected(this)" />
-          <button style="background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);color:#34d399;padding:12px 32px;border-radius:8px;font-family:'Chakra Petch';font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='#34d399';this.style.background='rgba(52,211,153,0.2)'" onmouseout="this.style.borderColor='rgba(52,211,153,0.3)';this.style.background='rgba(52,211,153,0.1)'" onclick="document.getElementById('av-escala-file').click()">📂 SELECIONAR VIDEO DO COMPUTADOR</button>
-          <div id="av-escala-file-name" style="font-size:12px;color:#64748b;margin-top:8px;font-family:'JetBrains Mono';"></div>
-        </div>
+        <p style="font-size:14px;color:#94a3b8;line-height:1.6;margin-bottom:24px;max-width:640px;margin-left:auto;margin-right:auto;">Upload de assets por categoria, gera todas as combinacoes possiveis, rating com IA e ranking automatico dos melhores criativos.</p>
+        <iframe id="av-escala-mix-inline" src="/escala-mix?embed=1" style="width:100%;min-height:880px;border:none;border-radius:12px;background:#0a0e1a;display:block;" loading="lazy"></iframe>
       </div>
 
       <!-- Action -->
@@ -5715,6 +5712,20 @@
         <button class="av-sector-btn" style="font-size:14px;padding:12px 32px;letter-spacing:2px;border-color:rgba(52,211,153,0.4);color:#34d399;" onclick="showView('av-pipeline'); event.preventDefault();">EXECUTAR PRODUCAO</button>
         <a href="/av/projects" target="_blank" class="av-sector-btn" style="font-size:14px;padding:12px 32px;letter-spacing:2px;text-decoration:none;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);color:#a78bfa;">PROJETOS</a>
       </div>
+    </section>
+
+    <!-- Escala Mix (embedded view) -->
+    <section class="dashboard-section wrap view-section" id="av-escala-mix">
+      <div class="av-breadcrumb">
+        <a href="#" onclick="showView('entrada'); event.preventDefault();">Centro de Comando</a>
+        <span class="av-bread-sep">&rsaquo;</span>
+        <a href="#" onclick="showView('setor-audiovisual'); event.preventDefault();">Setor Audiovisual</a>
+        <span class="av-bread-sep">&rsaquo;</span>
+        <a href="#" onclick="showView('av-motor-escala'); event.preventDefault();">Escala de Criativos</a>
+        <span class="av-bread-sep">&rsaquo;</span>
+        <span class="av-bread-current">Mix (Hook &times; Dev &times; CTA)</span>
+      </div>
+      <iframe id="av-escala-mix-frame" style="width:100%;min-height:90vh;border:none;border-radius:12px;background:#0a0e1a;" src="about:blank"></iframe>
     </section>
 
     <section class="dashboard-section wrap view-section" id="av-pipeline">
@@ -5912,6 +5923,12 @@
         if (frame && frame.src === 'about:blank') {
           // Load approval page via server route that injects project ID
           loadApprovalFrame(frame);
+        }
+      }
+      if (viewId === 'av-escala-mix') {
+        const frame = document.getElementById('av-escala-mix-frame');
+        if (frame && (frame.src === 'about:blank' || frame.src.endsWith('about:blank'))) {
+          frame.src = '/escala-mix?v=' + Date.now();
         }
       }
     }
