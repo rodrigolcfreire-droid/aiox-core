@@ -120,13 +120,14 @@ const AUTH_COOKIE = 'aios_session';
 const crypto = require('crypto');
 const AUTH_TOKEN = crypto.createHash('sha256').update(AUTH_PASSWORD).digest('hex').substring(0, 32);
 
+// Public routes (no auth required). Login + health only.
+const AUTH_PUBLIC_PATHS = new Set(['/api/login', '/api/health', '/health', '/favicon.ico']);
+
 function checkAuth(req, res) {
   const pathname = url.parse(req.url).pathname;
 
-  // Auth ONLY on the main entry points (/ and /index.html)
-  // Everything else (APIs, static files, iframes) is open once you're past the gate.
-  // Cloudflare tunnel + iframes don't reliably pass cookies, so we gate at the door only.
-  if (pathname !== '/' && pathname !== '/index.html') return true;
+  // Public endpoints bypass auth
+  if (AUTH_PUBLIC_PATHS.has(pathname)) return true;
 
   // 1. Cookie auth
   const cookies = (req.headers.cookie || '').split(';').reduce((acc, c) => {
@@ -176,8 +177,13 @@ async function handleRequest(req, res) {
     return res.end();
   }
 
-  // Auth check — show login page if not authenticated
+  // Auth check — show login page for HTML paths, return 401 for API paths
   if (!checkAuth(req, res)) {
+    const pathname = url.parse(req.url).pathname;
+    if (pathname.startsWith('/api/')) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ error: 'Authentication required' }));
+    }
     serveLoginPage(res);
     return;
   }
