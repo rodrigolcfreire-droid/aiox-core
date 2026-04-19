@@ -11,7 +11,18 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { execFile } = require('child_process');
 const { AV_DIR } = require(path.resolve(__dirname, 'constants'));
+
+function generateThumb(videoPath, outPath) {
+  return new Promise(resolve => {
+    execFile('ffmpeg', [
+      '-y', '-ss', '0.5', '-i', videoPath,
+      '-vframes', '1', '-vf', 'scale=320:-2',
+      '-q:v', '4', outPath,
+    ], { timeout: 15000 }, err => resolve(!err && fs.existsSync(outPath)));
+  });
+}
 
 const ROOT = path.join(AV_DIR, 'escala-mix');
 
@@ -70,7 +81,7 @@ function listMixes() {
     .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
 }
 
-function addAsset(mixId, kind, sourcePath, name) {
+async function addAsset(mixId, kind, sourcePath, name) {
   if (!['hooks', 'devs', 'ctas'].includes(kind)) {
     throw new Error(`Invalid kind "${kind}". Use hooks, devs, or ctas.`);
   }
@@ -82,11 +93,17 @@ function addAsset(mixId, kind, sourcePath, name) {
   const dest = path.join(getMixDir(mixId), kind, `${assetId}${ext}`);
   fs.copyFileSync(sourcePath, dest);
 
+  const thumbsDir = path.join(getMixDir(mixId), 'thumbs');
+  fs.mkdirSync(thumbsDir, { recursive: true });
+  const thumbPath = path.join(thumbsDir, `${assetId}.jpg`);
+  const thumbOk = await generateThumb(dest, thumbPath);
+
   const stat = fs.statSync(dest);
   const asset = {
     id: assetId,
     name: name || path.basename(sourcePath, ext),
     path: dest,
+    thumb: thumbOk ? thumbPath : null,
     sizeMB: +(stat.size / 1048576).toFixed(2),
     addedAt: new Date().toISOString(),
   };

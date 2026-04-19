@@ -97,6 +97,17 @@
     input[type=file]{display:none}
     body.embed .header{display:none}
     body.embed .container{padding-top:8px}
+    .asset-item{gap:8px}
+    .asset-thumb{width:48px;height:64px;object-fit:cover;border-radius:4px;background:var(--bg-surface);flex-shrink:0}
+    .asset-thumb-placeholder{width:48px;height:64px;display:flex;align-items:center;justify-content:center;background:var(--bg-surface);border-radius:4px;color:var(--text-dim);font-size:14px;flex-shrink:0}
+    .asset-upload{background:var(--bg-surface);border:1px solid var(--accent-blue);border-radius:6px;padding:10px 12px;margin-bottom:6px;font-size:11px}
+    .asset-upload-name{display:flex;justify-content:space-between;margin-bottom:6px;color:var(--text-secondary)}
+    .asset-upload-bar{background:var(--border);border-radius:2px;height:4px;overflow:hidden}
+    .asset-upload-fill{background:var(--accent-blue);height:100%;width:0;transition:width .2s}
+    .asset-upload-fill.error{background:var(--accent-red)}
+    .asset-upload-pct{color:var(--accent-blue);font-family:'JetBrains Mono'}
+    .modal-actions{display:flex;gap:8px;margin-top:12px}
+    .modal-actions .btn{flex:1}
   </style>
 </head>
 <body>
@@ -199,6 +210,19 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="newMixModal">
+    <div class="modal" style="width:420px">
+      <button class="modal-close" onclick="closeNewMixModal()">&times;</button>
+      <h3>Novo Mix de Criativos</h3>
+      <p style="color:var(--text-dim);font-size:12px;margin-bottom:12px">Dê um nome para organizar esse lote de Hook × Dev × CTA.</p>
+      <input type="text" class="modal-input" id="newMixName" placeholder="ex: Campanha Roleta Maio" autofocus>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeNewMixModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="confirmNewMix()">Criar Mix</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="aiModal">
     <div class="modal">
       <button class="modal-close" onclick="closeAiModal()">&times;</button>
@@ -237,19 +261,43 @@
       if (currentMix) select.value = currentMix.mixId;
     }
 
-    async function newMix() {
-      const name = prompt('Nome do novo mix:');
-      if (!name) return;
-      const res = await fetch(API + '/api/escala-mix', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name }),
-      });
-      const { mix } = await res.json();
-      await loadMixes();
-      selectMix(mix.mixId);
-      showToast('Mix criado: ' + mix.name, 'success');
+    function newMix() {
+      document.getElementById('newMixName').value = '';
+      document.getElementById('newMixModal').classList.add('visible');
+      setTimeout(() => document.getElementById('newMixName').focus(), 50);
     }
+
+    function closeNewMixModal() {
+      document.getElementById('newMixModal').classList.remove('visible');
+    }
+
+    async function confirmNewMix() {
+      const name = document.getElementById('newMixName').value.trim();
+      if (!name) { showToast('Informe um nome', 'error'); return; }
+      try {
+        const res = await fetch(API + '/api/escala-mix', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name }),
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const { mix } = await res.json();
+        closeNewMixModal();
+        await loadMixes();
+        selectMix(mix.mixId);
+        showToast('Mix criado: ' + mix.name, 'success');
+      } catch (err) {
+        showToast('Erro: ' + err.message, 'error');
+      }
+    }
+
+    // Ensure Enter submits newMixName
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && document.getElementById('newMixModal').classList.contains('visible')) {
+        e.preventDefault();
+        confirmNewMix();
+      }
+    });
 
     async function deleteCurrentMix() {
       if (!currentMix) return;
@@ -289,18 +337,25 @@
       loadRanking();
     }
 
+    function assetItemHTML(mixId, a) {
+      const thumb = a.thumb
+        ? `<img class="asset-thumb" src="/api/escala-mix/${mixId}/thumbs/${a.id}.jpg" alt="">`
+        : `<div class="asset-thumb-placeholder">&#9654;</div>`;
+      return `<div class="asset-item">
+        ${thumb}
+        <span class="asset-name" title="${a.name}">${a.name}</span>
+        <span class="asset-size">${a.sizeMB}MB</span>
+        <button class="asset-del" onclick="removeAsset('${a.id}')" title="Remover">&times;</button>
+      </div>`;
+    }
+
     function renderPools() {
       const empty = { hooks: [], devs: [], ctas: [] };
       const pool = currentMix || empty;
+      const mixId = currentMix ? currentMix.mixId : '';
       ['hooks', 'devs', 'ctas'].forEach(kind => {
         const list = document.getElementById('assets' + kind.charAt(0).toUpperCase() + kind.slice(1));
-        list.innerHTML = (pool[kind] || []).map(a =>
-          `<div class="asset-item">
-            <span class="asset-name" title="${a.name}">${a.name}</span>
-            <span class="asset-size">${a.sizeMB}MB</span>
-            <button class="asset-del" onclick="removeAsset('${a.id}')" title="Remover">&times;</button>
-          </div>`
-        ).join('');
+        list.innerHTML = (pool[kind] || []).map(a => assetItemHTML(mixId, a)).join('');
         document.getElementById(kind + 'Count').textContent = (pool[kind] || []).length;
       });
       const h = (pool.hooks || []).length, d = (pool.devs || []).length, c = (pool.ctas || []).length;
@@ -308,19 +363,58 @@
       document.getElementById('genBtn').disabled = !(h > 0 && d > 0 && c > 0);
     }
 
-    async function uploadFile(file, kind) {
-      if (!currentMix) { showToast('Selecione ou crie um mix primeiro', 'error'); return; }
-      const fd = new FormData();
-      fd.append('video', file);
-      fd.append('kind', kind);
-      fd.append('name', file.name.replace(/\.[^.]+$/, ''));
-      try {
-        const res = await fetch(API + '/api/escala-mix/' + currentMix.mixId + '/assets', { method: 'POST', body: fd });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        await selectMix(currentMix.mixId);
-      } catch (err) {
-        showToast('Erro upload: ' + err.message, 'error');
-      }
+    function uploadFile(file, kind) {
+      return new Promise(resolve => {
+        if (!currentMix) { showToast('Selecione ou crie um mix primeiro', 'error'); return resolve(); }
+
+        const listEl = document.getElementById('assets' + (kind === 'hook' ? 'Hooks' : kind === 'dev' ? 'Devs' : 'Ctas'));
+        const uploadId = 'up_' + Math.random().toString(36).slice(2, 8);
+        const card = document.createElement('div');
+        card.className = 'asset-upload';
+        card.id = uploadId;
+        card.innerHTML = `
+          <div class="asset-upload-name">
+            <span>${file.name}</span>
+            <span class="asset-upload-pct" id="${uploadId}-pct">0%</span>
+          </div>
+          <div class="asset-upload-bar"><div class="asset-upload-fill" id="${uploadId}-fill"></div></div>`;
+        listEl.appendChild(card);
+
+        const fd = new FormData();
+        fd.append('video', file);
+        fd.append('kind', kind);
+        fd.append('name', file.name.replace(/\.[^.]+$/, ''));
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', API + '/api/escala-mix/' + currentMix.mixId + '/assets');
+        xhr.upload.onprogress = e => {
+          if (!e.lengthComputable) return;
+          const pct = Math.round((e.loaded / e.total) * 100);
+          const fill = document.getElementById(uploadId + '-fill');
+          const pctEl = document.getElementById(uploadId + '-pct');
+          if (fill) fill.style.width = pct + '%';
+          if (pctEl) pctEl.textContent = pct + '%';
+        };
+        xhr.onload = async () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            await selectMix(currentMix.mixId);
+          } else {
+            const fill = document.getElementById(uploadId + '-fill');
+            if (fill) fill.classList.add('error');
+            showToast('Erro upload ' + xhr.status + ': ' + file.name, 'error');
+            setTimeout(() => card.remove(), 3000);
+          }
+          resolve();
+        };
+        xhr.onerror = () => {
+          const fill = document.getElementById(uploadId + '-fill');
+          if (fill) fill.classList.add('error');
+          showToast('Falha de rede no upload', 'error');
+          setTimeout(() => card.remove(), 3000);
+          resolve();
+        };
+        xhr.send(fd);
+      });
     }
 
     async function handleFileSelect(e, kind) {

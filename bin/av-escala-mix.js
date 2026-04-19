@@ -83,13 +83,13 @@ function cmdShow(mixId) {
   console.log(`\n  Renders: ${renders.length} total, ${done} done, ${failed} failed\n`);
 }
 
-function cmdAdd(args) {
+async function cmdAdd(args) {
   const [mixId, rawKind, file] = args;
   if (!mixId || !rawKind || !file) { console.error('Usage: add <mixId> hook|dev|cta <file>'); process.exit(1); }
   const kind = KIND_ALIAS[rawKind.toLowerCase()];
   if (!kind) { console.error(`Invalid kind "${rawKind}". Use: hook, dev, cta`); process.exit(1); }
   const name = parseArg(args, '--name');
-  const asset = store.addAsset(mixId, kind, path.resolve(file), name);
+  const asset = await store.addAsset(mixId, kind, path.resolve(file), name);
   console.log(`\n  Adicionado ${asset.id} em ${kind}`);
   console.log(`  Nome: ${asset.name}\n`);
 }
@@ -154,7 +154,7 @@ function main() {
       case 'list': return cmdList();
       case 'show': return cmdShow(args[0]);
       case 'delete': return store.deleteMix(args[0]) && console.log(`\n  Deletado ${args[0]}\n`);
-      case 'add': return cmdAdd(args);
+      case 'add': return cmdAdd(args).catch(err => { console.error('Erro:', err.message); process.exit(1); });
       case 'remove': return cmdRemove(args);
       case 'plan': return cmdPlan(args);
       case 'generate': return cmdGenerate(args);

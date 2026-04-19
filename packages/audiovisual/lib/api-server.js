@@ -1239,13 +1239,28 @@ async function handleRequest(req, res) {
       const tmpPath = path.join(os.tmpdir(), `escala-mix-${Date.now()}-${originalFilename.replace(/[^a-zA-Z0-9._-]/g, '_')}`);
       fs.writeFileSync(tmpPath, fileBuffer);
       try {
-        const asset = mixStore.addAsset(mixId, normalizedKind, tmpPath, customName || path.parse(originalFilename).name);
+        const asset = await mixStore.addAsset(mixId, normalizedKind, tmpPath, customName || path.parse(originalFilename).name);
         fs.unlinkSync(tmpPath);
         return sendJSON(res, { asset, kind: normalizedKind }, 201);
       } catch (err) {
         try { fs.unlinkSync(tmpPath); } catch { /* ignore */ }
         return sendError(res, err.message, 400);
       }
+    }
+    if (pathname.match(/^\/api\/escala-mix\/[^/]+\/thumbs\/[^/]+$/) && method === 'GET') {
+      const mixStore = require('./escala-mix-store');
+      const parts = pathname.split('/');
+      const mixId = parts[3];
+      const assetId = parts[5].replace(/\.[^.]+$/, '');
+      const thumbPath = path.join(mixStore.getMixDir(mixId), 'thumbs', `${assetId}.jpg`);
+      if (!fs.existsSync(thumbPath)) return sendError(res, 'Thumb not found', 404);
+      const stat = fs.statSync(thumbPath);
+      res.writeHead(200, {
+        'Content-Type': 'image/jpeg',
+        'Content-Length': stat.size,
+        'Cache-Control': 'public, max-age=86400',
+      });
+      return fs.createReadStream(thumbPath).pipe(res);
     }
     if (pathname.match(/^\/api\/escala-mix\/[^/]+\/assets\/[^/]+$/) && method === 'DELETE') {
       const mixStore = require('./escala-mix-store');
