@@ -1249,6 +1249,44 @@ async function handleRequest(req, res) {
         return sendError(res, err.message, 400);
       }
     }
+    if (pathname.match(/^\/api\/escala-mix\/[^/]+\/assets\/from-chunked$/) && method === 'POST') {
+      const mixStore = require('./escala-mix-store');
+      const mixId = pathname.split('/')[3];
+      const body = await parseBody(req);
+      const { uploadId, kind, name } = body;
+      if (!uploadId || !kind) return sendError(res, 'uploadId and kind required', 400);
+      const os = require('os');
+      const tmpDir = path.join(os.tmpdir(), 'aiox-av-uploads', uploadId);
+      if (!fs.existsSync(tmpDir)) return sendError(res, 'Upload session not found', 404);
+
+      const meta = JSON.parse(fs.readFileSync(path.join(tmpDir, 'meta.json'), 'utf8'));
+      const outputDir = path.join(os.tmpdir(), 'aiox-av-uploads');
+      const finalPath = path.join(outputDir, `${uploadId}-${meta.filename}`);
+      const ws = fs.createWriteStream(finalPath);
+      const chunks = fs.readdirSync(tmpDir).filter(f => f.startsWith('chunk-')).sort();
+      for (const chunk of chunks) ws.write(fs.readFileSync(path.join(tmpDir, chunk)));
+      ws.end();
+      await new Promise((resolve, reject) => {
+        ws.on('finish', resolve);
+        ws.on('error', reject);
+      });
+
+      const kindMap = { hook: 'hooks', dev: 'devs', cta: 'ctas', hooks: 'hooks', devs: 'devs', ctas: 'ctas' };
+      const normalizedKind = kindMap[kind.toLowerCase()];
+      if (!normalizedKind) {
+        try { fs.unlinkSync(finalPath); } catch { /* ignore */ }
+        return sendError(res, `Invalid kind "${kind}"`, 400);
+      }
+      try {
+        const asset = await mixStore.addAsset(mixId, normalizedKind, finalPath, name || path.parse(meta.filename).name);
+        try { fs.unlinkSync(finalPath); } catch { /* ignore */ }
+        try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch { /* ignore */ }
+        return sendJSON(res, { asset, kind: normalizedKind }, 201);
+      } catch (err) {
+        try { fs.unlinkSync(finalPath); } catch { /* ignore */ }
+        return sendError(res, err.message, 400);
+      }
+    }
     if (pathname.match(/^\/api\/escala-mix\/[^/]+\/thumbs\/[^/]+$/) && method === 'GET') {
       const mixStore = require('./escala-mix-store');
       const parts = pathname.split('/');

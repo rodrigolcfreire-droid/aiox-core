@@ -364,7 +364,8 @@
       document.getElementById('genBtn').disabled = !(h > 0 && d > 0 && c > 0);
     }
 
-    const MAX_UPLOAD_MB = 200;
+    const MAX_UPLOAD_MB = 2048;
+    const CHUNK_SIZE = 50 * 1024 * 1024;
 
     async function ensureMix() {
       if (currentMix) return currentMix;
@@ -389,6 +390,22 @@
       }
     }
 
+    function sendChunk(uploadId, chunkIndex, blob, onProgress) {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `${API}/api/upload/chunk?uploadId=${uploadId}&chunk=${chunkIndex}`);
+        xhr.upload.onprogress = e => {
+          if (e.lengthComputable && onProgress) onProgress(e.loaded, e.total);
+        };
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) resolve();
+          else reject(new Error('HTTP ' + xhr.status + ' no chunk ' + chunkIndex));
+        };
+        xhr.onerror = () => reject(new Error('Falha de rede no chunk ' + chunkIndex));
+        xhr.send(blob);
+      });
+    }
+
     async function uploadFile(file, kind) {
       const sizeMB = file.size / 1048576;
       if (sizeMB > MAX_UPLOAD_MB) {
@@ -398,55 +415,64 @@
       const mix = await ensureMix();
       if (!mix) return;
 
-      return new Promise(resolve => {
-        const listEl = document.getElementById('assets' + (kind === 'hook' ? 'Hooks' : kind === 'dev' ? 'Devs' : 'Ctas'));
-        const uploadId = 'up_' + Math.random().toString(36).slice(2, 8);
-        const card = document.createElement('div');
-        card.className = 'asset-upload';
-        card.id = uploadId;
-        card.innerHTML = `
-          <div class="asset-upload-name">
-            <span>${file.name}</span>
-            <span class="asset-upload-pct" id="${uploadId}-pct">0%</span>
-          </div>
-          <div class="asset-upload-bar"><div class="asset-upload-fill" id="${uploadId}-fill"></div></div>`;
-        listEl.appendChild(card);
+      const listEl = document.getElementById('assets' + (kind === 'hook' ? 'Hooks' : kind === 'dev' ? 'Devs' : 'Ctas'));
+      const cardId = 'up_' + Math.random().toString(36).slice(2, 8);
+      const card = document.createElement('div');
+      card.className = 'asset-upload';
+      card.id = cardId;
+      card.innerHTML = `
+        <div class="asset-upload-name">
+          <span>${file.name}</span>
+          <span class="asset-upload-pct" id="${cardId}-pct">0%</span>
+        </div>
+        <div class="asset-upload-bar"><div class="asset-upload-fill" id="${cardId}-fill"></div></div>`;
+      listEl.appendChild(card);
 
-        const fd = new FormData();
-        fd.append('video', file);
-        fd.append('kind', kind);
-        fd.append('name', file.name.replace(/\.[^.]+$/, ''));
+      const setProgress = pct => {
+        const fill = document.getElementById(cardId + '-fill');
+        const pctEl = document.getElementById(cardId + '-pct');
+        if (fill) fill.style.width = pct + '%';
+        if (pctEl) pctEl.textContent = pct + '%';
+      };
+      const markError = msg => {
+        const fill = document.getElementById(cardId + '-fill');
+        if (fill) fill.classList.add('error');
+        showToast(msg, 'error');
+        setTimeout(() => card.remove(), 4000);
+      };
 
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', API + '/api/escala-mix/' + currentMix.mixId + '/assets');
-        xhr.upload.onprogress = e => {
-          if (!e.lengthComputable) return;
-          const pct = Math.round((e.loaded / e.total) * 100);
-          const fill = document.getElementById(uploadId + '-fill');
-          const pctEl = document.getElementById(uploadId + '-pct');
-          if (fill) fill.style.width = pct + '%';
-          if (pctEl) pctEl.textContent = pct + '%';
-        };
-        xhr.onload = async () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            await selectMix(currentMix.mixId);
-          } else {
-            const fill = document.getElementById(uploadId + '-fill');
-            if (fill) fill.classList.add('error');
-            showToast('Erro upload ' + xhr.status + ': ' + file.name, 'error');
-            setTimeout(() => card.remove(), 3000);
-          }
-          resolve();
-        };
-        xhr.onerror = () => {
-          const fill = document.getElementById(uploadId + '-fill');
-          if (fill) fill.classList.add('error');
-          showToast('Falha de rede no upload', 'error');
-          setTimeout(() => card.remove(), 3000);
-          resolve();
-        };
-        xhr.send(fd);
-      });
+      const totalChunks = Math.max(1, Math.ceil(file.size / CHUNK_SIZE));
+      try {
+        const initRes = await fetch(`${API}/api/upload/init`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: file.name, totalSize: file.size, totalChunks }),
+        });
+        if (!initRes.ok) throw new Error('init HTTP ' + initRes.status);
+        const { uploadId } = await initRes.json();
+
+        for (let i = 0; i < totalChunks; i++) {
+          const start = i * CHUNK_SIZE;
+          const blob = file.slice(start, Math.min(start + CHUNK_SIZE, file.size));
+          await sendChunk(uploadId, i, blob, (loaded, total) => {
+            const chunkPct = total > 0 ? loaded / total : 1;
+            const overall = ((i + chunkPct) / totalChunks) * 100;
+            setProgress(Math.min(99, Math.round(overall)));
+          });
+        }
+
+        setProgress(99);
+        const finRes = await fetch(`${API}/api/escala-mix/${currentMix.mixId}/assets/from-chunked`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ uploadId, kind, name: file.name.replace(/\.[^.]+$/, '') }),
+        });
+        if (!finRes.ok) throw new Error('finalize HTTP ' + finRes.status);
+        setProgress(100);
+        await selectMix(currentMix.mixId);
+      } catch (err) {
+        markError('Erro no upload: ' + err.message);
+      }
     }
 
     async function handleFileSelect(e, kind) {
