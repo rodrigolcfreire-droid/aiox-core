@@ -282,6 +282,21 @@
   <script>
     const API = '';
     let currentMix = null;
+    let authToken = null;
+
+    async function ensureAuthToken() {
+      if (authToken) return authToken;
+      try {
+        const res = await fetch(API + '/api/token', { credentials: 'same-origin' });
+        if (!res.ok) return null;
+        const data = await res.json();
+        authToken = data.token || null;
+        return authToken;
+      } catch { return null; }
+    }
+    function authQS() {
+      return authToken ? '?token=' + encodeURIComponent(authToken) : '';
+    }
 
     function showToast(msg, type = 'info') {
       const t = document.getElementById('toast');
@@ -657,20 +672,22 @@
 
     function renderItemHTML(r) {
       const isDone = r.status === 'done' && r.output;
+      const qs = authQS();
       const play = isDone ? `<button class="btn" style="padding:3px 8px;font-size:10px;margin-left:6px" onclick="openPreviewModal('${r.id}', ${JSON.stringify(r.name).replace(/"/g, '&quot;')})">&#9654; Play</button>` : '';
-      const dl = isDone ? `<a class="btn" style="padding:3px 8px;font-size:10px;margin-left:6px" href="/api/escala-mix/${currentMix.mixId}/renders/${r.id}/download">Baixar</a>` : '';
+      const dl = isDone ? `<a class="btn" style="padding:3px 8px;font-size:10px;margin-left:6px" href="/api/escala-mix/${currentMix.mixId}/renders/${r.id}/download${qs}">Baixar</a>` : '';
       const stars = r.status === 'done' ? starsHTML(r.id, r.rating) : '';
       const statusEl = `<span class="render-status ${r.status}">${r.status}</span>`;
       return `<div class="render-item" id="render-${r.id}"><span style="flex:1">${r.name}</span>${statusEl}${stars}${play}${dl}</div>`;
     }
 
-    function openPreviewModal(renderId, name) {
+    async function openPreviewModal(renderId, name) {
       if (!currentMix) return;
+      await ensureAuthToken();
+      const qs = authQS();
       const video = document.getElementById('previewVideo');
-      const src = `/api/escala-mix/${currentMix.mixId}/renders/${renderId}/stream`;
-      video.src = src;
+      video.src = `/api/escala-mix/${currentMix.mixId}/renders/${renderId}/stream${qs}`;
       document.getElementById('previewModalTitle').textContent = name;
-      document.getElementById('previewDownloadBtn').href = `/api/escala-mix/${currentMix.mixId}/renders/${renderId}/download`;
+      document.getElementById('previewDownloadBtn').href = `/api/escala-mix/${currentMix.mixId}/renders/${renderId}/download${qs}`;
       document.getElementById('previewModal').classList.add('visible');
     }
 
@@ -682,11 +699,12 @@
       document.getElementById('previewModal').classList.remove('visible');
     }
 
-    function exportPremiereXml() {
+    async function exportPremiereXml() {
       if (!currentMix) { showToast('Selecione um mix com renders', 'error'); return; }
       const hasDone = (currentMix.renders || []).some(r => r.status === 'done');
       if (!hasDone) { showToast('Nenhum render concluido ainda', 'error'); return; }
-      window.location.href = `/api/escala-mix/${currentMix.mixId}/export/premiere-xml`;
+      await ensureAuthToken();
+      window.location.href = `/api/escala-mix/${currentMix.mixId}/export/premiere-xml${authQS()}`;
       showToast('Gerando XML...', 'success');
     }
 
@@ -804,7 +822,10 @@
       });
     });
 
-    loadMixes();
+    (async () => {
+      await ensureAuthToken();
+      await loadMixes();
+    })();
   </script>
 </body>
 </html>
