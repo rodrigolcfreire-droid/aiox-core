@@ -97,7 +97,7 @@ async function renderAll(mixId, { limit = null, onProgress = null, opts = {} } =
     try {
       store.updateRender(mixId, r.id, { status: 'rendering' });
       if (onProgress) onProgress({ index: i, total: renders.length, render: r, phase: 'start' });
-      const outPath = renderCombo(mixId, r, opts);
+      const outPath = await renderCombo(mixId, r, opts);
       store.updateRender(mixId, r.id, { status: 'done', output: outPath });
       if (onProgress) onProgress({ index: i, total: renders.length, render: r, phase: 'done', output: outPath });
       results.push({ id: r.id, status: 'done', output: outPath });
