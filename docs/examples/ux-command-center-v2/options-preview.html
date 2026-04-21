@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5 Opções — Setor Audiovisual</title>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@400;500;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/design-system/tokens.css" />
+  <link rel="stylesheet" href="/design-system/components.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+      color: #f1f4ff;
+      font-family: Inter, sans-serif;
+      min-height: 100vh;
+      padding: 40px 24px 80px;
+    }
+    .stars::before {
+      content: "";
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        radial-gradient(circle at 10% 10%, rgba(255,255,255,0.4) 1px, transparent 1px),
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.3) 1px, transparent 1px),
+        radial-gradient(circle at 60% 35%, rgba(255,255,255,0.5) 1.5px, transparent 1px),
+        radial-gradient(circle at 80% 22%, rgba(255,255,255,0.2) 1px, transparent 1px),
+        radial-gradient(circle at 75% 70%, rgba(255,255,255,0.6) 1.5px, transparent 1px),
+        radial-gradient(circle at 22% 78%, rgba(255,255,255,0.3) 1px, transparent 1px),
+        radial-gradient(circle at 50% 85%, rgba(255,255,255,0.4) 1px, transparent 1px);
+      background-size: 200px 200px;
+    }
+
+    .page {
+      max-width: 1400px; margin: 0 auto; position: relative; z-index: 1;
+    }
+    h1 {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 32px; font-weight: 700; margin-bottom: 6px;
+      background: linear-gradient(135deg, #f5fbff, #85ccff, #00e5cc);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 32px; letter-spacing: 1px; text-transform: uppercase; }
+
+    /* TABS */
+    .tabs {
+      display: flex; gap: 8px; margin-bottom: 32px; flex-wrap: wrap;
+      border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 16px;
+    }
+    .tab {
+      background: rgba(26,31,46,0.6);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #94a3b8; padding: 12px 20px; border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .tab:hover { border-color: rgba(0,229,204,0.4); color: #e2e8f0; }
+    .tab.active {
+      background: linear-gradient(135deg, #00e5cc, #38bdf8);
+      color: #0a0e1a; border-color: transparent;
+      box-shadow: 0 0 20px rgba(0,229,204,0.3);
+    }
+    .tab-hint { font-size: 11px; color: #64748b; margin-left: 6px; }
+
+    .panel { display: none; animation: fade 0.3s ease; }
+    .panel.active { display: block; }
+    @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    .panel-header {
+      margin-bottom: 20px; padding: 16px 20px;
+      background: rgba(26,31,46,0.5); border-left: 3px solid #00e5cc;
+      border-radius: 8px;
+    }
+    .panel-header h2 { font-family: 'Chakra Petch', sans-serif; font-size: 18px; margin-bottom: 4px; }
+    .panel-header p { font-size: 13px; color: #94a3b8; line-height: 1.5; }
+
+    /* ═══ OPÇÃO 1 — Grid 3 colunas iguais (mantém chips) ═══ */
+    .opt1-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .opt1-card {
+      background: rgba(15,23,42,0.8); border: 1px solid #1e293b;
+      border-left: 4px solid var(--accent, #a78bfa);
+      border-radius: 16px; padding: 24px;
+      transition: all 0.3s; cursor: pointer;
+      display: flex; flex-direction: column;
+    }
+    .opt1-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 0 30px var(--accent-glow); }
+    .opt1-title { font-family: 'Chakra Petch', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .opt1-tag { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+    .opt1-desc { font-size: 13px; color: #94a3b8; line-height: 1.5; margin-bottom: 16px; flex: 1; }
+    .chips { display: flex; gap: 4px; flex-wrap: wrap; }
+    .chip { background: rgba(30,41,59,0.8); color: #cbd5e1; padding: 5px 10px; border-radius: 4px; font-size: 11px; font-family: 'JetBrains Mono', monospace; }
+    .chip-arrow { color: #334155; font-size: 12px; align-self: center; }
+
+    /* ═══ OPÇÃO 2 — Botões primários ═══ */
+    .opt2-wrap { display: flex; flex-direction: column; gap: 14px; align-items: center; padding: 40px 0; }
+    .opt2-btn {
+      width: 100%; max-width: 520px;
+      background: transparent; border: 1.5px solid var(--accent);
+      color: var(--accent); padding: 22px 36px;
+      font-family: 'Chakra Petch', sans-serif; font-size: 16px; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase; border-radius: 10px;
+      cursor: pointer; transition: all 0.25s;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+    }
+    .opt2-btn:hover {
+      background: var(--accent); color: #0a0e1a;
+      box-shadow: 0 0 30px var(--accent-glow);
+      transform: translateY(-2px);
+    }
+    .opt2-icon { font-size: 22px; }
+
+    /* ═══ OPÇÃO 3 — Cards compactos com ícone + CTA (RECOMENDADA) ═══ */
+    .opt3-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .opt3-card {
+      background: rgba(15,23,42,0.8); border: 1px solid #1e293b;
+      border-radius: 14px; padding: 28px 24px; text-align: center;
+      transition: all 0.3s; cursor: pointer; min-height: 220px;
+      display: flex; flex-direction: column; align-items: center;
+      position: relative; overflow: hidden;
+    }
+    .opt3-card::before {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 0%, var(--accent-glow), transparent 60%);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .opt3-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .opt3-card:hover::before { opacity: 0.6; }
+    .opt3-card > * { position: relative; z-index: 1; }
+    .opt3-icon {
+      font-size: 44px; margin-bottom: 14px;
+      filter: drop-shadow(0 0 12px var(--accent));
+    }
+    .opt3-title { font-family: 'Chakra Petch', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .opt3-desc { font-size: 13px; color: #94a3b8; line-height: 1.5; margin-bottom: 18px; flex: 1; }
+    .opt3-cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--accent);
+      color: var(--accent); padding: 8px 16px; border-radius: 20px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    /* ═══ OPÇÃO 4 — Híbrido: cards compactos + mini-pipeline (4 chips) ═══ */
+    .opt4-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .opt4-card {
+      background: rgba(15,23,42,0.8); border: 1px solid #1e293b;
+      border-top: 3px solid var(--accent);
+      border-radius: 14px; padding: 24px; cursor: pointer; transition: all 0.3s;
+      display: flex; flex-direction: column;
+    }
+    .opt4-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 0 30px var(--accent-glow); }
+    .opt4-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .opt4-icon { font-size: 28px; filter: drop-shadow(0 0 8px var(--accent)); }
+    .opt4-title { font-family: 'Chakra Petch', sans-serif; font-size: 18px; font-weight: 700; }
+    .opt4-desc { font-size: 12px; color: #94a3b8; line-height: 1.5; margin-bottom: 14px; flex: 1; }
+    .opt4-pipeline { display: flex; gap: 3px; flex-wrap: nowrap; align-items: center; overflow: hidden; }
+    .opt4-chip {
+      background: rgba(30,41,59,0.9); color: #cbd5e1;
+      padding: 4px 8px; border-radius: 4px;
+      font-size: 10px; font-family: 'JetBrains Mono', monospace; white-space: nowrap;
+    }
+    .opt4-chip.last { background: rgba(251,191,36,0.15); border: 1px solid #fbbf24; color: #fbbf24; }
+    .opt4-arrow { color: #334155; font-size: 10px; }
+
+    /* ═══ OPÇÃO 5 — Tabs horizontais + conteúdo dinâmico ═══ */
+    .opt5-tabs { display: flex; gap: 0; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 24px; }
+    .opt5-tab {
+      background: transparent; border: none; color: #94a3b8;
+      padding: 14px 28px; font-family: 'Chakra Petch', sans-serif;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      border-bottom: 2px solid transparent; transition: all 0.2s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .opt5-tab:hover { color: #e2e8f0; }
+    .opt5-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .opt5-content {
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 14px; padding: 32px; min-height: 280px;
+    }
+    .opt5-body h3 { font-family: 'Chakra Petch', sans-serif; font-size: 22px; margin-bottom: 6px; }
+    .opt5-body .badge { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; display: block; }
+    .opt5-body p { font-size: 14px; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px; }
+    .opt5-body .opt5-chips { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 20px; }
+    .opt5-panel { display: none; }
+    .opt5-panel.active { display: block; animation: fade 0.25s ease; }
+
+    @media (max-width: 1000px) {
+      .opt1-grid, .opt3-grid, .opt4-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="stars">
+  <div class="page">
+    <h1>5 Opções — Setor Audiovisual</h1>
+    <p class="subtitle">Layout alternativo pros 3 módulos (Cortes, Escala, Editor Growth)</p>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="1">Opção 1 <span class="tab-hint">3 col + chips</span></button>
+      <button class="tab" data-tab="2">Opção 2 <span class="tab-hint">Botões</span></button>
+      <button class="tab" data-tab="3">Opção 3 <span class="tab-hint">⭐ Recomendada</span></button>
+      <button class="tab" data-tab="4">Opção 4 <span class="tab-hint">Híbrido</span></button>
+      <button class="tab" data-tab="5">Opção 5 <span class="tab-hint">Tabs</span></button>
+    </div>
+
+    <!-- ═══════════════ OPÇÃO 1 ═══════════════ -->
+    <div class="panel active" data-panel="1">
+      <div class="panel-header">
+        <h2>Grid 3 colunas iguais (mesma linha, mantém chips)</h2>
+        <p>Cards lado a lado, mesma altura. Mantém a informação rica (pipeline + agentes). Conservador, mas visualmente carregado.</p>
+      </div>
+      <div class="opt1-grid">
+        <div class="opt1-card" style="--accent:#a78bfa; --accent-glow:rgba(167,139,250,0.15)">
+          <div class="opt1-title">Cortes Inteligentes</div>
+          <div class="opt1-tag" style="color:#a78bfa">Cerebro Criativo</div>
+          <div class="opt1-desc">Recebe video bruto, analisa, transcreve, segmenta em blocos, identifica os melhores cortes por categoria.</div>
+          <div class="chips">
+            <span class="chip">Ingestao</span><span class="chip-arrow">→</span>
+            <span class="chip">FFprobe</span><span class="chip-arrow">→</span>
+            <span class="chip">Transcricao</span><span class="chip-arrow">→</span>
+            <span class="chip">Cortes</span><span class="chip-arrow">→</span>
+            <span class="chip" style="background:rgba(251,191,36,0.15);border:1px solid #fbbf24;color:#fbbf24">Aprovacao</span>
+          </div>
+        </div>
+        <div class="opt1-card" style="--accent:#34d399; --accent-glow:rgba(52,211,153,0.15)">
+          <div class="opt1-title">Escala de Criativos</div>
+          <div class="opt1-tag" style="color:#34d399">Motor de Producao</div>
+          <div class="opt1-desc">Recebe cortes aprovados, monta video, aplica legendas inteligentes, branding, valida qualidade, renderiza em batch.</div>
+          <div class="chips">
+            <span class="chip">Montagem</span><span class="chip-arrow">→</span>
+            <span class="chip">Legendas</span><span class="chip-arrow">→</span>
+            <span class="chip">Branding</span><span class="chip-arrow">→</span>
+            <span class="chip">Render</span><span class="chip-arrow">→</span>
+            <span class="chip">Output</span>
+          </div>
+        </div>
+        <div class="opt1-card" style="--accent:#38bdf8; --accent-glow:rgba(56,189,248,0.15)">
+          <div class="opt1-title">Editor de Video</div>
+          <div class="opt1-tag" style="color:#38bdf8">Editor Growth · NOVO</div>
+          <div class="opt1-desc">Player com legendas em tempo real, 15 presets de estilo, timeline com trim, transcricao editavel e export direto.</div>
+          <div class="chips">
+            <span class="chip">Player</span><span class="chip-arrow">→</span>
+            <span class="chip">Legendas</span><span class="chip-arrow">→</span>
+            <span class="chip">Trim</span><span class="chip-arrow">→</span>
+            <span class="chip">Export</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ OPÇÃO 2 ═══════════════ -->
+    <div class="panel" data-panel="2">
+      <div class="panel-header">
+        <h2>Botões primários minimalistas</h2>
+        <p>3 botões grandes empilhados (estilo "SETOR AUDIOVISUAL INTELIGENTE" da home). Super limpo, detalhes moram dentro da view. Perde o "preview".</p>
+      </div>
+      <div class="opt2-wrap">
+        <button class="opt2-btn" style="--accent:#a78bfa; --accent-glow:rgba(167,139,250,0.4)">
+          <span class="opt2-icon">🧠</span> Cortes Inteligentes
+        </button>
+        <button class="opt2-btn" style="--accent:#34d399; --accent-glow:rgba(52,211,153,0.4)">
+          <span class="opt2-icon">⚡</span> Escala de Criativos
+        </button>
+        <button class="opt2-btn" style="--accent:#38bdf8; --accent-glow:rgba(56,189,248,0.4)">
+          <span class="opt2-icon">✂️</span> Editor de Video (NOVO)
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══════════════ OPÇÃO 3 — RECOMENDADA ═══════════════ -->
+    <div class="panel" data-panel="3">
+      <div class="panel-header">
+        <h2>⭐ Cards compactos com ícone + CTA</h2>
+        <p>Grid 3 colunas, altura fixa. Ícone grande + título + 1 linha + pill "ACESSAR". Escaneável, bonito, balanço visual igual entre os 3 módulos.</p>
+      </div>
+      <div class="opt3-grid">
+        <div class="opt3-card" style="--accent:#a78bfa; --accent-glow:rgba(167,139,250,0.25)">
+          <div class="opt3-icon">🧠</div>
+          <div class="opt3-title">Cortes Inteligentes</div>
+          <div class="opt3-desc">Analisa video bruto, identifica melhores cortes por categoria e aguarda aprovacao humana.</div>
+          <div class="opt3-cta">ACESSAR →</div>
+        </div>
+        <div class="opt3-card" style="--accent:#34d399; --accent-glow:rgba(52,211,153,0.25)">
+          <div class="opt3-icon">⚡</div>
+          <div class="opt3-title">Escala de Criativos</div>
+          <div class="opt3-desc">Monta video com legendas, branding, validacao e renderiza em batch.</div>
+          <div class="opt3-cta">ACESSAR →</div>
+        </div>
+        <div class="opt3-card" style="--accent:#38bdf8; --accent-glow:rgba(56,189,248,0.25)">
+          <div class="opt3-icon">✂️</div>
+          <div class="opt3-title">Editor de Video <span style="font-size:10px;color:#34d399;vertical-align:middle;margin-left:6px;font-family:'JetBrains Mono',monospace">NOVO</span></div>
+          <div class="opt3-desc">Player com legendas em tempo real, 15 presets, timeline com trim, export direto.</div>
+          <div class="opt3-cta">ACESSAR →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ OPÇÃO 4 ═══════════════ -->
+    <div class="panel" data-panel="4">
+      <div class="panel-header">
+        <h2>Híbrido — cards compactos + mini-pipeline (4 chips)</h2>
+        <p>Igual opção 3 mas mantém 1 linha enxuta de chips (só 4 principais). Dá o "preview" do pipeline sem poluir. Compromisso entre clean e rico.</p>
+      </div>
+      <div class="opt4-grid">
+        <div class="opt4-card" style="--accent:#a78bfa; --accent-glow:rgba(167,139,250,0.2)">
+          <div class="opt4-head">
+            <span class="opt4-icon">🧠</span>
+            <div class="opt4-title">Cortes Inteligentes</div>
+          </div>
+          <div class="opt4-desc">Analisa video bruto e identifica melhores cortes por categoria.</div>
+          <div class="opt4-pipeline">
+            <span class="opt4-chip">Ingesta</span><span class="opt4-arrow">→</span>
+            <span class="opt4-chip">Cortes</span><span class="opt4-arrow">→</span>
+            <span class="opt4-chip">Energia</span><span class="opt4-arrow">→</span>
+            <span class="opt4-chip last">Aprova</span>
+          </div>
+        </div>
+        <div class="opt4-card" style="--accent:#34d399; --accent-glow:rgba(52,211,153,0.2)">
+          <div class="opt4-head">
+            <span class="opt4-icon">⚡</span>
+            <div class="opt4-title">Escala de Criativos</div>
+          </div>
+          <div class="opt4-desc">Monta, legenda, valida e renderiza em batch.</div>
+          <div class="opt4-pipeline">
+            <span class="opt4-chip">Montagem</span><span class="opt4-arrow">→</span>
+            <span class="opt4-chip">Legendas</span><span class="opt4-arrow">→</span>
+            <span class="opt4-chip">Render</span><span class="opt4-arrow">→</span>
+            <span class="opt4-chip last">Output</span>
+          </div>
+        </div>
+        <div class="opt4-card" style="--accent:#38bdf8; --accent-glow:rgba(56,189,248,0.2)">
+          <div class="opt4-head">
+            <span class="opt4-icon">✂️</span>
+            <div class="opt4-title">Editor de Video</div>
+          </div>
+          <div class="opt4-desc">Preview ao vivo com 15 presets e export direto.</div>
+          <div class="opt4-pipeline">
+            <span class="opt4-chip">Player</span><span class="opt4-arrow">→</span>
+            <span class="opt4-chip">Legendas</span><span class="opt4-arrow">→</span>
+            <span class="opt4-chip">Trim</span><span class="opt4-arrow">→</span>
+            <span class="opt4-chip last">Export</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ OPÇÃO 5 ═══════════════ -->
+    <div class="panel" data-panel="5">
+      <div class="panel-header">
+        <h2>Tabs horizontais + conteúdo dinâmico</h2>
+        <p>Barra de abas no topo, só o módulo selecionado fica visível. Detalhes ricos sem poluir. Ótimo pra quem usa um motor por vez; esconde 2/3 por default.</p>
+      </div>
+      <div class="opt5-tabs">
+        <button class="opt5-tab active" data-opt5="1" style="--accent:#a78bfa">🧠 Cortes Inteligentes</button>
+        <button class="opt5-tab" data-opt5="2" style="--accent:#34d399">⚡ Escala de Criativos</button>
+        <button class="opt5-tab" data-opt5="3" style="--accent:#38bdf8">✂️ Editor Growth</button>
+      </div>
+      <div class="opt5-content">
+        <div class="opt5-panel active" data-opt5-panel="1" style="--accent:#a78bfa">
+          <div class="opt5-body">
+            <span class="badge">Cerebro Criativo</span>
+            <h3>Cortes Inteligentes</h3>
+            <p>Recebe video bruto, analisa, transcreve, segmenta em blocos, identifica os melhores cortes por categoria, estima engagement e aguarda aprovacao humana.</p>
+            <div class="opt5-chips">
+              <span class="chip">Ingestao</span><span class="chip-arrow">→</span>
+              <span class="chip">FFprobe</span><span class="chip-arrow">→</span>
+              <span class="chip">Transcricao</span><span class="chip-arrow">→</span>
+              <span class="chip">Segmentacao</span><span class="chip-arrow">→</span>
+              <span class="chip">Cortes</span><span class="chip-arrow">→</span>
+              <span class="chip">Energia</span><span class="chip-arrow">→</span>
+              <span class="chip" style="background:rgba(251,191,36,0.15);border:1px solid #fbbf24;color:#fbbf24">Aprovacao</span>
+            </div>
+            <button class="opt2-btn" style="--accent:#a78bfa; --accent-glow:rgba(167,139,250,0.4); margin-top:8px">ACESSAR MOTOR →</button>
+          </div>
+        </div>
+        <div class="opt5-panel" data-opt5-panel="2" style="--accent:#34d399">
+          <div class="opt5-body">
+            <span class="badge">Motor de Producao</span>
+            <h3>Escala de Criativos</h3>
+            <p>Recebe cortes aprovados, monta video, aplica legendas inteligentes, branding, valida qualidade, renderiza em batch e organiza outputs.</p>
+            <div class="opt5-chips">
+              <span class="chip">Montagem</span><span class="chip-arrow">→</span>
+              <span class="chip">Legendas</span><span class="chip-arrow">→</span>
+              <span class="chip">Branding</span><span class="chip-arrow">→</span>
+              <span class="chip">Validacao</span><span class="chip-arrow">→</span>
+              <span class="chip">Render</span><span class="chip-arrow">→</span>
+              <span class="chip">Output</span>
+            </div>
+            <button class="opt2-btn" style="--accent:#34d399; --accent-glow:rgba(52,211,153,0.4); margin-top:8px">ACESSAR MOTOR →</button>
+          </div>
+        </div>
+        <div class="opt5-panel" data-opt5-panel="3" style="--accent:#38bdf8">
+          <div class="opt5-body">
+            <span class="badge">Editor Growth · NOVO</span>
+            <h3>Editor de Video com Preview ao Vivo</h3>
+            <p>Player com legendas em tempo real, 15 presets de estilo, timeline com trim, transcricao editavel e export direto.</p>
+            <div class="opt5-chips">
+              <span class="chip">Player</span><span class="chip-arrow">→</span>
+              <span class="chip">Legendas vivas</span><span class="chip-arrow">→</span>
+              <span class="chip">Timeline/Trim</span><span class="chip-arrow">→</span>
+              <span class="chip">Transcricao editavel</span><span class="chip-arrow">→</span>
+              <span class="chip">Export</span>
+            </div>
+            <button class="opt2-btn" style="--accent:#38bdf8; --accent-glow:rgba(56,189,248,0.4); margin-top:8px">ABRIR EDITOR →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Top-level tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const id = tab.dataset.tab;
+        document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t === tab));
+        document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === id));
+      });
+    });
+    // Nested tabs (option 5)
+    document.querySelectorAll('.opt5-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const id = tab.dataset.opt5;
+        document.querySelectorAll('.opt5-tab').forEach(t => t.classList.toggle('active', t === tab));
+        document.querySelectorAll('.opt5-panel').forEach(p => p.classList.toggle('active', p.dataset.opt5Panel === id));
+      });
+    });
+  </script>
+</body>
+</html>
