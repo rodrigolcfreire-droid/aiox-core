@@ -11,6 +11,8 @@
     href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@400;500;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap"
     rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="design-system/tokens.css" />
+  <link rel="stylesheet" href="design-system/components.css" />
   <style>
     :root {
       --bg: #0a0e1a;
@@ -3114,16 +3116,248 @@
   </header>
 
   <main>
-    <section class="hero wrap view-section active" id="entrada">
-      <div>
-        <div class="pre">INICIALIZANDO SISTEMA</div>
-        <h2>CENTRO DE<br />COMANDO</h2>
-        <h3>UX</h3>
-        <button class="av-sector-btn" onclick="showView('setor-audiovisual'); event.preventDefault();">SETOR AUDIOVISUAL INTELIGENTE</button>
-        <br><br>
-        <button class="av-sector-btn" style="border-color:rgba(52,211,153,0.4);color:#34d399;font-size:14px;padding:14px 36px;" onclick="showView('seguranca'); event.preventDefault();">SEGURANCA DO SISTEMA</button>
+    <!-- ══════════════════════════════════════════════════════
+         HOME — Direção A (design system aplicado 2026-04-21)
+         Tokens: design-system/tokens.css
+         Components: design-system/components.css
+         ══════════════════════════════════════════════════════ -->
+    <div class="halo-breath" aria-hidden="true"></div>
+
+    <section class="hero wrap view-section active" id="entrada" aria-label="Entrada principal do Centro de Comando UX">
+      <div class="hero-inner-ds">
+
+        <!-- Pre-title com typing effect -->
+        <div class="hero-pre" aria-live="polite">
+          <span class="typing" id="ds-typing">INICIALIZANDO SISTEMA</span>
+        </div>
+
+        <!-- Título -->
+        <h2 class="hero-title" style="margin:18px 0 6px;">CENTRO DE<br />COMANDO</h2>
+
+        <!-- Subtítulo -->
+        <h3 class="hero-subtitle">UX</h3>
+
+        <!-- Tagline -->
+        <p class="hero-tagline-ds">Orquestração autônoma de agentes, briefings e pipelines audiovisuais em tempo real.</p>
+
+        <!-- CTA buttons -->
+        <div class="cta-group-ds" role="group" aria-label="Ações principais">
+          <button class="btn btn--primary av-sector-btn"
+                  onclick="showView('setor-audiovisual'); event.preventDefault();"
+                  aria-label="Abrir Setor Audiovisual Inteligente">
+            <span>SETOR AUDIOVISUAL INTELIGENTE</span>
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </button>
+          <button class="btn btn--secondary av-sector-btn"
+                  onclick="showView('seguranca'); event.preventDefault();"
+                  aria-label="Abrir Segurança do Sistema">
+            <span>SEGURANCA DO SISTEMA</span>
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </button>
+        </div>
+
+        <!-- KPI cards (mock — trocar por /api/health) -->
+        <div class="kpi-grid kpi-grid-ds" role="list" aria-label="Status do sistema em tempo real"
+             style="margin-top:64px; animation: ds-rise 700ms 440ms cubic-bezier(.2,.9,.3,1.2) both;">
+          <div class="kpi-card kpi-card--success" role="listitem">
+            <div class="kpi-card__label">
+              <span class="kpi-card__dot" aria-hidden="true"></span>Serviços Online
+            </div>
+            <div class="kpi-card__value">3<span class="kpi-card__value-unit">/3</span></div>
+            <div class="kpi-card__sub">CLI · Orchestrator · Memory</div>
+          </div>
+          <div class="kpi-card kpi-card--success" role="listitem">
+            <div class="kpi-card__label">
+              <span class="kpi-card__dot" aria-hidden="true"></span>Uptime Tunnel
+            </div>
+            <div class="kpi-card__value">99.8<span class="kpi-card__value-unit">%</span></div>
+            <div class="kpi-card__sub">Cloudflare · 30d</div>
+          </div>
+          <div class="kpi-card kpi-card--info" role="listitem">
+            <div class="kpi-card__label">
+              <span class="kpi-card__dot" aria-hidden="true"></span>Última Atividade
+            </div>
+            <div class="kpi-card__value">2<span class="kpi-card__value-unit">min</span></div>
+            <div class="kpi-card__sub">commit · escala-mix</div>
+          </div>
+          <div class="kpi-card kpi-card--success" role="listitem">
+            <div class="kpi-card__label">
+              <span class="kpi-card__dot" aria-hidden="true"></span>Agentes Ativos
+            </div>
+            <div class="kpi-card__value">10<span class="kpi-card__value-unit">/18</span></div>
+            <div class="kpi-card__sub">3 squads operacionais</div>
+          </div>
+        </div>
+
       </div>
     </section>
+
+    <!-- Status bar fixa — só visível na home (#entrada active) -->
+    <div class="status-bar ds-status-bar" role="contentinfo" aria-label="Barra de status do sistema">
+      <div class="wrap status-bar__row">
+        <div class="status-bar__left">
+          <span class="status-bar__chip">
+            <span class="kpi-card__dot" aria-hidden="true"></span>SISTEMA OPERACIONAL
+          </span>
+          <span class="status-bar__chip">v4.0 · main</span>
+        </div>
+        <div class="status-bar__right">
+          <span class="status-bar__chip" id="ds-clock">--:--:--</span>
+          <span class="status-bar__chip">LAT 12ms</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layout auxiliar para a seção home -->
+    <style>
+      /* Hero inner — centralizado, direção A */
+      .hero-inner-ds {
+        width: min(900px, 92vw);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      /* Tagline */
+      .hero-tagline-ds {
+        margin: 14px 0 0;
+        color: var(--ds-muted);
+        font-size: var(--ds-size-md);
+        letter-spacing: var(--ds-tracking-wider);
+        max-width: 540px;
+        line-height: var(--ds-leading-body);
+        animation: ds-rise 700ms 220ms cubic-bezier(.2,.9,.3,1.2) both;
+      }
+
+      /* CTA group */
+      .cta-group-ds {
+        margin-top: var(--ds-space-11);
+        display: flex;
+        flex-direction: column;
+        gap: var(--ds-space-4);
+        align-items: stretch;
+        width: min(460px, 100%);
+        animation: ds-rise 700ms 320ms cubic-bezier(.2,.9,.3,1.2) both;
+      }
+
+      /* Override: hero-title animation delay via ds-rise */
+      .hero-title {
+        animation: ds-rise 700ms cubic-bezier(.2,.9,.3,1.2) both;
+      }
+      .hero-subtitle {
+        animation: ds-rise 700ms 120ms cubic-bezier(.2,.9,.3,1.2) both;
+      }
+
+      /* Status bar só visível quando #entrada está ativa */
+      .ds-status-bar { display: none; }
+      #entrada.active ~ .ds-status-bar,
+      .ds-status-bar.ds-visible { display: block; }
+
+      /* Halo breath posicionado */
+      .halo-breath {
+        position: fixed;
+        left: 50%;
+        top: 52%;
+        transform: translate(-50%, -50%);
+        width: 880px;
+        height: 880px;
+        border-radius: 50%;
+        background: var(--ds-grad-halo);
+        filter: blur(20px);
+        z-index: 0;
+        pointer-events: none;
+        animation: ds-breathe 8s ease-in-out infinite;
+      }
+
+      /* Overrides btn para compatibilidade com classe .av-sector-btn legacy */
+      .btn.av-sector-btn { border: none; margin-top: 0; }
+    </style>
+
+    <!-- Micro-JS: typing, parallax, clock para a home -->
+    <script>
+      /* ── Home DS scripts ── */
+      (function() {
+        'use strict';
+
+        /* Typing effect no pre-title */
+        function initTyping() {
+          var el = document.getElementById('ds-typing');
+          if (!el) return;
+          var full = 'INICIALIZANDO SISTEMA';
+          var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (reduced) { el.textContent = full; return; }
+          el.textContent = '';
+          var i = 0;
+          var interval = setInterval(function() {
+            el.textContent = full.slice(0, ++i);
+            if (i >= full.length) clearInterval(interval);
+          }, 55);
+        }
+
+        /* Parallax sutil do starfield ao mouse */
+        function initParallax() {
+          var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (reduced) return;
+          var root = document.documentElement;
+          var raf = null;
+          window.addEventListener('mousemove', function(e) {
+            if (raf) return;
+            raf = requestAnimationFrame(function() {
+              var cx = window.innerWidth / 2;
+              var cy = window.innerHeight / 2;
+              var dx = (e.clientX - cx) / cx;
+              var dy = (e.clientY - cy) / cy;
+              root.style.setProperty('--ds-px', (dx * -8).toFixed(2) + 'px');
+              root.style.setProperty('--ds-py', (dy * -8).toFixed(2) + 'px');
+              raf = null;
+            });
+          }, { passive: true });
+        }
+
+        /* Relógio local no status bar */
+        function initClock() {
+          var el = document.getElementById('ds-clock');
+          if (!el) return;
+          function pad(n) { return n < 10 ? '0' + n : '' + n; }
+          function tick() {
+            var d = new Date();
+            el.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+          }
+          tick();
+          setInterval(tick, 1000);
+        }
+
+        /* Visibilidade da status bar sincronizada com showView() */
+        function initStatusBarVisibility() {
+          var bar = document.querySelector('.ds-status-bar');
+          if (!bar) return;
+          /* Observa mudanças de classe na section #entrada */
+          var section = document.getElementById('entrada');
+          if (!section) return;
+          var mo = new MutationObserver(function() {
+            bar.classList.toggle('ds-visible', section.classList.contains('active'));
+          });
+          mo.observe(section, { attributes: true, attributeFilter: ['class'] });
+          /* Estado inicial */
+          bar.classList.toggle('ds-visible', section.classList.contains('active'));
+        }
+
+        /* Logo pulse class — adiciona ao elemento .logo existente */
+        function initLogoPulse() {
+          var logo = document.querySelector('.topbar .logo');
+          if (logo) logo.classList.add('logo--pulse');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+          initTyping();
+          initParallax();
+          initClock();
+          initStatusBarVisibility();
+          initLogoPulse();
+        });
+      })();
+    </script>
 
     <!-- Nova seção do Painel de Agentes embebedando o localhost:3001 -->
     <section class="dashboard-section wrap view-section" id="saude">

@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Centro de Comando UX — v2 Direção B</title>
+  <meta name="description" content="Rascunho v2 (Direção B): Command Bridge — grid 3 colunas com nav, hero e feed de eventos." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@400;500;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --bg-soft: #0d1117;
+      --panel: rgba(26, 31, 46, 0.82);
+      --panel-hi: rgba(26, 31, 46, 0.95);
+      --line: rgba(255, 255, 255, 0.1);
+      --line-strong: #00e5cc;
+      --text: #f1f4ff;
+      --muted: #a0a8b8;
+      --cyan: #00e5cc;
+      --sky: #38bdf8;
+      --sky-soft: #85ccff;
+      --green: #34d399;
+      --amber: #fbbf24;
+      --red: #f87171;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      font-family: Inter, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Starfield (DNA preservado) ── */
+    .stars::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle at 10% 10%, rgba(255,255,255,0.4) 1px, transparent 1px),
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.3) 1px, transparent 1px),
+        radial-gradient(circle at 60% 35%, rgba(255,255,255,0.5) 1.5px, transparent 1px),
+        radial-gradient(circle at 80% 22%, rgba(255,255,255,0.2) 1px, transparent 1px),
+        radial-gradient(circle at 75% 70%, rgba(255,255,255,0.6) 1.5px, transparent 1px),
+        radial-gradient(circle at 22% 78%, rgba(255,255,255,0.3) 1px, transparent 1px),
+        radial-gradient(circle at 50% 85%, rgba(255,255,255,0.4) 1px, transparent 1px),
+        radial-gradient(circle at 90% 90%, rgba(255,255,255,0.2) 1px, transparent 1px),
+        radial-gradient(circle at 5% 50%, rgba(255,255,255,0.3) 1px, transparent 1px),
+        radial-gradient(circle at 40% 60%, rgba(255,255,255,0.5) 2px, transparent 1px);
+      background-size: 200px 200px;
+      opacity: 0.75;
+      animation: drift 40s linear infinite;
+      z-index: 0;
+    }
+    @keyframes drift {
+      from { background-position: 0 0; }
+      to   { background-position: 0 -200px; }
+    }
+
+    /* ── Top bar enxuta ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(13, 17, 23, 0.78);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .wrap {
+      width: min(1680px, 96vw);
+      margin: 0 auto;
+    }
+
+    .nav {
+      min-height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer; user-select: none;
+    }
+    .brand .logo-sm { width: 28px; height: 28px; display: grid; place-items: center; }
+    .brand .logo-sm svg { width: 100%; height: 100%; stroke: url(#cyan-gradient); }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.02rem;
+      letter-spacing: 0.06em;
+      font-weight: 800;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #f5fbff 0%, #85ccff 46%, #00e5cc 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      font-family: 'Chakra Petch', sans-serif;
+    }
+
+    .breadcrumb {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .breadcrumb .cur { color: var(--cyan); }
+
+    .nav-right-mini {
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .mini-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(0,229,204,0.08);
+      color: var(--cyan);
+      border: 1px solid rgba(0,229,204,0.3);
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 7px 12px;
+      text-transform: uppercase;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .mini-btn:hover {
+      background: rgba(0, 229, 204, 0.18);
+      color: #fff; border-color: var(--cyan);
+      box-shadow: 0 0 14px rgba(0, 229, 204, 0.25);
+    }
+    .mini-btn:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+
+    /* ── Grid 3 colunas ── */
+    .bridge {
+      width: min(1680px, 96vw);
+      margin: 0 auto;
+      padding: 20px 0 40px;
+      display: grid;
+      grid-template-columns: 240px 1fr 340px;
+      gap: 20px;
+      min-height: calc(100vh - 62px);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Sidebar nav ── */
+    .sidebar {
+      position: sticky;
+      top: 82px;
+      align-self: start;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px 10px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      max-height: calc(100vh - 102px);
+      overflow-y: auto;
+    }
+
+    .sidebar-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 4px 10px 10px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: #c0cae3;
+      text-decoration: none;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      transition: all 0.22s ease;
+      border: 1px solid transparent;
+      margin-bottom: 4px;
+    }
+
+    .nav-item .icon {
+      width: 20px; height: 20px;
+      display: grid; place-items: center;
+      color: var(--muted);
+      flex-shrink: 0;
+      transition: color 0.22s ease;
+    }
+    .nav-item .icon svg { width: 100%; height: 100%; }
+
+    .nav-item:hover {
+      background: rgba(0, 229, 204, 0.08);
+      border-color: rgba(0, 229, 204, 0.3);
+      color: #fff;
+      box-shadow: 0 0 18px rgba(0, 229, 204, 0.1) inset;
+    }
+    .nav-item:hover .icon { color: var(--cyan); }
+    .nav-item:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 2px;
+    }
+    .nav-item.active {
+      background: rgba(0,229,204,0.15);
+      border-color: rgba(0,229,204,0.5);
+      color: var(--cyan);
+    }
+    .nav-item.active .icon { color: var(--cyan); }
+
+    .nav-divider {
+      height: 1px;
+      background: var(--line);
+      margin: 10px 6px;
+    }
+
+    /* ── Hero central ── */
+    .hero-center {
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 40px 24px;
+      position: relative;
+    }
+
+    .halo {
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      width: 640px; height: 640px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,229,204,0.12) 0%, rgba(56,189,248,0.05) 40%, transparent 70%);
+      filter: blur(20px);
+      pointer-events: none;
+      animation: breathe 8s ease-in-out infinite;
+    }
+    @keyframes breathe {
+      0%,100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+      50%     { opacity: 1;   transform: translate(-50%, -50%) scale(1.05); }
+    }
+
+    .hero-inner { position: relative; z-index: 1; max-width: 680px; }
+
+    .logo-xl {
+      width: 120px; height: 120px;
+      margin: 0 auto 22px;
+      display: grid; place-items: center;
+      filter: drop-shadow(0 0 24px rgba(0, 229, 204, 0.35));
+      animation: pulse-logo 3.5s ease-in-out infinite;
+    }
+    .logo-xl svg { width: 100%; height: 100%; stroke: url(#cyan-gradient-xl); stroke-width: 1.5; }
+    @keyframes pulse-logo {
+      0%,100% { filter: drop-shadow(0 0 12px rgba(0,229,204,0.25)); }
+      50%     { filter: drop-shadow(0 0 32px rgba(0,229,204,0.6)); }
+    }
+
+    .pre {
+      color: var(--cyan);
+      letter-spacing: 0.28em;
+      font-size: 0.78rem;
+      font-family: "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      display: inline-flex; align-items: center; gap: 12px;
+    }
+    .pre::before, .pre::after {
+      content: "——"; color: rgba(0, 229, 204, 0.65);
+    }
+
+    .hero-center h2 {
+      margin: 16px 0 4px;
+      font-size: clamp(2.8rem, 7vw, 4.8rem);
+      line-height: 0.95;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #f5fbff 0%, #85ccff 46%, #00e5cc 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      font-family: 'Chakra Petch', sans-serif;
+    }
+
+    .hero-center h3 {
+      margin: 0 0 8px;
+      font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+      color: #00ffd5;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-family: 'Chakra Petch', sans-serif;
+      text-shadow: 0 0 18px rgba(0, 229, 204, 0.35);
+    }
+
+    .tagline {
+      margin: 14px auto 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      max-width: 480px;
+      line-height: 1.6;
+    }
+
+    .cta-group {
+      margin-top: 38px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: stretch;
+      width: min(420px, 100%);
+      margin-left: auto; margin-right: auto;
+    }
+
+    .av-sector-btn {
+      position: relative;
+      background: linear-gradient(135deg, rgba(56,189,248,0.15), rgba(167,139,250,0.15));
+      border: 1px solid rgba(56,189,248,0.4);
+      color: #38bdf8;
+      padding: 16px 36px;
+      border-radius: 12px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      gap: 12px;
+      overflow: hidden;
+    }
+    .av-sector-btn::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(56,189,248,0.25), transparent);
+      transform: translateX(-100%);
+      transition: transform 600ms ease;
+    }
+    .av-sector-btn:hover::before { transform: translateX(100%); }
+    .av-sector-btn:hover {
+      border-color: #38bdf8;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(56,189,248,0.25);
+      color: #e0f2fe;
+    }
+    .av-sector-btn:focus-visible { outline: 2px solid #38bdf8; outline-offset: 3px; }
+
+    .av-sector-btn.security {
+      border-color: rgba(52, 211, 153, 0.4);
+      color: #34d399;
+      background: linear-gradient(135deg, rgba(52,211,153,0.12), rgba(16,185,129,0.08));
+      padding: 13px 32px;
+      font-size: 12px;
+    }
+    .av-sector-btn.security:hover {
+      border-color: #34d399;
+      box-shadow: 0 8px 32px rgba(52, 211, 153, 0.22);
+      color: #d1fae5;
+    }
+    .av-sector-btn.security::before {
+      background: linear-gradient(90deg, transparent, rgba(52,211,153,0.25), transparent);
+    }
+
+    .btn-arrow { transition: transform 0.25s ease; }
+    .av-sector-btn:hover .btn-arrow { transform: translateX(4px); }
+
+    /* ── Feed rail (direita) ── */
+    .rail {
+      position: sticky;
+      top: 82px;
+      align-self: start;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      max-height: calc(100vh - 102px);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .rail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 6px 2px;
+    }
+    .rail-title {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--cyan);
+    }
+    .rail-pulse {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--green);
+      letter-spacing: 0.1em;
+    }
+    .rail-pulse::before {
+      content: "";
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px rgba(52, 211, 153, 0.7);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { opacity: 1; }
+      50%     { opacity: 0.35; }
+    }
+
+    .rail-feed {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-right: 2px;
+    }
+
+    .rail-feed::-webkit-scrollbar { width: 4px; }
+    .rail-feed::-webkit-scrollbar-thumb {
+      background: rgba(0,229,204,0.25); border-radius: 4px;
+    }
+
+    .event {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--line);
+      border-left: 2px solid var(--cyan);
+      border-radius: 8px;
+      padding: 10px 12px;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    }
+    .event:hover {
+      background: rgba(0, 229, 204, 0.05);
+      border-color: rgba(0, 229, 204, 0.35);
+      transform: translateX(2px);
+    }
+    .event.commit { border-left-color: var(--cyan); }
+    .event.alert  { border-left-color: var(--amber); }
+    .event.render { border-left-color: var(--sky); }
+    .event.security { border-left-color: var(--green); }
+
+    .event-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .event-tag {
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+    }
+    .event-tag.commit { color: var(--cyan); }
+    .event-tag.alert  { color: var(--amber); }
+    .event-tag.render { color: var(--sky); }
+    .event-tag.security { color: var(--green); }
+
+    .event-msg {
+      font-size: 0.82rem;
+      line-height: 1.45;
+      color: #dbe2f0;
+      font-family: 'Inter', sans-serif;
+    }
+    .event-msg code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--sky-soft);
+      background: rgba(56, 189, 248, 0.08);
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    .rail-footer {
+      padding: 8px 6px 2px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-align: center;
+      border-top: 1px solid var(--line);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      .bridge {
+        grid-template-columns: 220px 1fr;
+      }
+      .rail { display: none; }
+    }
+
+    @media (max-width: 860px) {
+      .bridge {
+        grid-template-columns: 1fr;
+        padding: 16px 0 40px;
+      }
+      .sidebar {
+        position: relative;
+        top: auto;
+        max-height: none;
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 10px;
+        gap: 6px;
+      }
+      .sidebar-title, .nav-divider { display: none; }
+      .nav-item {
+        flex-shrink: 0;
+        margin-bottom: 0;
+        padding: 8px 12px;
+        white-space: nowrap;
+      }
+      .nav-item .icon { display: none; }
+      .logo-xl { width: 88px; height: 88px; }
+    }
+
+    @media (max-width: 520px) {
+      .breadcrumb { display: none; }
+      .brand h1 { font-size: 0.9rem; }
+      .hero-center { padding: 24px 8px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .stars::before, .logo-xl, .halo, .rail-pulse::before { animation: none !important; }
+    }
+  </style>
+</head>
+
+<body class="stars">
+  <!-- SVG defs globais para gradientes -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="cyan-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#f5fbff" />
+        <stop offset="46%" stop-color="#85ccff" />
+        <stop offset="100%" stop-color="#00e5cc" />
+      </linearGradient>
+      <linearGradient id="cyan-gradient-xl" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#f5fbff" />
+        <stop offset="46%" stop-color="#85ccff" />
+        <stop offset="100%" stop-color="#00e5cc" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <header class="topbar">
+    <div class="wrap nav">
+      <div class="brand" tabindex="0" aria-label="Centro de Comando UX — Home">
+        <div class="logo-sm" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 21.5c-6 0-9-3-9-8s2.5-4 4-7c1.5-1.5 5-2.5 5-2.5v17.5z" />
+            <path d="M12 21.5c6 0 9-3 9-8s-2.5-4-4-7c-1.5-1.5-5-2.5-5-2.5v17.5z" />
+            <circle cx="8" cy="11" r="1.5"></circle>
+            <circle cx="16" cy="11" r="1.5"></circle>
+            <circle cx="7" cy="16" r="1.5"></circle>
+            <circle cx="17" cy="16" r="1.5"></circle>
+            <circle cx="9" cy="6" r="1"></circle>
+            <circle cx="15" cy="6" r="1"></circle>
+            <path d="M12 11H9.5V8.5"></path>
+            <path d="M12 11h2.5V8.5"></path>
+            <path d="M12 16H8.5v-3.5"></path>
+            <path d="M12 16h3.5v-3.5"></path>
+          </svg>
+        </div>
+        <h1>CENTRO DE COMANDO UX</h1>
+      </div>
+      <div class="breadcrumb" aria-hidden="true">
+        [BRIDGE] / <span class="cur">HOME</span>
+      </div>
+      <div class="nav-right-mini">
+        <a href="#" class="mini-btn" aria-label="Agentes">AGENTES</a>
+        <a href="#" class="mini-btn" aria-label="Squads">SQUADS</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="bridge">
+    <!-- Nav lateral -->
+    <aside class="sidebar" aria-label="Navegação principal">
+      <div class="sidebar-title">Navegação</div>
+
+      <a href="#" class="nav-item active" aria-current="page">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        </span>
+        Home
+      </a>
+      <a href="#" class="nav-item">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </span>
+        Saúde
+      </a>
+      <a href="#" class="nav-item">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg>
+        </span>
+        Agentes
+      </a>
+      <a href="#" class="nav-item">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </span>
+        Squads
+      </a>
+      <a href="#" class="nav-item">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        </span>
+        Audiovisual
+      </a>
+
+      <div class="nav-divider" aria-hidden="true"></div>
+
+      <a href="#" class="nav-item">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </span>
+        Segurança
+      </a>
+      <a href="#" class="nav-item">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h8"/></svg>
+        </span>
+        Relatórios
+      </a>
+      <a href="#" class="nav-item">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.65 1.65 0 0 0-1.8-.3 1.65 1.65 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.65 1.65 0 0 0-1-1.5 1.65 1.65 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.65 1.65 0 0 0 .3-1.8 1.65 1.65 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.65 1.65 0 0 0 1.5-1 1.65 1.65 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.65 1.65 0 0 0 1.8.3H9a1.65 1.65 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.65 1.65 0 0 0 1 1.5 1.65 1.65 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.65 1.65 0 0 0-.3 1.8V9a1.65 1.65 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.65 1.65 0 0 0-1.5 1z"/></svg>
+        </span>
+        Configurações
+      </a>
+    </aside>
+
+    <!-- Hero central -->
+    <main class="hero-center" id="entrada" aria-label="Home do Centro de Comando UX">
+      <div class="halo" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <div class="logo-xl" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 21.5c-6 0-9-3-9-8s2.5-4 4-7c1.5-1.5 5-2.5 5-2.5v17.5z" />
+            <path d="M12 21.5c6 0 9-3 9-8s-2.5-4-4-7c-1.5-1.5-5-2.5-5-2.5v17.5z" />
+            <circle cx="8" cy="11" r="1.5"></circle>
+            <circle cx="16" cy="11" r="1.5"></circle>
+            <circle cx="7" cy="16" r="1.5"></circle>
+            <circle cx="17" cy="16" r="1.5"></circle>
+            <circle cx="9" cy="6" r="1"></circle>
+            <circle cx="15" cy="6" r="1"></circle>
+            <path d="M12 11H9.5V8.5"></path>
+            <path d="M12 11h2.5V8.5"></path>
+            <path d="M12 16H8.5v-3.5"></path>
+            <path d="M12 16h3.5v-3.5"></path>
+          </svg>
+        </div>
+        <div class="pre">INICIALIZANDO SISTEMA</div>
+        <h2>CENTRO DE<br />COMANDO</h2>
+        <h3>UX</h3>
+        <p class="tagline">Bridge operacional: navegação à esquerda, missão ao centro, telemetria à direita.</p>
+
+        <div class="cta-group">
+          <a href="#" class="av-sector-btn" aria-label="Abrir Setor Audiovisual Inteligente">
+            <span>SETOR AUDIOVISUAL INTELIGENTE</span>
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </a>
+          <a href="#" class="av-sector-btn security" aria-label="Abrir Segurança do Sistema">
+            <span>SEGURANCA DO SISTEMA</span>
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <!-- Feed rail -->
+    <aside class="rail" aria-label="Eventos recentes do sistema">
+      <div class="rail-header">
+        <div class="rail-title">Eventos</div>
+        <div class="rail-pulse">LIVE</div>
+      </div>
+
+      <!-- MOCK: trocar por API /api/events?limit=5 -->
+      <div class="rail-feed" id="rail-feed">
+        <article class="event commit">
+          <div class="event-meta">
+            <span class="event-tag commit">COMMIT</span>
+            <time datetime="2026-04-20T14:02:00">2min atrás</time>
+          </div>
+          <div class="event-msg">fix(escala-mix): anexar token na URL de stream/download <code>790600b7</code></div>
+        </article>
+
+        <article class="event render">
+          <div class="event-meta">
+            <span class="event-tag render">RENDER</span>
+            <time datetime="2026-04-20T13:48:00">16min atrás</time>
+          </div>
+          <div class="event-msg">Projeto <code>escala-mix</code> exportado (XML Premiere, 1m24s).</div>
+        </article>
+
+        <article class="event alert">
+          <div class="event-meta">
+            <span class="event-tag alert">ALERTA</span>
+            <time datetime="2026-04-20T13:30:00">34min atrás</time>
+          </div>
+          <div class="event-msg">Upload acima de 100MB roteado via chunked bypass (Cloudflare).</div>
+        </article>
+
+        <article class="event commit">
+          <div class="event-meta">
+            <span class="event-tag commit">COMMIT</span>
+            <time datetime="2026-04-20T11:10:00">3h atrás</time>
+          </div>
+          <div class="event-msg">feat(escala-mix): galeria de Meus Projetos no topo do embed <code>79f8bbb3</code></div>
+        </article>
+
+        <article class="event security">
+          <div class="event-meta">
+            <span class="event-tag security">SECURITY</span>
+            <time datetime="2026-04-20T09:05:00">hoje · 09:05</time>
+          </div>
+          <div class="event-msg">Tunnel Cloudflare saudável · último health check OK.</div>
+        </article>
+      </div>
+
+      <div class="rail-footer" aria-hidden="true">
+        FEED · 5 de 127 eventos
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // Ticker simples para os "X min atrás" (cosmetico, refresca labels a cada 30s)
+    (function liveTicker() {
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) return;
+      function refresh() {
+        var nodes = document.querySelectorAll('.event time[datetime]');
+        var now = Date.now();
+        nodes.forEach(function (t) {
+          var when = Date.parse(t.getAttribute('datetime'));
+          if (isNaN(when)) return;
+          var diff = Math.max(0, Math.floor((now - when) / 60000));
+          // Só atualiza se passar de 1h; abaixo disso o texto inicial já cobre
+          if (diff < 60) return;
+          if (diff < 1440) t.textContent = Math.floor(diff / 60) + 'h atrás';
+        });
+      }
+      setInterval(refresh, 30000);
+    })();
+  </script>
+</body>
+</html>

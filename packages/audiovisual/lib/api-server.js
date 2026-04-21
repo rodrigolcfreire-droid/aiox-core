@@ -608,6 +608,24 @@ async function handleRequest(req, res) {
       return sendJSON(res, state || { events: [] });
     }
 
+    // Serve v2 draft sandbox (design rascunho, nao afeta raiz)
+    if (pathname === '/v2' || pathname === '/v2/') {
+      const v2Index = path.resolve(__dirname, '..', '..', '..', 'docs', 'examples', 'ux-command-center-v2', 'index.html');
+      if (!fs.existsSync(v2Index)) return sendError(res, 'v2 draft not built yet', 404);
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache, no-store, must-revalidate' });
+      return fs.createReadStream(v2Index).pipe(res);
+    }
+    if (pathname.startsWith('/v2/') && !pathname.includes('..')) {
+      const v2File = path.resolve(__dirname, '..', '..', '..', 'docs', 'examples', 'ux-command-center-v2', pathname.slice(4));
+      const v2Root = path.resolve(__dirname, '..', '..', '..', 'docs', 'examples', 'ux-command-center-v2');
+      if (v2File.startsWith(v2Root) && fs.existsSync(v2File) && fs.statSync(v2File).isFile()) {
+        const ext = path.extname(v2File).toLowerCase();
+        const ctype = ext === '.css' ? 'text/css' : ext === '.js' ? 'application/javascript' : ext === '.svg' ? 'image/svg+xml' : ext === '.html' ? 'text/html; charset=utf-8' : 'application/octet-stream';
+        res.writeHead(200, { 'Content-Type': ctype, 'Cache-Control': 'no-cache' });
+        return fs.createReadStream(v2File).pipe(res);
+      }
+    }
+
     // Serve Escala Mix UI page
     if (pathname === '/escala-mix' || pathname === '/escala-mix/') {
       const mixHtml = path.resolve(__dirname, '..', '..', '..', 'docs', 'examples', 'ux-command-center', 'av-escala-mix.html');

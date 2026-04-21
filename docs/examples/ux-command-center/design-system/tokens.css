@@ -1,0 +1,147 @@
+/*
+ * CENTRO DE COMANDO UX — Design System Tokens
+ * Extraído da Direção A (aprovada) · Aplicado 2026-04-21
+ *
+ * Namespaced como --ds-* para não colidir com :root legacy do index.html.
+ * Valores que coincidem com o legacy são referenciados via var(--cyan) etc.
+ * quando seguro; os novos tokens sempre definem seu próprio valor.
+ */
+
+:root {
+  /* ── Cores base ── */
+  --ds-bg:              #0a0e1a;
+  --ds-bg-soft:         #0d1117;
+  --ds-bg-deep:         #020617;
+
+  /* ── Superfícies / painéis ── */
+  --ds-panel:           rgba(26, 31, 46, 0.82);
+  --ds-panel-hi:        rgba(26, 31, 46, 0.95);
+  --ds-glass:           rgba(26, 31, 46, 0.72);
+
+  /* ── Bordas ── */
+  --ds-line:            rgba(255, 255, 255, 0.10);
+  --ds-line-strong:     rgba(255, 255, 255, 0.20);
+
+  /* ── Texto ── */
+  --ds-text:            #f1f4ff;
+  --ds-text-soft:       #e0f2fe;
+  --ds-muted:           #a0a8b8;
+  --ds-muted-light:     #cbd5e1;
+
+  /* ── Cyan — cor assinatura ── */
+  --ds-cyan:            #00e5cc;
+  --ds-cyan-dim:        rgba(0, 229, 204, 0.35);
+  --ds-cyan-glass:      rgba(0, 229, 204, 0.15);
+  --ds-cyan-glow-sm:    rgba(0, 229, 204, 0.10);
+  --ds-cyan-glow-md:    rgba(0, 229, 204, 0.25);
+  --ds-cyan-glow-lg:    rgba(0, 229, 204, 0.45);
+
+  /* ── Sky — accent secundário ── */
+  --ds-sky:             #38bdf8;
+  --ds-sky-soft:        #85ccff;
+  --ds-sky-dim:         rgba(56, 189, 248, 0.35);
+  --ds-sky-glass:       rgba(56, 189, 248, 0.15);
+  --ds-sky-glow-md:     rgba(56, 189, 248, 0.25);
+
+  /* ── Status ── */
+  --ds-status-green:    #34d399;
+  --ds-status-green-glow: rgba(52, 211, 153, 0.70);
+  --ds-status-amber:    #fbbf24;
+  --ds-status-amber-glow: rgba(251, 191, 36, 0.70);
+  --ds-status-red:      #ef4444;
+  --ds-status-red-glow: rgba(239, 68, 68, 0.50);
+
+  /* ── Gradients assinatura ── */
+  --ds-grad-title:      linear-gradient(180deg, #f5fbff 0%, #85ccff 46%, #00e5cc 100%);
+  --ds-grad-hero:       linear-gradient(135deg, rgba(56,189,248,0.15), rgba(167,139,250,0.15));
+  --ds-grad-cyan-sweep: linear-gradient(90deg, transparent, rgba(0,229,204,0.25), transparent);
+  --ds-grad-sky-sweep:  linear-gradient(90deg, transparent, rgba(56,189,248,0.25), transparent);
+  --ds-grad-security:   linear-gradient(135deg, rgba(52,211,153,0.12), rgba(16,185,129,0.08));
+  --ds-grad-topbar:     linear-gradient(135deg, rgba(0,229,204,0.15) 0%, rgba(0,229,204,0.05) 100%);
+  --ds-grad-kpi-value:  linear-gradient(180deg, #f5fbff 0%, #85ccff 60%, #00e5cc 100%);
+  --ds-grad-radial-bg:  radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+  --ds-grad-halo:       radial-gradient(circle, rgba(0,229,204,0.12) 0%, rgba(56,189,248,0.05) 40%, transparent 70%);
+  --ds-grad-line-top:   linear-gradient(90deg, transparent, var(--ds-cyan), transparent);
+
+  /* ── Typography ── */
+  --ds-font-display:    'Chakra Petch', sans-serif;
+  --ds-font-body:       Inter, sans-serif;
+  --ds-font-mono:       'JetBrains Mono', monospace;
+
+  --ds-size-xs:         0.65rem;   /* 10.4px */
+  --ds-size-sm:         0.75rem;   /* 12px   */
+  --ds-size-base:       0.875rem;  /* 14px   */
+  --ds-size-md:         0.95rem;   /* 15.2px */
+  --ds-size-lg:         1.1rem;    /* 17.6px */
+  --ds-size-xl:         1.45rem;   /* 23.2px */
+  --ds-size-2xl:        1.9rem;    /* 30.4px */
+  --ds-size-hero-h3:    clamp(1.45rem, 3vw, 2.2rem);
+  --ds-size-hero-h2:    clamp(3.3rem, 11vw, 6.6rem);
+
+  --ds-weight-normal:   400;
+  --ds-weight-medium:   500;
+  --ds-weight-bold:     700;
+  --ds-weight-black:    900;
+
+  --ds-leading-tight:   0.94;
+  --ds-leading-body:    1.6;
+
+  --ds-tracking-wide:   0.05em;
+  --ds-tracking-wider:  0.08em;
+  --ds-tracking-mono:   0.20em;
+  --ds-tracking-display: 0.28em;
+  --ds-tracking-title:  0.06em;
+  --ds-tracking-hero:   -0.035em;
+
+  /* ── Spacing scale ── */
+  --ds-space-1:  4px;
+  --ds-space-2:  8px;
+  --ds-space-3:  12px;
+  --ds-space-4:  16px;
+  --ds-space-5:  20px;   /* not in original but gap-filler */
+  --ds-space-6:  24px;
+  --ds-space-8:  32px;
+  --ds-space-10: 40px;
+  --ds-space-11: 44px;
+  --ds-space-12: 48px;
+  --ds-space-14: 56px;
+  --ds-space-16: 64px;
+  --ds-space-20: 80px;
+
+  /* ── Radii ── */
+  --ds-radius-sm:   6px;
+  --ds-radius-md:   8px;
+  --ds-radius-lg:   12px;
+  --ds-radius-xl:   14px;
+  --ds-radius-2xl:  16px;
+  --ds-radius-pill: 99px;
+
+  /* ── Shadows / glows ── */
+  --ds-shadow-glow-cyan:   0 0 10px rgba(0, 229, 204, 0.10);
+  --ds-shadow-glow-cyan-hover: 0 0 20px rgba(0, 229, 204, 0.30);
+  --ds-shadow-glow-sky:    0 8px 32px rgba(56, 189, 248, 0.25);
+  --ds-shadow-glow-green:  0 8px 32px rgba(52, 211, 153, 0.22);
+  --ds-shadow-dot-green:   0 0 8px rgba(52, 211, 153, 0.70);
+  --ds-shadow-dot-amber:   0 0 8px rgba(251, 191, 36, 0.70);
+  --ds-shadow-dot-cyan:    0 0 8px rgba(0, 229, 204, 0.70);
+  --ds-shadow-kpi-hover:   0 8px 28px rgba(0, 229, 204, 0.08);
+  --ds-shadow-elevation-1: 0 2px 8px rgba(0, 0, 0, 0.30);
+  --ds-shadow-elevation-2: 0 4px 16px rgba(0, 0, 0, 0.40);
+  --ds-shadow-elevation-3: 0 8px 32px rgba(0, 0, 0, 0.50);
+
+  /* ── Transitions ── */
+  --ds-ease:        cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  --ds-ease-out:    ease-out;
+  --ds-ease-in-out: ease-in-out;
+  --ds-dur-fast:    150ms;
+  --ds-dur-normal:  250ms;
+  --ds-dur-slow:    400ms;
+  --ds-dur-anim:    700ms;
+
+  /* ── Z-index ── */
+  --ds-z-base:     0;
+  --ds-z-overlay:  2;
+  --ds-z-dropdown: 5;
+  --ds-z-modal:    10;
+  --ds-z-toast:    20;
+}

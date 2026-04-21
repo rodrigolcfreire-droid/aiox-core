@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Centro de Comando UX — v2 Direção A</title>
+  <meta name="description" content="Rascunho v2 (Direção A): Command Center evoluído com microinterações e KPIs." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@400;500;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --bg-soft: #0d1117;
+      --panel: rgba(26, 31, 46, 0.82);
+      --panel-hi: rgba(26, 31, 46, 0.95);
+      --line: rgba(255, 255, 255, 0.1);
+      --line-strong: #00e5cc;
+      --text: #f1f4ff;
+      --muted: #a0a8b8;
+      --cyan: #00e5cc;
+      --sky: #38bdf8;
+      --sky-soft: #85ccff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      font-family: Inter, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Starfield (DNA preservado, com parallax) ── */
+    .stars::before {
+      content: "";
+      position: fixed;
+      inset: -20px;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle at 10% 10%, rgba(255,255,255,0.4) 1px, transparent 1px),
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.3) 1px, transparent 1px),
+        radial-gradient(circle at 60% 35%, rgba(255,255,255,0.5) 1.5px, transparent 1px),
+        radial-gradient(circle at 80% 22%, rgba(255,255,255,0.2) 1px, transparent 1px),
+        radial-gradient(circle at 75% 70%, rgba(255,255,255,0.6) 1.5px, transparent 1px),
+        radial-gradient(circle at 22% 78%, rgba(255,255,255,0.3) 1px, transparent 1px),
+        radial-gradient(circle at 50% 85%, rgba(255,255,255,0.4) 1px, transparent 1px),
+        radial-gradient(circle at 90% 90%, rgba(255,255,255,0.2) 1px, transparent 1px),
+        radial-gradient(circle at 5% 50%, rgba(255,255,255,0.3) 1px, transparent 1px),
+        radial-gradient(circle at 40% 60%, rgba(255,255,255,0.5) 2px, transparent 1px);
+      background-size: 200px 200px;
+      opacity: 0.9;
+      animation: drift 40s linear infinite;
+      transform: translate3d(var(--px, 0), var(--py, 0), 0);
+      transition: transform 400ms ease-out;
+      z-index: 0;
+    }
+
+    @keyframes drift {
+      from { background-position: 0 0; }
+      to   { background-position: 0 -200px; }
+    }
+
+    /* Halo cyan que respira atrás do hero */
+    .halo {
+      position: fixed;
+      left: 50%;
+      top: 52%;
+      transform: translate(-50%, -50%);
+      width: 880px;
+      height: 880px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,229,204,0.12) 0%, rgba(56,189,248,0.05) 40%, transparent 70%);
+      filter: blur(20px);
+      z-index: 0;
+      pointer-events: none;
+      animation: breathe 8s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%,100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+      50%     { opacity: 1;   transform: translate(-50%, -50%) scale(1.05); }
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(13, 17, 23, 0.72);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .wrap {
+      width: min(1600px, 94vw);
+      margin: 0 auto;
+    }
+
+    .nav {
+      min-height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .nav-left { display: flex; align-items: center; gap: 24px; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+
+    .dropbtn, .nav-btn, .squads-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, rgba(0,229,204,0.15) 0%, rgba(0,229,204,0.05) 100%);
+      color: var(--cyan);
+      border: 1px solid rgba(0,229,204,0.4);
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 10px 18px;
+      text-transform: uppercase;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,229,204,0.1);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .dropbtn:hover, .nav-btn:hover, .squads-btn:hover {
+      background: rgba(0, 229, 204, 0.2);
+      box-shadow: 0 0 20px rgba(0, 229, 204, 0.3);
+      color: #fff;
+      border-color: var(--cyan);
+    }
+
+    .dropbtn:focus-visible, .nav-btn:focus-visible, .squads-btn:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 3px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .logo {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      color: var(--cyan);
+      animation: pulse-logo 3.5s ease-in-out infinite;
+    }
+
+    .logo svg { width: 100%; height: 100%; stroke: url(#cyan-gradient); }
+
+    @keyframes pulse-logo {
+      0%,100% { filter: drop-shadow(0 0 2px rgba(0,229,204,0.3)); }
+      50%     { filter: drop-shadow(0 0 10px rgba(0,229,204,0.8)); }
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      letter-spacing: 0.06em;
+      font-weight: 800;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #f5fbff 0%, #85ccff 46%, #00e5cc 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-family: 'Chakra Petch', sans-serif;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      z-index: 2;
+      min-height: calc(100vh - 66px);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 48px 0 80px;
+    }
+
+    .hero-inner {
+      width: min(900px, 92vw);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pre {
+      color: var(--cyan);
+      letter-spacing: 0.28em;
+      font-size: 0.82rem;
+      font-family: "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 1.2em;
+    }
+
+    .pre::before,
+    .pre::after {
+      content: "——";
+      color: rgba(0, 229, 204, 0.65);
+    }
+
+    .pre .typing::after {
+      content: "▍";
+      color: var(--cyan);
+      animation: blink 1s steps(1) infinite;
+      margin-left: 2px;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .hero h2 {
+      margin: 18px 0 6px;
+      font-size: clamp(3.3rem, 11vw, 6.6rem);
+      line-height: 0.94;
+      font-weight: 900;
+      letter-spacing: -0.035em;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #f5fbff 0%, #85ccff 46%, #00e5cc 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-family: 'Chakra Petch', sans-serif;
+      animation: rise 700ms cubic-bezier(.2,.9,.3,1.2) both;
+    }
+
+    .hero h3 {
+      margin: 0 0 6px;
+      font-size: clamp(1.45rem, 3vw, 2.2rem);
+      color: #00ffd5;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-family: 'Chakra Petch', sans-serif;
+      text-shadow: 0 0 18px rgba(0, 229, 204, 0.35);
+      animation: rise 700ms 120ms cubic-bezier(.2,.9,.3,1.2) both;
+    }
+
+    .tagline {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      letter-spacing: 0.08em;
+      max-width: 540px;
+      line-height: 1.6;
+      animation: rise 700ms 220ms cubic-bezier(.2,.9,.3,1.2) both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Botões primários ── */
+    .cta-group {
+      margin-top: 44px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: stretch;
+      width: min(460px, 100%);
+      animation: rise 700ms 320ms cubic-bezier(.2,.9,.3,1.2) both;
+    }
+
+    .av-sector-btn {
+      position: relative;
+      background: linear-gradient(135deg, rgba(56,189,248,0.15), rgba(167,139,250,0.15));
+      border: 1px solid rgba(56,189,248,0.4);
+      color: #38bdf8;
+      padding: 18px 40px;
+      border-radius: 12px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      overflow: hidden;
+    }
+
+    .av-sector-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(56,189,248,0.25), transparent);
+      transform: translateX(-100%);
+      transition: transform 600ms ease;
+    }
+
+    .av-sector-btn:hover::before { transform: translateX(100%); }
+
+    .av-sector-btn:hover {
+      border-color: #38bdf8;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(56,189,248,0.25), 0 0 0 1px rgba(56,189,248,0.2) inset;
+      color: #e0f2fe;
+    }
+
+    .av-sector-btn:focus-visible {
+      outline: 2px solid #38bdf8;
+      outline-offset: 3px;
+    }
+
+    .av-sector-btn.security {
+      border-color: rgba(52, 211, 153, 0.4);
+      color: #34d399;
+      background: linear-gradient(135deg, rgba(52,211,153,0.12), rgba(16,185,129,0.08));
+      padding: 14px 36px;
+      font-size: 13px;
+    }
+
+    .av-sector-btn.security:hover {
+      border-color: #34d399;
+      box-shadow: 0 8px 32px rgba(52, 211, 153, 0.22);
+      color: #d1fae5;
+    }
+
+    .av-sector-btn.security::before {
+      background: linear-gradient(90deg, transparent, rgba(52,211,153,0.25), transparent);
+    }
+
+    .btn-arrow { transition: transform 0.25s ease; }
+    .av-sector-btn:hover .btn-arrow { transform: translateX(4px); }
+
+    /* ── KPI cards ── */
+    .kpi-grid {
+      margin-top: 64px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      width: min(960px, 92vw);
+      animation: rise 700ms 440ms cubic-bezier(.2,.9,.3,1.2) both;
+    }
+
+    .kpi {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px 18px 16px;
+      text-align: left;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: border-color 0.3s, transform 0.2s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; top: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      opacity: 0;
+      transition: opacity 300ms;
+    }
+
+    .kpi:hover {
+      border-color: rgba(0, 229, 204, 0.35);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(0, 229, 204, 0.08);
+    }
+
+    .kpi:hover::after { opacity: 1; }
+
+    .kpi-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .kpi-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 8px rgba(52, 211, 153, 0.7);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    .kpi-dot.warn { background: #fbbf24; box-shadow: 0 0 8px rgba(251, 191, 36, 0.7); }
+    .kpi-dot.cyan { background: var(--cyan); box-shadow: 0 0 8px rgba(0, 229, 204, 0.7); }
+
+    @keyframes pulse-dot {
+      0%,100% { opacity: 1; }
+      50%     { opacity: 0.4; }
+    }
+
+    .kpi-value {
+      margin-top: 10px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      line-height: 1;
+      background: linear-gradient(180deg, #f5fbff 0%, #85ccff 60%, #00e5cc 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .kpi-sub {
+      margin-top: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+    }
+
+    /* ── Footer status line ── */
+    .status-bar {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      z-index: 5;
+      background: rgba(10, 14, 26, 0.88);
+      border-top: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 8px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-left, .status-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #cbd5e1;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .nav { min-height: 60px; gap: 12px; }
+      .dropbtn { display: none; }
+    }
+
+    @media (max-width: 520px) {
+      .hero { padding: 32px 0 100px; }
+      .brand h1 { font-size: 0.95rem; }
+      .kpi-value { font-size: 1.5rem; }
+      .status-row { flex-direction: column; gap: 6px; font-size: 10px; text-align: center; }
+      .status-left, .status-right { gap: 10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .stars::before, .logo, .halo, .kpi-dot { animation: none !important; }
+      .hero h2, .hero h3, .tagline, .cta-group, .kpi-grid { animation: none !important; opacity: 1; }
+      .pre .typing::after { display: none; }
+    }
+  </style>
+</head>
+
+<body class="stars">
+  <div class="halo" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="wrap nav">
+      <div class="nav-left">
+        <a href="#" class="dropbtn" aria-label="Abrir menu">MENU ▾</a>
+        <div class="brand" tabindex="0" aria-label="Centro de Comando UX — Home">
+          <div class="logo" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <defs>
+                <linearGradient id="cyan-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#f5fbff" />
+                  <stop offset="46%" stop-color="#85ccff" />
+                  <stop offset="100%" stop-color="#00e5cc" />
+                </linearGradient>
+              </defs>
+              <path d="M12 21.5c-6 0-9-3-9-8s2.5-4 4-7c1.5-1.5 5-2.5 5-2.5v17.5z" />
+              <path d="M12 21.5c6 0 9-3 9-8s-2.5-4-4-7c-1.5-1.5-5-2.5-5-2.5v17.5z" />
+              <circle cx="8" cy="11" r="1.5"></circle>
+              <circle cx="16" cy="11" r="1.5"></circle>
+              <circle cx="7" cy="16" r="1.5"></circle>
+              <circle cx="17" cy="16" r="1.5"></circle>
+              <circle cx="9" cy="6" r="1"></circle>
+              <circle cx="15" cy="6" r="1"></circle>
+              <path d="M12 11H9.5V8.5"></path>
+              <path d="M12 11h2.5V8.5"></path>
+              <path d="M12 16H8.5v-3.5"></path>
+              <path d="M12 16h3.5v-3.5"></path>
+            </svg>
+          </div>
+          <h1>CENTRO DE COMANDO UX</h1>
+        </div>
+      </div>
+      <div class="nav-right">
+        <a href="#" class="nav-btn">AGENTES</a>
+        <a href="#" class="squads-btn">SQUADS</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="entrada" aria-label="Entrada principal do Centro de Comando UX">
+      <div class="hero-inner">
+        <div class="pre" aria-live="polite"><span class="typing" id="typing">INICIALIZANDO SISTEMA</span></div>
+        <h2>CENTRO DE<br />COMANDO</h2>
+        <h3>UX</h3>
+        <p class="tagline">Orquestração autônoma de agentes, briefings e pipelines audiovisuais em tempo real.</p>
+
+        <div class="cta-group">
+          <a href="#" class="av-sector-btn" aria-label="Abrir Setor Audiovisual Inteligente">
+            <span>SETOR AUDIOVISUAL INTELIGENTE</span>
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </a>
+          <a href="#" class="av-sector-btn security" aria-label="Abrir Segurança do Sistema">
+            <span>SEGURANCA DO SISTEMA</span>
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        <!-- MOCK: trocar por API /api/health -->
+        <div class="kpi-grid" role="list" aria-label="Status do sistema em tempo real">
+          <div class="kpi" role="listitem">
+            <div class="kpi-label"><span class="kpi-dot" aria-hidden="true"></span>Serviços Online</div>
+            <div class="kpi-value">3<span style="color:var(--muted); font-size:1.1rem;">/3</span></div>
+            <div class="kpi-sub">CLI · Orchestrator · Memory</div>
+          </div>
+          <div class="kpi" role="listitem">
+            <div class="kpi-label"><span class="kpi-dot" aria-hidden="true"></span>Uptime Tunnel</div>
+            <div class="kpi-value">99.8%</div>
+            <div class="kpi-sub">Cloudflare · 30d</div>
+          </div>
+          <div class="kpi" role="listitem">
+            <div class="kpi-label"><span class="kpi-dot cyan" aria-hidden="true"></span>Última Atividade</div>
+            <div class="kpi-value">2<span style="color:var(--muted); font-size:1.1rem;">min</span></div>
+            <div class="kpi-sub">commit · escala-mix</div>
+          </div>
+          <div class="kpi" role="listitem">
+            <div class="kpi-label"><span class="kpi-dot" aria-hidden="true"></span>Agentes Ativos</div>
+            <div class="kpi-value">10<span style="color:var(--muted); font-size:1.1rem;">/18</span></div>
+            <div class="kpi-sub">3 squads operacionais</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="status-bar" role="contentinfo" aria-label="Barra de status do sistema">
+    <div class="wrap status-row">
+      <div class="status-left">
+        <span class="status-chip"><span class="kpi-dot" aria-hidden="true"></span> SISTEMA OPERACIONAL</span>
+        <span class="status-chip">v4.0 · main</span>
+      </div>
+      <div class="status-right">
+        <span class="status-chip" id="clock">--:--:--</span>
+        <span class="status-chip">LAT 12ms</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Typing effect no pre-title (DNA preservado: texto "INICIALIZANDO SISTEMA")
+    (function typing() {
+      var el = document.getElementById('typing');
+      if (!el) return;
+      var full = 'INICIALIZANDO SISTEMA';
+      var i = 0;
+      el.textContent = '';
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) { el.textContent = full; return; }
+      var interval = setInterval(function () {
+        el.textContent = full.slice(0, ++i);
+        if (i >= full.length) clearInterval(interval);
+      }, 55);
+    })();
+
+    // Parallax sutil do starfield ao mouse
+    (function parallax() {
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) return;
+      var root = document.documentElement;
+      var raf = null;
+      window.addEventListener('mousemove', function (e) {
+        if (raf) return;
+        raf = requestAnimationFrame(function () {
+          var cx = window.innerWidth / 2;
+          var cy = window.innerHeight / 2;
+          var dx = (e.clientX - cx) / cx;
+          var dy = (e.clientY - cy) / cy;
+          root.style.setProperty('--px', (dx * -8).toFixed(2) + 'px');
+          root.style.setProperty('--py', (dy * -8).toFixed(2) + 'px');
+          raf = null;
+        });
+      }, { passive: true });
+    })();
+
+    // Relógio local no status bar (cosmetico; nao bate em API)
+    (function clock() {
+      var el = document.getElementById('clock');
+      if (!el) return;
+      function pad(n) { return n < 10 ? '0' + n : '' + n; }
+      function tick() {
+        var d = new Date();
+        el.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+      }
+      tick();
+      setInterval(tick, 1000);
+    })();
+  </script>
+</body>
+</html>
