@@ -33,6 +33,7 @@ const { learnFromProject, getLearningInsights } = require(path.resolve(__dirname
 const { generatePlaybook } = require(path.resolve(__dirname, '..', 'packages', 'audiovisual', 'lib', 'playbook'));
 const { listProjects, loadProject } = require(path.resolve(__dirname, '..', 'packages', 'audiovisual', 'lib', 'project'));
 const { downloadFromDrive, extractFileId } = require(path.resolve(__dirname, '..', 'packages', 'audiovisual', 'lib', 'drive-stream'));
+const { detectHooksWithLLM, generateViralTitles, isLLMAvailable } = require(path.resolve(__dirname, '..', 'packages', 'audiovisual', 'lib', 'llm-hooks'));
 
 function formatTime(seconds) {
   const m = Math.floor(seconds / 60);
@@ -109,6 +110,21 @@ async function runFullPipeline(source, options = {}) {
     console.log(`  ${cut.id}  ${cut.category.padEnd(12)}  ${cut.duration.toFixed(0)}s  score:${cut.engagementScore}  ${cut.platform.join(',')}`);
   }
   if (cuts.totalSuggested > 5) console.log(`  ... +${cuts.totalSuggested - 5} mais`);
+
+  // 4b. LLM enrichment (hooks semanticos + titulos virais)
+  if (isLLMAvailable()) {
+    console.log('\n  ── 4.5/5 LLM ENRICHMENT ─────────────────────────');
+    try {
+      const hooks = await detectHooksWithLLM(result.projectId);
+      if (hooks && hooks.hooks) console.log(`  ${hooks.hooks.length} hooks semanticos detectados (Claude)`);
+      const titles = await generateViralTitles(result.projectId);
+      if (titles && titles.titles) console.log(`  ${titles.titles.length} titulos virais gerados (Claude)`);
+    } catch (err) {
+      console.log(`  LLM enrichment falhou (seguindo com cortes heuristicos): ${err.message}`);
+    }
+  } else {
+    console.log('\n  [LLM desativado — set ANTHROPIC_API_KEY para hooks/titulos virais]');
+  }
 
   // 5. Describe
   console.log('\n  ── 5/5 DESCRICAO ────────────────────────────────');

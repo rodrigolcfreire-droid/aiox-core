@@ -13,7 +13,7 @@ const https = require('https');
 
 const API_HOST = 'api.anthropic.com';
 const API_PATH = '/v1/messages';
-const MODEL = 'claude-sonnet-4-20250514';
+const MODEL = 'claude-sonnet-4-5';
 const API_VERSION = '2023-06-01';
 const MAX_TOKENS = 2048;
 
