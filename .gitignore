@@ -165,6 +165,9 @@ tests/*/__fixtures__/
 # UI/UX design artifacts
 docs/ui-prompts.pdf
 
+# Auto-generated reports (telegram-monitor.js, whatsapp-monitor.js)
+docs/examples/ux-command-center/reports/
+
 # NOTE: docs/ internal directories are gitignored in the
 # "INTERNAL DOCS" section below. Only public docs ship.
 
