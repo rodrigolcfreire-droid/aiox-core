@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1400">
+  <title>Renders — 5 Opcoes de Design</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0a0e1a;--bg-panel:#0f172a;--bg-surface:#111827;
+      --border:#1e293b;--border-soft:#1f2937;
+      --text:#e2e8f0;--text-dim:#64748b;--text-muted:#94a3b8;
+      --hook:#f472b6;--dev:#fbbf24;--cta:#34d399;--info:#38bdf8;--purple:#a78bfa;
+      --gold:#fbbf24;
+    }
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;padding-bottom:80px;background-image:radial-gradient(circle at 20% 30%,rgba(167,139,250,.04),transparent 40%),radial-gradient(circle at 80% 70%,rgba(52,211,153,.03),transparent 40%)}
+    .topbar{position:sticky;top:0;z-index:50;background:rgba(10,14,26,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:16px 32px}
+    .topbar-row{display:flex;align-items:center;justify-content:space-between;gap:24px;max-width:1400px;margin:0 auto}
+    .topbar-brand{font-family:'Chakra Petch';font-size:16px;font-weight:700;letter-spacing:1.2px}
+    .topbar-brand span{color:var(--purple)}
+    .topbar-hint{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono'}
+    .tabs{display:flex;gap:6px;padding:12px 32px 0;max-width:1400px;margin:0 auto;flex-wrap:wrap}
+    .tab{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:10px 18px;border-radius:8px;cursor:pointer;font-family:'Chakra Petch';font-size:12px;font-weight:600;letter-spacing:1.2px;transition:all .2s}
+    .tab:hover{color:var(--text);border-color:var(--text-dim)}
+    .tab.active{background:linear-gradient(135deg,rgba(167,139,250,.18),rgba(244,114,182,.14));border-color:var(--purple);color:var(--text)}
+    .tab .tab-num{font-family:'JetBrains Mono';color:var(--purple);margin-right:6px;font-size:10px}
+    .wrap{max-width:1400px;margin:0 auto;padding:32px}
+    .opt{display:none;animation:fade .35s ease}
+    .opt.active{display:block}
+    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    .opt-head{margin-bottom:20px}
+    .opt-head h2{font-family:'Chakra Petch';font-size:22px;font-weight:700;letter-spacing:.5px;margin-bottom:6px;color:#fff}
+    .opt-head h2 small{color:var(--purple);font-size:12px;margin-right:10px;letter-spacing:2px}
+    .opt-head p{font-size:13px;color:var(--text-muted);line-height:1.6;max-width:760px}
+    .opt-rationale{background:rgba(15,23,42,.6);border:1px solid var(--border);border-left:3px solid var(--purple);border-radius:8px;padding:14px 18px;margin-bottom:24px;font-size:12px;color:var(--text-muted);line-height:1.7;font-family:'JetBrains Mono'}
+    .opt-rationale b{color:var(--text);font-family:'Inter';font-weight:600}
+    .preview{background:linear-gradient(180deg,rgba(15,23,42,.5),rgba(10,14,26,.3));border:1px solid var(--border);border-radius:14px;padding:28px;overflow:hidden}
+
+    /* Shared components */
+    .chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:5px;font-family:'JetBrains Mono';font-size:10px;font-weight:700;letter-spacing:.5px}
+    .chip.hook{background:rgba(244,114,182,.12);color:var(--hook);border:1px solid rgba(244,114,182,.2)}
+    .chip.dev{background:rgba(251,191,36,.12);color:var(--dev);border:1px solid rgba(251,191,36,.2)}
+    .chip.cta{background:rgba(52,211,153,.12);color:var(--cta);border:1px solid rgba(52,211,153,.2)}
+    .chip-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+    .status-dot{display:inline-block;width:8px;height:8px;border-radius:50%}
+    .status-dot.done{background:var(--cta);box-shadow:0 0 8px rgba(52,211,153,.6)}
+    .status-dot.running{background:var(--info);box-shadow:0 0 8px rgba(56,189,248,.6);animation:pulse 1.5s infinite}
+    .status-dot.pending{background:var(--text-dim)}
+    .status-dot.failed{background:#f87171;box-shadow:0 0 8px rgba(248,113,113,.6)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .thumb{width:64px;height:64px;border-radius:8px;background:linear-gradient(135deg,#1e293b,#0f172a);display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:20px;flex-shrink:0;position:relative;overflow:hidden;border:1px solid var(--border)}
+    .thumb::after{content:'▶';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.4);opacity:0;transition:.2s;color:#fff;font-size:16px}
+    .thumb:hover::after{opacity:1}
+    .thumb.small{width:48px;height:48px;font-size:16px}
+    .thumb.big{width:100%;aspect-ratio:9/16;height:auto}
+    .rating{display:inline-flex;gap:2px}
+    .rating .star{font-size:13px;color:var(--border);transition:.15s;cursor:pointer}
+    .rating .star.on{color:var(--gold)}
+    .rating .star:hover{color:var(--gold)}
+    .btn-ic{background:rgba(15,23,42,.8);border:1px solid var(--border);color:var(--text-muted);padding:6px 10px;border-radius:6px;cursor:pointer;font-family:'JetBrains Mono';font-size:10px;font-weight:700;display:inline-flex;align-items:center;gap:5px;transition:.15s}
+    .btn-ic:hover{border-color:var(--info);color:var(--info);background:rgba(56,189,248,.05)}
+    .btn-ic.primary{background:var(--cta);border-color:var(--cta);color:#0a0e1a}
+    .btn-ic.primary:hover{background:#6ee7b7;color:#0a0e1a}
+    .btn-ic.premiere{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.25);color:var(--gold)}
+
+    /* ========== OPTION 1: Rich List Row ========== */
+    .o1-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:14px;flex-wrap:wrap;gap:12px}
+    .o1-title-block{display:flex;align-items:center;gap:14px}
+    .o1-title{font-family:'Chakra Petch';font-size:16px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+    .o1-stats{display:flex;gap:16px;font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono'}
+    .o1-stats b{color:var(--text);font-weight:600}
+    .o1-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .o1-search{background:var(--bg-surface);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:6px;font-size:11px;font-family:'JetBrains Mono';width:200px;outline:none}
+    .o1-search:focus{border-color:var(--info)}
+    .o1-sort{background:var(--bg-surface);border:1px solid var(--border);color:var(--text-muted);padding:6px 10px;border-radius:6px;font-size:11px;font-family:'JetBrains Mono';cursor:pointer}
+    .o1-prog{background:var(--border);height:4px;border-radius:4px;overflow:hidden;margin-bottom:12px;position:relative}
+    .o1-prog-fill{background:linear-gradient(90deg,var(--cta),#6ee7b7);height:100%;width:100%;transition:.3s}
+    .o1-row{display:grid;grid-template-columns:64px 1fr auto auto auto;gap:14px;align-items:center;padding:12px;border-radius:10px;transition:.15s;border:1px solid transparent}
+    .o1-row:hover{background:rgba(15,23,42,.6);border-color:var(--border)}
+    .o1-row+.o1-row{margin-top:4px}
+    .o1-row-name{display:flex;flex-direction:column;gap:6px;min-width:0}
+    .o1-name-chips{display:flex;gap:6px;flex-wrap:wrap}
+    .o1-name-meta{font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono'}
+    .o1-actions{display:flex;gap:6px;opacity:.5;transition:.2s}
+    .o1-row:hover .o1-actions{opacity:1}
+    .o1-row.top{background:linear-gradient(90deg,rgba(251,191,36,.04),transparent);border-color:rgba(251,191,36,.15)}
+    .o1-medal{position:absolute;left:-6px;top:-6px;background:var(--gold);color:#0a0e1a;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:'JetBrains Mono';box-shadow:0 0 12px rgba(251,191,36,.4)}
+
+    /* ========== OPTION 2: Grid Cards ========== */
+    .o2-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+    .o2-title{font-family:'Chakra Petch';font-size:16px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+    .o2-view-toggle{display:flex;background:var(--bg-surface);border:1px solid var(--border);border-radius:6px;padding:2px}
+    .o2-view-toggle button{background:none;border:none;padding:5px 12px;border-radius:4px;font-family:'JetBrains Mono';font-size:10px;color:var(--text-dim);cursor:pointer;font-weight:700}
+    .o2-view-toggle button.on{background:var(--bg-panel);color:var(--text)}
+    .o2-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .o2-card{background:var(--bg-panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:.2s;cursor:pointer;position:relative}
+    .o2-card:hover{transform:translateY(-3px);border-color:var(--info);box-shadow:0 10px 30px rgba(0,0,0,.3)}
+    .o2-card-thumb{aspect-ratio:9/16;background:linear-gradient(135deg,#1e293b,#0a0e1a);position:relative;display:flex;align-items:center;justify-content:center;color:var(--text-dim)}
+    .o2-card-thumb::before{content:'▶';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);opacity:0;transition:.2s;font-size:28px;color:#fff}
+    .o2-card:hover .o2-card-thumb::before{opacity:1}
+    .o2-card-status{position:absolute;top:10px;right:10px;display:flex;align-items:center;gap:5px;padding:4px 8px;background:rgba(0,0,0,.6);border-radius:4px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;letter-spacing:1px}
+    .o2-card-duration{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.8);color:#fff;padding:3px 7px;border-radius:4px;font-size:10px;font-family:'JetBrains Mono'}
+    .o2-card-medal{position:absolute;top:10px;left:10px;background:var(--gold);color:#0a0e1a;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;font-family:'JetBrains Mono';box-shadow:0 0 14px rgba(251,191,36,.5)}
+    .o2-card-body{padding:10px 12px}
+    .o2-card-chips{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap}
+    .o2-card-chips .chip{font-size:9px;padding:2px 6px}
+    .o2-card-foot{display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--border)}
+    .o2-card-foot .rating .star{font-size:11px}
+    .o2-card-foot .meta{font-size:9px;color:var(--text-dim);font-family:'JetBrains Mono'}
+
+    /* ========== OPTION 3: Dense Data Table ========== */
+    .o3-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:12px}
+    .o3-title-row{display:flex;align-items:baseline;gap:14px}
+    .o3-title{font-family:'Chakra Petch';font-size:16px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+    .o3-count{font-family:'JetBrains Mono';font-size:11px;color:var(--text-dim)}
+    .o3-filters{display:flex;gap:6px;flex-wrap:wrap}
+    .o3-pill{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:5px 10px;border-radius:5px;font-family:'JetBrains Mono';font-size:10px;cursor:pointer}
+    .o3-pill:hover{color:var(--text);border-color:var(--text-dim)}
+    .o3-pill.on{background:rgba(167,139,250,.1);border-color:var(--purple);color:var(--purple)}
+    .o3-table{background:var(--bg-panel);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .o3-row{display:grid;grid-template-columns:24px 48px 1.2fr 1fr 1fr 80px 80px 80px 100px;gap:10px;align-items:center;padding:10px 14px;font-size:11px;transition:.15s;border-bottom:1px solid var(--border)}
+    .o3-row:last-child{border-bottom:none}
+    .o3-row.head{background:rgba(15,23,42,.9);font-family:'JetBrains Mono';font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-dim);padding:10px 14px}
+    .o3-row:not(.head):hover{background:rgba(255,255,255,.02)}
+    .o3-check{width:14px;height:14px;border:1px solid var(--border);border-radius:3px;cursor:pointer;background:transparent}
+    .o3-check.on{background:var(--info);border-color:var(--info);position:relative}
+    .o3-check.on::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#0a0e1a;font-weight:700}
+    .o3-actions-inline{display:flex;gap:4px}
+    .o3-action-ic{background:transparent;border:1px solid var(--border);color:var(--text-muted);width:24px;height:24px;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:10px}
+    .o3-action-ic:hover{color:var(--info);border-color:var(--info)}
+    .o3-bulk-bar{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:8px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;font-size:12px}
+    .o3-bulk-bar .left{color:var(--info);font-family:'JetBrains Mono'}
+
+    /* ========== OPTION 4: Ranking-First ========== */
+    .o4-title{font-family:'Chakra Petch';font-size:16px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+    .o4-subtitle{font-size:12px;color:var(--text-dim);margin-bottom:20px;font-family:'JetBrains Mono'}
+    .o4-podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:24px}
+    .o4-podium-card{background:linear-gradient(180deg,rgba(15,23,42,.8),rgba(10,14,26,.5));border:1px solid var(--border);border-radius:14px;overflow:hidden;position:relative;transition:.25s}
+    .o4-podium-card:hover{transform:translateY(-3px)}
+    .o4-podium-card.p1{border-color:rgba(251,191,36,.4);box-shadow:0 0 32px rgba(251,191,36,.1)}
+    .o4-podium-card.p2{border-color:rgba(148,163,184,.3)}
+    .o4-podium-card.p3{border-color:rgba(217,119,6,.25)}
+    .o4-podium-rank{position:absolute;top:12px;left:12px;z-index:2;font-family:'Chakra Petch';font-size:32px;font-weight:700;line-height:1;padding:4px 10px;border-radius:6px;background:rgba(0,0,0,.6);backdrop-filter:blur(6px)}
+    .o4-podium-card.p1 .o4-podium-rank{color:var(--gold)}
+    .o4-podium-card.p2 .o4-podium-rank{color:#cbd5e1}
+    .o4-podium-card.p3 .o4-podium-rank{color:#d97706}
+    .o4-podium-thumb{aspect-ratio:16/9;background:linear-gradient(135deg,#1e293b,#0a0e1a);display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:24px;position:relative}
+    .o4-podium-thumb::before{content:'▶';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);opacity:0;transition:.2s;font-size:32px;color:#fff}
+    .o4-podium-card:hover .o4-podium-thumb::before{opacity:1}
+    .o4-podium-body{padding:14px 16px}
+    .o4-podium-chips{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
+    .o4-podium-meta{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border)}
+    .o4-rest{margin-top:28px}
+    .o4-rest-title{font-family:'JetBrains Mono';font-size:11px;color:var(--text-dim);letter-spacing:2px;margin-bottom:12px;text-transform:uppercase}
+    .o4-mini-row{display:grid;grid-template-columns:20px 48px 1fr auto auto;gap:12px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border);font-size:11px}
+    .o4-mini-row:last-child{border-bottom:none}
+    .o4-mini-row:hover{background:rgba(255,255,255,.02)}
+    .o4-mini-rank{font-family:'JetBrains Mono';color:var(--text-dim);font-size:11px;text-align:right}
+
+    /* ========== OPTION 5: Timeline ========== */
+    .o5-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px}
+    .o5-title{font-family:'Chakra Petch';font-size:16px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+    .o5-group-toggle{display:flex;gap:4px}
+    .o5-group-btn{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:5px 10px;border-radius:5px;font-family:'JetBrains Mono';font-size:10px;cursor:pointer}
+    .o5-group-btn.on{background:rgba(167,139,250,.1);border-color:var(--purple);color:var(--purple)}
+    .o5-group{margin-bottom:24px}
+    .o5-group-label{font-family:'JetBrains Mono';font-size:10px;letter-spacing:2px;color:var(--text-dim);margin-bottom:10px;padding-bottom:6px;border-bottom:1px dashed var(--border);text-transform:uppercase;display:flex;align-items:center;gap:10px}
+    .o5-group-label .count{background:var(--bg-surface);padding:2px 8px;border-radius:10px;font-size:9px;color:var(--text)}
+    .o5-tl-row{display:grid;grid-template-columns:14px 48px 1fr auto;gap:12px;align-items:center;padding:10px 14px;border-radius:8px;background:var(--bg-panel);border:1px solid var(--border);margin-bottom:6px;font-size:11px;transition:.15s}
+    .o5-tl-row:hover{border-color:var(--info)}
+    .o5-tl-dot{display:flex;justify-content:center}
+    .o5-tl-body{display:flex;flex-direction:column;gap:5px;min-width:0}
+    .o5-tl-chips{display:flex;gap:5px;flex-wrap:wrap}
+    .o5-tl-meta{font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono';display:flex;gap:10px}
+    .o5-tl-actions{display:flex;gap:5px;align-items:center}
+    .o5-time-label{font-family:'JetBrains Mono';font-size:10px;color:var(--text-dim)}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-row">
+      <div class="topbar-brand">RENDERS <span>/</span> ESTUDO DE DESIGN</div>
+      <div class="topbar-hint">5 opcoes · clique nas abas abaixo</div>
+    </div>
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-opt="1"><span class="tab-num">01</span>Chips + Linhas Ricas</button>
+      <button class="tab" data-opt="2"><span class="tab-num">02</span>Grade de Cards</button>
+      <button class="tab" data-opt="3"><span class="tab-num">03</span>Tabela Densa</button>
+      <button class="tab" data-opt="4"><span class="tab-num">04</span>Ranking Podium</button>
+      <button class="tab" data-opt="5"><span class="tab-num">05</span>Timeline Agrupada</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- ============== OPTION 1 ============== -->
+    <section class="opt active" data-opt="1">
+      <div class="opt-head">
+        <h2><small>OPCAO 01</small>Chips + Linhas Ricas</h2>
+        <p>Parser transforma o nome cru em chips coloridos Hook/Dev/CTA com thumbnail. Toolbar em cima pra busca/sort, barra de stats detalhada, ações inline no hover, medalha pros top-rated.</p>
+      </div>
+      <div class="opt-rationale">
+        <b>Quando usar:</b> default recomendado — cabe iniciante e power user. <b>Ganho:</b> scan 3x mais rápido (cores ≠ nome cru), metadata visivel, top-3 destacados. <b>Trade-off:</b> ocupa mais vertical que tabela densa.
+      </div>
+      <div class="preview">
+        <div class="o1-header">
+          <div class="o1-title-block">
+            <span class="o1-title">Renders</span>
+            <div class="o1-stats">
+              <span><b>3</b> de 3 · <b>100%</b></span>
+              <span><b>2m 14s</b> processados</span>
+              <span><b>142 MB</b></span>
+              <span style="color:var(--gold)">★ <b>2</b> top-rated</span>
+            </div>
+          </div>
+          <div class="o1-toolbar">
+            <input class="o1-search" placeholder="buscar hook/dev/cta..." />
+            <select class="o1-sort"><option>ordenar: melhor avaliado ↓</option><option>mais recente</option><option>duracao</option></select>
+            <button class="btn-ic premiere">🎬 Exportar XML</button>
+          </div>
+        </div>
+        <div class="o1-prog"><div class="o1-prog-fill"></div></div>
+
+        <div class="o1-row top" style="position:relative">
+          <div class="thumb" style="position:relative"><div class="o1-medal">1</div></div>
+          <div class="o1-row-name">
+            <div class="o1-name-chips">
+              <span class="chip hook"><span class="chip-dot"></span>HOOK · 5.Ganchos-Snake</span>
+              <span class="chip dev"><span class="chip-dot"></span>DEV · v2 Metodo Fortune OX</span>
+              <span class="chip cta"><span class="chip-dot"></span>CTA · 5.CTA's</span>
+            </div>
+            <div class="o1-name-meta"><span class="status-dot done"></span> DONE · 1m 50s · 42 MB · rendered 4min ago</div>
+          </div>
+          <div class="rating"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span></div>
+          <div class="o1-actions">
+            <button class="btn-ic primary">▶ Play</button>
+            <button class="btn-ic">⬇ Baixar</button>
+            <button class="btn-ic">⋯</button>
+          </div>
+        </div>
+
+        <div class="o1-row top" style="position:relative">
+          <div class="thumb" style="position:relative"><div class="o1-medal" style="background:#cbd5e1">2</div></div>
+          <div class="o1-row-name">
+            <div class="o1-name-chips">
+              <span class="chip hook"><span class="chip-dot"></span>HOOK · 5.Ganchos-Snake</span>
+              <span class="chip dev"><span class="chip-dot"></span>DEV · v2 Metodo Fortune OX</span>
+              <span class="chip cta"><span class="chip-dot"></span>CTA · 3.CTA's-Rabbit</span>
+            </div>
+            <div class="o1-name-meta"><span class="status-dot done"></span> DONE · 2m 00s · 45 MB · rendered 4min ago</div>
+          </div>
+          <div class="rating"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star">★</span></div>
+          <div class="o1-actions">
+            <button class="btn-ic primary">▶ Play</button>
+            <button class="btn-ic">⬇ Baixar</button>
+            <button class="btn-ic">⋯</button>
+          </div>
+        </div>
+
+        <div class="o1-row">
+          <div class="thumb"></div>
+          <div class="o1-row-name">
+            <div class="o1-name-chips">
+              <span class="chip hook"><span class="chip-dot"></span>HOOK · 5.Ganchos-Snake</span>
+              <span class="chip dev"><span class="chip-dot"></span>DEV · Metodo Coelho</span>
+              <span class="chip cta"><span class="chip-dot"></span>CTA · 3.CTA's-Rabbit</span>
+            </div>
+            <div class="o1-name-meta"><span class="status-dot done"></span> DONE · 2m 05s · 48 MB · rendered 3min ago · <span style="color:var(--purple);cursor:pointer">☆☆☆☆☆ avalie</span></div>
+          </div>
+          <div class="rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+          <div class="o1-actions">
+            <button class="btn-ic primary">▶ Play</button>
+            <button class="btn-ic">⬇ Baixar</button>
+            <button class="btn-ic">⋯</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== OPTION 2 ============== -->
+    <section class="opt" data-opt="2">
+      <div class="opt-head">
+        <h2><small>OPCAO 02</small>Grade de Cards</h2>
+        <p>Thumbnail gigante domina cada card. Play overlay no hover, status no canto, duracao no rodape da thumb, chips Hook/Dev/CTA abaixo. Visual de biblioteca de videos.</p>
+      </div>
+      <div class="opt-rationale">
+        <b>Quando usar:</b> creator que decide por imagem (frame inicial impacta mais que nome). <b>Ganho:</b> reconhecimento visual instantaneo + cabem 8-12 renders na primeira dobra. <b>Trade-off:</b> metadata fica comprimida, rating pequeno.
+      </div>
+      <div class="preview">
+        <div class="o2-header">
+          <div class="o2-title">Renders · 3 de 3</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div class="o2-view-toggle">
+              <button>☰ Lista</button>
+              <button class="on">▦ Grade</button>
+            </div>
+            <button class="btn-ic premiere">🎬 Exportar XML</button>
+          </div>
+        </div>
+        <div class="o2-grid">
+          <div class="o2-card">
+            <div class="o2-card-thumb">▶
+              <div class="o2-card-medal">1</div>
+              <div class="o2-card-status"><span class="status-dot done"></span>DONE</div>
+              <div class="o2-card-duration">1:50</div>
+            </div>
+            <div class="o2-card-body">
+              <div class="o2-card-chips">
+                <span class="chip hook">H · Snake</span>
+                <span class="chip dev">D · Fortune</span>
+                <span class="chip cta">C · 5.CTA</span>
+              </div>
+              <div class="o2-card-foot">
+                <div class="rating"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span></div>
+                <div class="meta">42MB</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="o2-card">
+            <div class="o2-card-thumb">▶
+              <div class="o2-card-medal" style="background:#cbd5e1">2</div>
+              <div class="o2-card-status"><span class="status-dot done"></span>DONE</div>
+              <div class="o2-card-duration">2:00</div>
+            </div>
+            <div class="o2-card-body">
+              <div class="o2-card-chips">
+                <span class="chip hook">H · Snake</span>
+                <span class="chip dev">D · Fortune</span>
+                <span class="chip cta">C · Rabbit</span>
+              </div>
+              <div class="o2-card-foot">
+                <div class="rating"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star">★</span></div>
+                <div class="meta">45MB</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="o2-card">
+            <div class="o2-card-thumb">▶
+              <div class="o2-card-status"><span class="status-dot done"></span>DONE</div>
+              <div class="o2-card-duration">2:05</div>
+            </div>
+            <div class="o2-card-body">
+              <div class="o2-card-chips">
+                <span class="chip hook">H · Snake</span>
+                <span class="chip dev">D · Coelho</span>
+                <span class="chip cta">C · Rabbit</span>
+              </div>
+              <div class="o2-card-foot">
+                <div class="rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+                <div class="meta">48MB</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="o2-card" style="opacity:.7">
+            <div class="o2-card-thumb" style="background:linear-gradient(135deg,rgba(56,189,248,.1),#0a0e1a)">⏳
+              <div class="o2-card-status"><span class="status-dot running"></span>67%</div>
+            </div>
+            <div class="o2-card-body">
+              <div class="o2-card-chips">
+                <span class="chip hook">H · Dragon</span>
+                <span class="chip dev">D · Fortune</span>
+                <span class="chip cta">C · Tiger</span>
+              </div>
+              <div class="o2-card-foot">
+                <div class="meta" style="color:var(--info)">renderizando...</div>
+                <div class="meta">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== OPTION 3 ============== -->
+    <section class="opt" data-opt="3">
+      <div class="opt-head">
+        <h2><small>OPCAO 03</small>Tabela Densa</h2>
+        <p>Colunas fixas (thumb · hook · dev · cta · rating · dur · size · acoes), checkbox de bulk action, filtros rápidos, headers clicaveis pra sort. Visual de ferramenta profissional.</p>
+      </div>
+      <div class="opt-rationale">
+        <b>Quando usar:</b> 50+ renders, power user que gerencia em lote. <b>Ganho:</b> 3x mais densidade que as outras opcoes + selecao multipla nativa. <b>Trade-off:</b> hostil pra iniciante, thumb pequeno reduz ID visual.
+      </div>
+      <div class="preview">
+        <div class="o3-toolbar">
+          <div class="o3-title-row">
+            <span class="o3-title">Renders</span>
+            <span class="o3-count">3 de 3 · 142 MB · 2m 14s</span>
+          </div>
+          <div class="o3-filters">
+            <button class="o3-pill on">Todos</button>
+            <button class="o3-pill">★ Top rated</button>
+            <button class="o3-pill">Nao avaliados</button>
+            <button class="o3-pill">Por hook ▾</button>
+            <button class="o3-pill">Por CTA ▾</button>
+          </div>
+        </div>
+
+        <div class="o3-bulk-bar">
+          <div class="left">▪ 2 selecionados · 87 MB</div>
+          <div style="display:flex;gap:6px">
+            <button class="btn-ic">⬇ Baixar ZIP</button>
+            <button class="btn-ic premiere">🎬 Exportar XML</button>
+            <button class="btn-ic" style="color:#f87171;border-color:rgba(248,113,113,.3)">Excluir</button>
+          </div>
+        </div>
+
+        <div class="o3-table">
+          <div class="o3-row head">
+            <span></span><span></span><span>HOOK</span><span>DEV</span><span>CTA</span><span>RATING</span><span>DUR</span><span>SIZE</span><span>ACOES</span>
+          </div>
+          <div class="o3-row">
+            <div class="o3-check on"></div>
+            <div class="thumb small"></div>
+            <span class="chip hook">5.Ganchos-Snake</span>
+            <span class="chip dev">v2 Fortune OX</span>
+            <span class="chip cta">5.CTA's</span>
+            <div class="rating"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span></div>
+            <span style="font-family:'JetBrains Mono';color:var(--text-dim)">1:50</span>
+            <span style="font-family:'JetBrains Mono';color:var(--text-dim)">42M</span>
+            <div class="o3-actions-inline">
+              <button class="o3-action-ic">▶</button>
+              <button class="o3-action-ic">⬇</button>
+              <button class="o3-action-ic">⋯</button>
+            </div>
+          </div>
+          <div class="o3-row">
+            <div class="o3-check on"></div>
+            <div class="thumb small"></div>
+            <span class="chip hook">5.Ganchos-Snake</span>
+            <span class="chip dev">v2 Fortune OX</span>
+            <span class="chip cta">3.CTA's-Rabbit</span>
+            <div class="rating"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star">★</span></div>
+            <span style="font-family:'JetBrains Mono';color:var(--text-dim)">2:00</span>
+            <span style="font-family:'JetBrains Mono';color:var(--text-dim)">45M</span>
+            <div class="o3-actions-inline">
+              <button class="o3-action-ic">▶</button>
+              <button class="o3-action-ic">⬇</button>
+              <button class="o3-action-ic">⋯</button>
+            </div>
+          </div>
+          <div class="o3-row">
+            <div class="o3-check"></div>
+            <div class="thumb small"></div>
+            <span class="chip hook">5.Ganchos-Snake</span>
+            <span class="chip dev">Metodo Coelho</span>
+            <span class="chip cta">3.CTA's-Rabbit</span>
+            <div class="rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+            <span style="font-family:'JetBrains Mono';color:var(--text-dim)">2:05</span>
+            <span style="font-family:'JetBrains Mono';color:var(--text-dim)">48M</span>
+            <div class="o3-actions-inline">
+              <button class="o3-action-ic">▶</button>
+              <button class="o3-action-ic">⬇</button>
+              <button class="o3-action-ic">⋯</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== OPTION 4 ============== -->
+    <section class="opt" data-opt="4">
+      <div class="opt-head">
+        <h2><small>OPCAO 04</small>Ranking Podium</h2>
+        <p>Top 3 viram cards grandes (ouro/prata/bronze). Resto vai pra lista mini compacta. Força a decisao: "quem sobe pra escalar?" fica visivel em 2 segundos.</p>
+      </div>
+      <div class="opt-rationale">
+        <b>Quando usar:</b> momento de decisao pos-batch — voce avaliou, agora precisa eleger vencedores. <b>Ganho:</b> hierarquia clara, fomenta competicao visual, direciona acao. <b>Trade-off:</b> se ninguem foi avaliado ainda, podium fica vazio e a tela parece quebrada.
+      </div>
+      <div class="preview">
+        <div class="o4-title">Renders · Ranking</div>
+        <div class="o4-subtitle">TOP 3 POR AVALIACAO · 3 DE 3 · 2M 14S · 142MB</div>
+        <div class="o4-podium">
+          <div class="o4-podium-card p1">
+            <div class="o4-podium-rank">01</div>
+            <div class="o4-podium-thumb">▶</div>
+            <div class="o4-podium-body">
+              <div class="o4-podium-chips">
+                <span class="chip hook">H · Snake</span>
+                <span class="chip dev">D · Fortune OX</span>
+                <span class="chip cta">C · 5.CTA</span>
+              </div>
+              <div class="o4-podium-meta">
+                <div class="rating"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span></div>
+                <div style="display:flex;gap:6px">
+                  <button class="btn-ic primary">▶</button>
+                  <button class="btn-ic">⬇</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="o4-podium-card p2">
+            <div class="o4-podium-rank">02</div>
+            <div class="o4-podium-thumb">▶</div>
+            <div class="o4-podium-body">
+              <div class="o4-podium-chips">
+                <span class="chip hook">H · Snake</span>
+                <span class="chip dev">D · Fortune OX</span>
+                <span class="chip cta">C · Rabbit</span>
+              </div>
+              <div class="o4-podium-meta">
+                <div class="rating"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star">★</span></div>
+                <div style="display:flex;gap:6px">
+                  <button class="btn-ic primary">▶</button>
+                  <button class="btn-ic">⬇</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="o4-podium-card p3">
+            <div class="o4-podium-rank">03</div>
+            <div class="o4-podium-thumb">▶</div>
+            <div class="o4-podium-body">
+              <div class="o4-podium-chips">
+                <span class="chip hook">H · Snake</span>
+                <span class="chip dev">D · Coelho</span>
+                <span class="chip cta">C · Rabbit</span>
+              </div>
+              <div class="o4-podium-meta">
+                <div class="rating"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star">★</span><span class="star">★</span></div>
+                <div style="display:flex;gap:6px">
+                  <button class="btn-ic primary">▶</button>
+                  <button class="btn-ic">⬇</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="o4-rest">
+          <div class="o4-rest-title">Demais renders (0)</div>
+          <div style="text-align:center;padding:32px;color:var(--text-dim);font-family:'JetBrains Mono';font-size:12px;background:var(--bg-panel);border:1px dashed var(--border);border-radius:10px">
+            Gere mais variações pra povoar o ranking
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== OPTION 5 ============== -->
+    <section class="opt" data-opt="5">
+      <div class="opt-head">
+        <h2><small>OPCAO 05</small>Timeline Agrupada</h2>
+        <p>Renders agrupados por lote/hora ou por Hook/Dev/CTA. Toggle no topo define o eixo. Ajuda a achar "os renders daquela tentativa de sábado" ou "todos usando Hook Snake".</p>
+      </div>
+      <div class="opt-rationale">
+        <b>Quando usar:</b> uso ao longo de dias/semanas, quando voce itera em batches. <b>Ganho:</b> memoria temporal + facilita "vou comparar Hook X contra Hook Y". <b>Trade-off:</b> em batch unico parece over-engineered.
+      </div>
+      <div class="preview">
+        <div class="o5-head">
+          <div class="o5-title">Renders · Timeline</div>
+          <div style="display:flex;gap:10px;align-items:center">
+            <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--text-dim)">agrupar por:</span>
+            <div class="o5-group-toggle">
+              <button class="o5-group-btn on">⏱ Tempo</button>
+              <button class="o5-group-btn">H Hook</button>
+              <button class="o5-group-btn">D Dev</button>
+              <button class="o5-group-btn">C CTA</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="o5-group">
+          <div class="o5-group-label">HOJE · 18:42 <span class="count">2 renders</span> <span style="margin-left:auto;color:var(--cta)">✓ concluidos</span></div>
+          <div class="o5-tl-row">
+            <div class="o5-tl-dot"><span class="status-dot done"></span></div>
+            <div class="thumb small"></div>
+            <div class="o5-tl-body">
+              <div class="o5-tl-chips">
+                <span class="chip hook">HOOK · Snake</span>
+                <span class="chip dev">DEV · Fortune OX</span>
+                <span class="chip cta">CTA · 5.CTA's</span>
+              </div>
+              <div class="o5-tl-meta"><span>1m 50s</span><span>42 MB</span><span>★★★★★</span></div>
+            </div>
+            <div class="o5-tl-actions">
+              <button class="btn-ic primary">▶</button>
+              <button class="btn-ic">⬇</button>
+            </div>
+          </div>
+          <div class="o5-tl-row">
+            <div class="o5-tl-dot"><span class="status-dot done"></span></div>
+            <div class="thumb small"></div>
+            <div class="o5-tl-body">
+              <div class="o5-tl-chips">
+                <span class="chip hook">HOOK · Snake</span>
+                <span class="chip dev">DEV · Fortune OX</span>
+                <span class="chip cta">CTA · Rabbit</span>
+              </div>
+              <div class="o5-tl-meta"><span>2m 00s</span><span>45 MB</span><span>★★★★☆</span></div>
+            </div>
+            <div class="o5-tl-actions">
+              <button class="btn-ic primary">▶</button>
+              <button class="btn-ic">⬇</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="o5-group">
+          <div class="o5-group-label">HOJE · 18:39 <span class="count">1 render</span></div>
+          <div class="o5-tl-row">
+            <div class="o5-tl-dot"><span class="status-dot done"></span></div>
+            <div class="thumb small"></div>
+            <div class="o5-tl-body">
+              <div class="o5-tl-chips">
+                <span class="chip hook">HOOK · Snake</span>
+                <span class="chip dev">DEV · Coelho</span>
+                <span class="chip cta">CTA · Rabbit</span>
+              </div>
+              <div class="o5-tl-meta"><span>2m 05s</span><span>48 MB</span><span style="color:var(--purple)">☆ avalie</span></div>
+            </div>
+            <div class="o5-tl-actions">
+              <button class="btn-ic primary">▶</button>
+              <button class="btn-ic">⬇</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="o5-group">
+          <div class="o5-group-label">ONTEM · 22:15 <span class="count">5 renders</span> <span style="margin-left:auto;color:var(--text-dim)">arquivados</span></div>
+          <div style="padding:12px 14px;background:var(--bg-panel);border:1px dashed var(--border);border-radius:8px;font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono';text-align:center;cursor:pointer">▾ expandir grupo (5 itens)</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const opts = document.querySelectorAll('.opt');
+    tabs.forEach(t => t.addEventListener('click', () => {
+      const id = t.dataset.opt;
+      tabs.forEach(x => x.classList.toggle('active', x === t));
+      opts.forEach(o => o.classList.toggle('active', o.dataset.opt === id));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }));
+  </script>
+</body>
+</html>

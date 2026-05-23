@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1400">
+  <title>Escala Mix — 5 Opcoes de Design</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0a0e1a;--bg-panel:#0f172a;--bg-surface:#111827;
+      --border:#1e293b;--border-soft:#1f2937;
+      --text:#e2e8f0;--text-dim:#64748b;--text-muted:#94a3b8;
+      --hook:#f472b6;--dev:#fbbf24;--cta:#34d399;--info:#38bdf8;--purple:#a78bfa;
+    }
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;padding-bottom:80px;background-image:radial-gradient(circle at 20% 30%,rgba(167,139,250,.04),transparent 40%),radial-gradient(circle at 80% 70%,rgba(52,211,153,.03),transparent 40%)}
+    .topbar{position:sticky;top:0;z-index:50;background:rgba(10,14,26,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:16px 32px}
+    .topbar-row{display:flex;align-items:center;justify-content:space-between;gap:24px;max-width:1400px;margin:0 auto}
+    .topbar-brand{font-family:'Chakra Petch';font-size:16px;font-weight:700;letter-spacing:1.2px;color:var(--text)}
+    .topbar-brand span{color:var(--purple)}
+    .topbar-hint{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono'}
+    .tabs{display:flex;gap:6px;padding:12px 32px 0;max-width:1400px;margin:0 auto;flex-wrap:wrap}
+    .tab{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:10px 18px;border-radius:8px;cursor:pointer;font-family:'Chakra Petch';font-size:12px;font-weight:600;letter-spacing:1.2px;transition:all .2s}
+    .tab:hover{color:var(--text);border-color:var(--text-dim)}
+    .tab.active{background:linear-gradient(135deg,rgba(167,139,250,.18),rgba(244,114,182,.14));border-color:var(--purple);color:var(--text)}
+    .tab .tab-num{font-family:'JetBrains Mono';color:var(--purple);margin-right:6px;font-size:10px}
+    .wrap{max-width:1400px;margin:0 auto;padding:32px}
+    .opt{display:none;animation:fade .35s ease}
+    .opt.active{display:block}
+    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    .opt-head{margin-bottom:28px;display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap}
+    .opt-head h2{font-family:'Chakra Petch';font-size:22px;font-weight:700;letter-spacing:.5px;margin-bottom:6px;color:#fff}
+    .opt-head h2 small{color:var(--purple);font-size:12px;margin-right:10px;letter-spacing:2px}
+    .opt-head p{font-size:13px;color:var(--text-muted);line-height:1.6;max-width:680px}
+    .opt-rationale{background:rgba(15,23,42,.6);border:1px solid var(--border);border-left:3px solid var(--purple);border-radius:8px;padding:14px 18px;margin-bottom:28px;font-size:12px;color:var(--text-muted);line-height:1.7;font-family:'JetBrains Mono'}
+    .opt-rationale b{color:var(--text);font-family:'Inter';font-weight:600}
+    .preview{background:linear-gradient(180deg,rgba(15,23,42,.5),rgba(10,14,26,.3));border:1px solid var(--border);border-radius:14px;padding:48px 32px;position:relative;overflow:hidden}
+    .preview::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 20% 10%,rgba(244,114,182,.04),transparent 40%),radial-gradient(circle at 80% 90%,rgba(52,211,153,.04),transparent 40%);pointer-events:none}
+
+    /* ============= OPTION 1: Pipeline Stepper ============= */
+    .o1-hero{text-align:center;margin-bottom:32px;position:relative}
+    .o1-kicker{display:inline-flex;align-items:center;gap:8px;margin-bottom:14px}
+    .o1-pill{background:linear-gradient(135deg,#f472b6,#a78bfa);color:#0a0e1a;padding:6px 14px;border-radius:999px;font-family:'Chakra Petch';font-size:11px;font-weight:700;letter-spacing:2px}
+    .o1-tag{border:1px solid var(--cta);color:var(--cta);padding:5px 10px;border-radius:6px;font-family:'JetBrains Mono';font-size:10px;font-weight:700}
+    .o1-title{font-family:'Chakra Petch';font-size:34px;font-weight:700;letter-spacing:1px;margin-bottom:8px}
+    .o1-sub{font-size:16px;color:var(--text-muted);font-weight:500}
+    .o1-sub .h{color:var(--hook)} .o1-sub .d{color:var(--dev)} .o1-sub .c{color:var(--cta)}
+    .o1-steps{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0;align-items:stretch;margin-top:12px}
+    .o1-step{background:var(--bg-panel);border:1px solid var(--border);border-radius:14px;padding:24px;position:relative;transition:all .25s;cursor:pointer}
+    .o1-step:hover{transform:translateY(-2px);border-color:var(--text-dim)}
+    .o1-step.hook:hover{border-color:var(--hook);box-shadow:0 0 28px rgba(244,114,182,.15)}
+    .o1-step.dev:hover{border-color:var(--dev);box-shadow:0 0 28px rgba(251,191,36,.15)}
+    .o1-step.cta:hover{border-color:var(--cta);box-shadow:0 0 28px rgba(52,211,153,.15)}
+    .o1-arrow{display:flex;align-items:center;justify-content:center;color:var(--border);font-size:22px;padding:0 10px}
+    .o1-step-num{position:absolute;top:-10px;left:20px;background:var(--bg);padding:2px 10px;border-radius:4px;font-family:'JetBrains Mono';font-size:11px;color:var(--text-dim);letter-spacing:1px}
+    .o1-step.hook .o1-step-num{color:var(--hook)}
+    .o1-step.dev .o1-step-num{color:var(--dev)}
+    .o1-step.cta .o1-step-num{color:var(--cta)}
+    .o1-step-title{font-family:'Chakra Petch';font-size:15px;font-weight:700;letter-spacing:1.2px;margin-bottom:4px;text-transform:uppercase}
+    .o1-step.hook .o1-step-title{color:var(--hook)}
+    .o1-step.dev .o1-step-title{color:var(--dev)}
+    .o1-step.cta .o1-step-title{color:var(--cta)}
+    .o1-step-hint{font-size:11px;color:var(--text-dim);margin-bottom:16px;font-family:'JetBrains Mono'}
+    .o1-drop{border:1.5px dashed var(--border);border-radius:10px;padding:22px 12px;text-align:center;font-size:12px;color:var(--text-muted);transition:all .2s}
+    .o1-step:hover .o1-drop{border-style:solid}
+    .o1-step.hook:hover .o1-drop{border-color:rgba(244,114,182,.4);background:rgba(244,114,182,.04);color:var(--hook)}
+    .o1-step.dev:hover .o1-drop{border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.04);color:var(--dev)}
+    .o1-step.cta:hover .o1-drop{border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.04);color:var(--cta)}
+    .o1-drop-icon{font-size:22px;margin-bottom:6px}
+    .o1-step-foot{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+    .o1-count{font-family:'JetBrains Mono';font-size:11px;color:var(--text-dim)}
+    .o1-ia{background:linear-gradient(135deg,#8B5CF6,#EC4899);color:#fff;border:none;padding:5px 12px;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono';letter-spacing:.5px}
+
+    /* ============= OPTION 2: Hero Focus ============= */
+    .o2-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:16px;flex-wrap:wrap}
+    .o2-title{font-family:'Chakra Petch';font-size:26px;font-weight:700}
+    .o2-title small{color:var(--text-dim);font-size:12px;font-weight:400;margin-left:12px;letter-spacing:2px}
+    .o2-progress{display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono';font-size:11px;color:var(--text-dim)}
+    .o2-dot{width:8px;height:8px;border-radius:50%;background:var(--border)}
+    .o2-dot.filled{background:var(--purple);box-shadow:0 0 12px rgba(167,139,250,.5)}
+    .o2-grid{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+    .o2-hero{background:linear-gradient(135deg,rgba(244,114,182,.08),rgba(15,23,42,.8));border:1px solid rgba(244,114,182,.25);border-radius:16px;padding:32px;position:relative;overflow:hidden}
+    .o2-hero::after{content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(244,114,182,.12),transparent 70%);pointer-events:none}
+    .o2-hero-badge{display:inline-block;background:rgba(244,114,182,.15);color:var(--hook);padding:5px 12px;border-radius:6px;font-family:'JetBrains Mono';font-size:10px;font-weight:700;letter-spacing:1.5px;margin-bottom:16px}
+    .o2-hero-title{font-family:'Chakra Petch';font-size:22px;font-weight:700;color:var(--hook);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+    .o2-hero-desc{font-size:13px;color:var(--text-muted);margin-bottom:24px;line-height:1.6}
+    .o2-hero-drop{border:2px dashed rgba(244,114,182,.3);border-radius:12px;padding:60px 20px;text-align:center;background:rgba(244,114,182,.03);transition:all .25s;cursor:pointer}
+    .o2-hero-drop:hover{border-color:var(--hook);background:rgba(244,114,182,.06)}
+    .o2-hero-drop .big-icon{font-size:42px;margin-bottom:10px}
+    .o2-hero-drop .big-text{font-family:'Chakra Petch';font-size:18px;font-weight:700;color:var(--hook);margin-bottom:4px;letter-spacing:.5px}
+    .o2-hero-drop .small-text{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono'}
+    .o2-side{display:flex;flex-direction:column;gap:16px}
+    .o2-side-card{background:var(--bg-panel);border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;overflow:hidden;flex:1}
+    .o2-side-card.dev{border-left:3px solid var(--dev)}
+    .o2-side-card.cta{border-left:3px solid var(--cta)}
+    .o2-side-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .o2-side-title{font-family:'Chakra Petch';font-size:13px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase}
+    .o2-side-card.dev .o2-side-title{color:var(--dev)}
+    .o2-side-card.cta .o2-side-title{color:var(--cta)}
+    .o2-side-count{background:var(--bg-surface);color:var(--text-dim);padding:2px 8px;border-radius:10px;font-family:'JetBrains Mono';font-size:10px}
+    .o2-side-drop{border:1.5px dashed var(--border);border-radius:8px;padding:16px 10px;text-align:center;font-size:11px;color:var(--text-dim);cursor:pointer;transition:all .2s;margin-bottom:12px}
+    .o2-side-card.dev .o2-side-drop:hover{border-color:var(--dev);background:rgba(251,191,36,.04);color:var(--dev)}
+    .o2-side-card.cta .o2-side-drop:hover{border-color:var(--cta);background:rgba(52,211,153,.04);color:var(--cta)}
+    .o2-side-ia{background:linear-gradient(135deg,#8B5CF6,#EC4899);color:#fff;border:none;padding:6px 14px;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono';width:100%}
+
+    /* ============= OPTION 3: Dense Dashboard ============= */
+    .o3-header{background:var(--bg-panel);border:1px solid var(--border);border-radius:12px;padding:18px 24px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+    .o3-title-block{display:flex;align-items:center;gap:16px}
+    .o3-title{font-family:'Chakra Petch';font-size:18px;font-weight:700}
+    .o3-title span{color:var(--text-dim);font-weight:400;margin-left:10px;font-size:12px;letter-spacing:2px}
+    .o3-metrics{display:flex;gap:24px}
+    .o3-metric-label{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:2px;font-family:'JetBrains Mono'}
+    .o3-metric-val{font-family:'JetBrains Mono';font-size:18px;font-weight:700}
+    .o3-metric-val.pink{color:var(--hook)} .o3-metric-val.amber{color:var(--dev)} .o3-metric-val.green{color:var(--cta)}
+    .o3-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+    .o3-card{background:var(--bg-panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .2s}
+    .o3-card:hover{border-color:var(--text-dim);transform:translateY(-1px)}
+    .o3-card-bar{height:3px;background:var(--border)}
+    .o3-card.hook .o3-card-bar{background:linear-gradient(90deg,var(--hook),transparent)}
+    .o3-card.dev .o3-card-bar{background:linear-gradient(90deg,var(--dev),transparent)}
+    .o3-card.cta .o3-card-bar{background:linear-gradient(90deg,var(--cta),transparent)}
+    .o3-card-body{padding:16px}
+    .o3-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .o3-card-title{font-family:'Chakra Petch';font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+    .o3-card.hook .o3-card-title{color:var(--hook)}
+    .o3-card.dev .o3-card-title{color:var(--dev)}
+    .o3-card.cta .o3-card-title{color:var(--cta)}
+    .o3-ring{position:relative;width:40px;height:40px}
+    .o3-ring svg{transform:rotate(-90deg)}
+    .o3-ring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono';font-size:11px;font-weight:700;color:var(--text)}
+    .o3-card-drop{border:1.5px dashed var(--border);border-radius:8px;padding:18px 12px;text-align:center;font-size:11px;color:var(--text-dim);cursor:pointer;transition:all .2s;margin-bottom:12px}
+    .o3-card.hook .o3-card-drop:hover{border-color:var(--hook);background:rgba(244,114,182,.04);color:var(--hook)}
+    .o3-card.dev .o3-card-drop:hover{border-color:var(--dev);background:rgba(251,191,36,.04);color:var(--dev)}
+    .o3-card.cta .o3-card-drop:hover{border-color:var(--cta);background:rgba(52,211,153,.04);color:var(--cta)}
+    .o3-card-foot{display:flex;gap:6px}
+    .o3-chip{flex:1;padding:6px 8px;border-radius:6px;font-size:10px;font-family:'JetBrains Mono';font-weight:600;text-align:center;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text-dim);transition:all .2s}
+    .o3-chip:hover{color:var(--text);border-color:var(--text-dim)}
+    .o3-chip.ia{background:linear-gradient(135deg,#8B5CF6,#EC4899);border-color:transparent;color:#fff}
+    .o3-chip.ia:hover{opacity:.92;color:#fff}
+
+    /* ============= OPTION 4: Glass + Neon ============= */
+    .o4-wrap{text-align:center;margin-bottom:28px}
+    .o4-kicker{font-family:'JetBrains Mono';font-size:11px;color:var(--purple);letter-spacing:3px;margin-bottom:8px}
+    .o4-title{font-family:'Chakra Petch';font-size:40px;font-weight:700;letter-spacing:2px;background:linear-gradient(135deg,#fff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+    .o4-sub{font-size:13px;color:var(--text-muted)}
+    .o4-sub .h{color:var(--hook);font-weight:600} .o4-sub .d{color:var(--dev);font-weight:600} .o4-sub .c{color:var(--cta);font-weight:600}
+    .o4-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:32px}
+    .o4-card{position:relative;background:rgba(15,23,42,.5);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:28px;overflow:hidden;transition:all .35s;cursor:pointer}
+    .o4-card::before{content:attr(data-glyph);position:absolute;top:-12px;right:-18px;font-size:120px;opacity:.06;pointer-events:none;font-family:'Chakra Petch';font-weight:700}
+    .o4-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.15)}
+    .o4-card.hook::before{color:var(--hook)}
+    .o4-card.dev::before{color:var(--dev)}
+    .o4-card.cta::before{color:var(--cta)}
+    .o4-card.hook:hover{box-shadow:0 12px 48px rgba(244,114,182,.25),inset 0 1px 0 rgba(244,114,182,.2)}
+    .o4-card.dev:hover{box-shadow:0 12px 48px rgba(251,191,36,.2),inset 0 1px 0 rgba(251,191,36,.2)}
+    .o4-card.cta:hover{box-shadow:0 12px 48px rgba(52,211,153,.22),inset 0 1px 0 rgba(52,211,153,.2)}
+    .o4-card-label{font-family:'JetBrains Mono';font-size:10px;letter-spacing:2px;margin-bottom:6px;color:var(--text-dim)}
+    .o4-card-name{font-family:'Chakra Petch';font-size:20px;font-weight:700;letter-spacing:1.5px;margin-bottom:8px}
+    .o4-card.hook .o4-card-name{color:var(--hook)}
+    .o4-card.dev .o4-card-name{color:var(--dev)}
+    .o4-card.cta .o4-card-name{color:var(--cta)}
+    .o4-card-tag{font-size:11px;color:var(--text-muted);margin-bottom:22px}
+    .o4-card-drop{border:1.5px dashed rgba(255,255,255,.08);border-radius:10px;padding:28px 14px;text-align:center;font-size:12px;color:var(--text-muted);cursor:pointer;transition:all .3s;background:rgba(0,0,0,.25);margin-bottom:18px}
+    .o4-card.hook .o4-card-drop:hover{border-color:var(--hook);background:rgba(244,114,182,.05)}
+    .o4-card.dev .o4-card-drop:hover{border-color:var(--dev);background:rgba(251,191,36,.05)}
+    .o4-card.cta .o4-card-drop:hover{border-color:var(--cta);background:rgba(52,211,153,.05)}
+    .o4-card-actions{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-family:'JetBrains Mono';color:var(--text-dim)}
+    .o4-ia-ghost{background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.3);color:var(--purple);padding:6px 14px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono';letter-spacing:.5px}
+    .o4-ia-ghost:hover{background:rgba(167,139,250,.2)}
+
+    /* ============= OPTION 5: Compact Strip ============= */
+    .o5-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:16px}
+    .o5-title-box{display:flex;align-items:baseline;gap:14px}
+    .o5-num{font-family:'JetBrains Mono';font-size:11px;color:var(--purple);letter-spacing:2px}
+    .o5-title{font-family:'Chakra Petch';font-size:20px;font-weight:700;letter-spacing:.5px}
+    .o5-flow{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono'}
+    .o5-flow .chip{padding:3px 8px;border-radius:4px;font-weight:700;letter-spacing:.5px}
+    .o5-flow .chip.h{background:rgba(244,114,182,.12);color:var(--hook)}
+    .o5-flow .chip.d{background:rgba(251,191,36,.12);color:var(--dev)}
+    .o5-flow .chip.c{background:rgba(52,211,153,.12);color:var(--cta)}
+    .o5-flow .arrow{color:var(--border)}
+    .o5-strip{background:var(--bg-panel);border:1px solid var(--border);border-radius:12px;padding:6px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+    .o5-lane{border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px;transition:all .2s;cursor:pointer;min-height:200px;border:1px solid transparent}
+    .o5-lane.hook{background:linear-gradient(180deg,rgba(244,114,182,.05),transparent)}
+    .o5-lane.dev{background:linear-gradient(180deg,rgba(251,191,36,.05),transparent)}
+    .o5-lane.cta{background:linear-gradient(180deg,rgba(52,211,153,.05),transparent)}
+    .o5-lane:hover{background:rgba(255,255,255,.02)}
+    .o5-lane.hook:hover{border-color:rgba(244,114,182,.2)}
+    .o5-lane.dev:hover{border-color:rgba(251,191,36,.2)}
+    .o5-lane.cta:hover{border-color:rgba(52,211,153,.2)}
+    .o5-lane-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:8px;border-bottom:1px dashed var(--border)}
+    .o5-lane-label{display:flex;align-items:center;gap:8px}
+    .o5-lane-dot{width:8px;height:8px;border-radius:50%}
+    .o5-lane.hook .o5-lane-dot{background:var(--hook);box-shadow:0 0 10px var(--hook)}
+    .o5-lane.dev .o5-lane-dot{background:var(--dev);box-shadow:0 0 10px var(--dev)}
+    .o5-lane.cta .o5-lane-dot{background:var(--cta);box-shadow:0 0 10px var(--cta)}
+    .o5-lane-name{font-family:'Chakra Petch';font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase}
+    .o5-lane.hook .o5-lane-name{color:var(--hook)}
+    .o5-lane.dev .o5-lane-name{color:var(--dev)}
+    .o5-lane.cta .o5-lane-name{color:var(--cta)}
+    .o5-lane-ia{background:none;border:1px solid rgba(167,139,250,.3);color:var(--purple);padding:3px 8px;border-radius:4px;font-family:'JetBrains Mono';font-size:9px;font-weight:700;cursor:pointer}
+    .o5-lane-ia:hover{background:rgba(167,139,250,.1)}
+    .o5-lane-drop{flex:1;border:1.5px dashed var(--border);border-radius:8px;padding:18px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:11px;color:var(--text-dim);transition:all .2s;min-height:120px}
+    .o5-lane-drop .emo{font-size:18px;opacity:.6}
+    .o5-lane:hover .o5-lane-drop{border-style:solid}
+    .o5-lane-stats{display:flex;justify-content:space-between;font-family:'JetBrains Mono';font-size:10px;color:var(--text-dim)}
+    .o5-lane-stats b{color:var(--text);font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-row">
+      <div class="topbar-brand">ESCALA MIX <span>/</span> ESTUDO DE DESIGN</div>
+      <div class="topbar-hint">5 opcoes · clique nas abas abaixo</div>
+    </div>
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-opt="1"><span class="tab-num">01</span>Pipeline Stepper</button>
+      <button class="tab" data-opt="2"><span class="tab-num">02</span>Hero Focus</button>
+      <button class="tab" data-opt="3"><span class="tab-num">03</span>Dashboard Denso</button>
+      <button class="tab" data-opt="4"><span class="tab-num">04</span>Glass Neon</button>
+      <button class="tab" data-opt="5"><span class="tab-num">05</span>Strip Compacto</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- ================ OPTION 1 ================ -->
+    <section class="opt active" data-opt="1">
+      <div class="opt-head">
+        <div>
+          <h2><small>OPCAO 01</small>Pipeline Stepper</h2>
+          <p>Transforma os tres pools numa jornada visual com numeracao (01 → 02 → 03) e setas conectoras. Comunica que Hook vem primeiro e CTA fecha a historia.</p>
+        </div>
+      </div>
+      <div class="opt-rationale">
+        <b>Quando usar:</b> quando o time tem gente nova e precisa entender a logica do mix. <b>Ganho:</b> hierarquia clara de sequencia + reducao do vazio (cards mais compactos verticalmente). <b>Trade-off:</b> em mobile, setas viram para baixo (ok) mas as colunas ficam mais estreitas.
+      </div>
+      <div class="preview">
+        <div class="o1-hero">
+          <div class="o1-kicker"><span class="o1-pill">COMECE AQUI</span><span class="o1-tag">NOVO</span></div>
+          <div class="o1-title">Monte seu mix de criativos</div>
+          <div class="o1-sub"><span class="h">Hook</span> + <span class="d">Desenvolvimento</span> + <span class="c">CTA</span></div>
+        </div>
+        <div class="o1-steps">
+          <div class="o1-step hook">
+            <div class="o1-step-num">01 · INICIO</div>
+            <div class="o1-step-title">Hooks</div>
+            <div class="o1-step-hint">Primeiros 3s · captura atencao</div>
+            <div class="o1-drop"><div class="o1-drop-icon">↩</div>Arraste ou clique para adicionar hooks</div>
+            <div class="o1-step-foot"><span class="o1-count">0 arquivos</span><button class="o1-ia">✦ IA</button></div>
+          </div>
+          <div class="o1-arrow">→</div>
+          <div class="o1-step dev">
+            <div class="o1-step-num">02 · MEIO</div>
+            <div class="o1-step-title">Desenvolvimento</div>
+            <div class="o1-step-hint">Miolo · mantem interesse</div>
+            <div class="o1-drop"><div class="o1-drop-icon">☯</div>Arraste ou clique para adicionar desenvolvimentos</div>
+            <div class="o1-step-foot"><span class="o1-count">0 arquivos</span><button class="o1-ia">✦ IA</button></div>
+          </div>
+          <div class="o1-arrow">→</div>
+          <div class="o1-step cta">
+            <div class="o1-step-num">03 · FINAL</div>
+            <div class="o1-step-title">CTA</div>
+            <div class="o1-step-hint">Chamada · converte acao</div>
+            <div class="o1-drop"><div class="o1-drop-icon">→</div>Arraste ou clique para adicionar CTAs</div>
+            <div class="o1-step-foot"><span class="o1-count">0 arquivos</span><button class="o1-ia">✦ IA</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================ OPTION 2 ================ -->
+    <section class="opt" data-opt="2">
+      <div class="opt-head">
+        <div>
+          <h2><small>OPCAO 02</small>Hero Focus</h2>
+          <p>Da peso visual ao Hook (2x maior) e encosta Dev/CTA como secundarios. Reforca a regra: "se o hook nao prende, nada adianta".</p>
+        </div>
+      </div>
+      <div class="opt-rationale">
+        <b>Quando usar:</b> quando 80% dos erros sao hooks fracos. <b>Ganho:</b> forca o usuario a comecar pelo mais critico + reduz decisoes paralelas. <b>Trade-off:</b> parece "desbalanceado" se ja existe um mix completo carregado.
+      </div>
+      <div class="preview">
+        <div class="o2-header">
+          <div class="o2-title">Envie seus videos <small>HOOK · DEV · CTA</small></div>
+          <div class="o2-progress">
+            <span class="o2-dot"></span><span class="o2-dot"></span><span class="o2-dot"></span>
+            <span>0 / 3 pools preenchidos</span>
+          </div>
+        </div>
+        <div class="o2-grid">
+          <div class="o2-hero">
+            <div class="o2-hero-badge">🎯 COMECE POR AQUI</div>
+            <div class="o2-hero-title">Hooks</div>
+            <div class="o2-hero-desc">Os primeiros 3 segundos definem o sucesso do criativo. Arraste quantos hooks quiser — o sistema combinara todos com Dev e CTA.</div>
+            <div class="o2-hero-drop">
+              <div class="big-icon">↩</div>
+              <div class="big-text">Arraste hooks aqui</div>
+              <div class="small-text">ou clique para selecionar · mp4, mov, webm · ate 2GB</div>
+            </div>
+          </div>
+          <div class="o2-side">
+            <div class="o2-side-card dev">
+              <div class="o2-side-head"><div class="o2-side-title">Desenvolvimento</div><div class="o2-side-count">0 arquivos</div></div>
+              <div class="o2-side-drop">Arraste ou clique<br>para adicionar</div>
+              <button class="o2-side-ia">✦ SUGERIR COM IA</button>
+            </div>
+            <div class="o2-side-card cta">
+              <div class="o2-side-head"><div class="o2-side-title">CTA</div><div class="o2-side-count">0 arquivos</div></div>
+              <div class="o2-side-drop">Arraste ou clique<br>para adicionar</div>
+              <button class="o2-side-ia">✦ SUGERIR COM IA</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================ OPTION 3 ================ -->
+    <section class="opt" data-opt="3">
+      <div class="opt-head">
+        <div>
+          <h2><small>OPCAO 03</small>Dashboard Denso</h2>
+          <p>Layout de painel profissional com anel de progresso por pool, header de metricas e cards compactos. Visual de ferramenta, nao de onboarding.</p>
+        </div>
+      </div>
+      <div class="opt-rationale">
+        <b>Quando usar:</b> fase pos-onboarding, usuario ja entende o conceito e quer volume + controle. <b>Ganho:</b> cabe mais conteudo na primeira dobra, anel mostra meta (ex: 5 hooks pra gerar 125 combos). <b>Trade-off:</b> menos acolhedor pra iniciante.
+      </div>
+      <div class="preview">
+        <div class="o3-header">
+          <div class="o3-title-block">
+            <div class="o3-title">Escala Mix <span>HOOK × DEV × CTA</span></div>
+          </div>
+          <div class="o3-metrics">
+            <div><div class="o3-metric-label">Hooks</div><div class="o3-metric-val pink">0</div></div>
+            <div><div class="o3-metric-label">Dev</div><div class="o3-metric-val amber">0</div></div>
+            <div><div class="o3-metric-label">CTA</div><div class="o3-metric-val green">0</div></div>
+            <div><div class="o3-metric-label">Combos</div><div class="o3-metric-val">0</div></div>
+          </div>
+        </div>
+        <div class="o3-grid">
+          <div class="o3-card hook">
+            <div class="o3-card-bar"></div>
+            <div class="o3-card-body">
+              <div class="o3-card-head">
+                <div class="o3-card-title">Hooks</div>
+                <div class="o3-ring">
+                  <svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="#1e293b" stroke-width="3"/><circle cx="20" cy="20" r="17" fill="none" stroke="#f472b6" stroke-width="3" stroke-dasharray="0 107" stroke-linecap="round"/></svg>
+                  <div class="o3-ring-val">0/5</div>
+                </div>
+              </div>
+              <div class="o3-card-drop">↩ Arraste hooks<br><span style="font-size:10px">ou clique aqui</span></div>
+              <div class="o3-card-foot">
+                <button class="o3-chip ia">✦ IA</button>
+                <button class="o3-chip">IMPORT</button>
+              </div>
+            </div>
+          </div>
+          <div class="o3-card dev">
+            <div class="o3-card-bar"></div>
+            <div class="o3-card-body">
+              <div class="o3-card-head">
+                <div class="o3-card-title">Desenvolvimento</div>
+                <div class="o3-ring">
+                  <svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="#1e293b" stroke-width="3"/><circle cx="20" cy="20" r="17" fill="none" stroke="#fbbf24" stroke-width="3" stroke-dasharray="0 107" stroke-linecap="round"/></svg>
+                  <div class="o3-ring-val">0/5</div>
+                </div>
+              </div>
+              <div class="o3-card-drop">☯ Arraste developments<br><span style="font-size:10px">ou clique aqui</span></div>
+              <div class="o3-card-foot">
+                <button class="o3-chip ia">✦ IA</button>
+                <button class="o3-chip">IMPORT</button>
+              </div>
+            </div>
+          </div>
+          <div class="o3-card cta">
+            <div class="o3-card-bar"></div>
+            <div class="o3-card-body">
+              <div class="o3-card-head">
+                <div class="o3-card-title">CTA</div>
+                <div class="o3-ring">
+                  <svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="#1e293b" stroke-width="3"/><circle cx="20" cy="20" r="17" fill="none" stroke="#34d399" stroke-width="3" stroke-dasharray="0 107" stroke-linecap="round"/></svg>
+                  <div class="o3-ring-val">0/5</div>
+                </div>
+              </div>
+              <div class="o3-card-drop">→ Arraste CTAs<br><span style="font-size:10px">ou clique aqui</span></div>
+              <div class="o3-card-foot">
+                <button class="o3-chip ia">✦ IA</button>
+                <button class="o3-chip">IMPORT</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================ OPTION 4 ================ -->
+    <section class="opt" data-opt="4">
+      <div class="opt-head">
+        <div>
+          <h2><small>OPCAO 04</small>Glass + Neon</h2>
+          <p>Estetica moderna com cards de vidro fosco, glow neon no hover e letras gigantes de marca d'agua. Transmite marca premium.</p>
+        </div>
+      </div>
+      <div class="opt-rationale">
+        <b>Quando usar:</b> demo de venda, landing, ou publico creator/agency que valoriza o look. <b>Ganho:</b> alto apelo visual + diferencial vs ferramentas "planilha". <b>Trade-off:</b> backdrop-filter pesa em maquina fraca; letras grandes podem distrair na rotina de uso.
+      </div>
+      <div class="preview">
+        <div class="o4-wrap">
+          <div class="o4-kicker">COMECE AQUI · NOVO</div>
+          <div class="o4-title">Envie seus videos</div>
+          <div class="o4-sub"><span class="h">Hook</span> + <span class="d">Desenvolvimento</span> + <span class="c">CTA</span></div>
+        </div>
+        <div class="o4-grid">
+          <div class="o4-card hook" data-glyph="H">
+            <div class="o4-card-label">01 · INICIO</div>
+            <div class="o4-card-name">Hooks</div>
+            <div class="o4-card-tag">Captura atencao nos primeiros 3s</div>
+            <div class="o4-card-drop">↩<br>Arraste ou clique<br>para adicionar hooks</div>
+            <div class="o4-card-actions">
+              <span>0 arquivos</span>
+              <button class="o4-ia-ghost">✦ IA</button>
+            </div>
+          </div>
+          <div class="o4-card dev" data-glyph="D">
+            <div class="o4-card-label">02 · MEIO</div>
+            <div class="o4-card-name">Desenvolvimento</div>
+            <div class="o4-card-tag">Sustenta interesse ate o CTA</div>
+            <div class="o4-card-drop">☯<br>Arraste ou clique<br>para adicionar developments</div>
+            <div class="o4-card-actions">
+              <span>0 arquivos</span>
+              <button class="o4-ia-ghost">✦ IA</button>
+            </div>
+          </div>
+          <div class="o4-card cta" data-glyph="C">
+            <div class="o4-card-label">03 · FINAL</div>
+            <div class="o4-card-name">CTA</div>
+            <div class="o4-card-tag">Fecha com chamada direta</div>
+            <div class="o4-card-drop">→<br>Arraste ou clique<br>para adicionar CTAs</div>
+            <div class="o4-card-actions">
+              <span>0 arquivos</span>
+              <button class="o4-ia-ghost">✦ IA</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================ OPTION 5 ================ -->
+    <section class="opt" data-opt="5">
+      <div class="opt-head">
+        <div>
+          <h2><small>OPCAO 05</small>Strip Compacto</h2>
+          <p>Reduz drasticamente a altura. Pools viram lanes dentro de uma tira unica. Ideal pra fluxo recorrente — quem ja usou 10x.</p>
+        </div>
+      </div>
+      <div class="opt-rationale">
+        <b>Quando usar:</b> power user, workflow repetitivo, tela compartilhada com outros paineis. <b>Ganho:</b> ~40% menos altura vertical, mais espaco pra renders e ranking. <b>Trade-off:</b> menos "wow" no onboarding; iniciante pode nao perceber que sao 3 slots distintos.
+      </div>
+      <div class="preview">
+        <div class="o5-top">
+          <div class="o5-title-box">
+            <div class="o5-num">STEP 01</div>
+            <div class="o5-title">Envie seus videos</div>
+          </div>
+          <div class="o5-flow">
+            <span class="chip h">HOOK</span><span class="arrow">+</span>
+            <span class="chip d">DEV</span><span class="arrow">+</span>
+            <span class="chip c">CTA</span>
+            <span style="margin-left:12px">· 0 combos possiveis</span>
+          </div>
+        </div>
+        <div class="o5-strip">
+          <div class="o5-lane hook">
+            <div class="o5-lane-head">
+              <div class="o5-lane-label"><span class="o5-lane-dot"></span><span class="o5-lane-name">Hooks</span></div>
+              <button class="o5-lane-ia">✦ IA</button>
+            </div>
+            <div class="o5-lane-drop"><div class="emo">↩</div>Arraste hooks aqui</div>
+            <div class="o5-lane-stats"><span>0 arquivos</span><span><b>INICIO</b></span></div>
+          </div>
+          <div class="o5-lane dev">
+            <div class="o5-lane-head">
+              <div class="o5-lane-label"><span class="o5-lane-dot"></span><span class="o5-lane-name">Desenvolvimento</span></div>
+              <button class="o5-lane-ia">✦ IA</button>
+            </div>
+            <div class="o5-lane-drop"><div class="emo">☯</div>Arraste desenvolvimentos aqui</div>
+            <div class="o5-lane-stats"><span>0 arquivos</span><span><b>MEIO</b></span></div>
+          </div>
+          <div class="o5-lane cta">
+            <div class="o5-lane-head">
+              <div class="o5-lane-label"><span class="o5-lane-dot"></span><span class="o5-lane-name">CTA</span></div>
+              <button class="o5-lane-ia">✦ IA</button>
+            </div>
+            <div class="o5-lane-drop"><div class="emo">→</div>Arraste CTAs aqui</div>
+            <div class="o5-lane-stats"><span>0 arquivos</span><span><b>FINAL</b></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const opts = document.querySelectorAll('.opt');
+    tabs.forEach(t => t.addEventListener('click', () => {
+      const id = t.dataset.opt;
+      tabs.forEach(x => x.classList.toggle('active', x === t));
+      opts.forEach(o => o.classList.toggle('active', o.dataset.opt === id));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }));
+  </script>
+</body>
+</html>

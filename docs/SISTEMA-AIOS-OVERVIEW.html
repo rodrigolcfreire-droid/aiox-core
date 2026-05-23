@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sistema AIOS — Documento Mestre</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --fg: #e6edf3;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --border: #30363d;
+    --code-bg: #161b22;
+    --table-stripe: #161b22;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 48px 32px 96px;
+    line-height: 1.65;
+    font-size: 16px;
+  }
+  h1 { font-size: 2.2em; border-bottom: 2px solid var(--border); padding-bottom: 0.4em; margin-top: 0; }
+  h2 { font-size: 1.6em; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; margin-top: 2em; color: var(--accent); }
+  h3 { font-size: 1.25em; margin-top: 1.6em; }
+  h4 { font-size: 1.05em; color: var(--muted); }
+  p { margin: 0.8em 0; }
+  blockquote {
+    border-left: 4px solid var(--accent);
+    padding: 0.4em 1em;
+    color: var(--muted);
+    background: var(--code-bg);
+    margin: 1em 0;
+    border-radius: 0 4px 4px 0;
+  }
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Menlo, Monaco, Consolas, monospace;
+    font-size: 0.88em;
+    color: #ffa657;
+  }
+  pre {
+    background: var(--code-bg);
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    color: var(--fg);
+    font-size: 0.85em;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+    font-size: 0.92em;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--code-bg); color: var(--accent); }
+  tr:nth-child(even) td { background: var(--table-stripe); }
+  ul, ol { padding-left: 1.5em; }
+  li { margin: 0.3em 0; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2.5em 0; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  strong { color: #ffa657; }
+  .toc {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 28px;
+    margin: 1.5em 0 2em;
+  }
+  .toc h3 { margin-top: 0; color: var(--accent); }
+  .toc ul { list-style: none; padding-left: 0; columns: 2; column-gap: 24px; }
+  .toc li { break-inside: avoid; }
+</style>
+</head>
+<body>
+<div id="content"><h1>SISTEMA AIOS — Documento Mestre</h1>
+<blockquote>
+<p>Visão completa do sistema. Snapshot em 2026-04-29.
+Versão: aiox-core 4.4.6 · Branch: main</p>
+</blockquote>
+<hr>
+<h2>1. O que é o AIOS</h2>
+<p><strong>AIOS (AI-Orchestrated System)</strong> — também chamado <strong>Synkra AIOX</strong> no namespace de pacote — é uma plataforma meta-de-desenvolvimento que combina:</p>
+<ol>
+<li><strong>Framework de orquestração de agentes</strong> (12 personas, 200+ tasks, 8 workflows YAML)</li>
+<li><strong>Três motores autônomos de operação</strong>: Intelligence, Briefing, Audiovisual</li>
+<li><strong>Sistema IDS</strong> (Incremental Development System) com hierarquia REUSE &gt; ADAPT &gt; CREATE sobre 751 entidades registradas</li>
+<li><strong>SYNAPSE</strong> — engine de contexto para roteamento por domínio/regra</li>
+<li><strong>Centro de Comando UX</strong> — suite de dashboards HTML para observar (não controlar) os motores</li>
+<li><strong>Persistência multi-domínio</strong> com 8 schemas Supabase isolados + RLS</li>
+</ol>
+<p><strong>Filosofia inegociável (Constitution):</strong></p>
+<pre><code>CLI First  →  Observability Second  →  UI Third
+</code></pre>
+<p>A inteligência vive na CLI. Dashboards apenas observam. UI nunca é requisito de operação.</p>
+<hr>
+<h2>2. Estrutura de Camadas (Framework vs Project)</h2>
+<table>
+<thead>
+<tr>
+<th>Camada</th>
+<th>Mutabilidade</th>
+<th>Path</th>
+<th>O que é</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>L1</strong> Framework Core</td>
+<td>NEVER modify</td>
+<td><code>.aiox-core/core/</code>, <code>bin/aiox.js</code>, <code>bin/aiox-init.js</code>, <code>.aiox-core/constitution.md</code></td>
+<td>Núcleo protegido por deny rules</td>
+</tr>
+<tr>
+<td><strong>L2</strong> Framework Templates</td>
+<td>NEVER modify</td>
+<td><code>.aiox-core/development/{tasks,templates,checklists,workflows}/</code>, <code>.aiox-core/infrastructure/</code></td>
+<td>Extend-only</td>
+</tr>
+<tr>
+<td><strong>L3</strong> Project Config</td>
+<td>Mutable c/ exceções</td>
+<td><code>.aiox-core/data/</code>, <code>agents/*/MEMORY.md</code>, <code>core-config.yaml</code></td>
+<td>Configuração do projeto</td>
+</tr>
+<tr>
+<td><strong>L4</strong> Project Runtime</td>
+<td>ALWAYS modify</td>
+<td><code>docs/stories/</code>, <code>packages/</code>, <code>squads/</code>, <code>tests/</code></td>
+<td>Trabalho do projeto</td>
+</tr>
+</tbody></table>
+<p>Toggle via <code>core-config.yaml → boundary.frameworkProtection</code>.</p>
+<hr>
+<h2>3. Os Três Motores Autônomos</h2>
+<h3>3.1 Intelligence Engine — monitoramento social</h3>
+<p><strong>Localização:</strong> <code>bin/intelligence-*.js</code>, <code>bin/telegram-monitor.js</code>, <code>bin/whatsapp-monitor.js</code>
+<strong>Squads:</strong> <code>squads/telegram/</code>, <code>squads/whatsapp/</code>, <code>squads/squad-espiao/</code>
+<strong>Schema Supabase:</strong> <code>telegram</code>, <code>whatsapp</code> (RLS ativo)
+<strong>Modo:</strong> <strong>READ-ONLY</strong> — bots observam e relatam, nunca interagem</p>
+<p>CLIs principais:</p>
+<ul>
+<li><code>intelligence-pipeline.js</code> — orquestrador unificado Telegram + WhatsApp</li>
+<li><code>intelligence-dashboard.js</code> — gerador de relatórios</li>
+<li><code>telegram-monitor.js</code> (~59k LOC) — análise de mensagens, sentimento, tendências</li>
+<li><code>whatsapp-monitor.js</code> (~35k LOC) — equivalente WhatsApp</li>
+<li><code>radar-editorial.js</code> — radar de conteúdo editorial</li>
+<li><code>sentinel-report.js</code> — relatório auto-avaliativo</li>
+</ul>
+<h3>3.2 Briefing Engine — Máquina de Briefing</h3>
+<p><strong>Localização:</strong> <code>squads/maquina-de-briefing/</code>
+<strong>Estrutura:</strong> 11 agents + 9 cycle runs históricos + workflows + scripts
+<strong>Schema Supabase:</strong> <code>briefing</code>, <code>personas</code>
+<strong>Função:</strong> geração de briefings, ciclos editoriais, campanhas (ex.: Copa 2026)</p>
+<p>Composição típica de ciclo: Scheduler → Generator → Reviewer → Output</p>
+<h3>3.3 Audiovisual Engine — Central Audiovisual</h3>
+<p><strong>Localização:</strong> <code>squads/central-audiovisual/</code> + 25 binários <code>bin/av-*.js</code>
+<strong>Schema Supabase:</strong> <code>audiovisual</code> (adicionado 2026-03-19)
+<strong>Pipeline:</strong> ingest → transcribe → segment → cut → produce → edit → brand → scale → approve → output</p>
+<p>CLIs do pipeline AV:</p>
+<table>
+<thead>
+<tr>
+<th>Etapa</th>
+<th>CLI</th>
+<th>Função</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ingest</td>
+<td><code>av-ingest.js</code>, <code>av-drive.js</code></td>
+<td>importa mídia (Drive incluso)</td>
+</tr>
+<tr>
+<td>Transcrição</td>
+<td><code>av-transcribe.js</code></td>
+<td>speech-to-text</td>
+</tr>
+<tr>
+<td>Segmentação</td>
+<td><code>av-segment.js</code>, <code>av-cuts.js</code>, <code>av-cortes.js</code></td>
+<td>cortes inteligentes</td>
+</tr>
+<tr>
+<td>Smart cuts</td>
+<td><code>av-cortes.js</code> (~11k LOC)</td>
+<td>cortes baseados em LLM</td>
+</tr>
+<tr>
+<td>Produção</td>
+<td><code>av-produce.js</code>, <code>av-edit.js</code> (~13k LOC)</td>
+<td>edição, transições</td>
+</tr>
+<tr>
+<td>Escala/Mix</td>
+<td><code>av-escala.js</code>, <code>av-escala-mix.js</code> (~9k LOC)</td>
+<td>Hook × Dev × CTA com IA</td>
+</tr>
+<tr>
+<td>Brand/QA</td>
+<td><code>av-brand.js</code>, <code>av-performance.js</code>, <code>av-suggest.js</code></td>
+<td>compliance, métricas, sugestões</td>
+</tr>
+<tr>
+<td>Aprovação</td>
+<td><code>av-approve.js</code>, <code>av-batch.js</code></td>
+<td>workflow de aprovação</td>
+</tr>
+<tr>
+<td>Output</td>
+<td><code>av-output.js</code></td>
+<td>exportação final (inclui XML para Premiere)</td>
+</tr>
+<tr>
+<td>Auth/API</td>
+<td><code>av-auth.js</code>, <code>av-server.js</code>, <code>av-dashboard-data.js</code></td>
+<td>infra da engine</td>
+</tr>
+</tbody></table>
+<p><strong>Stories AV (av-1 → av-16):</strong> schema, smart cuts, hooks, XML export, estimativa de tempo, legendas animadas, hook headline.</p>
+<hr>
+<h2>4. Sistema de Agentes</h2>
+<h3>4.1 Personas (12 + master)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Persona</th>
+<th>Escopo</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>@dev</code></td>
+<td>Dex</td>
+<td>Implementação</td>
+</tr>
+<tr>
+<td><code>@qa</code></td>
+<td>Quinn</td>
+<td>Testes, quality gates</td>
+</tr>
+<tr>
+<td><code>@architect</code></td>
+<td>Aria</td>
+<td>Arquitetura, design técnico</td>
+</tr>
+<tr>
+<td><code>@pm</code></td>
+<td>Morgan</td>
+<td>Product Management, épicos</td>
+</tr>
+<tr>
+<td><code>@po</code></td>
+<td>Pax</td>
+<td>Product Owner, stories</td>
+</tr>
+<tr>
+<td><code>@sm</code></td>
+<td>River</td>
+<td>Scrum Master, sprint</td>
+</tr>
+<tr>
+<td><code>@analyst</code></td>
+<td>Alex</td>
+<td>Pesquisa, análise</td>
+</tr>
+<tr>
+<td><code>@data-engineer</code></td>
+<td>Dara</td>
+<td>DB, migrations</td>
+</tr>
+<tr>
+<td><code>@ux-design-expert</code></td>
+<td>Uma</td>
+<td>UX/UI</td>
+</tr>
+<tr>
+<td><code>@devops</code></td>
+<td>Gage</td>
+<td>CI/CD, <strong>único com autoridade de <code>git push</code> e PRs</strong></td>
+</tr>
+<tr>
+<td><code>@aiox-master</code></td>
+<td>—</td>
+<td>Override constitucional</td>
+</tr>
+<tr>
+<td><code>@autoavaliativo</code></td>
+<td>—</td>
+<td>Auto-assessment, métricas</td>
+</tr>
+<tr>
+<td><code>@squad-creator</code></td>
+<td>—</td>
+<td>Bootstrap de novas squads</td>
+</tr>
+</tbody></table>
+<h3>4.2 Autoridade (Agent Authority Matrix)</h3>
+<p><strong><code>@devops</code> exclusivo:</strong> <code>git push</code>, <code>gh pr create/merge</code>, MCP add/remove, CI/CD, releases.
+<strong><code>@pm</code> exclusivo:</strong> <code>*execute-epic</code>, <code>*create-epic</code>, requirements gathering, spec writing.
+<strong><code>@po</code> exclusivo:</strong> <code>*validate-story-draft</code> (10-point checklist), backlog priorities.
+<strong><code>@sm</code> exclusivo:</strong> <code>*draft</code> / <code>*create-story</code>.
+<strong><code>@dev</code> permitido:</strong> <code>git add/commit/branch/checkout/merge</code> LOCAL. Bloqueado: push e PR.</p>
+<h3>4.3 Handoff Protocol</h3>
+<p>Switch de agente compacta a persona anterior em artefato de ~379 tokens (vs ~3-5K). Máximo 3 summaries retidos. Storage: <code>.aiox/handoffs/</code>.</p>
+<hr>
+<h2>5. Squads (8 ativos + 1 template)</h2>
+<table>
+<thead>
+<tr>
+<th>Squad</th>
+<th>Domínio</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>central-audiovisual</code></td>
+<td>Pipeline AV completo (18 agents)</td>
+</tr>
+<tr>
+<td><code>maquina-de-briefing</code></td>
+<td>Briefings, ciclos editoriais, campanhas</td>
+</tr>
+<tr>
+<td><code>persona</code></td>
+<td>Definição de personas, segmentação</td>
+</tr>
+<tr>
+<td><code>squad-espiao</code></td>
+<td>Inteligência competitiva read-only</td>
+</tr>
+<tr>
+<td><code>telegram</code></td>
+<td>Integração Telegram (read-only)</td>
+</tr>
+<tr>
+<td><code>whatsapp</code></td>
+<td>Integração WhatsApp (read-only)</td>
+</tr>
+<tr>
+<td><code>claude-code-mastery</code></td>
+<td>Plugins, MCP, hooks Claude Code (8 agents)</td>
+</tr>
+<tr>
+<td><code>_example</code></td>
+<td>Template para novas squads</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>6. Database — Supabase</h2>
+<h3>6.1 Schemas (7+1, isolamento por domínio)</h3>
+<table>
+<thead>
+<tr>
+<th>Schema</th>
+<th>Conteúdo</th>
+<th>Migrations</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>auth</code></td>
+<td>Usuários (nativo Supabase)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>agents</code></td>
+<td>agents, agent_state, agent_metrics</td>
+<td>000002</td>
+</tr>
+<tr>
+<td><code>memory</code></td>
+<td>memory, memory_segments</td>
+<td>000003</td>
+</tr>
+<tr>
+<td><code>briefing</code> + <code>personas</code></td>
+<td>briefing_*, personas_*</td>
+<td>000007-000009</td>
+</tr>
+<tr>
+<td><code>reports</code> + <code>workflow</code></td>
+<td>reports_*, workflows_*, workflow_logs</td>
+<td>000010-000012</td>
+</tr>
+<tr>
+<td><code>system_logs</code></td>
+<td>system_logs, error_logs, audit_logs</td>
+<td>000013-000014</td>
+</tr>
+<tr>
+<td><code>telegram</code></td>
+<td>telegram_messages, telegram_analysis</td>
+<td>0315000001-3</td>
+</tr>
+<tr>
+<td><code>whatsapp</code></td>
+<td>whatsapp_messages, whatsapp_analysis</td>
+<td>0315100001-3</td>
+</tr>
+<tr>
+<td><code>audiovisual</code></td>
+<td>av_projects, av_assets, av_timelines, av_edits, av_renders</td>
+<td>0319000001-3</td>
+</tr>
+</tbody></table>
+<p><strong>Total:</strong> 24 migrations. RLS ativo em todos os schemas de domínio.</p>
+<h3>6.2 Auditoria</h3>
+<p><code>bin/db-audit-security.js</code> (~14k LOC) — audita RLS, isolamento de dados, vulnerabilidades.</p>
+<hr>
+<h2>7. CLI — bin/ (43 executáveis, ~10k LOC)</h2>
+<h3>Núcleo</h3>
+<ul>
+<li><code>aiox.js</code> — CLI master (init, config, dispatcher)</li>
+<li><code>aiox-init.js</code> — wizard greenfield/brownfield</li>
+<li><code>aiox-minimal.js</code> — runner mínimo</li>
+<li><code>aiox-ids.js</code> — resolver IDS (entity registry)</li>
+<li><code>aiox-graph.js</code> — visualização de grafo de entidades</li>
+<li><code>agent-panel.js</code> — gerador de dashboard HTML</li>
+</ul>
+<h3>Pipeline &amp; Reporting</h3>
+<ul>
+<li><code>intelligence-pipeline.js</code>, <code>intelligence-dashboard.js</code></li>
+<li><code>telegram-monitor.js</code>, <code>whatsapp-monitor.js</code></li>
+<li><code>sentinel-report.js</code>, <code>radar-editorial.js</code></li>
+</ul>
+<h3>Audiovisual (25 scripts av-*)</h3>
+<p>Ver seção 3.3.</p>
+<h3>Database</h3>
+<ul>
+<li><code>db-audit-security.js</code></li>
+</ul>
+<hr>
+<h2>8. Centro de Comando UX (<code>docs/examples/ux-command-center/</code>)</h2>
+<p>Suite de dashboards HTML estáticos. <strong>Apenas observam — não controlam.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Função</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>index.html</code></td>
+<td>Hub principal (Home v2 em produção)</td>
+</tr>
+<tr>
+<td><code>av-approve.html</code></td>
+<td>Aprovação de cortes/edições</td>
+</tr>
+<tr>
+<td><code>av-editor.html</code></td>
+<td>Editor Growth (visual)</td>
+</tr>
+<tr>
+<td><code>av-escala-mix.html</code></td>
+<td>Hook × Dev × CTA (Escala Mix)</td>
+</tr>
+<tr>
+<td><code>av-live-pipeline.html</code></td>
+<td>Estado em tempo real do pipeline AV</td>
+</tr>
+<tr>
+<td><code>av-projects.html</code></td>
+<td>Lista de projetos AV</td>
+</tr>
+<tr>
+<td><code>av-workspace.html</code></td>
+<td>Workspace operacional</td>
+</tr>
+<tr>
+<td><code>setor-audiovisual-inteligente.html</code></td>
+<td>Setor AV (opção 3 aplicada — commit 46372c96)</td>
+</tr>
+<tr>
+<td><code>escala-mix-design-options.html</code></td>
+<td>Variantes de design Escala Mix</td>
+</tr>
+<tr>
+<td><code>renders-design-options.html</code></td>
+<td>Variantes de design de renders</td>
+</tr>
+<tr>
+<td><code>design-system/</code></td>
+<td>Mini design system</td>
+</tr>
+<tr>
+<td><code>reports/</code></td>
+<td>Relatórios gerados (relatório-{persona}-{data}.html)</td>
+</tr>
+</tbody></table>
+<p><strong>Versão alternativa:</strong> <code>docs/examples/ux-command-center-v2/</code></p>
+<p><strong>Reports atuais (snapshot):</strong> caio-roleta, iristhaize, professor, suhaviator — datas 2026-04-19 a 2026-04-30.</p>
+<hr>
+<h2>9. Workflows</h2>
+<h3>9.1 Workflows Primários</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Workflow</th>
+<th>Fases</th>
+<th>Quando usar</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><strong>Story Development Cycle (SDC)</strong></td>
+<td>Create (@sm) → Validate (@po) → Implement (@dev) → QA Gate (@qa)</td>
+<td>Toda story nova</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>QA Loop</strong></td>
+<td>review → verdict → fix → re-review (max 5)</td>
+<td>Após QA gate inicial com pendências</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Spec Pipeline</strong></td>
+<td>Gather (@pm) → Assess (@architect) → Research (@analyst) → Spec (@pm) → Critique (@qa) → Plan (@architect)</td>
+<td>Feature complexa pré-implementação</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Brownfield Discovery</strong></td>
+<td>10 fases — coleta, draft, validação especialista, QA, finalização</td>
+<td>Codebase legado</td>
+</tr>
+</tbody></table>
+<h3>9.2 Classificação de Complexidade (Spec Pipeline)</h3>
+<p>5 dimensões (Scope, Integration, Infrastructure, Knowledge, Risk) pontuadas 1-5:</p>
+<table>
+<thead>
+<tr>
+<th>Score</th>
+<th>Classe</th>
+<th>Fases</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>≤8</td>
+<td>SIMPLE</td>
+<td>gather → spec → critique</td>
+</tr>
+<tr>
+<td>9-15</td>
+<td>STANDARD</td>
+<td>6 fases completas</td>
+</tr>
+<tr>
+<td>≥16</td>
+<td>COMPLEX</td>
+<td>6 fases + revision cycle</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>10. IDS (Incremental Development System)</h2>
+<p><strong>Hierarquia obrigatória:</strong> REUSE &gt; ADAPT &gt; CREATE</p>
+<p><strong>Registry:</strong> <code>.aiox-core/data/entity-registry.yaml</code> — <strong>751 entidades</strong> com:</p>
+<ul>
+<li>SHA256 checksum</li>
+<li>Lifecycle stage (production / experimental)</li>
+<li>Adaptability scoring</li>
+<li>Last verified timestamp</li>
+</ul>
+<p><strong>Gates:</strong> G1-G6 (verificação progressiva antes de criar nova entidade).</p>
+<p>CLI: <code>aiox-ids.js</code> resolve entidades; <code>aiox-graph.js</code> visualiza dependências.</p>
+<hr>
+<h2>11. Stories e Épicos</h2>
+<p><strong>Estado:</strong> 41 stories em <code>docs/stories/</code> (mix active/completed).</p>
+<h3>Linhas principais</h3>
+<ul>
+<li><strong>Editor Growth</strong> (eg-1 → eg-4): core data, presets, API, UI editor</li>
+<li><strong>Audiovisual</strong> (av-1 → av-16): schema, smart cuts, XML export, hooks, legendas animadas</li>
+<li><strong>Database phases</strong> (phase 1, 2, 5): foundation, core content, hardening</li>
+<li><strong>UX Group cycles</strong>: cycle-002-cashback-roleta, scope-split, continuous improvement</li>
+<li><strong>Briefing</strong> (9 ciclos rodados, incluindo Copa 2026)</li>
+<li><strong>Intelligence</strong> (classification refinement, telegram-monitor-bots)</li>
+</ul>
+<hr>
+<h2>12. Configuração e Governança</h2>
+<h3>12.1 Constitution (<code>.aiox-core/constitution.md</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Artigo</th>
+<th>Princípio</th>
+<th>Severidade</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>I</td>
+<td>CLI First</td>
+<td>NON-NEGOTIABLE</td>
+</tr>
+<tr>
+<td>II</td>
+<td>Agent Authority</td>
+<td>NON-NEGOTIABLE</td>
+</tr>
+<tr>
+<td>III</td>
+<td>Story-Driven Development</td>
+<td>MUST</td>
+</tr>
+<tr>
+<td>IV</td>
+<td>No Invention</td>
+<td>MUST</td>
+</tr>
+<tr>
+<td>V</td>
+<td>Quality First</td>
+<td>MUST</td>
+</tr>
+<tr>
+<td>VI</td>
+<td>Absolute Imports</td>
+<td>SHOULD</td>
+</tr>
+</tbody></table>
+<p><strong>Quality First gates obrigatórios:</strong> <code>npm run lint</code>, <code>npm run typecheck</code>, <code>npm test</code>, <code>npm run build</code>, CodeRabbit sem CRITICAL.</p>
+<h3>12.2 Regras Claude (<code>.claude/rules/</code>)</h3>
+<p>10 arquivos: <code>ids-principles</code>, <code>coderabbit-integration</code>, <code>story-lifecycle</code>, <code>agent-authority</code>, <code>agent-handoff</code>, <code>agent-memory-imports</code>, <code>tool-response-filtering</code>, <code>tool-examples</code>, <code>workflow-execution</code>, <code>mcp-usage</code>.</p>
+<h3>12.3 SYNAPSE — Engine de Contexto</h3>
+<p>Pipeline de 8 layers. Domínios + regras + star-commands + context brackets. Localização: <code>.aiox-core/core/synapse/</code>, <code>.synapse/</code>.</p>
+<h3>12.4 Skills instaladas</h3>
+<p><code>morning-briefing</code>, <code>checklist-runner</code>, <code>coderabbit-review</code>, <code>ui-ux-pro-max</code>, <code>architect-first</code>, <code>tech-search</code>, <code>synapse</code>, <code>skill-creator</code>, <code>mcp-builder</code>.</p>
+<h3>12.5 Tier Tool Mesh</h3>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Carregamento</th>
+<th>Exemplos</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Sempre</td>
+<td>Read, Write, Edit, Bash, Grep, Glob, Task</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Na ativação do agente</td>
+<td>git, coderabbit, context7, supabase</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Sob demanda</td>
+<td>EXA, Playwright, Apify, Nogic, Code-Graph</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>13. Stack Técnica</h2>
+<h3>13.1 Linguagem &amp; Runtime</h3>
+<ul>
+<li>Node.js (CommonJS, ES2022)</li>
+<li>TypeScript (com <code>tsc --noEmit</code> no quality gate)</li>
+<li>Convenção: 2-space indent, single quotes, semicolons, kebab-case files, PascalCase components, SCREAMING_SNAKE_CASE constants</li>
+<li>Imports absolutos com alias <code>@/</code> (sem relativos)</li>
+</ul>
+<h3>13.2 Persistência</h3>
+<ul>
+<li>Supabase (Postgres + RLS)</li>
+<li>8 schemas isolados</li>
+</ul>
+<h3>13.3 Test</h3>
+<ul>
+<li>Jest (<code>jest.config.js</code>)</li>
+<li>Mocha (health-check)</li>
+<li>32 categorias em <code>tests/</code> (agents, audiovisual, cli, core, e2e, code-intel, ids, security, synapse, hooks, integration, performance, ...)</li>
+</ul>
+<h3>13.4 Quality Pipeline</h3>
+<ul>
+<li>ESLint (<code>eslint.config.js</code>)</li>
+<li>Prettier (<code>.prettierrc</code>)</li>
+<li>Husky pre-commit</li>
+<li>CodeRabbit (<code>.coderabbit.yaml</code>) — auto-fix max 2 iterações</li>
+<li>Semantic-release (<code>.releaserc.json</code>)</li>
+</ul>
+<h3>13.5 IDEs Suportadas (sync via <code>aiox-core/infrastructure/scripts/ide-sync/</code>)</h3>
+<ul>
+<li>Claude Code (primário)</li>
+<li>Codex</li>
+<li>Gemini</li>
+<li>GitHub Copilot</li>
+<li>Antigravity</li>
+<li>Cursor</li>
+</ul>
+<h3>13.6 Pacotes NPM (<code>packages/</code>)</h3>
+<ul>
+<li><code>@synkra/aiox-install</code> — instalador NPX</li>
+<li><code>aiox-pro</code> — ativação de licença e features pro</li>
+<li><code>@aiox/installer</code> — wizard avançado</li>
+</ul>
+<hr>
+<h2>14. Estado Operacional Atual (2026-04-29)</h2>
+<h3>Branch: <code>main</code></h3>
+<h3>Working tree</h3>
+<ul>
+<li>8 arquivos modificados (UX command center, reports, entity-registry, av-escala-mix.html, index.html)</li>
+<li>12+ relatórios novos (caio-roleta, iristhaize, professor, suhaviator: 2026-04-20 → 2026-04-30)</li>
+<li>2 arquivos novos de design options (escala-mix, renders)</li>
+</ul>
+<h3>Últimos commits</h3>
+<ul>
+<li><code>46372c96</code> feat(ux): opção 3 setor audiovisual + cleanup blocos escala</li>
+<li><code>109d3632</code> chore(ux): remover Pipeline Completa e 7 Categorias de Corte</li>
+<li><code>17035421</code> docs(tech-debt): tests audiovisual quebrados pos-auth-close</li>
+<li><code>b71a955a</code> feat(ux): mini design system + home v2 aplicada</li>
+<li><code>33b760dd</code> fix(escala-mix): await renderCombo</li>
+</ul>
+<h3>Pendências conhecidas (memória)</h3>
+<ul>
+<li>Editor Growth + Escala Mix (Hook×Dev×CTA com IA) e biblioteca <code>assets-editor/</code> ainda <strong>não-commitados</strong></li>
+<li>2 testes audiovisual quebrados pós-fechamento de auth (registrado em tech-debt)</li>
+<li>Bots Telegram/WhatsApp confirmados em modo read-only</li>
+</ul>
+<hr>
+<h2>15. Comandos Frequentes</h2>
+<pre><code class="language-bash"># Desenvolvimento
+npm run dev
+npm test
+npm run lint
+npm run typecheck
+npm run build
+
+# AIOX
+npx aiox-core install
+npx aiox-core doctor
+npx aiox-core info
+
+# IDE Sync
+npm run sync:ide
+npm run sync:ide:claude
+npm run validate:claude-sync
+
+# Validação
+npm run validate:structure
+npm run validate:agents
+npm run validate:paths
+npm run validate:parity
+npm run validate:semantic-lint
+</code></pre>
+<hr>
+<h2>16. Como Tudo se Conecta</h2>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│                      CONSTITUTION                            │
+│  (CLI First · Agent Authority · No Invention · Quality)      │
+└─────────────────────────────────────────────────────────────┘
+                            │
+        ┌───────────────────┼───────────────────┐
+        ▼                   ▼                   ▼
+   ┌─────────┐         ┌─────────┐         ┌─────────┐
+   │ AGENTS  │ ◄────► │   IDS    │ ◄────► │ SYNAPSE │
+   │ (12+1)  │         │ Registry │         │ Context │
+   └────┬────┘         └─────────┘         └─────────┘
+        │
+        ▼
+   ┌────────────────────────────────────────────────┐
+   │              WORKFLOWS                          │
+   │  SDC · QA Loop · Spec Pipeline · Brownfield     │
+   └────┬────────────────────────────────────────────┘
+        │
+        ▼
+   ┌────────────────────────────────────────────────┐
+   │           STORIES (docs/stories/)               │
+   └────┬────────────────────────────────────────────┘
+        │
+        ▼
+   ┌────────────────────────────────────────────────┐
+   │      EXECUTION LAYER (CLI - bin/*.js)           │
+   ├────────────────────────────────────────────────┤
+   │  Intelligence  │   Briefing   │   Audiovisual  │
+   │  (Telegram +   │  (Máquina    │  (25 av-*.js   │
+   │   WhatsApp     │   de         │   pipeline     │
+   │   read-only)   │   Briefing)  │   completo)    │
+   └────┬────────────┬──────────────┬───────────────┘
+        ▼            ▼              ▼
+   ┌────────────────────────────────────────────────┐
+   │              SUPABASE (8 schemas + RLS)         │
+   │  agents · memory · briefing · personas ·        │
+   │  reports · workflow · system_logs · telegram ·  │
+   │  whatsapp · audiovisual                         │
+   └────┬────────────────────────────────────────────┘
+        │
+        ▼ (apenas observação)
+   ┌────────────────────────────────────────────────┐
+   │         UX COMMAND CENTER (HTML estático)       │
+   │  Dashboards: AV pipeline, projects, escala-mix, │
+   │  reports, design system                          │
+   └────────────────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2>17. Pontos de Atenção</h2>
+<ol>
+<li><strong>Trabalho não-committado</strong> em Editor Growth e Escala Mix exposto a perda — ver session 2026-04-13 na memória.</li>
+<li><strong>Tests audiovisual quebrados</strong> pós-auth-close — tech-debt registrado em <code>2026-04-19</code>.</li>
+<li><strong>Bots em produção (Telegram/WhatsApp) são read-only</strong> — qualquer modificação pode violar essa regra. Memória <code>feedback_telegram_readonly.md</code> reforça.</li>
+<li><strong><code>@devops</code> é único com autoridade de push/PR</strong> — qualquer agent que tente push direto viola Constitution Article II.</li>
+<li><strong>No Invention (Article IV)</strong> — todo statement em spec.md deve traçar para FR/NFR/CON/research finding.</li>
+</ol>
+<hr>
+<p><em>Documento gerado em 2026-04-29 a partir do estado real do repositório.</em>
+<em>Para diagnóstico operacional diário, executar <code>/morning-briefing</code>.</em></p>
+</div></body>
+</html>
