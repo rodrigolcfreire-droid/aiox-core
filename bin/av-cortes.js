@@ -147,8 +147,60 @@ async function runFullPipeline(source, options = {}) {
   return result;
 }
 
+function spawnDetached(args) {
+  const { spawn } = require('child_process');
+  const logsDir = path.resolve(__dirname, '..', '.aiox', 'audiovisual', 'logs');
+  fs.mkdirSync(logsDir, { recursive: true });
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-').replace('T', '_').slice(0, 19);
+  const logPath = path.join(logsDir, `cortes-${stamp}.log`);
+  const logFd = fs.openSync(logPath, 'a');
+  fs.writeSync(logFd, `# av-cortes BG run started ${new Date().toISOString()}\n# args: ${args.join(' ')}\n\n`);
+  const child = spawn(process.argv[0], [process.argv[1], ...args.filter(a => a !== '--bg')], {
+    detached: true,
+    stdio: ['ignore', logFd, logFd],
+    env: process.env,
+  });
+  child.unref();
+  fs.closeSync(logFd);
+  console.log('');
+  console.log('  CORTES INTELIGENTES — modo background');
+  console.log(`  PID:  ${child.pid}`);
+  console.log(`  Log:  ${logPath}`);
+  console.log('');
+  console.log('  Acompanhar:');
+  console.log('    node bin/av-cortes.js follow');
+  console.log(`    tail -f ${logPath}`);
+  console.log('');
+}
+
+function followLog(arg) {
+  const { spawn } = require('child_process');
+  const logsDir = path.resolve(__dirname, '..', '.aiox', 'audiovisual', 'logs');
+  let logPath;
+  if (arg && fs.existsSync(arg)) {
+    logPath = arg;
+  } else {
+    if (!fs.existsSync(logsDir)) { console.error('  Nenhum log encontrado'); process.exit(1); }
+    const logs = fs.readdirSync(logsDir)
+      .filter(f => f.startsWith('cortes-') && f.endsWith('.log'))
+      .map(f => ({ f, mtime: fs.statSync(path.join(logsDir, f)).mtimeMs }))
+      .sort((a, b) => b.mtime - a.mtime);
+    if (logs.length === 0) { console.error('  Nenhum log de execucao em background'); process.exit(1); }
+    logPath = path.join(logsDir, logs[0].f);
+  }
+  console.log(`  Following: ${logPath}\n`);
+  const tail = spawn('tail', ['-n', '+1', '-f', logPath], { stdio: 'inherit' });
+  tail.on('exit', code => process.exit(code || 0));
+}
+
 async function main() {
   const args = process.argv.slice(2);
+
+  // Background mode: spawn detached and exit immediately
+  if (args.includes('--bg')) {
+    spawnDetached(args);
+    process.exit(0);
+  }
 
   if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
     console.log('');
@@ -158,6 +210,7 @@ async function main() {
     console.log('    node bin/av-cortes.js <video.mp4>');
     console.log('    node bin/av-cortes.js <video.mp4> --srt legenda.srt');
     console.log('    node bin/av-cortes.js <drive-url>');
+    console.log('    node bin/av-cortes.js <drive-url> --bg     (background — terminal livre)');
     console.log('');
     console.log('  Aprovacao:');
     console.log('    node bin/av-cortes.js <project-id> status');
@@ -169,10 +222,19 @@ async function main() {
     console.log('    node bin/av-cortes.js <project-id> learn');
     console.log('    node bin/av-cortes.js <project-id> playbook');
     console.log('');
+    console.log('  Background:');
+    console.log('    node bin/av-cortes.js follow [logfile]    Tail do log mais recente');
+    console.log('');
     console.log('  Geral:');
     console.log('    node bin/av-cortes.js list');
     console.log('');
     process.exit(0);
+  }
+
+  // Follow most recent (or specific) bg log
+  if (args[0] === 'follow') {
+    followLog(args[1]);
+    return;
   }
 
   // List projects
