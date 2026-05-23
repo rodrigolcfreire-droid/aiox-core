@@ -225,7 +225,7 @@ function render() {
 
 function openProject(id) {
   var token = getAuthToken();
-  window.location.href = '/av/' + id + '/workspace' + (token ? '?token=' + token : '');
+  window.location.href = '/av/' + id + '/approve?project=' + id + (token ? '&token=' + token : '');
 }
 function setSort(s, btn) {
   currentSort = s;

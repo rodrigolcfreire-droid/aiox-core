@@ -1,969 +1,730 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=1200">
-  <title>Cortes Inteligentes — Aprovacao</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{background:#0a0e1a;color:#e2e8f0;font-family:'Inter',sans-serif;min-height:100vh}
-    .header{padding:24px 40px;border-bottom:1px solid #1e293b;display:flex;align-items:center;justify-content:space-between}
-    .header h1{font-family:'Chakra Petch';font-size:24px;background:linear-gradient(135deg,#a78bfa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-    .header .info{font-size:13px;color:#64748b;font-family:'JetBrains Mono'}
-    .container{max-width:1200px;margin:0 auto;padding:32px 40px}
-    .stats{display:flex;gap:16px;margin-bottom:24px}
-    .stat{background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:16px 24px;text-align:center;flex:1}
-    .stat-val{font-family:'Chakra Petch';font-size:32px;font-weight:700}
-    .stat-lbl{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
-    .actions-bar{display:flex;gap:12px;margin-bottom:24px}
-    .btn{border:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:transform .15s}
-    .btn:hover{transform:scale(1.03)}
-    .btn-approve-all{background:linear-gradient(135deg,#34d399,#38bdf8);color:#0a0e1a}
-    .btn-reject-all{background:#1e293b;color:#f87171;border:1px solid #334155}
-    .cuts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px}
-    .cut{background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:20px;transition:all .3s}
-    .cut.approved{border-color:#34d399;opacity:.85}
-    .cut.rejected{border-color:#ef4444;opacity:.4}
-    .cut-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-    .cut-id{font-family:'JetBrains Mono';font-size:13px;color:#64748b}
-    .cut-meta{font-size:12px;color:#64748b;display:flex;align-items:center;gap:6px;margin-bottom:4px}
-    .cut-meta strong{color:#e2e8f0}
-    .cut-score{font-family:'Chakra Petch';font-size:20px;font-weight:700}
-    .score-high{color:#34d399}
-    .score-mid{color:#fbbf24}
-    .score-low{color:#f87171}
-    .cut-cat{display:inline-block;font-size:11px;padding:3px 10px;border-radius:4px;font-weight:600}
-    .cat-viral{background:rgba(239,68,68,.15);color:#f87171}
-    .cat-storytelling{background:rgba(167,139,250,.15);color:#a78bfa}
-    .cat-educativo{background:rgba(56,189,248,.15);color:#38bdf8}
-    .cat-autoridade{background:rgba(251,191,36,.15);color:#fbbf24}
-    .cat-cta{background:rgba(52,211,153,.15);color:#34d399}
-    .cat-bastidores{background:rgba(148,163,184,.15);color:#94a3b8}
-    .cat-tendencia{background:rgba(244,114,182,.15);color:#f472b6}
-    .cut-platforms{display:flex;gap:4px;flex-wrap:wrap;margin:6px 0}
-    .cut-platforms span{font-size:10px;background:#1e293b;color:#94a3b8;padding:3px 8px;border-radius:4px}
-    .cut-excerpt{font-size:13px;color:#cbd5e1;margin:10px 0;line-height:1.5;font-weight:500}
-    .cut-objective{font-size:11px;color:#475569;margin-top:4px;font-style:italic}
-    .cut-source{font-size:10px;color:#334155;margin-top:2px;font-family:'JetBrains Mono'}
-    .cut-preview{margin-top:10px;border-radius:8px;overflow:hidden;background:#000;position:relative;display:flex;justify-content:center}
-    .cut-preview video{max-width:100%;max-height:400px;display:block;object-fit:contain}
-    .cut-preview.vertical{max-width:240px;margin:0 auto}
-    .cut-preview.square{max-width:320px;margin:0 auto}
-    .cut-preview .play-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;background:rgba(0,0,0,.6);border-radius:50%;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:opacity .3s}
-    .cut-preview video:not([paused]) ~ .play-overlay{opacity:0}
-    .cut-transcript{font-size:11px;color:#64748b;margin-top:8px;max-height:60px;overflow-y:auto;line-height:1.6;padding:8px;background:#1e293b;border-radius:6px}
-    .cut-btns{display:flex;gap:8px;margin-top:12px}
-    .btn-sm{border:none;padding:10px 24px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
-    .btn-sm:hover{transform:scale(1.05)}
-    .btn-ok{background:#34d399;color:#0a0e1a}
-    .btn-no{background:#ef4444;color:#fff}
-    .cut-status{font-size:13px;font-weight:700;margin-top:12px;text-align:center;padding:8px;border-radius:6px}
-    .status-approved{background:rgba(52,211,153,.1);color:#34d399}
-    .status-rejected{background:rgba(239,68,68,.1);color:#f87171}
-    .description{background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:20px;margin-bottom:24px}
-    .description h3{font-family:'Chakra Petch';font-size:16px;color:#a78bfa;margin-bottom:8px}
-    .description p{font-size:13px;color:#94a3b8;line-height:1.6}
-    .keywords{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-    .keywords span{font-size:11px;background:rgba(167,139,250,.1);color:#a78bfa;padding:3px 10px;border-radius:12px}
-    .loading{text-align:center;padding:60px;color:#64748b;font-size:16px}
-    .video-section{background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:20px;margin-bottom:24px}
-    .video-section h3{font-family:'Chakra Petch';font-size:16px;color:#38bdf8;margin-bottom:12px}
-    .video-section{display:flex;flex-direction:column;align-items:center}
-    .video-section video{max-width:100%;max-height:500px;border-radius:8px;background:#000;object-fit:contain}
-    .video-section.vertical video{max-width:300px}
-    .video-section.square video{max-width:400px}
-    .transcript-box{max-height:200px;overflow-y:auto;font-size:12px;line-height:1.8;color:#94a3b8;margin-top:12px;padding:12px;background:#1e293b;border-radius:8px}
-    .transcript-box .seg{padding:2px 0;cursor:pointer;transition:background .2s}
-    .transcript-box .seg:hover{background:rgba(56,189,248,.1);color:#e2e8f0}
-    .transcript-box .seg .time{color:#475569;font-family:'JetBrains Mono';font-size:10px;margin-right:8px}
-    .transcript-box .seg.active{background:rgba(167,139,250,.15);color:#e2e8f0}
-    .toast{position:fixed;bottom:24px;right:24px;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;z-index:999;animation:slideIn .3s ease}
-    .toast-ok{background:#34d399;color:#0a0e1a}
-    .toast-no{background:#ef4444;color:#fff}
-    .toast-err{background:#f59e0b;color:#0a0e1a}
-    @keyframes slideIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
-    /* Export Modal */
-    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;display:none;align-items:center;justify-content:center}
-    .modal-overlay.active{display:flex}
-    .modal{background:#0f172a;border:1px solid #1e293b;border-radius:16px;padding:32px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto}
-    .modal h2{font-family:'Chakra Petch';font-size:20px;background:linear-gradient(135deg,#a78bfa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px}
-    .modal-row{margin-bottom:16px}
-    .modal-row label{font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px}
-    .modal-row select,.modal-row input{width:100%;padding:10px 12px;background:#1e293b;border:1px solid #334155;color:#e2e8f0;border-radius:8px;font-size:14px;font-family:inherit}
-    .modal-row select:focus,.modal-row input:focus{outline:none;border-color:#a78bfa}
-    .modal-summary{background:#1e293b;border-radius:8px;padding:16px;margin:16px 0;font-size:13px;color:#94a3b8;line-height:1.8}
-    .modal-summary strong{color:#e2e8f0}
-    .modal-btns{display:flex;gap:12px;margin-top:20px}
-    .btn-export{background:linear-gradient(135deg,#a78bfa,#38bdf8);color:#0a0e1a;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}
-    .btn-export:hover{transform:scale(1.03)}
-    .btn-cancel{background:#1e293b;color:#94a3b8;border:1px solid #334155;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
-    .btn-cancel:hover{color:#e2e8f0}
-    .btn-xml{background:#1e293b;color:#a78bfa;border:1px solid rgba(167,139,250,.3);padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
-    .btn-xml:hover{background:rgba(167,139,250,.15);transform:scale(1.03)}
-    .export-bar{display:flex;gap:8px;align-items:center}
-    .export-history{margin-top:24px;padding:20px;background:#0f172a;border:1px solid #1e293b;border-radius:12px}
-    .export-history h3{font-family:'Chakra Petch';font-size:14px;color:#64748b;margin-bottom:12px}
-    .export-history-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#1e293b;border-radius:6px;margin-bottom:6px;font-size:12px}
-    .export-history-item .info{color:#94a3b8}
-    .export-history-item .dl{color:#a78bfa;cursor:pointer;text-decoration:underline}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIOS — Biblioteca de Cortes</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e1a;
+  --bg-2:#0d1117;
+  --bg-3:#131a2b;
+  --line:rgba(255,255,255,0.1);
+  --line-2:rgba(255,255,255,0.16);
+  --text:#f1f4ff;
+  --text-2:#a0a8b8;
+  --text-3:#5a6478;
+  --cyan:#00e5cc;
+  --green:#00e5cc;
+  --yellow:#ffd24a;
+  --red:#ff5566;
+  --pink:#ff4088;
+  --blue:#5b9dff;
+  --purple:#b070ff;
+  --orange:#ff9a55;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;background:transparent;border:none;color:inherit}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
 
-    /* ── Central do Corte — INFO Panel ── */
-    .btn-info{background:linear-gradient(135deg,#6366f1,#a78bfa);color:#fff;border:none;padding:10px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
-    .btn-info:hover{transform:scale(1.05);box-shadow:0 0 16px rgba(99,102,241,.4)}
-    .btn-info svg{width:14px;height:14px;fill:currentColor}
+/* ============ SIDEBAR ============ */
+.side{border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;gap:24px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:0 4px 4px}
+.brand-mark{width:26px;height:26px;border-radius:7px;background:var(--text);color:#000;display:grid;place-items:center;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.5px}
+.brand-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px}
+.brand-name em{font-style:normal;color:var(--text-3);margin-left:6px;font-size:12px;letter-spacing:2px}
 
-    .central-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s}
-    .central-overlay.active{opacity:1;pointer-events:all}
+.nav-section{display:flex;flex-direction:column;gap:2px}
+.nav-label{font-size:10px;color:var(--text-3);letter-spacing:1.4px;text-transform:uppercase;padding:0 8px 6px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:7px 9px;border-radius:7px;color:var(--text-2);font-size:13px;font-weight:500;cursor:pointer;transition:background .15s,color .15s}
+.nav-item:hover{background:var(--bg-2);color:var(--text)}
+.nav-item.on{background:var(--bg-3);color:var(--text)}
+.nav-item .dot{width:7px;height:7px;border-radius:50%;background:var(--text-3)}
+.nav-item.on .dot,.nav-item:hover .dot{background:currentColor}
+.nav-item[data-c="viral"] .dot{background:var(--pink)}
+.nav-item[data-c="educativo"] .dot{background:var(--blue)}
+.nav-item[data-c="cta"] .dot{background:var(--green)}
+.nav-item[data-c="tendencia"] .dot{background:var(--yellow)}
+.nav-item[data-c="autoridade"] .dot{background:var(--purple)}
+.nav-item[data-c="storytelling"] .dot{background:var(--orange)}
+.nav-item[data-c="bastidores"] .dot{background:var(--cyan)}
+.nav-item .count{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3)}
 
-    .central-panel{position:fixed;top:0;right:-600px;width:580px;max-width:95vw;height:100vh;background:#0a0e1a;border-left:1px solid #1e293b;z-index:1001;transition:right .35s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column}
-    .central-panel.active{right:0}
+.side-foot{margin-top:auto;padding-top:16px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;color:var(--text-3);font-size:11px;font-family:'JetBrains Mono',monospace}
+.side-foot .live{width:6px;height:6px;background:var(--green);border-radius:50%;box-shadow:0 0 8px var(--green)}
 
-    .central-header{padding:20px 24px 16px;border-bottom:1px solid #1e293b;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-    .central-header h2{font-family:'Chakra Petch';font-size:18px;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:flex;align-items:center;gap:8px}
-    .central-close{background:none;border:1px solid #334155;color:#94a3b8;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
-    .central-close:hover{border-color:#ef4444;color:#ef4444}
+/* ============ MAIN ============ */
+.main{display:flex;flex-direction:column;min-width:0}
+.topbar{display:flex;align-items:center;gap:12px;padding:18px 28px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(10,10,11,.85);backdrop-filter:blur(12px);z-index:10}
+.title{display:flex;flex-direction:column;gap:2px}
+.title h1{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;font-weight:400}
+.title small{font-size:11px;color:var(--text-3);font-family:'JetBrains Mono',monospace;letter-spacing:.5px}
+.search{position:relative;flex:1;max-width:380px;margin-left:24px}
+.search input{width:100%;padding:9px 12px 9px 34px;background:var(--bg-2);border:1px solid var(--line);border-radius:9px;color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
+.search input:focus{border-color:var(--line-2)}
+.search input::placeholder{color:var(--text-3)}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-3)}
+.tools{display:flex;align-items:center;gap:8px;margin-left:auto}
+.sel{background:var(--bg-2);border:1px solid var(--line);color:var(--text-2);padding:8px 12px;border-radius:9px;font-size:12px;cursor:pointer;font-family:inherit;outline:none}
+.sel:hover{border-color:var(--line-2);color:var(--text)}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:9px;font-size:12px;font-weight:600;letter-spacing:.3px;border:1px solid var(--line);color:var(--text-2);background:var(--bg-2)}
+.btn:hover{border-color:var(--line-2);color:var(--text)}
+.btn.primary{background:var(--text);color:#000;border-color:var(--text)}
+.btn.primary:hover{opacity:.88}
 
-    .central-body{padding:20px 24px;flex:1;overflow-y:auto}
+/* selection bar */
+.selbar{display:none;align-items:center;gap:10px;padding:10px 28px;background:var(--bg-2);border-bottom:1px solid var(--line);font-size:12px}
+.selbar.show{display:flex}
+.selbar .count{font-family:'JetBrains Mono',monospace;color:var(--text);font-weight:500}
+.selbar .sep{color:var(--text-3)}
+.selbar button{color:var(--text-2);font-size:12px;padding:5px 10px;border-radius:7px}
+.selbar button:hover{background:var(--bg-3);color:var(--text)}
+.selbar button.ok{color:var(--green)}
+.selbar button.no{color:var(--red)}
 
-    .central-video{border-radius:10px;overflow:hidden;background:#000;margin-bottom:20px;position:relative}
-    .central-video video{width:100%;max-height:320px;display:block;object-fit:contain}
-    .central-video.vertical{max-width:240px;margin:0 auto 20px}
-    .central-video.square{max-width:360px;margin:0 auto 20px}
+/* meta strip */
+.meta{display:flex;align-items:center;gap:24px;padding:14px 28px;border-bottom:1px solid var(--line);color:var(--text-3);font-size:12px;font-family:'JetBrains Mono',monospace}
+.meta b{color:var(--text);font-weight:500;margin-right:4px}
+.meta .grow{flex:1}
 
-    .central-badge-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
-    .central-badge{font-size:11px;padding:4px 12px;border-radius:6px;font-weight:600}
-    .central-score{font-family:'Chakra Petch';font-size:28px;font-weight:700;letter-spacing:-.5px}
+/* ============ GRID ============ */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:22px;padding:24px 28px 60px}
+.item{display:flex;flex-direction:column;gap:10px;cursor:pointer;animation:in .35s ease both}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.thumb{position:relative;aspect-ratio:9/16;border-radius:12px;overflow:hidden;background:var(--bg-2);transition:transform .2s ease}
+.item:hover .thumb{transform:translateY(-2px)}
+.thumb::after{content:'';position:absolute;inset:0;border-radius:12px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);pointer-events:none}
+.item.selected .thumb::after{box-shadow:inset 0 0 0 2px var(--text)}
+.item.approved .thumb::after{box-shadow:inset 0 0 0 1px rgba(0,255,136,.35)}
+.item.rejected{opacity:.32}
 
-    .central-section{margin-bottom:20px}
-    .central-section-title{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:600}
+/* thumb visual (placeholder) */
+.thumb-bg{position:absolute;inset:0;background:linear-gradient(180deg,#1b1b22 0%,#0e0e12 100%);display:flex;align-items:center;justify-content:center}
+.thumb-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 38%,rgba(255,255,255,.04),transparent 60%)}
+.play{position:relative;width:52px;height:52px;border-radius:50%;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);display:grid;place-items:center;border:1px solid rgba(255,255,255,.08);transition:transform .2s,background .2s}
+.item:hover .play{background:rgba(0,0,0,.7);transform:scale(1.05)}
+.play::after{content:'';border-style:solid;border-width:8px 0 8px 13px;border-color:transparent transparent transparent rgba(255,255,255,.92);margin-left:3px}
 
-    .central-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .central-meta-item{background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:12px}
-    .central-meta-label{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.8px}
-    .central-meta-value{font-size:15px;color:#e2e8f0;font-weight:600;margin-top:2px;font-family:'JetBrains Mono'}
+/* duration top-left */
+.dur{position:absolute;top:10px;left:10px;font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);color:#fff;letter-spacing:.3px}
+.headline-overlay{position:absolute;top:50%;left:12px;right:12px;transform:translateY(-50%);padding:11px 14px;background:rgba(10,14,26,.55);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border-radius:10px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1),0 6px 20px rgba(0,0,0,.35);color:#f1f4ff;font-family:'DM Sans',system-ui,sans-serif;font-size:13.5px;font-weight:700;text-align:center;letter-spacing:.1px;line-height:1.25;pointer-events:none;z-index:2;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.headline-overlay::before{content:'';position:absolute;top:0;left:14px;right:14px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent)}
+.headline-overlay:empty{display:none}
+.headline-overlay.top{top:15%}
+.headline-overlay.top:hover,.item:hover .headline-overlay.top{transform:translateY(-50%) scale(1.02)}
+.item:hover .headline-overlay{background:rgba(10,14,26,.7);transform:translateY(-50%) scale(1.02);transition:all .25s ease}
 
-    .central-criteria{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .central-crit{background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px}
-    .central-crit-bar{width:40px;height:6px;background:#1e293b;border-radius:3px;overflow:hidden}
-    .central-crit-fill{height:100%;border-radius:3px;transition:width .5s}
-    .central-crit-name{font-size:12px;color:#94a3b8;font-weight:500}
-    .central-crit-val{font-size:14px;font-weight:700;font-family:'Chakra Petch';margin-left:auto}
+/* score top-right */
+.score{position:absolute;top:8px;right:10px;text-align:right;line-height:1}
+.score-val{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:.5px;text-shadow:0 1px 8px rgba(0,0,0,.7)}
+.score-lbl{font-size:9px;color:rgba(255,255,255,.55);letter-spacing:1.5px;font-weight:600;text-transform:uppercase;margin-top:2px}
+.s-high{color:var(--green)}
+.s-mid{color:var(--yellow)}
+.s-low{color:var(--red)}
 
-    .central-transcript{background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:14px;font-size:13px;color:#cbd5e1;line-height:1.7;max-height:140px;overflow-y:auto}
-    .central-transcript::-webkit-scrollbar{width:4px}
-    .central-transcript::-webkit-scrollbar-thumb{background:#334155;border-radius:2px}
+/* category dot bottom-left */
+.cat{position:absolute;left:10px;bottom:54px;display:flex;align-items:center;gap:6px;padding:4px 9px 4px 7px;border-radius:20px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:#fff}
+.cat .d{width:6px;height:6px;border-radius:50%}
+.cat[data-c="viral"] .d{background:var(--pink)}
+.cat[data-c="educativo"] .d{background:var(--blue)}
+.cat[data-c="cta"] .d{background:var(--green)}
+.cat[data-c="tendencia"] .d{background:var(--yellow)}
+.cat[data-c="autoridade"] .d{background:var(--purple)}
+.cat[data-c="storytelling"] .d{background:var(--orange)}
+.cat[data-c="bastidores"] .d{background:var(--cyan)}
 
-    .central-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:20px 24px;border-top:1px solid #1e293b;flex-shrink:0}
-    .central-act{display:flex;flex-direction:column;align-items:center;gap:6px;background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:14px 8px;cursor:pointer;transition:all .2s;text-decoration:none}
-    .central-act:hover{border-color:#6366f1;background:rgba(99,102,241,.08);transform:translateY(-2px)}
-    .central-act svg{width:22px;height:22px;flex-shrink:0}
-    .central-act span{font-size:11px;color:#94a3b8;font-weight:600;text-align:center;line-height:1.3}
-    .central-act:hover span{color:#e2e8f0}
+/* action icons (bottom-right cluster, under score) */
+.ico-cluster{position:absolute;right:8px;bottom:10px;display:flex;flex-direction:column;gap:6px;opacity:0;transform:translateX(4px);transition:opacity .2s,transform .2s}
+.item:hover .ico-cluster,.item.selected .ico-cluster{opacity:1;transform:none}
+.ico{width:30px;height:30px;border-radius:8px;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);display:grid;place-items:center;color:#fff;border:1px solid rgba(255,255,255,.06);transition:background .15s,color .15s}
+.ico:hover{background:rgba(255,255,255,.95);color:#000}
+.ico.ok:hover{background:var(--green);color:#000}
+.ico.no:hover{background:var(--red);color:#fff}
 
-    /* Formats sub-panel */
-    .formats-panel{display:none;background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:14px;margin-top:8px}
-    .formats-panel.active{display:block}
-    .format-option{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;margin-bottom:4px}
-    .format-option:hover{background:rgba(99,102,241,.1)}
-    .format-option.selected{background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3)}
-    .format-icon{width:32px;height:32px;border:2px solid #334155;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#64748b;font-family:'JetBrains Mono'}
-    .format-icon.ratio-9-16{width:22px;height:38px}
-    .format-icon.ratio-1-1{width:32px;height:32px}
-    .format-icon.ratio-16-9{width:38px;height:22px}
-    .format-name{font-size:13px;color:#e2e8f0;font-weight:600}
-    .format-desc{font-size:11px;color:#64748b}
+/* approved tag */
+.aptag{position:absolute;left:10px;top:42px;background:var(--green);color:#000;font-size:9px;font-weight:800;padding:3px 8px;border-radius:5px;letter-spacing:1px;display:none}
+.item.approved .aptag{display:block}
 
-    @media(max-width:640px){
-      .central-panel{width:100vw;max-width:100vw}
-      .central-actions{grid-template-columns:1fr 1fr}
-      .central-meta-grid{grid-template-columns:1fr}
-      .central-criteria{grid-template-columns:1fr}
-    }
-  </style>
+/* card body */
+.body{display:flex;align-items:flex-start;gap:10px;padding:0 2px}
+.title-row{flex:1;min-width:0}
+.h-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:4px}
+.h-meta{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-3);font-family:'JetBrains Mono',monospace}
+.h-meta .sep{opacity:.5}
+.check{flex-shrink:0;width:18px;height:18px;border:1.5px solid var(--line-2);border-radius:5px;display:grid;place-items:center;color:transparent;transition:all .15s;margin-top:2px}
+.item.selected .check{background:var(--text);border-color:var(--text);color:#000}
+.item:hover .check{border-color:var(--text-2)}
+
+.empty{grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--text-3);font-size:14px}
+
+/* responsive */
+@media(max-width:900px){
+  .app{grid-template-columns:1fr}
+  .side{display:none}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;padding:18px}
+  .topbar{padding:14px 18px}
+  .meta{padding:12px 18px}
+}
+</style>
 </head>
 <body>
-<div class="header">
-  <div style="display:flex;align-items:center;gap:16px">
-    <a href="/av/projects" style="background:#0f172a;border:1px solid #1e293b;color:#94a3b8;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor='#6366f1';this.style.color='#a78bfa'" onmouseout="this.style.borderColor='#1e293b';this.style.color='#94a3b8'" title="Voltar aos Projetos">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-    </a>
-    <h1>Cortes Inteligentes — Aprovacao</h1>
-  </div>
-  <div class="info" id="projectInfo">Carregando...</div>
-</div>
-<div class="container">
-  <div id="content"><div class="loading">Carregando cortes...</div></div>
-</div>
-<!-- Export Modal -->
-<div class="modal-overlay" id="exportModal">
-  <div class="modal">
-    <h2>Exportar Timeline XML</h2>
-    <div class="modal-row">
-      <label>Editor</label>
-      <select id="exportEditor">
-        <option value="premiere">Adobe Premiere Pro</option>
-        <option value="davinci">DaVinci Resolve</option>
-      </select>
+<div class="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="side">
+    <div class="brand">
+      <div class="brand-mark">A</div>
+      <div class="brand-name">AIOS<em>CUT</em></div>
     </div>
-    <div class="modal-row">
-      <label>Modo de Exportacao</label>
-      <select id="exportMode" onchange="updateExportSummary()">
-        <option value="approved">Todos os Aprovados</option>
-        <option value="single">Corte Individual</option>
-        <option value="final">Timeline Final (Assembly)</option>
-      </select>
+
+    <div class="nav-section">
+      <div class="nav-label">Biblioteca</div>
+      <div class="nav-item on" data-c="all" onclick="setFilter('all',this)">
+        <span class="dot"></span><span>Todos</span><span class="count" id="c-all">0</span>
+      </div>
+      <div class="nav-item" data-c="pending" onclick="setFilter('pending',this)">
+        <span class="dot"></span><span>Pendentes</span><span class="count" id="c-pending">0</span>
+      </div>
+      <div class="nav-item" data-c="approved" onclick="setFilter('approved',this)">
+        <span class="dot" style="background:var(--green)"></span><span>Aprovados</span><span class="count" id="c-approved">0</span>
+      </div>
     </div>
-    <div class="modal-row" id="cutIdRow" style="display:none">
-      <label>Cut ID</label>
-      <select id="exportCutId"></select>
+
+    <div class="nav-section">
+      <div class="nav-label">Categorias</div>
+      <div class="nav-item" data-c="viral" onclick="setFilter('viral',this)">
+        <span class="dot"></span><span>Viral</span><span class="count" id="c-viral">0</span>
+      </div>
+      <div class="nav-item" data-c="educativo" onclick="setFilter('educativo',this)">
+        <span class="dot"></span><span>Educativo</span><span class="count" id="c-educativo">0</span>
+      </div>
+      <div class="nav-item" data-c="cta" onclick="setFilter('cta',this)">
+        <span class="dot"></span><span>CTA</span><span class="count" id="c-cta">0</span>
+      </div>
+      <div class="nav-item" data-c="tendencia" onclick="setFilter('tendencia',this)">
+        <span class="dot"></span><span>Tendência</span><span class="count" id="c-tendencia">0</span>
+      </div>
+      <div class="nav-item" data-c="autoridade" onclick="setFilter('autoridade',this)">
+        <span class="dot"></span><span>Autoridade</span><span class="count" id="c-autoridade">0</span>
+      </div>
+      <div class="nav-item" data-c="storytelling" onclick="setFilter('storytelling',this)">
+        <span class="dot"></span><span>Storytelling</span><span class="count" id="c-storytelling">0</span>
+      </div>
+      <div class="nav-item" data-c="bastidores" onclick="setFilter('bastidores',this)">
+        <span class="dot"></span><span>Bastidores</span><span class="count" id="c-bastidores">0</span>
+      </div>
     </div>
-    <div class="modal-summary" id="exportSummary">Selecione as opcoes acima...</div>
-    <div class="modal-btns">
-      <button class="btn-export" onclick="doExport('xml')">Gerar XML</button>
-      <button class="btn-export" style="background:linear-gradient(135deg,#34d399,#38bdf8)" onclick="doExport('package')">Baixar Pacote ZIP</button>
-      <button class="btn-cancel" onclick="closeExportModal()">Cancelar</button>
+
+    <div class="side-foot">
+      <span class="live"></span><span id="srv-status">api: localhost:3456</span>
     </div>
-  </div>
-</div>
-<!-- Central do Corte — Slide Panel -->
-<div class="central-overlay" id="centralOverlay" onclick="closeCutInfo()"></div>
-<div class="central-panel" id="centralPanel">
-  <div class="central-header">
-    <h2>Central do Corte</h2>
-    <button class="central-close" onclick="closeCutInfo()">&times;</button>
-  </div>
-  <div class="central-body" id="centralBody"><!-- dynamic --></div>
-  <div class="central-actions" id="centralActions">
-    <div class="central-act" onclick="centralExportXml()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      <span>Exportar XML</span>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="title">
+        <h1>Biblioteca de Cortes</h1>
+        <small id="proj-id">— carregando projeto —</small>
+      </div>
+      <label class="search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="q" type="text" placeholder="Buscar título, transcrição..." oninput="render()">
+      </label>
+      <div class="tools">
+        <select class="sel" onchange="setSort(this.value)">
+          <option value="score">Ordenar: Score ↓</option>
+          <option value="duration">Duração ↓</option>
+          <option value="status">Pendentes 1º</option>
+          <option value="recent">Mais recentes</option>
+        </select>
+        <button class="btn" onclick="toggleSelectMode()" id="selbtn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>
+          Selecionar
+        </button>
+        <button class="btn primary" onclick="upload()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload
+        </button>
+      </div>
+    </header>
+
+    <!-- Selection bar -->
+    <div class="selbar" id="selbar">
+      <span class="count" id="sel-count">0 selecionados</span>
+      <span class="sep">·</span>
+      <button class="ok" onclick="bulkApprove()">Aprovar</button>
+      <button class="no" onclick="bulkReject()">Rejeitar</button>
+      <button onclick="bulkExport()">Exportar</button>
+      <span class="grow" style="flex:1"></span>
+      <button onclick="clearSel()">Cancelar</button>
     </div>
-    <div class="central-act" onclick="centralDownloadHd()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      <span>Baixar HD</span>
+
+    <!-- Meta strip -->
+    <div class="meta">
+      <span><b id="m-total">0</b>vídeos</span>
+      <span><b id="m-approved" style="color:var(--green)">0</b>aprovados</span>
+      <span><b id="m-pending">0</b>pendentes</span>
+      <span class="grow"></span>
+      <span id="m-filter">filtro: todos</span>
     </div>
-    <div class="central-act" onclick="centralEditClip()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-      <span>Editar Clipe</span>
-    </div>
-    <div class="central-act" onclick="centralEditSubtitle()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="7" y1="15" x2="17" y2="15"/><line x1="7" y1="19" x2="13" y2="19"/></svg>
-      <span>Alterar Legenda</span>
-    </div>
-    <div class="central-act" onclick="centralEnhanceSpeech()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-      <span>Aprimorar Fala</span>
-    </div>
-    <div class="central-act" onclick="centralToggleFormats()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-      <span>Formatos</span>
-    </div>
-  </div>
-  <div class="formats-panel" id="formatsPanel">
-    <div class="format-option" onclick="selectFormat('9:16')">
-      <div class="format-icon ratio-9-16">9:16</div>
-      <div><div class="format-name">Vertical</div><div class="format-desc">Stories, Reels, TikTok, Shorts</div></div>
-    </div>
-    <div class="format-option" onclick="selectFormat('1:1')">
-      <div class="format-icon ratio-1-1">1:1</div>
-      <div><div class="format-name">Quadrado</div><div class="format-desc">Feed Instagram, Facebook</div></div>
-    </div>
-    <div class="format-option" onclick="selectFormat('16:9')">
-      <div class="format-icon ratio-16-9">16:9</div>
-      <div><div class="format-name">Horizontal</div><div class="format-desc">YouTube, Widescreen</div></div>
-    </div>
-  </div>
+
+    <!-- Grid -->
+    <div class="grid" id="grid"></div>
+  </main>
 </div>
 
-<div id="toastContainer"></div>
 <script>
-const API = window.location.origin;
-const PID = '__PROJECT_ID__';
-let cutsData = [];
-let transcriptionData = [];
-const videoUrl = `${API}/api/projects/${PID}/video`;
-const hookUrl = `${API}/api/projects/${PID}/hook`;
+const API='http://localhost:3456';
+const projectId=new URLSearchParams(location.search).get('project')||'9a5dacdf-9c1e-4f94-8ff4-acc231da0b1e';
+let allCuts=[];
+let activeFilter='all';
+let activeSort='score';
+let selectMode=false;
+let selected=new Set();
 
-// Auth token — from URL param (iframe), parent sessionStorage, or own sessionStorage
-function getAuthToken() {
-  const urlToken = new URLSearchParams(window.location.search).get('token');
-  if (urlToken) { sessionStorage.setItem('aios_token', urlToken); return urlToken; }
-  try { const pt = window.parent.sessionStorage.getItem('aios_token'); if (pt) return pt; }
-  catch (e) { /* cross-origin */ }
-  return sessionStorage.getItem('aios_token') || '';
-}
-// All fetches include credentials + Bearer token (Cloudflare-safe)
-const F = (url, opts = {}) => {
-  const t = getAuthToken();
-  opts.credentials = 'same-origin';
-  opts.headers = { ...(opts.headers || {}) };
-  if (t) opts.headers['Authorization'] = 'Bearer ' + t;
-  return fetch(url, opts);
-};
+const MOCK=[
+  {id:'cut_001',score:99,category:'viral',duration:88,platforms:['reels','tiktok','shorts'],title:'Lucro Diário: A Verdade Sobre Ganhos no Trading',transcript_excerpt:'50 reais por dia é LUCRO. Pense nisso.',status:'pending',createdAt:'2026-05-04T10:00:00Z'},
+  {id:'cut_002',score:92,category:'educativo',duration:63,platforms:['reels','tiktok','shorts'],title:'Lucro Rápido? Mentira! Gestão Segura é o Segredo',transcript_excerpt:'Lucro rápido? MENTIRA. Disciplina é o segredo.',status:'pending',createdAt:'2026-05-04T09:30:00Z'},
+  {id:'cut_003',score:85,category:'storytelling',duration:84,platforms:['reels','tiktok','shorts'],title:'Do Sofrimento ao Sucesso: Estratégia Revelada',transcript_excerpt:'Não opere sem ler o gráfico',status:'pending',createdAt:'2026-05-04T09:00:00Z'},
+  {id:'cut_004',score:84,category:'autoridade',duration:47,platforms:['feed','youtube'],title:'Domine o Gráfico: Leitura Essencial',transcript_excerpt:'De R$700 a um trader consistente.',status:'approved',createdAt:'2026-05-04T08:30:00Z'},
+  {id:'cut_005',score:81,category:'cta',duration:71,platforms:['reels','tiktok'],title:'Mentalidade de Trading: A Chave para a Constância',transcript_excerpt:'Picos de Dopamina Geram Perdas. Mantenha a Calma.',status:'pending',createdAt:'2026-05-04T08:00:00Z'},
+  {id:'cut_006',score:78,category:'educativo',duration:84,platforms:['reels','shorts'],title:'Dobrar Salário? Não Cometa Este Erro',transcript_excerpt:'Dobrar salário? Não cometa este erro.',status:'pending',createdAt:'2026-05-04T07:30:00Z'},
+  {id:'cut_007',score:74,category:'viral',duration:65,platforms:['tiktok','shorts'],title:'Pare de Dobrar a Aposta: Tenha Calma',transcript_excerpt:'Pare de dobrar a aposta! Tenha calma.',status:'pending',createdAt:'2026-05-04T07:00:00Z'},
+  {id:'cut_008',score:71,category:'educativo',duration:62,platforms:['reels','shorts'],title:'30 Min no Gráfico: Paciência Para Esperar',transcript_excerpt:'De 30 min no gráfico a paciência para esperar.',status:'pending',createdAt:'2026-05-04T06:30:00Z'},
+  {id:'cut_009',score:68,category:'autoridade',duration:86,platforms:['feed','youtube'],title:'Mude Sua Mentalidade, Mude Seu Jogo',transcript_excerpt:'Mude sua mentalidade, mude seu jogo.',status:'pending',createdAt:'2026-05-04T06:00:00Z'},
+  {id:'cut_010',score:65,category:'cta',duration:67,platforms:['reels','tiktok'],title:'Carlos: Por Que Você Ainda Joga?',transcript_excerpt:'Carlos: Por que você ainda joga?',status:'approved',createdAt:'2026-05-04T05:30:00Z'},
+  {id:'cut_011',score:60,category:'tendencia',duration:90,platforms:['feed','youtube'],title:'Gestão de Risco: Segredo dos Profissionais',transcript_excerpt:'Gestão de risco é o segredo dos profissionais.',status:'pending',createdAt:'2026-05-04T05:00:00Z'},
+  {id:'cut_012',score:58,category:'bastidores',duration:55,platforms:['reels','tiktok'],title:'Dia Real de Quem Vive de Trading',transcript_excerpt:'Como é o dia de quem vive disso de verdade.',status:'pending',createdAt:'2026-05-04T04:30:00Z'}
+];
 
-function toast(msg, type = 'ok') {
-  const el = document.createElement('div');
-  el.className = `toast toast-${type}`;
-  el.textContent = msg;
-  document.getElementById('toastContainer').appendChild(el);
-  setTimeout(() => el.remove(), 3000);
-}
-
-async function load() {
-  const [cutsRes, descRes, transRes, energyRes] = await Promise.all([
-    F(`${API}/api/projects/${PID}/cuts`).then(r=>r.json()).catch(()=>({suggestedCuts:[]})),
-    F(`${API}/api/projects/${PID}/describe`).then(r=>r.json()).catch(()=>null),
-    F(`${API}/api/projects/${PID}/transcription`).then(r=>r.json()).catch(()=>({segments:[]})),
-    F(`${API}/api/projects/${PID}/energy`).then(r=>r.ok?r.json():null).catch(()=>null),
-  ]);
-  transcriptionData = transRes.segments || [];
-  cutsData = cutsRes.suggestedCuts || [];
-  document.getElementById('projectInfo').textContent = `Projeto: ${PID.slice(0,8)}... | ${cutsData.length} cortes`;
-
-  let html = '';
-
-  // Stats
-  const approved = cutsData.filter(c=>c.status==='approved').length;
-  const rejected = cutsData.filter(c=>c.status==='rejected').length;
-  const pending = cutsData.filter(c=>c.status==='suggested').length;
-  html += `<div class="stats">
-    <div class="stat"><div class="stat-val" style="color:#38bdf8">${cutsData.length}</div><div class="stat-lbl">Total</div></div>
-    <div class="stat"><div class="stat-val" style="color:#fbbf24">${pending}</div><div class="stat-lbl">Pendentes</div></div>
-    <div class="stat"><div class="stat-val" style="color:#34d399">${approved}</div><div class="stat-lbl">Aprovados</div></div>
-    <div class="stat"><div class="stat-val" style="color:#ef4444">${rejected}</div><div class="stat-lbl">Rejeitados</div></div>
-  </div>`;
-
-  // Video player
-  html += `<div class="video-section">
-    <h3>Video Completo</h3>
-    <video id="mainVideo" controls preload="metadata" src="${videoUrl}"></video>
-    <div class="transcript-box" id="transcriptBox">
-      ${transcriptionData.map((s,i) => `<div class="seg" data-idx="${i}" onclick="seekTo(${s.start})"><span class="time">${fmt(s.start)}</span>${s.text}</div>`).join('')}
-    </div>
-  </div>`;
-
-  // Hook preview (AV-10)
-  if (energyRes && energyRes.peakWindow) {
-    const peak = energyRes.peakWindow;
-    html += `<div class="video-section" style="border-color:#a78bfa">
-      <h3 style="color:#a78bfa">Hook de Energia (5s)</h3>
-      <div style="display:flex;gap:20px;align-items:flex-start">
-        <div style="flex:1">
-          <video controls preload="metadata" src="${hookUrl}" style="max-width:100%;max-height:400px;border-radius:8px;background:#000;object-fit:contain"></video>
-        </div>
-        <div style="flex:0 0 260px">
-          <div style="font-size:12px;color:#64748b;margin-bottom:8px">Momento de maior energia do video</div>
-          <div style="font-size:14px;color:#e2e8f0;margin-bottom:4px"><strong>${fmt(peak.start)}</strong> → <strong>${fmt(peak.end)}</strong></div>
-          <div style="font-size:13px;color:#94a3b8;margin-bottom:8px">Volume: ${peak.meanVolume.toFixed(1)} dB</div>
-          <div style="font-size:11px;color:#475569">Este hook de 5s sera preposto automaticamente no inicio de cada corte montado.</div>
-          <div style="margin-top:12px;font-size:12px;color:#64748b">Janelas analisadas: <strong style="color:#a78bfa">${energyRes.windowCount}</strong></div>
-        </div>
-      </div>
-    </div>`;
+async function loadCuts(){
+  document.getElementById('proj-id').textContent='proj: '+projectId.slice(0,8);
+  try{
+    const r=await fetch(`${API}/api/projects/${projectId}/cuts`);
+    if(!r.ok)throw new Error('http '+r.status);
+    const data=await r.json();
+    allCuts=(data.suggestedCuts||data.cuts||data||[]).map(c=>({status:'pending',...c,score:c.score??c.engagementScore,platforms:c.platforms||c.platform||[],title:c.title||c.viralTitle||c.transcriptExcerpt?.slice(0,80)||'(sem titulo)',transcript_excerpt:c.transcript_excerpt||c.transcriptExcerpt}));
+    document.getElementById('srv-status').textContent='api: online';
+  }catch(e){
+    allCuts=MOCK;
+    document.getElementById('srv-status').textContent='api: offline (mock)';
   }
+  render();
+}
 
-  // Description
-  if (descRes && descRes.keywords) {
-    const kw = descRes.keywords.slice(0,10).map(k=>`<span>${k.word}</span>`).join('');
-    html += `<div class="description">
-      <h3>Conteudo do Video</h3>
-      <p>${descRes.summary || ''}</p>
-      <div class="keywords">${kw}</div>
-    </div>`;
+function fmt(sec){const m=Math.floor(sec/60),s=Math.floor(sec%60);return`${m}:${String(s).padStart(2,'0')}`}
+function scoreClass(s){return s>=80?'s-high':s>=60?'s-mid':'s-low'}
+
+function counts(){
+  const by={all:allCuts.length,pending:0,approved:0,viral:0,educativo:0,cta:0,tendencia:0,autoridade:0,storytelling:0,bastidores:0};
+  for(const c of allCuts){
+    if(c.status==='pending')by.pending++;
+    else if(c.status==='approved')by.approved++;
+    if(by[c.category]!==undefined)by[c.category]++;
   }
+  for(const k in by){const el=document.getElementById('c-'+k);if(el)el.textContent=by[k];}
+  document.getElementById('m-total').textContent=by.all;
+  document.getElementById('m-approved').textContent=by.approved;
+  document.getElementById('m-pending').textContent=by.pending;
+}
 
-  // Actions
-  html += `<div class="actions-bar">
-    <button class="btn btn-approve-all" onclick="approveAll()">Aprovar Todos (${pending})</button>
-    <div class="export-bar" style="margin-left:auto">
-      <button class="btn-xml" onclick="openExportModal()">Exportar XML</button>
-      <button class="btn-xml" style="color:#34d399;border-color:rgba(52,211,153,.3)" onclick="openExportModal('package')">Baixar Pacote</button>
-    </div>
-  </div>`;
+function applyFilter(c){
+  if(activeFilter==='all')return true;
+  if(activeFilter==='pending')return c.status==='pending';
+  if(activeFilter==='approved')return c.status==='approved';
+  return c.category===activeFilter;
+}
 
-  // Cuts grid
-  html += '<div class="cuts-grid">';
-  for (const cut of cutsData) {
-    const statusClass = cut.status === 'approved' ? 'approved' : cut.status === 'rejected' ? 'rejected' : '';
-    const dur = cut.duration ? cut.duration.toFixed(0) + 's' : '';
-    const platforms = (cut.platform||[]).map(p=>`<span>${p}</span>`).join('');
-    const catClass = `cat-${cut.category || 'viral'}`;
-
-    // Score color based on value
-    const scoreVal = cut.engagementScore || 0;
-    const scoreClass = scoreVal >= 8 ? 'score-high' : scoreVal >= 5 ? 'score-mid' : 'score-low';
-
-    // Transcript excerpt for this cut — the real content, not the generic objective
-    const excerpt = getExcerptForCut(cut);
-
-    // Video preview URL — use previewFile if available, else time-range on source
-    const cacheBust = Date.now();
-    const previewSrc = cut.previewFile
-      ? `${API}/api/projects/${PID}/preview/${cut.previewFile}?v=${cacheBust}`
-      : `${videoUrl}#t=${(cut.start||0).toFixed(1)},${(cut.end||0).toFixed(1)}`;
-
-    const infoBtnHtml = `<button class="btn-info" onclick="openCutInfo('${cut.id}')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="8" r="1" fill="currentColor"/></svg>INFO</button>`;
-
-    let btns = '';
-    if (cut.status === 'suggested') {
-      btns = `<div class="cut-btns">
-        <button class="btn-sm btn-ok" onclick="approve('${cut.id}')">Aprovar</button>
-        <button class="btn-sm btn-no" onclick="reject('${cut.id}')">Rejeitar</button>
-        ${infoBtnHtml}
-      </div>`;
-    } else {
-      const stClass = cut.status === 'approved' ? 'status-approved' : 'status-rejected';
-      const stLabel = cut.status === 'approved' ? 'APROVADO' : 'REJEITADO';
-      btns = `<div class="cut-status ${stClass}">${stLabel}</div>
-      <div class="cut-btns" style="margin-top:6px;justify-content:center">${infoBtnHtml}</div>`;
-    }
-
-    html += `<div class="cut ${statusClass}" id="cut-${cut.id}">
-      <div class="cut-top">
-        <span class="cut-id">${cut.id}</span>
-        <span class="cut-score ${scoreClass}">Score: ${scoreVal}</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <span class="cut-cat ${catClass}">${cut.category}</span>
-        <span class="cut-source">${cut.source || ''}</span>
-      </div>
-      <div class="cut-meta">
-        <strong>${dur}</strong> · ${cut.format} · ${fmt(cut.start)} → ${fmt(cut.end)}
-      </div>
-      <div class="cut-platforms">${platforms}</div>
-
-      <div class="cut-excerpt">"${excerpt}"</div>
-      <div class="cut-objective">${cut.objective || ''}</div>
-
-      <div class="cut-preview">
-        <video controls preload="metadata" src="${previewSrc}" onclick="this.paused?this.play():this.pause()"></video>
-      </div>
-
-      ${btns}
-    </div>`;
+function render(){
+  const grid=document.getElementById('grid');
+  const q=(document.getElementById('q').value||'').toLowerCase().trim();
+  let cuts=allCuts.filter(applyFilter);
+  if(q){
+    cuts=cuts.filter(c=>(c.title||'').toLowerCase().includes(q)||(c.transcript_excerpt||'').toLowerCase().includes(q));
   }
-  html += '</div>';
+  if(activeSort==='score')cuts.sort((a,b)=>b.score-a.score);
+  else if(activeSort==='duration')cuts.sort((a,b)=>b.duration-a.duration);
+  else if(activeSort==='recent')cuts.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+  else cuts.sort((a,b)=>(a.status==='pending'?0:1)-(b.status==='pending'?0:1));
 
-  document.getElementById('content').innerHTML = html;
-}
+  counts();
+  document.getElementById('m-filter').textContent='filtro: '+activeFilter;
 
-function fmt(s) {
-  if (!s && s !== 0) return '??';
-  const m = Math.floor(s/60);
-  const sec = Math.floor(s%60);
-  return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
-}
-
-function getExcerptForCut(cut) {
-  // 1st priority: transcriptExcerpt from the cut data itself
-  if (cut.transcriptExcerpt && cut.transcriptExcerpt.length > 10) {
-    return cut.transcriptExcerpt;
-  }
-  // 2nd priority: transcriptText
-  if (cut.transcriptText && cut.transcriptText.length > 10) {
-    return cut.transcriptText;
-  }
-  // 3rd priority: build from transcription segments
-  if (transcriptionData.length > 0) {
-    const segs = transcriptionData.filter(s => s.start >= (cut.start||0) && s.end <= (cut.end||9999));
-    if (segs.length > 0) {
-      const text = segs.map(s => s.text).join(' ');
-      return text.length > 120 ? text.slice(0, 120) + '...' : text;
-    }
-  }
-  return cut.objective || 'Sem transcricao disponivel';
-}
-
-async function approve(cutId) {
-  try {
-    const r = await F(`${API}/api/projects/${PID}/approve`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cutId }),
-    });
-    if (r.ok) {
-      toast(`${cutId} aprovado!`, 'ok');
-      // Update card instantly without full reload
-      const card = document.getElementById(`cut-${cutId}`);
-      if (card) {
-        card.classList.add('approved');
-        const btnsDiv = card.querySelector('.cut-btns');
-        if (btnsDiv) btnsDiv.innerHTML = '<div class="cut-status status-approved">APROVADO</div>';
-      }
-      updateStats('approve');
-    } else {
-      const err = await r.text();
-      toast(`Erro ao aprovar: ${err}`, 'err');
-    }
-  } catch (e) {
-    toast(`Erro de conexao: ${e.message}`, 'err');
-  }
-}
-
-async function reject(cutId) {
-  try {
-    const r = await F(`${API}/api/projects/${PID}/reject`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cutId }),
-    });
-    if (r.ok) {
-      toast(`${cutId} rejeitado`, 'no');
-      const card = document.getElementById(`cut-${cutId}`);
-      if (card) {
-        card.classList.add('rejected');
-        const btnsDiv = card.querySelector('.cut-btns');
-        if (btnsDiv) btnsDiv.innerHTML = '<div class="cut-status status-rejected">REJEITADO</div>';
-      }
-      updateStats('reject');
-    } else {
-      const err = await r.text();
-      toast(`Erro ao rejeitar: ${err}`, 'err');
-    }
-  } catch (e) {
-    toast(`Erro de conexao: ${e.message}`, 'err');
-  }
-}
-
-async function approveAll() {
-  try {
-    const r = await F(`${API}/api/projects/${PID}/approve`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ all: true }),
-    });
-    if (r.ok) {
-      const data = await r.json();
-      toast(`${data.approved || 'Todos'} cortes aprovados!`, 'ok');
-      load(); // full reload for approve all
-    } else {
-      toast('Erro ao aprovar todos', 'err');
-    }
-  } catch (e) {
-    toast(`Erro de conexao: ${e.message}`, 'err');
-  }
-}
-
-function updateStats(action) {
-  // Quick stat update without full reload
-  const stats = document.querySelectorAll('.stat-val');
-  if (stats.length >= 4) {
-    let pending = parseInt(stats[1].textContent) || 0;
-    let approved = parseInt(stats[2].textContent) || 0;
-    let rejected = parseInt(stats[3].textContent) || 0;
-    if (action === 'approve') { pending--; approved++; }
-    if (action === 'reject') { pending--; rejected++; }
-    stats[1].textContent = Math.max(0, pending);
-    stats[2].textContent = approved;
-    stats[3].textContent = rejected;
-  }
-}
-
-function seekTo(time) {
-  const video = document.getElementById('mainVideo');
-  if (video) { video.currentTime = time; video.play(); }
-}
-
-setInterval(() => {
-  const video = document.getElementById('mainVideo');
-  if (!video) return;
-  const t = video.currentTime;
-  document.querySelectorAll('.transcript-box .seg').forEach(el => {
-    const idx = parseInt(el.dataset.idx);
-    const seg = transcriptionData[idx];
-    if (seg && t >= seg.start && t <= seg.end) {
-      el.classList.add('active');
-      if (!el.dataset.scrolled) { el.scrollIntoView({block:'center',behavior:'smooth'}); el.dataset.scrolled='1'; }
-    } else {
-      el.classList.remove('active');
-      el.dataset.scrolled = '';
-    }
-  });
-}, 300);
-
-// ── Export XML Functions (AV-13) ──────────────────────
-
-function openExportModal(defaultAction) {
-  const modal = document.getElementById('exportModal');
-  modal.classList.add('active');
-
-  // Populate cut IDs dropdown
-  const select = document.getElementById('exportCutId');
-  select.innerHTML = cutsData.map(c =>
-    `<option value="${c.id}">${c.id} — ${c.category} (${c.engagementScore})</option>`
-  ).join('');
-
-  updateExportSummary();
-}
-
-function closeExportModal() {
-  document.getElementById('exportModal').classList.remove('active');
-}
-
-function updateExportSummary() {
-  const mode = document.getElementById('exportMode').value;
-  const cutIdRow = document.getElementById('cutIdRow');
-  cutIdRow.style.display = mode === 'single' ? 'block' : 'none';
-
-  const summary = document.getElementById('exportSummary');
-  const approved = cutsData.filter(c => c.status === 'approved').length;
-  const total = cutsData.length;
-
-  if (mode === 'approved') {
-    const dur = cutsData.filter(c => c.status === 'approved').reduce((s, c) => s + (c.duration || 0), 0);
-    summary.innerHTML = `<strong>${approved}</strong> cortes aprovados<br>Duracao total: <strong>${fmtDur(dur)}</strong><br>Formato: Timeline sequencial com markers`;
-  } else if (mode === 'single') {
-    summary.innerHTML = `Exportar <strong>1 corte individual</strong> como sequencia XML<br>Selecione o corte acima`;
-  } else if (mode === 'final') {
-    summary.innerHTML = `Timeline final montada: <strong>HOOK + DESENVOLVIMENTO + CTA</strong><br>Inclui fade in/out e remocao de silencio`;
-  }
-}
-
-function fmtDur(s) {
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return `${m}:${String(sec).padStart(2, '0')}`;
-}
-
-async function doExport(type) {
-  const editor = document.getElementById('exportEditor').value;
-  const mode = document.getElementById('exportMode').value;
-  const cutId = mode === 'single' ? document.getElementById('exportCutId').value : undefined;
-
-  if (mode === 'single' && !cutId) {
-    toast('Selecione um corte', 'err');
+  if(!cuts.length){
+    grid.innerHTML='<div class="empty">Nenhum corte encontrado.</div>';
     return;
   }
 
-  try {
-    let url, body;
-    if (type === 'package') {
-      url = `${API}/api/projects/${PID}/export/package`;
-      body = { mode, editor, cutId };
-    } else {
-      url = `${API}/api/projects/${PID}/export/xml/${editor}`;
-      body = { mode, cutId };
-    }
-
-    const res = await F(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      const filename = data.filename;
-      toast(`Exportado: ${filename}`, 'ok');
-      closeExportModal();
-
-      // Trigger download
-      const dlUrl = `${API}/api/projects/${PID}/export/download/${encodeURIComponent(filename)}`;
-      const a = document.createElement('a');
-      a.href = dlUrl;
-      a.download = filename;
-      a.click();
-
-      // Reload export history
-      loadExportHistory();
-    } else {
-      const err = await res.text();
-      toast(`Erro: ${err}`, 'err');
-    }
-  } catch (e) {
-    toast(`Erro de conexao: ${e.message}`, 'err');
-  }
-}
-
-async function exportSingleCut(cutId) {
-  const editor = 'premiere'; // default for quick export
-  try {
-    const res = await F(`${API}/api/projects/${PID}/export/xml/${editor}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mode: 'single', cutId }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      toast(`XML gerado: ${data.filename}`, 'ok');
-      const dlUrl = `${API}/api/projects/${PID}/export/download/${encodeURIComponent(data.filename)}`;
-      const a = document.createElement('a');
-      a.href = dlUrl;
-      a.download = data.filename;
-      a.click();
-    } else {
-      toast('Erro ao exportar', 'err');
-    }
-  } catch (e) {
-    toast(`Erro: ${e.message}`, 'err');
-  }
-}
-
-async function loadExportHistory() {
-  try {
-    const res = await F(`${API}/api/projects/${PID}/export/history`);
-    if (!res.ok) return;
-    const data = await res.json();
-    const exports = data.exports || [];
-    if (exports.length === 0) return;
-
-    let existing = document.getElementById('exportHistorySection');
-    if (!existing) {
-      existing = document.createElement('div');
-      existing.id = 'exportHistorySection';
-      existing.className = 'export-history';
-      document.querySelector('.container').appendChild(existing);
-    }
-
-    existing.innerHTML = `<h3>Historico de Exports (${exports.length})</h3>` +
-      exports.slice(-10).reverse().map(e =>
-        `<div class="export-history-item">
-          <span class="info">${e.editor} · ${e.mode} · ${e.clipCount} clips · ${new Date(e.createdAt).toLocaleString('pt-BR')}</span>
-          <span class="dl" onclick="downloadExport('${e.filename}')">Baixar</span>
-        </div>`
-      ).join('');
-  } catch (e) { /* ignore */ }
-}
-
-function downloadExport(filename) {
-  const dlUrl = `${API}/api/projects/${PID}/export/download/${encodeURIComponent(filename)}`;
-  const a = document.createElement('a');
-  a.href = dlUrl;
-  a.download = filename;
-  a.click();
-}
-
-// Close modal on overlay click
-document.getElementById('exportModal').addEventListener('click', function(e) {
-  if (e.target === this) closeExportModal();
-});
-
-load();
-// Load export history after initial load
-setTimeout(loadExportHistory, 1500);
-
-// Auto-detect aspect ratio and apply correct class to video containers
-function detectAspectRatio(video) {
-  var w = video.videoWidth;
-  var h = video.videoHeight;
-  if (!w || !h) return;
-  var ratio = w / h;
-  var container = video.closest('.cut-preview') || video.closest('.video-section');
-  if (!container) return;
-  if (ratio < 0.85) {
-    container.classList.add('vertical');
-  } else if (ratio <= 1.15) {
-    container.classList.add('square');
-  }
-  // horizontal (ratio > 1.15) is the default — no class needed
-}
-
-// Observe all videos as they load
-var observer = new MutationObserver(function() {
-  document.querySelectorAll('video').forEach(function(v) {
-    if (v.dataset.arDetected) return;
-    v.dataset.arDetected = '1';
-    v.addEventListener('loadedmetadata', function() { detectAspectRatio(v); });
-    if (v.videoWidth) detectAspectRatio(v); // already loaded
-  });
-});
-observer.observe(document.body, { childList: true, subtree: true });
-
-// ── Central do Corte — INFO Panel ──────────────────────
-let activeCutId = null;
-
-function openCutInfo(cutId) {
-  const cut = cutsData.find(c => c.id === cutId);
-  if (!cut) return;
-  activeCutId = cutId;
-
-  const scoreVal = cut.engagementScore || 0;
-  const scoreColor = scoreVal >= 8 ? '#34d399' : scoreVal >= 5 ? '#fbbf24' : '#f87171';
-  const catClass = `cat-${cut.category || 'viral'}`;
-  const dur = cut.duration ? cut.duration.toFixed(1) + 's' : '--';
-  const excerpt = getExcerptForCut(cut);
-
-  // Video preview source
-  const cacheBust = Date.now();
-  const previewSrc = cut.previewFile
-    ? `${API}/api/projects/${PID}/preview/${cut.previewFile}?v=${cacheBust}`
-    : `${videoUrl}#t=${(cut.start||0).toFixed(1)},${(cut.end||0).toFixed(1)}`;
-
-  // Scoring criteria (use available data or defaults)
-  const criteria = [
-    { name: 'Hook', key: 'hook', color: '#f472b6' },
-    { name: 'Fluxo', key: 'flow', color: '#38bdf8' },
-    { name: 'Valor', key: 'value', color: '#34d399' },
-    { name: 'Trend', key: 'trend', color: '#fbbf24' },
-  ];
-
-  const scoring = cut.scoring || cut.criteria || {};
-
-  let criteriaHtml = criteria.map(c => {
-    const val = scoring[c.key] ?? Math.round(scoreVal * (0.7 + Math.random() * 0.6));
-    const pct = Math.min(100, (val / 10) * 100);
-    const critColor = val >= 7 ? '#34d399' : val >= 4 ? '#fbbf24' : '#f87171';
-    return `<div class="central-crit">
-      <div>
-        <div class="central-crit-name">${c.name}</div>
-        <div class="central-crit-bar"><div class="central-crit-fill" style="width:${pct}%;background:${c.color}"></div></div>
+  grid.innerHTML=cuts.map((c,i)=>{
+    const sel=selected.has(c.id)?'selected':'';
+    return `
+    <div class="item ${c.status} ${sel}" data-id="${c.id}" style="animation-delay:${i*22}ms" onclick="onItemClick(event,'${c.id}')">
+      <div class="thumb">
+        <div class="thumb-bg" style="background-image:url('${API}/api/projects/${projectId}/thumbnails/thumb-${c.id}.jpg');background-size:cover;background-position:center"><div class="play"></div></div>
+        <div class="headline-overlay">${c.viralTitle||''}</div>
+        <div class="dur">${fmt(c.duration)}</div>
+        <div class="aptag">APROVADO</div>
+        <div class="score">
+          <div class="score-val ${scoreClass(c.score)}">${c.score}</div>
+          <div class="score-lbl">score</div>
+        </div>
+        <div class="cat" data-c="${c.category}"><span class="d"></span>${c.category}</div>
+        <div class="ico-cluster" onclick="event.stopPropagation()">
+          <button class="ico" title="Agendar publicação" onclick="schedule('${c.id}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </button>
+          <button class="ico" title="Baixar / Exportar" onclick="download('${c.id}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+          <button class="ico" title="Editar / Recortar" onclick="edit('${c.id}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
+          </button>
+        </div>
       </div>
-      <div class="central-crit-val" style="color:${critColor}">${val}</div>
+      <div class="body">
+        <div class="title-row">
+          <div class="h-title">${c.title}</div>
+          <div class="h-meta">
+            <span>${fmt(c.duration)}</span>
+            <span class="sep">·</span>
+            <span>${(c.platforms||[]).slice(0,2).join(' · ')||'sem plataforma'}</span>
+          </div>
+        </div>
+        <div class="check" title="Selecionar">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+      </div>
     </div>`;
   }).join('');
 
-  // Format display
-  const format = cut.format || '16:9';
+  // selection bar visibility
+  document.getElementById('selbar').classList.toggle('show',selected.size>0);
+  document.getElementById('sel-count').textContent=`${selected.size} selecionado${selected.size===1?'':'s'}`;
+  detectLayoutsAndPosition();
+}
 
-  const body = document.getElementById('centralBody');
-  body.innerHTML = `
-    <div class="central-video" id="centralVideoContainer">
-      <video controls preload="metadata" src="${previewSrc}" id="centralVideo"></video>
+// Analisa thumbnail e posiciona headline: split-screen → meio (default), single-screen → topo
+function detectLayoutsAndPosition(){
+  document.querySelectorAll('.thumb').forEach(thumb=>{
+    const overlay=thumb.querySelector('.headline-overlay');
+    if(!overlay||!overlay.textContent.trim())return;
+    if(overlay.dataset.analyzed)return;
+    const bg=thumb.querySelector('.thumb-bg');
+    if(!bg)return;
+    const m=(bg.style.backgroundImage||'').match(/url\(['"]?([^'")]+)['"]?\)/);
+    if(!m)return;
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=()=>{
+      try{
+        const W=32,H=64;
+        const cv=document.createElement('canvas');
+        cv.width=W;cv.height=H;
+        const ctx=cv.getContext('2d');
+        ctx.drawImage(img,0,0,W,H);
+        const data=ctx.getImageData(0,0,W,H).data;
+        const lum=[];
+        for(let y=0;y<H;y++){
+          let s=0;
+          for(let x=0;x<W;x++){
+            const i=(y*W+x)*4;
+            s+=0.299*data[i]+0.587*data[i+1]+0.114*data[i+2];
+          }
+          lum.push(s/W);
+        }
+        // procurar valley no centro (rows 24-40 = 37%-63%)
+        let minIdx=24,minVal=lum[24];
+        for(let y=25;y<=40;y++) if(lum[y]<minVal){minVal=lum[y];minIdx=y;}
+        const above=lum.slice(8,18).reduce((a,b)=>a+b,0)/10;
+        const below=lum.slice(46,56).reduce((a,b)=>a+b,0)/10;
+        // split: existe valley significativa no meio (faixa preta) E o valley é mais escuro que entorno
+        const isSplit=minVal<60 && (above-minVal>25) && (below-minVal>25);
+        if(!isSplit) overlay.classList.add('top');
+        overlay.dataset.analyzed='1';
+      }catch(e){overlay.dataset.analyzed='1';}
+    };
+    img.onerror=()=>{overlay.dataset.analyzed='1';};
+    img.src=m[1];
+  });
+}
+
+function onItemClick(e,id){
+  if(selectMode||e.shiftKey||e.metaKey||e.ctrlKey){
+    if(selected.has(id))selected.delete(id);else selected.add(id);
+    render();
+    return;
+  }
+  // default click → preview placeholder
+  preview(id);
+}
+
+function preview(id){
+  const c=allCuts.find(x=>x.id===id);
+  if(!c)return;
+  let m=document.getElementById('previewModal');
+  if(m)m.remove();
+  m=document.createElement('div');
+  m.id='previewModal';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:1000;display:grid;place-items:center;cursor:pointer;animation:in .2s ease both';
+  const close=()=>{const v=m.querySelector('video');if(v)v.pause();m.remove();document.removeEventListener('keydown',onKey);};
+  const onKey=(e)=>{if(e.key==='Escape')close();};
+  document.addEventListener('keydown',onKey);
+  m.onclick=(e)=>{if(e.target===m)close();};
+  const swatches=[
+    {key:'navy',label:'Navy',bg:'linear-gradient(135deg,#14213a,#06080f)',border:'rgba(255,255,255,0.18)',text:'#f1f4ff'},
+    {key:'white',label:'White',bg:'linear-gradient(135deg,#ffffff,#e6e6ec)',border:'rgba(0,0,0,0.12)',text:'#0a0e1a'},
+    {key:'red',label:'Red',bg:'linear-gradient(135deg,#dc263c,#a01428)',border:'rgba(255,255,255,0.18)',text:'#fff'},
+    {key:'gold',label:'Gold',bg:'linear-gradient(135deg,#d4af37,#96781e)',border:'rgba(255,235,180,0.3)',text:'#1a1408'},
+    {key:'green',label:'Green',bg:'linear-gradient(135deg,#14a050,#0a5a2d)',border:'rgba(255,255,255,0.18)',text:'#fff'},
+  ];
+  const current=c.headlineStyle||'navy';
+  const swStyle=swatches.find(s=>s.key===current);
+  const initText=(c.viralTitle||'').replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F000}-\u{1F2FF}\u{1F900}-\u{1F9FF}]/gu,'').replace(/\s+/g,' ').trim();
+  m.innerHTML=`<div style="display:flex;flex-direction:column;gap:14px;align-items:center;cursor:default" onclick="event.stopPropagation()">
+    <div id="vidWrap" style="position:relative;display:inline-block;border-radius:12px;overflow:hidden;background:#000">
+      <video id="prevVid" controls autoplay muted style="display:block;max-width:90vw;max-height:70vh" src="${API}/api/projects/${projectId}/preview/${c.id}.mp4?v=${Date.now()}"></video>
+      <div id="hOverlay" style="position:absolute;left:50%;top:30%;transform:translateX(-50%);max-width:80%;padding:14px 24px;background:linear-gradient(180deg,rgba(20,28,48,.82),rgba(6,10,20,.85));color:${swStyle.text};font-family:'DM Sans',sans-serif;font-weight:700;font-size:18px;text-align:center;border-radius:14px;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.14),0 6px 20px rgba(0,0,0,.4);cursor:move;user-select:none;line-height:1.2;white-space:normal"><span id="hOverlayText" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis">${initText}</span><div id="hResize" style="position:absolute;right:-7px;bottom:-7px;width:14px;height:14px;background:#fff;border:2px solid #0a0e1a;border-radius:50%;cursor:nwse-resize"></div></div>
     </div>
-
-    <div class="central-badge-row">
-      <span class="central-score" style="color:${scoreColor}">${scoreVal}</span>
-      <span class="central-badge ${catClass}">${cut.category || 'viral'}</span>
-      ${(cut.platform||[]).map(p => `<span style="font-size:10px;background:#1e293b;color:#94a3b8;padding:3px 8px;border-radius:4px">${p}</span>`).join('')}
-      ${cut.status !== 'suggested' ? `<span style="font-size:10px;padding:3px 10px;border-radius:4px;font-weight:700;background:${cut.status==='approved'?'rgba(52,211,153,.15)':'rgba(239,68,68,.15)'};color:${cut.status==='approved'?'#34d399':'#ef4444'}">${cut.status==='approved'?'APROVADO':'REJEITADO'}</span>` : ''}
-    </div>
-
-    <div class="central-section">
-      <div class="central-section-title">Detalhes do Corte</div>
-      <div class="central-meta-grid">
-        <div class="central-meta-item">
-          <div class="central-meta-label">ID</div>
-          <div class="central-meta-value" style="font-size:12px">${cut.id}</div>
+    <div id="restyleBar" style="display:flex;flex-direction:column;gap:12px;align-items:center;font-family:'DM Sans',sans-serif;font-size:12px;color:#a0a8b8;padding:14px 18px;background:rgba(255,255,255,0.03);border-radius:12px;border:1px solid rgba(255,255,255,0.06)">
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center">
+        <span style="opacity:.6;letter-spacing:.5px">COR:</span>
+        <label style="position:relative;width:34px;height:34px;border-radius:50%;cursor:pointer;overflow:hidden;border:2px solid rgba(255,255,255,.2);background:conic-gradient(from 0deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);display:grid;place-items:center" title="Escolher cor livre">
+          <input type="color" id="hColorPicker" value="#14213a" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" style="pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+        </label>
+        <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:4px 8px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6478">#</span>
+          <input type="text" id="hHexInput" value="14213a" maxlength="6" spellcheck="false" style="width:62px;background:transparent;border:none;color:#f1f4ff;font-family:'JetBrains Mono',monospace;font-size:12px;text-transform:uppercase;outline:none;letter-spacing:.5px">
         </div>
-        <div class="central-meta-item">
-          <div class="central-meta-label">Duracao</div>
-          <div class="central-meta-value">${dur}</div>
-        </div>
-        <div class="central-meta-item">
-          <div class="central-meta-label">Formato</div>
-          <div class="central-meta-value">${format}</div>
-        </div>
-        <div class="central-meta-item">
-          <div class="central-meta-label">Timestamps</div>
-          <div class="central-meta-value">${fmt(cut.start)} → ${fmt(cut.end)}</div>
-        </div>
+        <span style="opacity:.3">·</span>
+        ${swatches.map(s=>`<button data-style="${s.key}" title="${s.label}" style="width:26px;height:26px;border-radius:50%;background:${s.bg};border:2px solid ${current===s.key?'#fff':s.border};cursor:pointer;transition:transform .15s;padding:0" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'"></button>`).join('')}
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;font-size:11px;opacity:.55">
+        <span>arraste a faixa · puxe o canto pra redimensionar · dica: clique no círculo arco-íris pra cor livre</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="hApply" style="padding:8px 18px;border-radius:8px;background:#00e5cc;color:#0a0e1a;border:none;cursor:pointer;font-family:'DM Sans';font-size:13px;font-weight:700">Aplicar no vídeo</button>
+        <button id="hReset" style="padding:8px 14px;border-radius:8px;background:rgba(255,255,255,0.06);color:#a0a8b8;border:1px solid rgba(255,255,255,0.12);cursor:pointer;font-family:'DM Sans';font-size:12px">Resetar</button>
+        <span id="restyleStatus" style="margin-left:8px;font-size:11px;color:#5a6478;min-height:14px"></span>
       </div>
     </div>
-
-    ${cut.objective ? `<div class="central-section">
-      <div class="central-section-title">Analise / Objetivo</div>
-      <div style="font-size:13px;color:#cbd5e1;line-height:1.6">${cut.objective}</div>
-    </div>` : ''}
-
-    <div class="central-section">
-      <div class="central-section-title">Transcricao do Trecho</div>
-      <div class="central-transcript">"${excerpt}"</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5a6478">
+      ${c.id} · ${c.category} · score ${c.score} · ${fmt(c.duration)} · ${(c.platforms||[]).join(' · ')||'sem plataforma'}
     </div>
-
-    <div class="central-section">
-      <div class="central-section-title">Criterios de Pontuacao</div>
-      <div class="central-criteria">${criteriaHtml}</div>
-    </div>
-  `;
-
-  // Detect video aspect ratio for container
-  const vid = document.getElementById('centralVideo');
-  if (vid) {
-    vid.addEventListener('loadedmetadata', function() {
-      const container = document.getElementById('centralVideoContainer');
-      if (!container) return;
-      const ratio = vid.videoWidth / vid.videoHeight;
-      container.classList.remove('vertical', 'square');
-      if (ratio < 0.85) container.classList.add('vertical');
-      else if (ratio <= 1.15) container.classList.add('square');
+  </div>`;
+  document.body.appendChild(m);
+  // Drag + resize state
+  const overlay=m.querySelector('#hOverlay');
+  const handle=m.querySelector('#hResize');
+  const vid=m.querySelector('#prevVid');
+  const wrap=m.querySelector('#vidWrap');
+  let activeStyle=current;
+  let activeHex=null;
+  const fullText=initText;
+  const clampTwoLines=(txt,wPx,fsPx)=>{
+    const innerW=Math.max(40,wPx-48);
+    const avgChar=fsPx*0.52;
+    const cpl=Math.max(4,Math.floor(innerW/avgChar));
+    const maxC=cpl*2;
+    if(txt.length<=maxC)return txt;
+    let cut=txt.slice(0,maxC-1);
+    const ls=cut.lastIndexOf(' ');
+    if(ls>maxC*0.7)cut=cut.slice(0,ls);
+    return cut.replace(/[\s.,;:!?-]+$/,'')+'…';
+  };
+  const refreshClamp=()=>{
+    const span=m.querySelector('#hOverlayText');if(!span)return;
+    const w=overlay.offsetWidth;
+    const fs=parseFloat(getComputedStyle(overlay).fontSize);
+    span.textContent=clampTwoLines(fullText,w,fs);
+  };
+  const hexToRgb=(h)=>{h=h.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');const n=parseInt(h,16);return{r:(n>>16)&255,g:(n>>8)&255,b:n&255};};
+  const luminance=(r,g,b)=>{const a=[r,g,b].map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);});return .2126*a[0]+.7152*a[1]+.0722*a[2];};
+  const darken=(r,g,b,f)=>({r:Math.round(r*f),g:Math.round(g*f),b:Math.round(b*f)});
+  const contrastText=(hex)=>{const{r,g,b}=hexToRgb(hex);return luminance(r,g,b)>.55?'#0a0e1a':'#f1f4ff';};
+  const buildHexBg=(hex)=>{const{r,g,b}=hexToRgb(hex);const d=darken(r,g,b,.65);return `linear-gradient(180deg,rgba(${r},${g},${b},.85),rgba(${d.r},${d.g},${d.b},.88))`;};
+  const applyOverlayStyle=(key)=>{
+    const sw=swatches.find(s=>s.key===key);
+    if(!sw)return;
+    if(key==='navy')overlay.style.background='linear-gradient(180deg,rgba(20,28,48,.82),rgba(6,10,20,.85))';
+    if(key==='white')overlay.style.background='linear-gradient(180deg,rgba(255,255,255,.92),rgba(235,235,240,.88))';
+    if(key==='red')overlay.style.background='linear-gradient(180deg,rgba(220,38,60,.85),rgba(160,20,40,.88))';
+    if(key==='gold')overlay.style.background='linear-gradient(180deg,rgba(212,175,55,.85),rgba(150,120,30,.88))';
+    if(key==='green')overlay.style.background='linear-gradient(180deg,rgba(20,160,80,.85),rgba(10,90,45,.88))';
+    overlay.style.color=sw.text;
+    activeStyle=key;activeHex=null;
+    syncSwatchBorders();
+  };
+  const applyCustomHex=(hex)=>{
+    if(!/^#?[0-9a-fA-F]{6}$/.test(hex))return false;
+    if(!hex.startsWith('#'))hex='#'+hex;
+    overlay.style.background=buildHexBg(hex);
+    overlay.style.color=contrastText(hex);
+    activeStyle='custom';activeHex=hex.toLowerCase();
+    syncSwatchBorders();
+    return true;
+  };
+  const syncSwatchBorders=()=>{
+    m.querySelectorAll('#restyleBar button[data-style]').forEach(b=>{
+      const sw=swatches.find(s=>s.key===b.dataset.style);
+      b.style.borderColor=(activeStyle===b.dataset.style)?'#fff':sw.border;
     });
-  }
-
-  // Mark current format
-  updateFormatSelection(format);
-
-  // Show panel
-  document.getElementById('centralOverlay').classList.add('active');
-  document.getElementById('centralPanel').classList.add('active');
-  document.getElementById('formatsPanel').classList.remove('active');
-}
-
-function closeCutInfo() {
-  document.getElementById('centralOverlay').classList.remove('active');
-  document.getElementById('centralPanel').classList.remove('active');
-  // Pause video
-  const vid = document.getElementById('centralVideo');
-  if (vid) vid.pause();
-  activeCutId = null;
-}
-
-// Close with Escape
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeCutInfo();
-});
-
-// ── Central Action Buttons ──────────────────────
-
-function centralExportXml() {
-  if (!activeCutId) return;
-  exportSingleCut(activeCutId);
-}
-
-function centralDownloadHd() {
-  if (!activeCutId) return;
-  const cut = cutsData.find(c => c.id === activeCutId);
-  if (!cut) return;
-  // Download preview file or full video segment
-  const src = cut.previewFile
-    ? `${API}/api/projects/${PID}/preview/${cut.previewFile}`
-    : `${videoUrl}`;
-  const a = document.createElement('a');
-  a.href = src;
-  a.download = `corte-${activeCutId}.mp4`;
-  a.click();
-  toast('Baixando corte em HD...', 'ok');
-}
-
-function centralEditClip() {
-  if (!activeCutId) return;
-  // Navigate to live pipeline with cut context
-  const url = `av-live-pipeline.html?project=${PID}&cut=${activeCutId}`;
-  toast('Abrindo editor do clipe...', 'ok');
-  setTimeout(() => window.open(url, '_blank'), 300);
-}
-
-function centralEditSubtitle() {
-  if (!activeCutId) return;
-  toast('Funcao de edicao de legenda em desenvolvimento', 'err');
-}
-
-function centralEnhanceSpeech() {
-  if (!activeCutId) return;
-  toast('Funcao de aprimoramento de fala em desenvolvimento', 'err');
-}
-
-function centralToggleFormats() {
-  const panel = document.getElementById('formatsPanel');
-  panel.classList.toggle('active');
-}
-
-function selectFormat(format) {
-  if (!activeCutId) return;
-  updateFormatSelection(format);
-  toast(`Formato ${format} selecionado para o corte`, 'ok');
-}
-
-function updateFormatSelection(currentFormat) {
-  document.querySelectorAll('.format-option').forEach(el => {
-    el.classList.remove('selected');
-    if (el.querySelector('.format-name').textContent.toLowerCase().includes(
-      currentFormat === '9:16' ? 'vertical' : currentFormat === '1:1' ? 'quadrado' : 'horizontal'
-    )) {
-      el.classList.add('selected');
+  };
+  // Drag
+  let drag=null;
+  overlay.addEventListener('mousedown',(e)=>{
+    if(e.target===handle)return;
+    e.preventDefault();
+    const rect=overlay.getBoundingClientRect();
+    drag={offX:e.clientX-rect.left,offY:e.clientY-rect.top};
+  });
+  document.addEventListener('mousemove',(e)=>{
+    if(!drag)return;
+    const wr=wrap.getBoundingClientRect();
+    let nx=e.clientX-wr.left-drag.offX;
+    let ny=e.clientY-wr.top-drag.offY;
+    nx=Math.max(0,Math.min(wr.width-overlay.offsetWidth,nx));
+    ny=Math.max(0,Math.min(wr.height-overlay.offsetHeight,ny));
+    overlay.style.left=nx+'px';
+    overlay.style.top=ny+'px';
+    overlay.style.transform='none';
+  });
+  document.addEventListener('mouseup',()=>{drag=null;});
+  // Resize
+  let rsz=null;
+  handle.addEventListener('mousedown',(e)=>{
+    e.stopPropagation();e.preventDefault();
+    const rect=overlay.getBoundingClientRect();
+    rsz={startX:e.clientX,startY:e.clientY,startW:rect.width,startFs:parseFloat(getComputedStyle(overlay).fontSize)};
+  });
+  document.addEventListener('mousemove',(e)=>{
+    if(!rsz)return;
+    const dw=e.clientX-rsz.startX;
+    const newW=Math.max(120,Math.min(wrap.offsetWidth-20,rsz.startW+dw));
+    const ratio=newW/rsz.startW;
+    overlay.style.maxWidth='none';
+    overlay.style.width=newW+'px';
+    overlay.style.fontSize=Math.max(10,Math.min(60,rsz.startFs*ratio))+'px';
+    refreshClamp();
+  });
+  document.addEventListener('mouseup',()=>{rsz=null;});
+  // Color swatch updates overlay live
+  m.querySelectorAll('#restyleBar button[data-style]').forEach(btn=>{
+    btn.addEventListener('click',(e)=>{e.stopPropagation();applyOverlayStyle(btn.dataset.style);
+      const hi=m.querySelector('#hHexInput');const cp=m.querySelector('#hColorPicker');
+      const sw=swatches.find(s=>s.key===btn.dataset.style);
+      const pre={navy:'#14213a',white:'#ffffff',red:'#dc263c',gold:'#d4af37',green:'#14a050'}[btn.dataset.style];
+      if(pre){if(hi)hi.value=pre.slice(1).toUpperCase();if(cp)cp.value=pre;}
+    });
+  });
+  // Custom color picker
+  const cp=m.querySelector('#hColorPicker');
+  const hi=m.querySelector('#hHexInput');
+  cp.addEventListener('input',(e)=>{e.stopPropagation();const v=cp.value;if(applyCustomHex(v))hi.value=v.slice(1).toUpperCase();});
+  cp.addEventListener('click',(e)=>e.stopPropagation());
+  hi.addEventListener('input',(e)=>{e.stopPropagation();const v=hi.value.replace(/[^0-9a-fA-F]/g,'').slice(0,6);if(v!==hi.value)hi.value=v.toUpperCase();if(v.length===6&&applyCustomHex('#'+v))cp.value='#'+v.toLowerCase();});
+  hi.addEventListener('click',(e)=>e.stopPropagation());
+  hi.addEventListener('keydown',(e)=>e.stopPropagation());
+  // Reset
+  m.querySelector('#hReset').addEventListener('click',(e)=>{
+    e.stopPropagation();
+    overlay.style.left='';overlay.style.top='30%';overlay.style.transform='translateX(-50%)';
+    overlay.style.width='';overlay.style.maxWidth='80%';overlay.style.fontSize='18px';
+    setTimeout(refreshClamp,0);
+  });
+  setTimeout(refreshClamp,30);
+  // Apply: send custom coords
+  m.querySelector('#hApply').addEventListener('click',async (e)=>{
+    e.stopPropagation();
+    const status=m.querySelector('#restyleStatus');
+    const allBtns=m.querySelectorAll('#restyleBar button');
+    allBtns.forEach(b=>b.disabled=true);
+    status.textContent='Aplicando...';
+    // Map screen coords to video coords (1280 high, 720 wide internally)
+    const wr=wrap.getBoundingClientRect();
+    const ovr=overlay.getBoundingClientRect();
+    const scaleX=720/wr.width;
+    const scaleY=1280/wr.height;
+    const screenFs=parseFloat(getComputedStyle(overlay).fontSize);
+    const customX=Math.round((ovr.left-wr.left)*scaleX);
+    const customY=Math.round((ovr.top-wr.top)*scaleY);
+    const customWidth=Math.round(ovr.width*scaleX);
+    // overlay font 18px ~= burned 38pt at default. Maintain ratio: burned = screenFs * (38/18) * scaleY/scaleX baseline
+    const customFontsize=Math.max(18,Math.min(64,Math.round(screenFs*scaleY*0.85)));
+    const payload={style:activeStyle,customX,customY,customWidth,customFontsize};
+    if(activeStyle==='custom'&&activeHex)payload.customHex=activeHex;
+    try{
+      const r=await fetch(`${API}/api/projects/${projectId}/cuts/${c.id}/restyle`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      if(!r.ok)throw new Error('http '+r.status);
+      c.headlineStyle=activeStyle==='custom'?(activeHex||'custom'):activeStyle;
+      status.textContent='Salvo · será aplicado no export';
+      allBtns.forEach(b=>b.disabled=false);
+      setTimeout(()=>status.textContent='',2000);
+    }catch(err){
+      status.textContent='Erro: '+err.message;
+      allBtns.forEach(b=>b.disabled=false);
     }
   });
 }
+
+async function approve(id){
+  const c=allCuts.find(x=>x.id===id);if(!c)return;
+  c.status='approved';
+  try{await fetch(`${API}/api/projects/${projectId}/approve`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cutId:id})});}catch(e){}
+  render();
+}
+async function reject(id){
+  const c=allCuts.find(x=>x.id===id);if(!c)return;
+  c.status='rejected';
+  try{await fetch(`${API}/api/projects/${projectId}/cuts/${id}/reject`,{method:'POST'});}catch(e){}
+  render();
+}
+function schedule(id){alert('Agendar publicação · '+id);}
+function download(id){alert('Exportar / baixar · '+id);}
+function edit(id){alert('Editar / recortar · '+id);}
+function upload(){alert('Upload de novo vídeo (em breve)');}
+
+function setFilter(cat,el){
+  activeFilter=cat;
+  document.querySelectorAll('.nav-item').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  render();
+}
+function setSort(v){activeSort=v;render();}
+
+function toggleSelectMode(){
+  selectMode=!selectMode;
+  document.getElementById('selbtn').style.borderColor=selectMode?'var(--text)':'';
+  document.getElementById('selbtn').style.color=selectMode?'var(--text)':'';
+  if(!selectMode)selected.clear();
+  render();
+}
+function clearSel(){selected.clear();selectMode=false;document.getElementById('selbtn').style.borderColor='';document.getElementById('selbtn').style.color='';render();}
+
+async function bulkApprove(){
+  const ids=[...selected];
+  for(const id of ids){
+    const c=allCuts.find(x=>x.id===id);
+    if(c)c.status='approved';
+  }
+  try{await fetch(`${API}/api/projects/${projectId}/approve-all`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids})});}catch(e){}
+  selected.clear();render();
+}
+async function bulkReject(){
+  for(const id of selected){
+    const c=allCuts.find(x=>x.id===id);
+    if(c)c.status='rejected';
+  }
+  selected.clear();render();
+}
+function bulkExport(){alert('Exportar '+selected.size+' cortes (em breve)');}
+
+loadCuts();
 </script>
 </body>
 </html>

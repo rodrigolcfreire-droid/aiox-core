@@ -36,6 +36,7 @@ const { listOutputs, generateOutputReport } = require('./output-manager');
 const { runLivePipeline, addClient, removeClient, getPipelineState } = require('./live-pipeline');
 const { addBrand, updateBrand, removeBrand, listBrands, getBrand } = require('./brand-catalog');
 const { generateThumbnail, generateCutThumbnails } = require('./thumbnail');
+const { restyleCut, STYLES: HEADLINE_STYLES, SIZES: HEADLINE_SIZES, POSITIONS: HEADLINE_POSITIONS } = require('./headline-restyle');
 const { detectEnergy, loadEnergyData } = require('./energy-detector');
 const { exportPremiereXml } = require('./export-premiere-xml');
 const { exportDaVinciXml } = require('./export-davinci-xml');
@@ -723,6 +724,29 @@ async function handleRequest(req, res) {
       const id = pathname.split('/')[3];
       const result = generateCutPreviews(id);
       return sendJSON(res, result);
+    }
+
+    // ── Headline Styles list ─────────────────────────
+    if (pathname === '/api/headline-styles' && method === 'GET') {
+      return sendJSON(res, {
+        styles: Object.entries(HEADLINE_STYLES).map(([key, s]) => ({ key, label: s.label })),
+        sizes: Object.entries(HEADLINE_SIZES).map(([key, s]) => ({ key, label: s.label })),
+        positions: Object.entries(HEADLINE_POSITIONS).map(([key, s]) => ({ key, label: s.label })),
+      });
+    }
+
+    // ── Restyle headline of a single cut ─────────────
+    if (pathname.match(/^\/api\/projects\/[^/]+\/cuts\/[^/]+\/restyle$/) && method === 'POST') {
+      const parts = pathname.split('/');
+      const id = parts[3];
+      const cutId = parts[5];
+      const body = await parseBody(req);
+      try {
+        const result = restyleCut(id, cutId, body || { style: 'navy' });
+        return sendJSON(res, result);
+      } catch (err) {
+        return sendError(res, err.message, 400);
+      }
     }
 
     // ── Energy Detection (AV-10) ─────────────────────
