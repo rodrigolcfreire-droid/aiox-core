@@ -17,9 +17,9 @@ const {
 
 describe('subtitle-presets', () => {
   describe('listPresets', () => {
-    it('returns all 15 presets', () => {
+    it('returns all 24 presets', () => {
       const presets = listPresets();
-      expect(presets).toHaveLength(15);
+      expect(presets).toHaveLength(24);
     });
 
     it('each preset has required fields', () => {
@@ -88,9 +88,9 @@ describe('subtitle-presets', () => {
       expect(presets).toHaveLength(2);
     });
 
-    it('returns 10 presets for shared', () => {
+    it('returns 19 presets for shared', () => {
       const presets = listPresetsByExpert('shared');
-      expect(presets).toHaveLength(10);
+      expect(presets).toHaveLength(19);
     });
 
     it('returns empty array for unknown expert', () => {
@@ -152,8 +152,8 @@ describe('subtitle-presets', () => {
   });
 
   describe('PRESETS constant', () => {
-    it('has exactly 15 entries', () => {
-      expect(Object.keys(PRESETS)).toHaveLength(15);
+    it('has exactly 24 entries', () => {
+      expect(Object.keys(PRESETS)).toHaveLength(24);
     });
 
     it('all ids match their keys', () => {
