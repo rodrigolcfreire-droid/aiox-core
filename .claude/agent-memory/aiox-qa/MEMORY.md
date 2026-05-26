@@ -1,5 +1,9 @@
 # Quinn (QA) Agent Memory
 
+## Project Gates
+- [Epic EG QA Gate 2026-05-25](project_eg_epic_gate_2026_05_25.md) — EG-1 PASS, EG-2/3/4 CONCERNS (test drift + auth-close debt)
+- [AV-AUTH-RESTORE Gate 2026-05-25](project_av_auth_gate_2026_05_25.md) — CONCERNS 90/100: escopo limpo (40 audiovisual tests verde), mas flake orthogonal em check-registry surfacing no full suite
+
 ## IDS Module Patterns
 - IDS modules live in `.aiox-core/core/ids/` with tests in `tests/core/ids/`
 - Test fixtures at `tests/core/ids/fixtures/` (valid-registry.yaml, empty-registry.yaml)

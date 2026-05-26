@@ -1,9 +1,13 @@
 # TECH-DEBT: Restaurar tests audiovisual pós-fechamento de auth
 
-**Status:** Open
+> **MIGRATED TO STORY:** `docs/stories/active/av-auth-tests-restore.md`
+> **Status:** Closed (2026-05-25) — rastreamento continua na story formal acima.
+
+**Status:** Closed
 **Priority:** MEDIUM
 **Created:** 2026-04-21 by @devops (Gage)
 **Origin commit:** `1e2d8ef7 fix(av-server): fechar perimetro de auth e carregar .env`
+**Migrated:** 2026-05-25 by @sm (River)
 
 ## Contexto
 

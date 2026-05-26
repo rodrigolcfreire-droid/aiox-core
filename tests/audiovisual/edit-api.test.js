@@ -11,6 +11,9 @@
 const http = require('http');
 const path = require('path');
 
+// Auth mock (story av-auth-tests-restore)
+const { getAuthCookieHeader } = require('../helpers/auth-mock');
+
 // ── Mocks ────────────────────────────────────────────────
 
 // Variables prefixed with "mock" are allowed inside jest.mock factories
@@ -168,7 +171,11 @@ function request(method, urlPath, body = null) {
       port: new URL(baseUrl).port,
       path: urlPath,
       method,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        // Inject session cookie so checkAuth() passes (api-server.js:127)
+        Cookie: getAuthCookieHeader(),
+      },
     };
 
     const req = http.request(opts, (res) => {
@@ -418,7 +425,11 @@ describe('Editor Growth API (EG-3)', () => {
           port: new URL(baseUrl).port,
           path: `/api/edit/${editId}/export`,
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            // Inject session cookie so checkAuth() passes (api-server.js:127)
+            Cookie: getAuthCookieHeader(),
+          },
         };
 
         const req = http.request(opts, (res) => {

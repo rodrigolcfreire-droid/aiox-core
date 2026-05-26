@@ -22,6 +22,9 @@ const { AV_DIR } = require('../../packages/audiovisual/lib/constants');
 // API Server
 const { handleRequest, DEFAULT_PORT } = require('../../packages/audiovisual/lib/api-server');
 
+// Auth mock (story av-auth-tests-restore)
+const { injectAuthCookie } = require('../helpers/auth-mock');
+
 // Drive
 const { loadToken } = require('../../packages/audiovisual/lib/drive-upload');
 
@@ -39,13 +42,16 @@ describe('API Server', () => {
   });
 
   function mockReq(method, url) {
-    return {
+    const req = {
       method,
       url,
       on: () => {},
       socket: { remoteAddress: '127.0.0.1' },
       headers: { 'user-agent': 'jest-test' },
     };
+    // Inject valid auth cookie so checkAuth() passes (api-server.js:127)
+    injectAuthCookie(req);
+    return req;
   }
 
   test('health endpoint works', (done) => {
