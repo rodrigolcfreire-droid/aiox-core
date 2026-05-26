@@ -128,7 +128,57 @@ N/A — no debug issues encountered
 | `docs/stories/active/eg-4-ui-editor.md` | Modified | Updated tasks, status, dev agent record |
 
 ## QA Results
-_A ser preenchido pelo QA agent_
+
+**Gate Date:** 2026-05-25
+**QA Agent:** @qa (Quinn)
+**Verdict:** CONCERNS
+
+### Quality Checks
+- [x] Lint — N/A (HTML file, sem ESLint config para HTML inline JS)
+- [x] Typecheck — N/A (vanilla JS por design — AC #12)
+- [ ] Tests — N/A por design (story explicitamente diz "Teste manual via browser" — sem testes automáticos)
+- [x] Coverage — N/A
+- [x] File List validation — 3/3 arquivos do File List existem
+- [x] AC verification — 12/12 AC mapeáveis ao código (mas não validados em browser real neste gate)
+- [x] Security review — UI consome auth-gated API; sem novos perímetros expostos
+
+### File Inventory
+- `docs/examples/ux-command-center/av-editor.html` (116411 bytes, 2246 linhas) — single-file HTML+CSS+JS
+- `docs/examples/ux-command-center/index.html` — modificado (card adicionado)
+- `docs/stories/active/eg-4-ui-editor.md` — atualizado pelo dev
+
+### AC Traceability
+| AC | Evidence |
+|----|----------|
+| 1 | av-editor.html criado (Dev nota: usou `av-editor.html` em vez de `editor.html` para seguir convenção `av-*`) |
+| 2-3 | Player HTML5 + Timeline (Tasks marcadas done por @dev) |
+| 4-5 | Aba Legendas com click-to-edit + overlay CSS sincronizado via rAF |
+| 6 | Galeria de presets carrega de `/api/edit/presets` |
+| 7-8 | Botão Exportar via SSE com download link |
+| 9 | Empty state com dropzone + upload standalone |
+| 10 | Sidebar com lista de edits via `/api/edit/list` |
+| 11 | Responsividade 1024px+ / 1280px+ |
+| 12 | Vanilla JS confirmado (single-file HTML, sem framework imports) |
+
+### Validation Gaps
+Esta story é INTRINSECAMENTE difícil de gatear automaticamente:
+- Sem testes E2E (Playwright/Cypress) configurados para o command-center
+- Validação manual requer browser session + server rodando + auth válida + edits criados
+- Como QA standalone (sem browser handoff), não posso validar: SSE end-to-end, drag-drop UX, responsividade visual, ZERO chamadas FFmpeg durante edição (AC #5)
+
+### Dependência crítica
+EG-4 depende de EG-3 funcionar. Como EG-3 está em **CONCERNS** (tests bloqueados por auth-debt), validação end-to-end de EG-4 está duplamente bloqueada.
+
+### Issues Found
+- (MEDIUM) Ausência de E2E tests automatizados — aceito por escopo da story (AC #12 + "Teste manual" em Dev Notes), mas gera blind spot para regressões futuras.
+- (LOW) AC #1 diz "editor.html" mas implementação usa "av-editor.html" — desvio justificado por consistência de naming (`av-*.html`). Documentado em Completion Notes.
+- (BLOCKED) Validação end-to-end depende de EG-3 ter tests verdes.
+
+### Recommendations
+- Manter em `active/` até EG-3 fechar (auth-test debt resolvido).
+- Bloqueador rastreado em story `docs/stories/active/av-auth-tests-restore.md` (criada 2026-05-25 por @sm) — resolve a dependencia transitiva EG-4 → EG-3 → auth-tests.
+- Considerar adicionar smoke test E2E mínimo (Playwright) numa próxima story dedicada a UI testing.
+- Antes do próximo merge, fazer pelo menos uma sessão de validação manual documentada (screenshots de cada tab funcionando + um export bem-sucedido).
 
 ## Change Log
 

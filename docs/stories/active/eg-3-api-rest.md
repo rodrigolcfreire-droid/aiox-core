@@ -115,7 +115,56 @@ Claude Opus 4.6 (1M context)
 | `docs/stories/active/eg-3-api-rest.md` | Modified | Story progress updates |
 
 ## QA Results
-_A ser preenchido pelo QA agent_
+
+**Gate Date:** 2026-05-25
+**QA Agent:** @qa (Quinn)
+**Verdict:** CONCERNS
+
+### Quality Checks
+- [x] Lint — não regrediu (api-server.js tem warnings pré-existentes documentados)
+- [x] Typecheck — N/A (JavaScript puro)
+- [ ] Tests — 0/26 passed (TODOS falham com HTTP 401 — regressão upstream auth-close, NÃO bug do EG-3)
+- [x] Coverage — N/A
+- [x] File List validation — 2/2 arquivos do File List existem (api-server.js, edit-api.test.js)
+- [x] AC verification — 10/10 AC implementados (rotas verificadas via grep)
+- [x] Security review — endpoints estão por trás do gate de auth (positivo — vide auth-close)
+
+### Test Results
+```
+Test Suites: 1 failed, 1 total
+Tests:       26 failed, 26 total / 0.162s
+```
+Padrão: `Expected: 404/200/400 / Received: 401`
+
+### Root Cause: Tech-Debt Upstream
+Os 26 tests do EG-3 já passavam quando foram escritos (2026-04-12). A regressão veio do commit `1e2d8ef7 fix(av-server): fechar perimetro de auth e carregar .env` (~21/04), que fechou o perímetro `/api/*` sem atualizar mocks de auth nos tests.
+
+**Tech-debt JÁ REGISTRADO:** `docs/tech-debt-av-auth-tests.md` (commit `17035421`, autor @devops).
+
+Quote do tech-debt doc: _"Essa violação bloqueia a Constitution art. V (Quality First) desde então. Todos os pushes posteriores foram feitos com tech debt acknowledged."_
+
+### AC Traceability (verificado via grep no api-server.js)
+| AC | Evidence (api-server.js line) |
+|----|------|
+| 1 | 11+ rotas `/api/edit/*` presentes (l.907,916,920,1032,1043,1086,1101,1122,1140,1155,1194,1209) |
+| 2 | `/api/edit/create` aceita source (l.920) |
+| 3 | Multipart documentado em Completion Notes |
+| 4 | SSE export route (l.1155) — `text/event-stream` pattern |
+| 5 | Evento final `done` com outputPath |
+| 6 | `/api/edit/presets` (l.907) |
+| 7 | `/api/edit/presets/:expert` (covered by routing) |
+| 8 | Extend-only: rotas adicionadas no final do arquivo, sem alterar handlers existentes |
+| 9 | Error handling padronizado mencionado em Completion Notes |
+| 10 | 26 tests em edit-api.test.js (cobertura projetada — bloqueados por auth) |
+
+### Issues Found
+- (HIGH) 0/26 tests verde. Implementação parece correta por inspeção visual mas validação automatizada está bloqueada por tech-debt `docs/tech-debt-av-auth-tests.md`. Não é regressão de EG-3.
+- (LOW) `tests/audiovisual/edit-api.test.js` modificou `docs/stories/active/eg-3-api-rest.md` segundo File List (auto-referência inofensiva).
+
+### Recommendations
+- Story NÃO pode ser promovida a Done até que o bloqueador de auth-tests seja resolvido.
+- Bloqueador agora rastreado em story `docs/stories/active/av-auth-tests-restore.md` (criada 2026-05-25 por @sm — substitui o tech-debt doc original).
+- Após fix em `av-auth-tests-restore`, re-rodar `npx jest tests/audiovisual/edit-api.test.js` e esperar 26/26 verde antes de promover.
 
 ## Change Log
 
